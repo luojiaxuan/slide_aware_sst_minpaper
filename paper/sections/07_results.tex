@@ -1,0 +1,32 @@
+\section{Results}
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lcccccc}
+\toprule
+System & BLEU $\uparrow$ & COMET $\uparrow$ & HDA $\uparrow$ & Term F1 $\uparrow$ & COR $\downarrow$ & Latency $\downarrow$ \\
+\midrule
+No context & -- & -- & -- & -- & -- & -- \\
+Glossary only & -- & -- & -- & -- & -- & -- \\
+Slide OCR only & -- & -- & -- & -- & -- & -- \\
+Naive all-context & -- & -- & -- & -- & -- & -- \\
+\policyname{} & -- & -- & -- & -- & -- & -- \\
+Oracle context & -- & -- & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\caption{Main results on \datasetname.  Fill with final numbers.  The expected pattern is that naive context improves HDA/Term F1 but increases context overuse, while \policyname{} keeps most gains with fewer wrong-context errors.}
+\label{tab:main-results}
+\end{table*}
+
+\paragraph{Main finding.}
+\todo{Report whether slide-aware context improves hard examples and whether the policy reduces context overuse.}
+
+\paragraph{Matched vs mismatched context.}
+\todo{Show that naive all-context is fragile under previous/next/random-slide conditions.}
+
+\paragraph{Latency trade-off.}
+\todo{Report whether retrieval/policy overhead changes latency meaningfully.}
+
+\paragraph{Oracle gap.}
+\todo{Discuss how far the policy is from human-verified evidence selection.}

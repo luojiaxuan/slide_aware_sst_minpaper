@@ -1,0 +1,4 @@
+id,lecture_id,verified,source_transcript,source_token,pinyin,correct_target,distractor_targets,category,reference_translation,slide_text,notes
+toy_001,toy,true,这里我们看线程调度的问题。,线程,xiancheng,thread|threads,ready-made|existing,homophone|technical_term,Here we look at the problem of thread scheduling.,Thread scheduling / 线程调度,Toy example.
+toy_002,toy,true,卷积核的大小会影响感受野。,卷积核,juan ji he,convolution kernel|kernel,volume core,technical_term,The size of the convolution kernel affects the receptive field.,Convolution kernel / receptive field,Toy example.
+toy_003,toy,true,这个基音频率决定了音高。,基音,ji yin,fundamental frequency|fundamental tone,gene,homophone|technical_term,This fundamental frequency determines the pitch.,Pitch tracking / fundamental frequency,Toy example.

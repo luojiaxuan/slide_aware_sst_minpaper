@@ -1,0 +1,28 @@
+\section{Task Formulation}
+
+At time step $t$, a streaming SST system has observed source speech chunks $\audio_{\leq t}$ and previously emitted target tokens $y_{<t}$.  In \taskname, the system also has access to deployment context:
+\begin{itemize}[leftmargin=*]
+    \item slide deck or slide video $\slides = \{s_i\}_{i=1}^{N}$, optionally with timestamps or page-change events;
+    \item glossary $\glosscxt = \{(g_j^{src}, g_j^{tgt}, d_j)\}$, where $d_j$ is an optional definition;
+    \item background documents $\docs$, e.g., talk abstract, speaker bio, paper abstract, course page, prior lecture notes;
+    \item history $\history_t$, including previous source hypotheses, previous translations, and recent evidence decisions.
+\end{itemize}
+
+The system outputs a sequence of committed target tokens $y_t$ or a \textsc{wait} action.  Each committed token receives a timestamp so latency can be computed.  The objective is to maximize translation quality and context-sensitive accuracy while satisfying a latency budget.
+
+\paragraph{Evidence candidates.}
+A context builder converts each source into evidence candidates:
+\begin{equation}
+    e = (\mathrm{source}, \mathrm{text}, \mathrm{translation}, \mathrm{description}, \mathrm{time}, \mathrm{confidence}).
+\end{equation}
+Sources include slide OCR terms, slide VLM summaries, glossary entries, background snippets, and previous discourse terms.  At step $t$, a retriever returns candidates $\evidence_t$ conditioned on $\audio_{\leq t}$, the partial ASR hypothesis $\hat{x}_{\leq t}$, and history.
+
+\paragraph{Context policy.}
+The policy maps each candidate to one of four decisions:
+\begin{equation}
+    \pi(e, t) \in \{\textsc{use}, \textsc{ignore}, \textsc{delay}, \textsc{downweight}\}.
+\end{equation}
+The selected evidence packet $\packet_t$ is deliberately small, containing at most $K$ items.  This design prevents raw slides or long documents from dominating the translation prompt and allows us to measure context overuse.
+
+\paragraph{Evaluation setting.}
+We evaluate systems under fixed chunk sizes or wait-$k$-style policies.  A system may use current, previous, and next-slide metadata only if that information would be available at deployment.  We report separate results for matched context and mismatched/adversarial context.

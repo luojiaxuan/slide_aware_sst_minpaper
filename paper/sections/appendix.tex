@@ -1,0 +1,19 @@
+\section{Dataset Schema}
+\label{app:schema}
+
+Each JSONL item should follow the schema in \texttt{code\_plan/DATA\_SCHEMA.md}.  Include local paths or IDs only; do not include copyrighted media in the release unless the license allows redistribution.
+
+\section{Prompts}
+\label{app:prompts}
+
+Include exact prompt templates for all context conditions: no-context, glossary-only, slide-only, naive all-context, and \policyname{}.
+
+\section{Additional Metrics}
+\label{app:metrics}
+
+Define normalization rules for homophone and term accuracy, e.g., lowercasing, lemmatization, aliases, and manually curated acceptable translations.
+
+\section{Annotation Instructions}
+\label{app:annotation}
+
+Annotators should identify the intended sense of each ambiguous Chinese token, acceptable English translations, evidence that supports the correct sense, and evidence that is plausible but wrong.

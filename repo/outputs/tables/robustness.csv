@@ -1,0 +1,4 @@
+mismatch,condition,bleu,hda,term_precision,term_recall,term_f1,context_overuse_rate,wrong_slide_adoption_rate,avg_wall_time_sec,n
+previous_slide,no_context,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0007708867390950521,3
+previous_slide,naive_all_context,1.9624223355995987,1.0,0.5,1.0,0.6666666666666666,1.0,0.6,0.00013113021850585938,3
+previous_slide,policy,3.034508801848689,1.0,1.0,1.0,1.0,0.0,0.0,0.0010496775309244792,3

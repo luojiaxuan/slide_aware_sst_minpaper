@@ -1,0 +1,3 @@
+{"id": "toy_001", "condition": "policy", "hypothesis": "[MOCK policy] 这里我们看线程调度的问题。 | hints: thread scheduling", "used_evidence_ids": ["ev1"], "prompt": null, "latency": {"wall_time_sec": 0.00013327598571777344}, "metadata": {}}
+{"id": "toy_002", "condition": "policy", "hypothesis": "[MOCK policy] 卷积核的大小会影响感受野。", "used_evidence_ids": [], "prompt": null, "latency": {"wall_time_sec": 7.104873657226562e-05}, "metadata": {}}
+{"id": "toy_003", "condition": "policy", "hypothesis": "[MOCK policy] 这个基音频率决定了音高。", "used_evidence_ids": [], "prompt": null, "latency": {"wall_time_sec": 3.1948089599609375e-05}, "metadata": {}}

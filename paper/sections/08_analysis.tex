@@ -1,0 +1,29 @@
+\section{Analysis}
+
+\subsection{Case studies}
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{p{0.16\linewidth}p{0.30\linewidth}p{0.22\linewidth}p{0.22\linewidth}}
+\toprule
+Case & Source / context & Naive context & \policyname{} \\
+\midrule
+Homophone & \placeholder{xiancheng, slide: thread scheduling} & \placeholder{...} & \placeholder{...} \\
+Wrong slide & \placeholder{speech discusses A, slide shows B} & \placeholder{hallucinates B} & \placeholder{ignores B} \\
+Entity & \placeholder{paper/method name on slide} & \placeholder{...} & \placeholder{...} \\
+\bottomrule
+\end{tabular}
+\caption{Qualitative examples.  Use real model outputs and keep examples concise.}
+\label{tab:cases}
+\end{table*}
+
+\subsection{Error taxonomy}
+
+We categorize errors into: missed evidence, stale-slide adoption, over-translation of slide terms, glossary conflict, ASR-induced ambiguity, and premature commitment.  This taxonomy is important because a method that improves BLEU may still be unsafe for real deployment if it increases stale-slide adoption.
+
+\subsection{What information do slides provide?}
+
+We separately analyze text-only slide OCR, visual summaries, and slide timing.  We expect OCR to help explicit terms, while visual summaries may help diagrams or examples that lack OCR text.  Timing should help suppress stale or future evidence.
+
+\todo{Add distribution plots for context-source usage and threshold sensitivity.}

@@ -1,0 +1,10 @@
+# Normalize equivalent target renderings for term metrics.
+thread:
+  - thread
+  - threads
+convolution:
+  - convolution
+  - conv
+source domain:
+  - source domain
+  - source-domain

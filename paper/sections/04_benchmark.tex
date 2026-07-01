@@ -1,0 +1,59 @@
+\section{Benchmark Construction}
+
+We construct \datasetname, a Chinese-to-English lecture challenge set designed to make slide context useful but not trivially reliable.
+
+\subsection{Data sources}
+
+The MVP uses a local lecture dataset with three required fields: audio or transcript, slide frames or slide OCR, and timing metadata.  Chinese-LiPS is the preferred source because it contains Chinese speech, slide videos, and manual transcriptions.  If Chinese-LiPS access is delayed, the codebase supports a generic JSONL adapter for self-collected or licensed lectures.
+
+\subsection{Candidate mining}
+
+We mine hard examples using a mixture of automatic heuristics and manual verification:
+\begin{enumerate}[leftmargin=*]
+    \item Run word segmentation and pinyin conversion on Chinese transcripts.
+    \item Build homophone and near-homophone clusters, e.g., \emph{xiancheng}: 线程 / 现成; \emph{jiyin}: 基因 / 基音; \emph{xiang}: 项 / 向 / 像 / 相.
+    \item Extract slide terms from OCR and optional VLM summaries.
+    \item Select segments where a transcript token shares pinyin with multiple plausible translations and where one candidate appears in nearby slide/background evidence.
+    \item Generate an English reference with a strong teacher model, then manually verify the target term and local sentence for a high-quality test subset.
+\end{enumerate}
+
+\subsection{Context variants}
+
+Each example is packaged with several context conditions:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Matched slide}: current or temporally closest slide.
+    \item \textbf{Previous/next slide}: realistic temporal mismatch.
+    \item \textbf{Random same-lecture slide}: topic-related but not locally relevant.
+    \item \textbf{Distractor glossary}: one correct term plus homophone distractors.
+    \item \textbf{Background-only}: talk abstract, paper abstract, or speaker history without current slide.
+\end{itemize}
+
+\subsection{Annotation fields}
+
+Each challenge item includes the source segment, target reference, ambiguous source token, pinyin, correct English rendering, distractor renderings, evidence IDs that justify the correct rendering, and evidence IDs that are plausible but wrong.  \Cref{tab:dataset-example} shows the intended schema.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{ll}
+\toprule
+Field & Example \\
+\midrule
+source token & 线程 \\
+pinyin & xiancheng \\
+correct target & thread \\
+distractor targets & ready-made; existing \\
+matched slide term & thread scheduling \\
+wrong slide term & ready-made template \\
+category & homophone + CS term \\
+\bottomrule
+\end{tabular}
+\caption{Illustrative \datasetname{} item.  Replace with real examples after annotation.}
+\label{tab:dataset-example}
+\end{table}
+
+\subsection{Splits}
+
+The minimal paper version should contain approximately 500--1000 verified hard examples plus a larger automatically labeled development set.  We recommend reporting separate subsets: homophone, technical term, named entity, formula/reference, and slide-speech mismatch.
+
+\todo{Fill in final counts, annotation agreement, and license/access statement.}

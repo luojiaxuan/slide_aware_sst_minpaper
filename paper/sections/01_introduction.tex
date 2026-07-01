@@ -1,0 +1,18 @@
+\section{Introduction}
+
+Simultaneous speech translation (SST) generates target-language text incrementally from a partial source speech stream.  This setting is essential for real-time lectures, conferences, and multilingual classrooms, but it is also unusually brittle: the system must act before hearing the full utterance, and emitted translations are difficult to revise without disrupting the user experience.
+
+Most research settings treat the current speech stream as the primary input, optionally augmented with a narrow terminology glossary.  In real deployments, however, interpreters and audiences often have access to much richer context: presentation slides, a talk abstract, speaker information, prior lectures, paper PDFs, course notes, and a domain glossary.  Slides are particularly natural for academic talks and professional courses because they contain terminology, equations, names, and visual concepts that are often under-specified in the audio signal.
+
+We argue that slide-aware contextual SST is not simply a matter of adding more context to the prompt.  Slides are asynchronous and noisy.  Speakers may skip a slide, return to a previous slide, summarize future content, or discuss off-slide details.  Background documents can also be too broad, and glossary entries can conflict with the current utterance.  Under a streaming latency budget, irrelevant context can cause the model to translate a slide term before the speaker says it, or to select the wrong English rendering for a Chinese homophone.
+
+This paper studies the following question: \emph{When do slides and deployment context help SST, and when do they hurt?}  We focus on Chinese-to-English lecture translation, where homophones and near-homophones make the value of slide context especially clear.  For example, the source pronunciation \emph{xiancheng} may correspond to ``thread'' or ``ready-made''; a current slide containing ``thread scheduling'' should help, but a stale slide about another topic should not.
+
+We make three contributions:
+\begin{enumerate}[leftmargin=*]
+    \item We define \taskname, a slide-aware contextual SST task where a streaming translator can use audio, current/past slide evidence, glossary entries, and background documents under latency constraints.
+    \item We construct \datasetname, a minimal Chinese lecture challenge set targeting homophones, terminology, entity names, and slide-speech mismatch.  The benchmark includes adversarial context variants so that context overuse can be measured, not merely translation quality.
+    \item We propose \policyname, a lightweight evidence-aware context manager that retrieves compact evidence packets and applies a conservative use/ignore/delay policy.  Our experiments compare no-context, glossary-only, slide-only, naive all-context, and policy-based systems.
+\end{enumerate}
+
+\todo{Add exact dataset size, human annotation protocol, and main result numbers.}

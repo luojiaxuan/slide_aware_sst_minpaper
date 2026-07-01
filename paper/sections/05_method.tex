@@ -1,0 +1,63 @@
+\section{Method}
+
+\subsection{Overview}
+
+\policyname{} is a lightweight context manager placed between the streaming speech front-end and the translator.  It has three components: an offline context builder, a streaming retriever, and an evidence policy.  The translator can be a cascaded ASR+MT/LLM system for the MVP or an end-to-end speech LLM in later versions.
+
+\begin{figure}[t]
+\centering
+\fbox{\parbox{0.92\linewidth}{
+\centering
+\vspace{1.5em}
+Speech chunks $\rightarrow$ streaming ASR/encoder $\rightarrow$ retriever $\rightarrow$ evidence policy $\rightarrow$ translation decoder \\
+\vspace{0.5em}
+Slides / glossary / background docs $\rightarrow$ context builder $\rightarrow$ evidence index
+\vspace{1.5em}
+}}
+\caption{System overview.  Replace this placeholder with the final architecture figure.}
+\label{fig:overview}
+\end{figure}
+
+\subsection{Offline context builder}
+
+Before the lecture begins, we process all available context:
+\begin{itemize}[leftmargin=*]
+    \item Slide OCR: extract visible text, equations, title lines, and bullet terms.
+    \item Slide visual summary: optional VLM summary for diagrams or terms not captured by OCR.
+    \item Glossary expansion: normalize terms, add pinyin, aliases, and target translations.
+    \item Background documents: chunk into short passages and extract entities/technical terms.
+\end{itemize}
+Each evidence item is represented by lexical features, pinyin features, embeddings, source type, and temporal metadata.
+
+\subsection{Streaming retriever}
+
+At each chunk $t$, the retriever receives a partial source hypothesis $\hat{x}_{\leq t}$ and returns the top $M$ evidence items.  The MVP implementation combines three signals:
+\begin{equation}
+    r(e,t) = \lambda_1 \mathrm{BM25}(e, \hat{x}_{\leq t}) + \lambda_2 \mathrm{PinyinMatch}(e, \hat{x}_{\leq t}) + \lambda_3 \mathrm{TemporalPrior}(e,t).
+\end{equation}
+An embedding retriever can be added for background snippets and semantically related slide terms.
+
+\subsection{Evidence policy}
+
+Naively sending all retrieved context to the translator can cause overuse.  \policyname{} therefore applies conservative rules:
+\begin{align}
+    \mathrm{score}(e,t) &= r(e,t) + \alpha \mathrm{sourceTrust}(e) - \beta \mathrm{timeDistance}(e,t) - \gamma \mathrm{conflict}(e,t), \\
+    \pi(e,t) &=
+    \begin{cases}
+    \textsc{use}, & \mathrm{score}(e,t) > \tau_u \\
+    \textsc{delay}, & \tau_d < \mathrm{score}(e,t) \leq \tau_u \\
+    \textsc{ignore}, & \mathrm{otherwise.}
+    \end{cases}
+\end{align}
+For homophones, we require either a pinyin match plus matched-slide support or a glossary match plus local semantic support.  The final evidence packet is capped at $K$ items and rendered as structured prompts, not raw slide text.
+
+\subsection{Prompt format}
+
+The MVP translator uses a structured prompt:
+\begin{quote}\small
+You are doing low-latency Chinese-to-English lecture translation. Translate only what has been spoken. Use evidence only when it directly supports the current speech. Do not introduce slide terms that have not been spoken. Evidence: \{source, confidence, term, translation, reason\}. Current partial transcript: \{...\}. Previous translation: \{...\}.
+\end{quote}
+
+\subsection{Training-free MVP and learned extension}
+
+The minimal version is training-free: retriever weights and thresholds are tuned on development data.  A stronger version can train a small reranker or policy classifier using matched and mismatched context examples.

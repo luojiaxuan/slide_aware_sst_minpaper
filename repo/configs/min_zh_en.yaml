@@ -1,0 +1,90 @@
+project: slide_aware_sst_mvp
+seed: 13
+
+paths:
+  raw_data_root: /path/to/local/chinese_lecture_data
+  candidate_jsonl: outputs/data/challenge_candidates.jsonl
+  annotation_csv: outputs/annotations/pilot_candidates.csv
+  challenge_jsonl: outputs/data/challenge_verified.jsonl
+  context_index_jsonl: outputs/index/evidence.jsonl
+  run_dir: outputs/runs
+  table_dir: outputs/tables
+
+dataset:
+  adapter: chinese_lips
+  metadata_glob: "**/*.jsonl"
+  allow_toy_fallback: true
+  toy_challenge_path: examples/toy_challenge.jsonl
+  source_lang: zh
+  target_lang: en
+  field_mappings:
+    id: id
+    lecture_id: lecture_id
+    source_transcript: transcript
+    reference_translation: reference_translation
+    audio_path: audio_path
+    start_sec: start_sec
+    end_sec: end_sec
+    slide_id: slide_id
+    slide_text: slide_text
+    slide_image: slide_image
+    glossary: glossary
+    background_docs: background_docs
+
+languages:
+  source: zh
+  target: en
+
+streaming:
+  mode: transcript_oracle   # transcript_oracle | asr_precomputed
+  chunk_seconds: 2.0
+  max_history_chars: 600
+
+context:
+  evidence_top_m: 20
+  packet_top_k: 5
+  allowed_sources: [slide_ocr, glossary, background, history]
+  slide_window: [-1, 0, 1]
+
+policy:
+  use_threshold: 0.30
+  delay_threshold: 0.20
+  weights:
+    bm25: 0.35
+    pinyin: 0.35
+    temporal: 0.20
+    source_trust: 0.10
+  penalties:
+    time_distance: 0.05
+    conflict: 0.30
+    unsupported: 0.25
+    supporting: 0.05
+
+translation:
+  provider: mock   # mock | openai_compatible | vllm
+  base_url: http://127.0.0.1:8000/v1
+  api_key_env: OPENAI_API_KEY
+  model: Qwen/Qwen2.5-7B-Instruct
+  temperature: 0.0
+  max_new_tokens: 128
+  timeout_sec: 120
+
+conditions:
+  - no_context
+  - glossary_only
+  - slide_ocr_current
+  - background_only
+  - naive_all_context
+  - policy
+  - oracle
+
+evaluation:
+  use_comet: false
+  normalize_case: true
+  output_aliases_path: configs/term_aliases.yaml
+  mismatch_modes:
+    - matched
+    - previous_slide
+    - next_slide
+    - random_same_lecture
+    - noisy_ocr

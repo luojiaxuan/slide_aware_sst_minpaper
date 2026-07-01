@@ -1,0 +1,35 @@
+\section{Experiments}
+
+\subsection{Systems}
+
+We compare the following systems:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{No context}: streaming translation from speech/transcript only.
+    \item \textbf{Glossary only}: only term-translation pairs are available.
+    \item \textbf{Slide OCR only}: current slide OCR text is injected.
+    \item \textbf{Background only}: background snippets are retrieved.
+    \item \textbf{Naive all-context}: raw or lightly compressed slides, glossary, and background are all injected.
+    \item \textbf{\policyname{}}: top-$K$ evidence selected by the context policy.
+    \item \textbf{Oracle context}: only human-verified relevant evidence; upper bound.
+\end{enumerate}
+
+\subsection{Streaming settings}
+
+We evaluate chunk sizes of \{1s, 2s, 4s\} or transcript-equivalent token windows, depending on the front-end.  The MVP reports both oracle-transcript streaming and ASR-based streaming to separate translation/context effects from ASR noise.
+
+\subsection{Metrics}
+
+General translation quality is measured with BLEU and COMET when references are available.  Since the benchmark targets context-sensitive behavior, primary metrics are:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Homophone Disambiguation Accuracy (HDA)}: whether the ambiguous source token receives the correct target rendering.
+    \item \textbf{Term Accuracy / Term F1}: exact or normalized match of technical terms and entities.
+    \item \textbf{Context Overuse Rate (COR)}: fraction of outputs containing context terms not supported by the current source segment.
+    \item \textbf{Wrong-Slide Adoption Rate (WSAR)}: fraction of mismatched-slide examples where the output follows the wrong slide.
+    \item \textbf{Latency}: StreamLAAL or token-level delay; include computation-aware latency if measured.
+\end{itemize}
+
+\subsection{Ablations}
+
+We ablate evidence source, top-$K$, policy thresholds, pinyin matching, temporal prior, and conflict penalty.  We also evaluate robustness under wrong current-slide detection, noisy OCR, and distractor glossary size.
+
+\todo{Insert exact model choices, decoding parameters, hardware/API cost, and reproducibility details.}

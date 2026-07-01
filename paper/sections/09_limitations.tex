@@ -1,0 +1,5 @@
+\section{Limitations}
+
+This MVP has several limitations.  First, if references are produced by a teacher model and only partially human-verified, evaluation may understate or overstate translation quality.  We therefore emphasize manually verified hard-case term labels.  Second, a cascaded ASR+translation pipeline is easier to build than a fully end-to-end speech LLM, but it may not capture all SST behavior.  Third, slide OCR and VLM summaries may leak information unavailable at real time if slide timing is not handled carefully.  Finally, Chinese lecture datasets may not cover all professional domains, and the homophone-heavy benchmark may not generalize to all language pairs.
+
+\todo{Add dataset license, privacy, and annotation-labor details.}
