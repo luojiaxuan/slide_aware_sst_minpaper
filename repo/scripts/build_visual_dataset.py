@@ -81,6 +81,7 @@ def mine_visual_hard_labels(item: ChallengeItem) -> list[HardLabel]:
         )
     for cue, (label_type, gold, distractors) in ACTION_CUES.items():
         if cue in transcript:
+            action_idx = _visual_index(item.visual_context.actions if item.visual_context else [], gold[0])
             labels.append(
                 HardLabel(
                     label_id=f"{item.id}_{label_type}_{len(labels)}",
@@ -89,6 +90,7 @@ def mine_visual_hard_labels(item: ChallengeItem) -> list[HardLabel]:
                     gold_en=gold,
                     distractor_en=distractors,
                     requires_visual=True,
+                    supporting_evidence_ids=[f"{item.id}_action_{action_idx}"] if action_idx is not None else [],
                 )
             )
     if item.visual_context and item.visual_context.ocr_text:
@@ -100,9 +102,18 @@ def mine_visual_hard_labels(item: ChallengeItem) -> list[HardLabel]:
                 gold_en=item.visual_context.ocr_text[:2],
                 requires_visual=True,
                 requires_ocr=True,
+                supporting_evidence_ids=[f"{item.id}_ocr_0"],
             )
         )
     return labels
+
+
+def _visual_index(values: list[str], needle: str) -> int | None:
+    needle_n = needle.lower()
+    for idx, value in enumerate(values):
+        if needle_n in value.lower() or value.lower() in needle_n:
+            return idx
+    return None
 
 
 if __name__ == "__main__":
