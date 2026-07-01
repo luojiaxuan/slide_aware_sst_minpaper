@@ -1,0 +1,11 @@
+mismatch,condition,evidence_precision,evidence_recall
+matched,no_context,0.0,0.0
+matched,glossary_only,0.0,0.0
+matched,slide_ocr_current,0.0,0.0
+matched,background_only,0.0,0.0
+matched,naive_all_context,0.0,0.0
+matched,policy,0.0,0.0
+matched,oracle,0.0,0.0
+previous_slide,no_context,0.0,0.0
+previous_slide,naive_all_context,0.0,0.0
+previous_slide,policy,0.0,0.0

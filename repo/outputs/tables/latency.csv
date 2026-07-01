@@ -1,0 +1,11 @@
+mismatch,condition,avg_wall_time_sec
+matched,no_context,0.00011380513509114583
+matched,glossary_only,0.00018938382466634115
+matched,slide_ocr_current,5.094210306803385e-05
+matched,background_only,3.09149424235026e-05
+matched,naive_all_context,5.5631001790364586e-05
+matched,policy,0.0006283919016520182
+matched,oracle,0.00045990943908691406
+previous_slide,no_context,0.0007708867390950521
+previous_slide,naive_all_context,0.00013113021850585938
+previous_slide,policy,0.0010496775309244792

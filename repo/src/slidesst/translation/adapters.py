@@ -96,17 +96,21 @@ def build_prompt(state: StreamState, evidence_packet: list[EvidenceItem], condit
     for e in evidence_packet:
         evidence_lines.append(
             f"- id={e.evidence_id}; source={e.source_type}; text={e.text}; "
-            f"target_hint={e.target_hint}; supporting={e.is_supporting}; label={e.support_label}"
+            f"target_hint={e.target_hint}; modality={e.modality}; anchor={e.spoken_anchor}; "
+            f"confidence={e.confidence}; visual_only={e.visual_only}; supporting={e.is_supporting}; label={e.support_label}"
         )
     evidence = "\n".join(evidence_lines) if evidence_lines else "(none)"
-    return f"""You are doing low-latency Chinese-to-English lecture translation.
-Translate only what has been spoken. Use evidence only when it directly supports the current speech.
-Do not introduce slide terms that have not been spoken.
+    return f"""You are doing low-latency Chinese-to-English streaming speech translation.
+Translate only what has been spoken in the current partial transcript.
+Visual evidence may help disambiguate spoken words, deixis, objects, actions, or on-screen text.
+Do not add any object, action, label, or fact that is visible but not spoken.
+If visual evidence conflicts with speech, prefer speech.
 
 Condition: {condition}
 Current partial transcript: {state.partial_transcript}
 Previous translation: {state.previous_translation}
+Video time: {state.video_time_sec}
 Evidence:
 {evidence}
 
-Translation:"""
+Return only the English translation:"""

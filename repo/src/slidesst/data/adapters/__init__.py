@@ -13,11 +13,17 @@ from slidesst.data.schema import (
     GlossaryEntry,
     SlideInfo,
 )
+from slidesst.data.adapters.vasr import load_vasr_manifest
 
 
 def load_challenge_items_from_config(cfg: dict) -> list[ChallengeItem]:
     dataset_cfg = cfg.get("dataset", {})
     paths = cfg.get("paths", {})
+    if dataset_cfg.get("adapter") == "vasr" and paths.get("visual_manifest"):
+        manifest = Path(paths["visual_manifest"]).expanduser()
+        if manifest.exists():
+            return load_vasr_manifest(manifest, validate_paths=dataset_cfg.get("validate_paths", False))
+
     raw_root = Path(paths.get("raw_data_root", ".")).expanduser()
     metadata_glob = dataset_cfg.get("metadata_glob")
 

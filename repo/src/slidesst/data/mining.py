@@ -109,7 +109,7 @@ def write_annotation_csv(path: str | Path, items: list[ChallengeItem]) -> None:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
+        writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS, lineterminator="\n")
         writer.writeheader()
         for item in items:
             for amb in item.ambiguous_items:

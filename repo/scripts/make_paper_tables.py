@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 import pandas as pd
+from pandas.errors import EmptyDataError
 import yaml
 
 
@@ -38,11 +39,16 @@ def main() -> None:
     args = parser.parse_args()
     cfg = yaml.safe_load(Path(args.config).read_text())
     table_dir = Path(cfg["paths"]["table_dir"])
-    for name in ("main_results", "robustness"):
+    for name in ("main_results", "robustness", "visual_ablation", "mismatch_robustness", "evidence_selection", "latency"):
         csv_path = table_dir / f"{name}.csv"
         if not csv_path.exists():
             continue
-        df = pd.read_csv(csv_path)
+        try:
+            df = pd.read_csv(csv_path)
+        except EmptyDataError:
+            continue
+        if df.empty:
+            continue
         tex = dataframe_to_latex(df)
         (table_dir / f"{name}.tex").write_text(tex, encoding="utf-8")
         print(f"Wrote {table_dir / f'{name}.tex'}")

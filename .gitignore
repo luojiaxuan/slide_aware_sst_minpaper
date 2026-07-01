@@ -10,6 +10,7 @@ __pycache__/
 .ruff_cache/
 *.egg-info/
 tmp/
+repo/outputs/visual/cache/
 
 # Local editor state
 .vscode/

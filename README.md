@@ -1,6 +1,8 @@
-# Slide-Aware Contextual SST: Minimal Paper Package
+# Visual-Evidence-Aware Streaming ST: Minimal Paper Package
 
-This package contains a minimal publishable-paper starter kit for **slide-aware contextual simultaneous speech translation (SST)**.  The planned first version is intentionally small: build a Chinese lecture challenge set with slides/glossary/background context, evaluate whether slides help hard ambiguous cases, and show that naive context injection can hurt under slide-speech mismatch while a lightweight evidence policy helps.
+This package contains a minimal publishable-paper starter kit for **visual-evidence-aware streaming speech translation (ST)**.  The first version keeps the original slide-aware contextual SST path runnable, but generalizes context into unified evidence from slides, video OCR, scene/object/action descriptions, glossary entries, background documents, and history.
+
+The central rule is faithfulness: visual evidence may help disambiguate spoken content, but the translator must not add visible objects, actions, labels, or facts that were not spoken.
 
 ## Directory layout
 
@@ -12,11 +14,11 @@ repo/        Minimal code scaffold and config files for the implementation agent
 
 ## Recommended MVP scope
 
-1. Dataset: Chinese lecture subset, preferably Chinese-LiPS if available locally; otherwise any lecture videos with slide frames, transcripts, and permission to use.
+1. Dataset: Chinese lecture or VASR-like local subset with transcript, video/audio path, and optional OCR/visual metadata.
 2. Translation direction: Chinese speech/transcript to English text.
-3. Main benchmark: hard homophone / near-homophone / technical-term cases where slides or background documents should help.
-4. Methods: no-context baseline, glossary-only baseline, slide-only baseline, naive all-context baseline, and lightweight evidence-aware context policy.
-5. Metrics: BLEU/COMET as secondary; term accuracy, homophone disambiguation accuracy, context overuse rate, wrong-slide adoption rate, and latency as primary.
+3. Main benchmark: homophones, technical terms, visual deixis, object/action grounding, on-screen text, and mismatch cases.
+4. Methods: no-context, text context, OCR-only, visual-caption-only, naive all-visual context, policy-based visual context, and oracle supporting evidence.
+5. Metrics: BLEU/COMET as secondary; hard-label accuracy, visual grounded accuracy, visual hallucination rate, wrong visual adoption rate, evidence selection, and latency as primary.
 
 ## How to use
 

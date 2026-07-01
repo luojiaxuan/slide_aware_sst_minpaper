@@ -44,6 +44,37 @@ python scripts/build_context_index.py --config configs/min_zh_en.yaml --mismatch
 
 5. For local vLLM/Qwen, set `translation.provider: vllm`, `translation.base_url`, and `translation.model` in the config. The adapter uses the OpenAI-compatible `/chat/completions` API and saves prompts, evidence packets, policy logs, and timing in each output JSONL.
 
+## Vision-aware workflow
+
+The vision-aware pivot keeps `slidesst` as the package name and adds video/OCR/VLM evidence on top of the slide-aware pipeline.
+
+Toy smoke test:
+
+```bash
+python scripts/build_visual_dataset.py --config configs/vision_zh_en.yaml --out outputs/visual/data/challenge_verified.jsonl --mine-hard-labels
+python scripts/build_visual_context_index.py --config configs/vision_zh_en.yaml --mismatch matched
+python scripts/run_visual_experiments.py --config configs/vision_zh_en.yaml --mismatch matched --conditions V0_no_context V2_ocr_only V3_visual_caption_only V5_naive_all_visual V6_policy_visual V7_oracle_supporting
+```
+
+VASR-like local manifest:
+
+```bash
+python scripts/build_visual_dataset.py \
+  --manifest /path/to/local_manifest.jsonl \
+  --out outputs/visual/data/candidates.jsonl \
+  --adapter vasr \
+  --sample-fps 1.0 \
+  --mine-hard-labels
+```
+
+Reference curation loop:
+
+```bash
+python scripts/generate_references.py --input outputs/visual/data/candidates.jsonl --output outputs/visual/data/pseudo_refs.jsonl --config configs/vision_zh_en.yaml
+python scripts/export_annotation_sheet.py --input outputs/visual/data/pseudo_refs.jsonl --output outputs/visual/annotation/review_sheet.csv
+python scripts/import_verified_references.py --input outputs/visual/data/pseudo_refs.jsonl --review outputs/visual/annotation/review_sheet.csv --output outputs/visual/data/challenge_verified.jsonl
+```
+
 ## Implementation principle
 
 Every script should read a YAML config and write to a timestamped output directory. Never write model outputs only to stdout.

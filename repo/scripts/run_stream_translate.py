@@ -16,18 +16,28 @@ from slidesst.translation.adapters import build_translator
 
 def select_condition_packet(item: ChallengeItem, condition: str, top_k: int) -> list[EvidenceItem]:
     evidence = item.evidence
-    if condition == "no_context":
+    if condition in {"no_context", "V0_no_context"}:
         return []
-    if condition == "naive_all_context":
+    if condition in {"naive_all_context", "V5_naive_all_visual"}:
         return evidence[:top_k]
+    if condition == "V1_text_context":
+        return [e for e in evidence if e.source_type in {"glossary", "background", "history"}][:top_k]
+    if condition == "V2_ocr_only":
+        return [e for e in evidence if e.source_type in {"slide_ocr", "video_ocr"}][:top_k]
+    if condition == "V3_visual_caption_only":
+        return [e for e in evidence if e.source_type in {"slide_vlm", "video_scene", "video_object", "video_action", "video_spatial", "video_vlm_frame", "video_vlm_clip"}][:top_k]
+    if condition == "V4_ocr_plus_visual":
+        return [e for e in evidence if e.modality in {"image", "video", "mixed"} or e.source_type in {"slide_ocr", "video_ocr", "slide_vlm"}][:top_k]
     if condition == "glossary_only":
         return [e for e in evidence if e.source_type == "glossary"][:top_k]
     if condition == "slide_ocr_current":
         return [e for e in evidence if e.source_type == "slide_ocr"][:top_k]
     if condition == "background_only":
         return [e for e in evidence if e.source_type == "background"][:top_k]
-    if condition == "oracle":
+    if condition in {"oracle", "V7_oracle_supporting"}:
         return [e for e in evidence if e.is_supporting is True][:top_k]
+    if condition == "V8_wrong_visual":
+        return [e for e in evidence if e.source_type in {"wrong_video", "wrong_clip", "negative_visual"}][:top_k]
     return []
 
 
@@ -62,7 +72,12 @@ def main() -> None:
         top_k=cfg["context"]["packet_top_k"],
         penalties=cfg["policy"].get("penalties"),
     )
-    streamer = TranscriptOracleStreamer()
+    streaming_cfg = cfg.get("streaming", {})
+    streamer = TranscriptOracleStreamer(
+        visual_availability=streaming_cfg.get("visual_availability", "offline_context"),
+        allowed_lookahead_sec=float(streaming_cfg.get("allowed_lookahead_sec", 0.0)),
+        visual_window_sec=float(streaming_cfg.get("visual_window_sec", 2.0)),
+    )
     translator = build_translator(cfg["translation"])
 
     outputs = []
@@ -76,8 +91,15 @@ def main() -> None:
         policy_log = []
         start = time.time()
         for state in streamer.stream(item):
-            if condition == "policy":
-                retrieved = retriever.retrieve(state.partial_transcript, state.current_slide_id, cfg["context"]["evidence_top_m"])
+            if condition in {"policy", "V6_policy_visual"}:
+                retrieved = retriever.retrieve(
+                    state.partial_transcript,
+                    state.current_slide_id,
+                    cfg["context"]["evidence_top_m"],
+                    current_time_sec=state.video_time_sec,
+                    visual_availability=streaming_cfg.get("visual_availability", "offline_context"),
+                    allowed_lookahead_sec=float(streaming_cfg.get("allowed_lookahead_sec", 0.0)),
+                )
                 packet, decisions = policy.select(retrieved)
                 policy_log.append(
                     {
@@ -103,6 +125,11 @@ def main() -> None:
             latency={"wall_time_sec": time.time() - start},
             metadata={"mismatch": args.mismatch, "policy_log": policy_log},
         ))
+        outputs[-1].metadata.update({
+            "model": cfg["translation"].get("model"),
+            "prompt_version": cfg["translation"].get("prompt_version"),
+            "seed": cfg.get("seed"),
+        })
 
     out_dir = Path(cfg["paths"]["run_dir"]) / args.mismatch / condition
     out_dir.mkdir(parents=True, exist_ok=True)

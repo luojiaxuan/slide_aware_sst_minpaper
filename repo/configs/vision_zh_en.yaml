@@ -1,0 +1,100 @@
+project: visual_evidence_sst_mvp
+seed: 13
+
+paths:
+  raw_data_root: /path/to/local/visual_data
+  visual_manifest: /path/to/local/manifest.jsonl
+  challenge_jsonl: outputs/visual/data/challenge_verified.jsonl
+  candidate_jsonl: outputs/visual/data/candidates.jsonl
+  pseudo_refs_jsonl: outputs/visual/data/pseudo_refs.jsonl
+  context_index_jsonl: outputs/visual/index/evidence.jsonl
+  annotation_csv: outputs/visual/annotation/review_sheet.csv
+  run_dir: outputs/visual/runs
+  table_dir: outputs/visual/tables
+  frame_cache_dir: outputs/visual/cache/keyframes
+
+dataset:
+  adapter: vasr
+  allow_toy_fallback: true
+  toy_challenge_path: examples/toy_visual_challenge.jsonl
+  source_lang: zh
+  target_lang: en
+
+streaming:
+  mode: transcript_oracle
+  chunk_seconds: 2.0
+  max_history_chars: 600
+  visual_availability: past_only
+  allowed_lookahead_sec: 0.0
+  visual_window_sec: 2.0
+
+vision:
+  sample_fps: 1.0
+  ocr_provider: mock
+  vlm_provider: mock
+  evidence_cache: true
+
+context:
+  evidence_top_m: 20
+  packet_top_k: 5
+  allowed_sources:
+    - glossary
+    - background
+    - history
+    - slide_ocr
+    - slide_vlm
+    - video_ocr
+    - video_scene
+    - video_object
+    - video_action
+    - video_spatial
+    - video_vlm_frame
+    - video_vlm_clip
+
+policy:
+  use_threshold: 0.30
+  delay_threshold: 0.20
+  weights:
+    bm25: 0.25
+    pinyin: 0.25
+    temporal: 0.15
+    source_trust: 0.10
+    anchor: 0.15
+    confidence: 0.10
+  penalties:
+    time_distance: 0.05
+    conflict: 0.30
+    unsupported: 0.25
+    supporting: 0.05
+    visual_only: 0.30
+    broad_scene: 0.15
+
+translation:
+  provider: mock
+  base_url: http://127.0.0.1:8000/v1
+  api_key_env: OPENAI_API_KEY
+  model: Qwen/Qwen2.5-7B-Instruct
+  temperature: 0.0
+  max_new_tokens: 128
+  timeout_sec: 120
+  prompt_version: v1_visual_faithful
+
+conditions:
+  - V0_no_context
+  - V1_text_context
+  - V2_ocr_only
+  - V3_visual_caption_only
+  - V4_ocr_plus_visual
+  - V5_naive_all_visual
+  - V6_policy_visual
+  - V7_oracle_supporting
+  - V8_wrong_visual
+
+evaluation:
+  use_comet: false
+  normalize_case: true
+  output_aliases_path: configs/term_aliases.yaml
+  mismatch_modes:
+    - matched
+    - previous_clip
+    - negative_visual

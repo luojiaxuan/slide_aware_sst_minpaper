@@ -1,0 +1,12 @@
+mismatch,condition,evidence_precision,evidence_recall
+matched,V0_no_context,0.0,0.0
+matched,V2_ocr_only,1.0,0.3333333333333333
+matched,V3_visual_caption_only,0.15384615384615385,0.6666666666666666
+matched,V4_ocr_plus_visual,0.2,1.0
+matched,V5_naive_all_visual,0.2,1.0
+matched,V6_policy_visual,1.0,1.0
+matched,V7_oracle_supporting,1.0,1.0
+matched,V8_wrong_visual,0.0,0.0
+negative_visual,V5_naive_all_visual,0.2,1.0
+negative_visual,V6_policy_visual,1.0,1.0
+negative_visual,V8_wrong_visual,0.0,0.0

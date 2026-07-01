@@ -19,7 +19,7 @@ class EvidencePolicy:
         self.use_threshold = use_threshold
         self.delay_threshold = delay_threshold
         self.top_k = top_k
-        self.penalties = penalties or {"time_distance": 0.05, "conflict": 0.30, "unsupported": 0.25, "supporting": 0.05}
+        self.penalties = penalties or {"time_distance": 0.05, "conflict": 0.30, "unsupported": 0.25, "supporting": 0.05, "visual_only": 0.30, "broad_scene": 0.15}
 
     def select(self, retrieved: List[RetrievedEvidence]) -> tuple[list, list[PolicyDecision]]:
         decisions: list[PolicyDecision] = []
@@ -32,9 +32,15 @@ class EvidencePolicy:
                 score -= penalty
                 if penalty:
                     reason_parts.append(f"time_distance_penalty={penalty:.3f}")
-            if r.item.source_type == "wrong_slide" or r.item.support_label == "wrong_slide":
+            if r.item.source_type in {"wrong_slide", "wrong_video", "wrong_clip", "negative_visual"} or r.item.support_label in {"wrong_slide", "previous_clip", "future_clip", "random_video", "negative_visual"}:
                 score -= self.penalties.get("conflict", 0.0)
                 reason_parts.append("source_type suggests mismatch")
+            if r.item.visual_only and r.features.get("anchor", 0.0) <= 0.0:
+                score -= self.penalties.get("visual_only", 0.0)
+                reason_parts.append("visual_only_without_spoken_anchor")
+            if r.item.source_type == "video_scene" and r.item.is_supporting is not True:
+                score -= self.penalties.get("broad_scene", 0.15)
+                reason_parts.append("broad_scene_without_label_support")
             if r.item.is_supporting is True:
                 score += self.penalties.get("supporting", 0.05)
                 reason_parts.append("marked supporting")
