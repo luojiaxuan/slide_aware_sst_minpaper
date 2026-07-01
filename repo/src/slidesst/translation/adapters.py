@@ -119,7 +119,7 @@ class HuggingFaceTransformersTranslator:
             )
         else:
             encoded = self.tokenizer(prompt, return_tensors="pt").input_ids
-        encoded = encoded.to(self.device)
+        model_inputs, input_length = self._model_inputs(encoded)
         kwargs = {
             "max_new_tokens": self.max_new_tokens,
             "pad_token_id": self.tokenizer.eos_token_id,
@@ -128,14 +128,25 @@ class HuggingFaceTransformersTranslator:
         if self.temperature > 0:
             kwargs["temperature"] = self.temperature
         with self.torch.inference_mode():
-            output_ids = self.model.generate(encoded, **kwargs)
-        new_tokens = output_ids[0, encoded.shape[-1] :]
+            output_ids = self.model.generate(**model_inputs, **kwargs)
+        new_tokens = output_ids[0, input_length:]
         text = self.tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
         return TranslationOutput(
             text=text,
             used_evidence_ids=[e.evidence_id for e in evidence_packet],
             prompt=prompt,
         )
+
+    def _model_inputs(self, encoded):
+        if hasattr(encoded, "shape"):
+            input_ids = encoded.to(self.device)
+            return {"input_ids": input_ids}, input_ids.shape[-1]
+        if hasattr(encoded, "to"):
+            encoded = encoded.to(self.device)
+        else:
+            encoded = {key: value.to(self.device) for key, value in encoded.items()}
+        input_ids = encoded["input_ids"]
+        return dict(encoded), input_ids.shape[-1]
 
 
 def build_translator(cfg: dict) -> Translator:
