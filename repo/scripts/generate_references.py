@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+from tqdm import tqdm
 import yaml
 
 from slidesst.data.io import read_jsonl, write_jsonl
@@ -40,7 +41,7 @@ def main() -> None:
     evidence_by_item: dict[str, list[EvidenceItem]] = {}
     for ev in evidence:
         evidence_by_item.setdefault(ev.item_id or "", []).append(ev)
-    generated = [
+    generated = (
         generate_reference(
             item,
             translator,
@@ -48,10 +49,10 @@ def main() -> None:
             translation_cfg.get("model", "unknown"),
             translation_cfg.get("prompt_version", PROMPT_VERSION),
         )
-        for item in items
-    ]
+        for item in tqdm(items, desc="Generating references")
+    )
     write_jsonl(args.output, generated)
-    print(f"Wrote {len(generated)} reference items to {args.output}")
+    print(f"Wrote {len(items)} reference items to {args.output}")
 
 
 def _load_evidence(cfg: dict) -> list[EvidenceItem]:
