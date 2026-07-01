@@ -1,0 +1,90 @@
+project: chinese_lips_visual_sst_pilot
+seed: 13
+paths:
+  raw_data_root: /data/datasets/chinese_lips
+  visual_manifest: /data/datasets/chinese_lips/pilot/chinese_lips_test50_manifest.jsonl
+  challenge_jsonl: outputs/chinese_lips_pilot/data/challenge_verified.jsonl
+  candidate_jsonl: outputs/chinese_lips_pilot/data/candidates.jsonl
+  pseudo_refs_jsonl: outputs/chinese_lips_pilot/data/pseudo_refs.jsonl
+  context_index_jsonl: outputs/chinese_lips_pilot/index/evidence.jsonl
+  annotation_csv: outputs/chinese_lips_pilot/annotation/review_sheet.csv
+  run_dir: outputs/chinese_lips_pilot/runs
+  table_dir: outputs/chinese_lips_pilot/tables
+  frame_cache_dir: outputs/chinese_lips_pilot/cache/keyframes
+dataset:
+  adapter: vasr
+  allow_toy_fallback: false
+  toy_challenge_path: examples/toy_visual_challenge.jsonl
+  source_lang: zh
+  target_lang: en
+streaming:
+  mode: transcript_oracle
+  chunk_seconds: 2.0
+  max_history_chars: 600
+  visual_availability: past_only
+  allowed_lookahead_sec: 0.0
+  visual_window_sec: 2.0
+vision:
+  sample_fps: 1.0
+  ocr_provider: mock
+  vlm_provider: mock
+  evidence_cache: true
+context:
+  evidence_top_m: 20
+  packet_top_k: 5
+  allowed_sources:
+    - glossary
+    - background
+    - history
+    - slide_ocr
+    - slide_vlm
+    - video_ocr
+    - video_scene
+    - video_object
+    - video_action
+    - video_spatial
+    - video_vlm_frame
+    - video_vlm_clip
+policy:
+  use_threshold: 0.3
+  delay_threshold: 0.2
+  weights:
+    bm25: 0.25
+    pinyin: 0.25
+    temporal: 0.15
+    source_trust: 0.1
+    anchor: 0.15
+    confidence: 0.1
+  penalties:
+    time_distance: 0.05
+    conflict: 0.3
+    unsupported: 0.25
+    supporting: 0.05
+    visual_only: 0.3
+    broad_scene: 0.15
+translation:
+  provider: mock
+  base_url: http://127.0.0.1:8000/v1
+  api_key_env: OPENAI_API_KEY
+  model: Qwen/Qwen2.5-7B-Instruct
+  temperature: 0.0
+  max_new_tokens: 128
+  timeout_sec: 120
+  prompt_version: v1_visual_faithful
+conditions:
+  - V0_no_context
+  - V1_text_context
+  - V2_ocr_only
+  - V3_visual_caption_only
+  - V4_ocr_plus_visual
+  - V5_naive_all_visual
+  - V6_policy_visual
+  - V7_oracle_supporting
+  - V8_wrong_visual
+evaluation:
+  use_comet: false
+  normalize_case: true
+  output_aliases_path: configs/term_aliases.yaml
+  mismatch_modes:
+    - matched
+    - negative_visual
