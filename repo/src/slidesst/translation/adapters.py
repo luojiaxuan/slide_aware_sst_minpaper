@@ -82,12 +82,70 @@ class OpenAICompatibleTranslator:
         return f"{self.base_url}/chat/completions"
 
 
+class HuggingFaceTransformersTranslator:
+    def __init__(self, cfg: dict):
+        try:
+            import torch
+            from transformers import AutoModelForCausalLM, AutoTokenizer
+        except Exception as exc:  # noqa: BLE001
+            raise RuntimeError("Install torch and transformers to use provider=hf_transformers") from exc
+
+        self.torch = torch
+        self.model_name = cfg["model"]
+        self.temperature = float(cfg.get("temperature", 0.0))
+        self.max_new_tokens = int(cfg.get("max_new_tokens", 128))
+        self.device = cfg.get("device") or ("cuda" if torch.cuda.is_available() else "cpu")
+        dtype_name = cfg.get("torch_dtype") or ("bfloat16" if self.device.startswith("cuda") else "float32")
+        dtype = getattr(torch, dtype_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            self.model_name,
+            trust_remote_code=bool(cfg.get("trust_remote_code", False)),
+        )
+        self.model = AutoModelForCausalLM.from_pretrained(
+            self.model_name,
+            torch_dtype=dtype,
+            trust_remote_code=bool(cfg.get("trust_remote_code", False)),
+        ).to(self.device)
+        self.model.eval()
+
+    def translate(self, state: StreamState, evidence_packet: list[EvidenceItem], condition: str) -> TranslationOutput:
+        prompt = build_prompt(state, evidence_packet, condition)
+        messages = [{"role": "user", "content": prompt}]
+        if hasattr(self.tokenizer, "apply_chat_template"):
+            encoded = self.tokenizer.apply_chat_template(
+                messages,
+                add_generation_prompt=True,
+                return_tensors="pt",
+            )
+        else:
+            encoded = self.tokenizer(prompt, return_tensors="pt").input_ids
+        encoded = encoded.to(self.device)
+        kwargs = {
+            "max_new_tokens": self.max_new_tokens,
+            "pad_token_id": self.tokenizer.eos_token_id,
+            "do_sample": self.temperature > 0,
+        }
+        if self.temperature > 0:
+            kwargs["temperature"] = self.temperature
+        with self.torch.inference_mode():
+            output_ids = self.model.generate(encoded, **kwargs)
+        new_tokens = output_ids[0, encoded.shape[-1] :]
+        text = self.tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
+        return TranslationOutput(
+            text=text,
+            used_evidence_ids=[e.evidence_id for e in evidence_packet],
+            prompt=prompt,
+        )
+
+
 def build_translator(cfg: dict) -> Translator:
     provider = cfg.get("provider", "mock")
     if provider == "mock":
         return MockTranslator()
     if provider in {"openai_compatible", "vllm"}:
         return OpenAICompatibleTranslator(cfg)
+    if provider == "hf_transformers":
+        return HuggingFaceTransformersTranslator(cfg)
     raise ValueError(f"Unsupported translation provider: {provider}")
 
 

@@ -10,7 +10,13 @@ from slidesst.translation.adapters import Translator
 PROMPT_VERSION = "v1_visual_faithful"
 
 
-def generate_reference(item: ChallengeItem, translator: Translator, evidence: list[EvidenceItem], model_name: str) -> ChallengeItem:
+def generate_reference(
+    item: ChallengeItem,
+    translator: Translator,
+    evidence: list[EvidenceItem],
+    model_name: str,
+    prompt_version: str = PROMPT_VERSION,
+) -> ChallengeItem:
     state = StreamState(
         item_id=item.id,
         t=item.video.end_sec if item.video else 0.0,
@@ -22,7 +28,7 @@ def generate_reference(item: ChallengeItem, translator: Translator, evidence: li
         translation=result.text,
         status="llm_generated",
         teacher_models=[model_name],
-        prompt_version=PROMPT_VERSION,
+        prompt_version=prompt_version,
         verification_notes="; ".join(run_reference_checks(item, result.text, evidence)),
     )
     item.reference_translation = result.text
