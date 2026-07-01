@@ -175,7 +175,14 @@ def _visual_texts(item: ChallengeItem) -> list[str]:
     for label in item.hard_labels:
         texts.extend(label.gold_en)
         texts.extend(label.unspoken_visual_distractors)
-    return [text.strip() for text in texts if text and text.strip()]
+    unique: list[str] = []
+    seen: set[str] = set()
+    for text in texts:
+        text = text.strip() if text else ""
+        if text and text not in seen:
+            seen.add(text)
+            unique.append(text)
+    return unique
 
 
 def _shorten(text: str, limit: int = 32) -> str:
