@@ -22,6 +22,8 @@ links, or handoff state.
 - Agent handoff plan: [`code_plan/AGENT_START_HERE.md`](../code_plan/AGENT_START_HERE.md)
 - Experiment matrix: [`code_plan/EXPERIMENT_MATRIX.md`](../code_plan/EXPERIMENT_MATRIX.md)
 - Progress log: [`docs/PROGRESS.md`](PROGRESS.md)
+- Qwen3-VL GPU profiling evidence:
+  [`docs/QWEN3_GPU_PROFILING_20260706.md`](QWEN3_GPU_PROFILING_20260706.md)
 
 ## Dataset and Artifact Truth
 
@@ -60,17 +62,21 @@ Hugging Face and record the exact repo revision here.
 - Dataset staging: `/data/datasets/chinese_lips`
 - HF cache: `/root/.cache/huggingface`
 - Resource policy: use at most 2 GPUs by default on Hyper00, and first make the
-  active GPU utilization sustain at least 90%. For Qwen3-VL enrichment, the
-  next longer trial should use 1 GPU with `--batch-size 64` for memory
-  headroom. Treat `--batch-size 96` as opt-in only after a wider image-size
-  distribution profile, and do not expand to a second GPU until the single-GPU
-  run remains efficient on a longer shard.
+  active GPU utilization sustain at least 90%. For the current Qwen3-VL
+  enrichment, the selected monitored setting is 2 H200 GPUs with 2 workers per
+  GPU, `--batch-size 56` per worker, `--max-new-tokens 256`, and
+  `--prefetch-batches 1`. A 2026-07-06 Hyper00 short run sustained at least
+  91% utilization after warmup on both active GPUs with about 122GB peak memory
+  per GPU. The active full-train run is also the longer image-distribution
+  validation; do not treat its derived artifacts as paper-grade until all
+  shards complete and post-run combine/schema/sample checks pass.
 
 ## Active Runs
 
 | Run | Host/container | Model | Input | Output | Status |
 | --- | --- | --- | --- | --- | --- |
-| `qwen3_vl_train_20260706_164650` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl` | Paused after partial shards; next step is a monitored 1-GPU `--batch-size 64` longer trial |
+| `qwen3_vl_train_bs56x2_2gpu_20260706_214711` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | shard outputs under `outputs/chinese_lips_train/enrichment/qwen3_vl_train_bs56x2_2gpu_20260706_214711/` | Running locally; 4 shards, 2 GPUs, 2 workers/GPU, batch56, prefetch1; full-run validation pending completion |
+| `qwen3_vl_train_20260706_164650` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | partial shards under `outputs/chinese_lips_train/enrichment/qwen3_vl_train_20260706_164650/` | Paused/superseded; do not resume with old one-sample-per-process settings |
 
 ## Current Durable Decisions
 

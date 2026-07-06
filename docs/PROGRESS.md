@@ -179,17 +179,43 @@ or a stronger Qwen3-VL variant if available.
     tests/test_enrich_visual_context.py` with batch ordering and missing-frame
     skip coverage; local syntax check passed
     `python3 -m compileall scripts/enrich_visual_context.py src/slidesst`.
-  - Single-GPU steady-state profile on H200, `max_new_tokens=512`:
-    `--batch-size 64` processed 128 rows at 1.71 rows/s with 89.8% average GPU
-    utilization and about 94GB peak memory; `--batch-size 96` processed 192
-    rows at 1.89 rows/s with 91.9% average GPU utilization and about 133GB peak
-    memory.
-  - Current continuation policy: run a longer 1-GPU shard trial with
-    `--batch-size 64` under `$gpu-utilization-monitor` because it leaves much
-    more H200 memory headroom. Treat `--batch-size 96` as opt-in only after a
-    wider image-size distribution profile confirms the 133GB peak is stable.
-    Do not use a second GPU until the single-GPU shard remains near or above
-    90% on the longer trial.
+  - Single-process steady-state profiles showed that larger batch alone was not
+    enough on representative random train frames. With `max_new_tokens=256`,
+    batch 64/80/96 reached only 72.9/73.2/74.7% average utilization, despite
+    p50 utilization near 98-100%. Adding `--prefetch-batches 1` improved those
+    points to 76.4/78.2/80.3%, confirming that the bottleneck was batch-level
+    CPU/image/processor gaps rather than raw model compute.
+  - Code change: `repo/scripts/enrich_visual_context.py` now splits Qwen batch
+    work into `prepare_batch` and `extract_prepared`, and supports
+    `--prefetch-batches 1` to overlap the next batch's CPU image/processor work
+    with the current batch's GPU generation. Hyper00 container tests passed
+    `python3 -m pytest tests/test_enrich_visual_context.py` with 6 tests,
+    including prefetched missing-frame ordering coverage and a Qwen-shaped fake
+    extractor concurrency test for processor locking and output order.
+  - Validated high-utilization configuration: 2 workers on one H200, each with
+    `--batch-size 48`, `--max-new-tokens 256`, and `--prefetch-batches 1`,
+    sustained 91.9% GPU utilization after warmup with about 110GB peak memory.
+    A 2-GPU, 4-worker short run with `--batch-size 56` per worker sustained
+    GPU0 93.3/93.9/97.2% and GPU1 91.5/91.2/94.2% average utilization after
+    20/40/60 seconds, with about 122GB peak memory per GPU. The profiling
+    evidence and command shapes are recorded in
+    [`docs/QWEN3_GPU_PROFILING_20260706.md`](QWEN3_GPU_PROFILING_20260706.md).
+  - Active Qwen3 production enrichment:
+    - Run id: `qwen3_vl_train_bs56x2_2gpu_20260706_214711`
+    - Run directory:
+      `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/enrichment/qwen3_vl_train_bs56x2_2gpu_20260706_214711`
+    - Configuration: GPU 0 and 1 only, 2 workers per GPU, 4 shards total,
+      `--batch-size 56`, `--max-new-tokens 256`, `--prefetch-batches 1`,
+      `--resume`.
+    - Startup validation: all four workers reached 616 rows per shard while
+      GPU0/GPU1 were both at 100% utilization and about 122GB memory per GPU.
+    - Safety status: this full-train run is the longer image-distribution
+      validation for the batch56/two-workers-per-GPU configuration. Treat
+      downstream Qwen3-VL artifacts as pending until all shards complete and
+      combine/schema/sample checks pass.
+    - Monitoring: Codex heartbeat automation
+      `monitor-vision-aware-sst-qwen3-run` checks this thread every 30 minutes
+      for utilization, shard counts, worker status, and completion handling.
 - Planned final train artifacts:
   - `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl`
   - `outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl`

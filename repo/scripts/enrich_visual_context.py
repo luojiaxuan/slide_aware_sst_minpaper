@@ -4,6 +4,8 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import threading
+from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
@@ -39,6 +41,14 @@ Rules:
 class SlideContextExtractor(Protocol):
     def extract(self, frame_path: str) -> dict[str, Any]: ...
     def extract_batch(self, frame_paths: list[str]) -> list[dict[str, Any]]: ...
+    def prepare_batch(self, frame_paths: list[str]) -> "PreparedSlideBatch": ...
+    def extract_prepared(self, prepared: "PreparedSlideBatch") -> list[dict[str, Any]]: ...
+
+
+@dataclass
+class PreparedSlideBatch:
+    frame_paths: list[str]
+    inputs: Any
 
 
 @dataclass
@@ -56,7 +66,13 @@ class MockSlideContextExtractor:
         }
 
     def extract_batch(self, frame_paths: list[str]) -> list[dict[str, Any]]:
-        return [self.extract(frame_path) for frame_path in frame_paths]
+        return self.extract_prepared(self.prepare_batch(frame_paths))
+
+    def prepare_batch(self, frame_paths: list[str]) -> PreparedSlideBatch:
+        return PreparedSlideBatch(frame_paths=list(frame_paths), inputs=None)
+
+    def extract_prepared(self, prepared: PreparedSlideBatch) -> list[dict[str, Any]]:
+        return [self.extract(frame_path) for frame_path in prepared.frame_paths]
 
 
 class QwenVLSlideContextExtractor:
@@ -95,31 +111,57 @@ class QwenVLSlideContextExtractor:
         self.device = device
         self.max_new_tokens = max_new_tokens
         self.prompt = prompt
+        self._processor_lock = threading.Lock()
 
     def extract(self, frame_path: str) -> dict[str, Any]:
         return self.extract_batch([frame_path])[0]
 
     def extract_batch(self, frame_paths: list[str]) -> list[dict[str, Any]]:
+        return self.extract_prepared(self.prepare_batch(frame_paths))
+
+    def prepare_batch(self, frame_paths: list[str]) -> PreparedSlideBatch:
         images = [Image.open(frame_path).convert("RGB") for frame_path in frame_paths]
-        texts = []
-        for image in images:
-            messages = [
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "image", "image": image},
-                        {"type": "text", "text": self.prompt},
-                    ],
-                }
-            ]
-            texts.append(self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True))
-        inputs = self.processor(text=texts, images=images, padding=True, return_tensors="pt")
+        try:
+            texts = []
+            with self._processor_lock:
+                for image in images:
+                    messages = [
+                        {
+                            "role": "user",
+                            "content": [
+                                {"type": "image", "image": image},
+                                {"type": "text", "text": self.prompt},
+                            ],
+                        }
+                    ]
+                    texts.append(
+                        self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+                    )
+                inputs = self.processor(text=texts, images=images, padding=True, return_tensors="pt")
+        finally:
+            for image in images:
+                image.close()
+        return PreparedSlideBatch(frame_paths=list(frame_paths), inputs=inputs)
+
+    def extract_prepared(self, prepared: PreparedSlideBatch) -> list[dict[str, Any]]:
+        inputs = prepared.inputs
         if self.device != "auto":
             inputs = inputs.to(self.device)
         output_ids = self.model.generate(**inputs, max_new_tokens=self.max_new_tokens, do_sample=False)
         trimmed = [out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, output_ids)]
-        decoded = self.processor.batch_decode(trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False)
+        with self._processor_lock:
+            decoded = self.processor.batch_decode(trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False)
         return [parse_context_json(text) for text in decoded]
+
+
+@dataclass
+class EnrichmentTask:
+    entries: list[tuple[ChallengeItem, str]] | None = None
+    passthrough: ChallengeItem | None = None
+
+    @property
+    def is_enrichment(self) -> bool:
+        return self.entries is not None
 
 
 def main() -> None:
@@ -138,6 +180,7 @@ def main() -> None:
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--only-missing", action="store_true")
     parser.add_argument("--batch-size", type=int, default=1)
+    parser.add_argument("--prefetch-batches", type=int, choices=[0, 1], default=0)
     parser.add_argument("--max-ocr-terms", type=int, default=24)
     args = parser.parse_args()
     if args.batch_size < 1:
@@ -156,44 +199,163 @@ def main() -> None:
     done_ids = read_done_ids(output_path) if args.resume else set()
     mode = "a" if args.resume and output_path.exists() else "w"
 
-    processed = 0
-    skipped = 0
-    pending: list[tuple[ChallengeItem, str]] = []
-
-    def flush_pending() -> None:
-        nonlocal processed
-        if not pending:
-            return
-        actual_batch_size = len(pending)
-        frame_paths = [frame_path for _, frame_path in pending]
-        contexts = extractor.extract_batch(frame_paths)
-        for (item, frame_path), context in zip(pending, contexts):
-            apply_context(item, context, frame_path, args.provider, args.model_id, args.max_ocr_terms, actual_batch_size)
-            write_item(out, item)
-            processed += 1
-        pending.clear()
+    tasks, skipped = build_tasks(items, done_ids, args)
 
     with output_path.open(mode, encoding="utf-8") as out:
-        for item in tqdm(items, desc="Enriching slide context"):
-            if item.id in done_ids:
-                skipped += 1
-                continue
-            if args.only_missing and has_context(item):
-                flush_pending()
-                write_item(out, item)
-                skipped += 1
-                continue
-            frame_path = first_frame(item)
-            if frame_path is None:
-                flush_pending()
-                write_item(out, item)
-                skipped += 1
-                continue
-            pending.append((item, frame_path))
-            if len(pending) >= args.batch_size:
-                flush_pending()
-        flush_pending()
+        processed = process_tasks(tasks, extractor, out, args)
     print(f"Wrote {processed} enriched items to {output_path}; skipped {skipped}")
+
+
+def build_tasks(
+    items: list[ChallengeItem],
+    done_ids: set[str],
+    args: argparse.Namespace,
+) -> tuple[list[EnrichmentTask], int]:
+    tasks: list[EnrichmentTask] = []
+    pending: list[tuple[ChallengeItem, str]] = []
+    skipped = 0
+
+    def flush_pending() -> None:
+        if pending:
+            tasks.append(EnrichmentTask(entries=list(pending)))
+            pending.clear()
+
+    for item in items:
+        if item.id in done_ids:
+            skipped += 1
+            continue
+        if args.only_missing and has_context(item):
+            flush_pending()
+            tasks.append(EnrichmentTask(passthrough=item))
+            skipped += 1
+            continue
+        frame_path = first_frame(item)
+        if frame_path is None:
+            flush_pending()
+            tasks.append(EnrichmentTask(passthrough=item))
+            skipped += 1
+            continue
+        pending.append((item, frame_path))
+        if len(pending) >= args.batch_size:
+            flush_pending()
+    flush_pending()
+    return tasks, skipped
+
+
+def process_tasks(
+    tasks: list[EnrichmentTask],
+    extractor: SlideContextExtractor,
+    out: Any,
+    args: argparse.Namespace,
+) -> int:
+    if args.prefetch_batches == 1:
+        return process_tasks_with_prefetch(tasks, extractor, out, args)
+
+    processed = 0
+    with tqdm(total=sum(task_size(task) for task in tasks), desc="Enriching slide context") as progress:
+        for task in tasks:
+            processed += process_one_task(task, extractor, out, args)
+            progress.update(task_size(task))
+    return processed
+
+
+def process_tasks_with_prefetch(
+    tasks: list[EnrichmentTask],
+    extractor: SlideContextExtractor,
+    out: Any,
+    args: argparse.Namespace,
+) -> int:
+    processed = 0
+    future: Future[PreparedSlideBatch] | None = None
+    future_index: int | None = None
+
+    def enrichment_index_after(start: int) -> int | None:
+        for idx in range(start, len(tasks)):
+            if tasks[idx].is_enrichment:
+                return idx
+        return None
+
+    def submit_prepare(executor: ThreadPoolExecutor, idx: int) -> Future[PreparedSlideBatch]:
+        entries = require_enrichment_entries(tasks[idx])
+        return executor.submit(extractor.prepare_batch, [frame_path for _, frame_path in entries])
+
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        first_idx = enrichment_index_after(0)
+        if first_idx is not None:
+            future = submit_prepare(executor, first_idx)
+            future_index = first_idx
+
+        with tqdm(total=sum(task_size(task) for task in tasks), desc="Enriching slide context") as progress:
+            for idx, task in enumerate(tasks):
+                if not task.is_enrichment:
+                    write_item(out, require_passthrough_item(task))
+                    progress.update(1)
+                    continue
+
+                entries = require_enrichment_entries(task)
+                if future is not None and future_index == idx:
+                    prepared = future.result()
+                    future = None
+                    future_index = None
+                else:
+                    prepared = extractor.prepare_batch([frame_path for _, frame_path in entries])
+
+                next_idx = enrichment_index_after(idx + 1)
+                if next_idx is not None:
+                    future = submit_prepare(executor, next_idx)
+                    future_index = next_idx
+
+                contexts = extractor.extract_prepared(prepared)
+                write_enriched_batch(out, entries, contexts, args)
+                processed += len(entries)
+                progress.update(len(entries))
+    return processed
+
+
+def process_one_task(
+    task: EnrichmentTask,
+    extractor: SlideContextExtractor,
+    out: Any,
+    args: argparse.Namespace,
+) -> int:
+    if not task.is_enrichment:
+        write_item(out, require_passthrough_item(task))
+        return 0
+    entries = require_enrichment_entries(task)
+    frame_paths = [frame_path for _, frame_path in entries]
+    contexts = extractor.extract_batch(frame_paths)
+    write_enriched_batch(out, entries, contexts, args)
+    return len(entries)
+
+
+def write_enriched_batch(
+    out: Any,
+    entries: list[tuple[ChallengeItem, str]],
+    contexts: list[dict[str, Any]],
+    args: argparse.Namespace,
+) -> None:
+    actual_batch_size = len(entries)
+    for (item, frame_path), context in zip(entries, contexts):
+        apply_context(item, context, frame_path, args.provider, args.model_id, args.max_ocr_terms, actual_batch_size)
+        write_item(out, item)
+
+
+def task_size(task: EnrichmentTask) -> int:
+    if task.entries is not None:
+        return len(task.entries)
+    return 1
+
+
+def require_enrichment_entries(task: EnrichmentTask) -> list[tuple[ChallengeItem, str]]:
+    if task.entries is None:
+        raise ValueError("Expected an enrichment task")
+    return task.entries
+
+
+def require_passthrough_item(task: EnrichmentTask) -> ChallengeItem:
+    if task.passthrough is None:
+        raise ValueError("Expected a passthrough task")
+    return task.passthrough
 
 
 def build_extractor(args: argparse.Namespace, prompt: str) -> SlideContextExtractor:
