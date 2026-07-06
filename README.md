@@ -1,8 +1,29 @@
-# Visual-Evidence-Aware Streaming ST: Minimal Paper Package
+# Slide/Context-Aware Streaming ST: Minimal Paper Package
 
-This package contains a minimal publishable-paper starter kit for **visual-evidence-aware streaming speech translation (ST)**.  The first version keeps the original slide-aware contextual SST path runnable, but generalizes context into unified evidence from slides, video OCR, scene/object/action descriptions, glossary entries, background documents, and history.
+This package contains a minimal publishable-paper starter kit for
+**slide/context-aware streaming speech translation (ST)**. The current paper
+framing is not pure vision-aware SST. It studies latency-aware use of
+slide-derived context: OCR terms, OCR-derived glossary, VLM slide summaries,
+deck/topic metadata, distractors, and later speaker/topic context.
 
 The central rule is faithfulness: visual evidence may help disambiguate spoken content, but the translator must not add visible objects, actions, labels, or facts that were not spoken.
+
+## Source of Truth
+
+This project uses Git and Hugging Face as the durable sources of truth.
+
+- Git stores code, configs, paper notes, lightweight metadata, progress, and
+  handoff state.
+- Hugging Face stores reusable datasets, generated data artifacts, checkpoints,
+  adapters, and revisions.
+- Hyper00 `/data` paths are temporary staging and active-run storage only.
+- Notion is not used for project source-of-truth state.
+
+Current source-of-truth docs:
+
+- [`docs/SOURCE_OF_TRUTH.md`](docs/SOURCE_OF_TRUTH.md)
+- [`docs/PROGRESS.md`](docs/PROGRESS.md)
+- [`code_plan/SLIDE_CONTEXT_AWARE_MVP.md`](code_plan/SLIDE_CONTEXT_AWARE_MVP.md)
 
 ## Directory layout
 
