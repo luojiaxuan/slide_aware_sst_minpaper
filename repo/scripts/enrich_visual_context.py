@@ -80,6 +80,9 @@ class QwenVLSlideContextExtractor:
             "float32": torch.float32,
         }[dtype]
         self.processor = AutoProcessor.from_pretrained(model_id, cache_dir=cache_dir, trust_remote_code=True)
+        tokenizer = getattr(self.processor, "tokenizer", None)
+        if tokenizer is not None:
+            tokenizer.padding_side = "left"
         self.model = AutoModelForImageTextToText.from_pretrained(
             model_id,
             cache_dir=cache_dir,
@@ -175,11 +178,13 @@ def main() -> None:
                 skipped += 1
                 continue
             if args.only_missing and has_context(item):
+                flush_pending()
                 write_item(out, item)
                 skipped += 1
                 continue
             frame_path = first_frame(item)
             if frame_path is None:
+                flush_pending()
                 write_item(out, item)
                 skipped += 1
                 continue
