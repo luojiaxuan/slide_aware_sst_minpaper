@@ -1,6 +1,12 @@
 # Agent start-here plan
 
-You are implementing the minimal publishable version of a paper on **slide-aware contextual simultaneous speech translation**.
+You are implementing the minimal publishable version of a paper on **slide/context-aware simultaneous speech translation**.
+
+Current source-of-truth update: follow
+[`SLIDE_CONTEXT_AWARE_MVP.md`](SLIDE_CONTEXT_AWARE_MVP.md). Keep Chinese-LiPS as
+the main dataset, but do not frame the first paper as pure vision-aware SST.
+Treat OCR, VLM captions, deck/topic metadata, and future speaker/topic context as
+evidence sources under a latency-aware context selection problem.
 
 ## Core hypothesis
 
@@ -8,11 +14,11 @@ Slides/glossary/background context helps hard Chinese lecture translation cases 
 
 ## MVP deliverables
 
-1. A JSONL challenge set with 500-1000 manually verified Chinese-to-English hard examples.
+1. A JSONL challenge set with 500-1000 manually verified Chinese-to-English hard examples, stratified by diagnostic evidence slice.
 2. A streaming simulation pipeline over Chinese lecture transcripts/audio.
-3. Context indices from slides, glossary, and background docs.
-4. Translation runs for: no context, glossary only, slide only, naive all-context, policy-based, oracle context.
-5. Evaluation scripts for BLEU/COMET, homophone accuracy, term F1, context overuse rate, wrong-slide adoption rate, and latency.
+3. Context indices from automatic slide-derived evidence: OCR terms, OCR-derived glossary, VLM slide summary, deck/topic metadata, and distractors.
+4. Translation runs for: no context, OCR terms, VLM summary, OCR+VLM, naive all-context, policy-based, wrong-context, and oracle context.
+5. Evaluation scripts for BLEU/COMET, homophone accuracy, term F1, context overuse rate, wrong-slide adoption rate, slice-level gains, and latency.
 6. CSV tables and plots ready to paste into `paper/sections/07_results.tex`.
 
 ## Constraints
@@ -36,16 +42,18 @@ Slides/glossary/background context helps hard Chinese lecture translation cases 
 - Implement pinyin-based homophone mining.
 - Generate candidate hard examples with matched and mismatched slide evidence.
 - Export annotation sheet CSV for manual verification.
+- Export a diagnostic subset sheet with slice labels for human English translation.
 
 ### M2: Baseline runs
 - Implement no-context, glossary-only, slide-only, and naive all-context prompts.
 - Run on 50 verified examples first.
 - Save outputs as JSONL with timing, prompt, evidence packet, and model response.
 
-### M3: Evidence policy
+### M3: Evidence policy and distractors
 - Implement BM25 + pinyin + temporal-prior retrieval.
 - Implement rule-based `use / ignore / delay` policy.
 - Run policy vs naive context under matched and mismatched slide settings.
+- Make wrong/previous/next/random slide evidence a first-class negative control.
 
 ### M4: Evaluation and tables
 - Implement term/homophone accuracy and context-overuse metrics.
