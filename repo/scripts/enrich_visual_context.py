@@ -16,7 +16,7 @@ from slidesst.data.schema import ChallengeItem, VisualContext
 
 
 DEFAULT_PROMPT = """You are extracting slide context for simultaneous speech translation.
-Inspect the slide image and return only compact JSON with this schema:
+Inspect the slide image and return one compact JSON object with this schema:
 {
   "ocr_text": ["visible slide text, title, formula, named entity, or term"],
   "scene_summary": "one short sentence describing the slide topic or visual content",
@@ -27,9 +27,12 @@ Inspect the slide image and return only compact JSON with this schema:
 Rules:
 - Preserve visible Chinese text exactly when legible.
 - Prefer short terms over full paragraphs.
+- Each array must contain plain strings only.
+- Do not output bounding boxes, coordinates, positions, or nested objects.
 - Do not invent facts that are not visible.
+- Keep at most 12 OCR text items and at most 8 items in each other array.
 - Use [] for uncertain fields.
-- Return JSON only.
+- Return JSON only. Do not wrap the JSON in Markdown fences.
 """
 
 
@@ -181,7 +184,7 @@ def parse_context_json(text: str) -> dict[str, Any]:
     except json.JSONDecodeError:
         parsed = {
             "ocr_text": [],
-            "scene_summary": text.strip()[:500],
+            "scene_summary": "",
             "objects": [],
             "actions": [],
             "spatial_relations": [],
@@ -281,7 +284,7 @@ def _as_str_list(value: Any) -> list[str]:
         values = [value]
     out: list[str] = []
     for item in values:
-        text = str(item).strip()
+        text = _stringify_term(item)
         if text:
             out.append(text)
     return out
@@ -300,6 +303,15 @@ def _merge_terms(existing: list[str], new: Any, limit: int) -> list[str]:
         if len(merged) >= limit:
             break
     return merged
+
+
+def _stringify_term(value: Any) -> str:
+    if isinstance(value, dict):
+        for key in ("text", "label", "description", "name", "value", "type"):
+            if value.get(key):
+                return str(value[key]).strip()
+        return ""
+    return str(value).strip()
 
 
 if __name__ == "__main__":
