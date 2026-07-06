@@ -59,14 +59,16 @@ Hugging Face and record the exact repo revision here.
 - Repo in container: `/data/projects/slide_aware_sst_minpaper`
 - Dataset staging: `/data/datasets/chinese_lips`
 - HF cache: `/root/.cache/huggingface`
-- Resource cap: at most 4 concurrent GPUs on Hyper00 unless explicitly
-  authorized for a specific run.
+- Resource policy: use at most 2 GPUs by default on Hyper00, and first make the
+  active GPU utilization sustain at least 90%. For Qwen3-VL enrichment, the
+  current candidate is 1 GPU with `--batch-size 96`; do not expand to a second
+  GPU until the single-GPU run remains efficient on a longer shard.
 
 ## Active Runs
 
 | Run | Host/container | Model | Input | Output | Status |
 | --- | --- | --- | --- | --- | --- |
-| `qwen3_vl_train_20260706_164650` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl` | Running locally on shards 0-3; shards 4-7 paused and resumable |
+| `qwen3_vl_train_20260706_164650` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl` | Paused after partial shards; resume with 1 GPU and `--batch-size 96` after profiling |
 
 ## Current Durable Decisions
 

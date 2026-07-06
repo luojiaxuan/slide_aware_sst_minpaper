@@ -155,11 +155,26 @@ or a stronger Qwen3-VL variant if available.
     `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/enrichment/qwen3_vl_train_20260706_164650`
   - Initial stability check: 8 shard processes ran successfully, one per H200,
     about 18.4GB GPU memory per process, no Traceback/OOM detected.
-  - Resource update: the run was reduced to at most 4 concurrent GPUs on
-    Hyper00. Shards 0-3 remain active. Shards 4-7 were stopped after partial
-    progress and are resumable because the enrichment command uses `--resume`.
-    Future continuation must run at most four shards concurrently unless the
-    user explicitly authorizes more GPUs for that specific run.
+  - Resource update: the original low-batch run was stopped. Shards 0-7 are
+    partial and resumable because the enrichment command uses `--resume`, but
+    no shard should be resumed with the old one-sample-per-GPU configuration.
+    Current partial line counts are shard_0=1361, shard_1=1372, shard_2=1354,
+    shard_3=1523, shard_4=1490, shard_5=1259, shard_6=1384, shard_7=1332.
+- GPU utilization profiling:
+  - Code change: `repo/scripts/enrich_visual_context.py` now supports
+    `--batch-size` for batched Qwen-VL image/text generation.
+  - Tests: Hyper00 container passed `python3 -m pytest
+    tests/test_enrich_visual_context.py`; local syntax check passed
+    `python3 -m compileall scripts/enrich_visual_context.py src/slidesst`.
+  - Single-GPU steady-state profile on H200, `max_new_tokens=512`:
+    `--batch-size 64` processed 128 rows at 1.71 rows/s with 89.8% average GPU
+    utilization and about 94GB peak memory; `--batch-size 96` processed 192
+    rows at 1.89 rows/s with 91.9% average GPU utilization and about 133GB peak
+    memory.
+  - Current continuation policy: prefer 1 GPU with `--batch-size 96`; monitor
+    utilization and fall back to `--batch-size 64` if memory pressure appears.
+    Do not use a second GPU until the single-GPU shard remains above 90% on a
+    longer run.
 - Planned final train artifacts:
   - `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl`
   - `outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl`
