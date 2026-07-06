@@ -61,14 +61,15 @@ Hugging Face and record the exact repo revision here.
 - HF cache: `/root/.cache/huggingface`
 - Resource policy: use at most 2 GPUs by default on Hyper00, and first make the
   active GPU utilization sustain at least 90%. For Qwen3-VL enrichment, the
-  current candidate is 1 GPU with `--batch-size 96`; do not expand to a second
+  next trial candidate is 1 GPU with `--batch-size 96`; fall back to
+  `--batch-size 64` if memory pressure appears, and do not expand to a second
   GPU until the single-GPU run remains efficient on a longer shard.
 
 ## Active Runs
 
 | Run | Host/container | Model | Input | Output | Status |
 | --- | --- | --- | --- | --- | --- |
-| `qwen3_vl_train_20260706_164650` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl` | Paused after partial shards; resume with 1 GPU and `--batch-size 96` after profiling |
+| `qwen3_vl_train_20260706_164650` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl` | Paused after partial shards; next step is a monitored 1-GPU `--batch-size 96` longer trial |
 
 ## Current Durable Decisions
 

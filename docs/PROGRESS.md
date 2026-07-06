@@ -162,19 +162,31 @@ or a stronger Qwen3-VL variant if available.
     shard_3=1523, shard_4=1490, shard_5=1259, shard_6=1384, shard_7=1332.
 - GPU utilization profiling:
   - Code change: `repo/scripts/enrich_visual_context.py` now supports
-    `--batch-size` for batched Qwen-VL image/text generation.
+    `--batch-size` for batched Qwen-VL image/text generation. It also flushes
+    pending batched items before writing missing-frame or already-contextualized
+    skip items, so JSONL output order is preserved when skip writes are
+    interleaved with batched generation.
+  - Batched generation safety: the Qwen-VL processor tokenizer is forced to
+    `padding_side="left"` before generation. Hyper00 real-model smoke checks
+    confirmed left padding and produced semantically consistent OCR and scene
+    outputs for batch=1 vs batch=2 and duplicate-image batch inputs. Exact
+    object/action wording is not guaranteed to be byte-identical across batch
+    shapes, so downstream quality checks should compare semantic fields rather
+    than raw strings.
   - Tests: Hyper00 container passed `python3 -m pytest
-    tests/test_enrich_visual_context.py`; local syntax check passed
+    tests/test_enrich_visual_context.py` with batch ordering and missing-frame
+    skip coverage; local syntax check passed
     `python3 -m compileall scripts/enrich_visual_context.py src/slidesst`.
   - Single-GPU steady-state profile on H200, `max_new_tokens=512`:
     `--batch-size 64` processed 128 rows at 1.71 rows/s with 89.8% average GPU
     utilization and about 94GB peak memory; `--batch-size 96` processed 192
     rows at 1.89 rows/s with 91.9% average GPU utilization and about 133GB peak
     memory.
-  - Current continuation policy: prefer 1 GPU with `--batch-size 96`; monitor
-    utilization and fall back to `--batch-size 64` if memory pressure appears.
-    Do not use a second GPU until the single-GPU shard remains above 90% on a
-    longer run.
+  - Current continuation policy: run a longer 1-GPU shard trial with
+    `--batch-size 96` under `$gpu-utilization-monitor`; fall back to
+    `--batch-size 64` if memory pressure appears or utilization is unstable.
+    Do not use a second GPU until the single-GPU shard remains above 90% on the
+    longer trial.
 - Planned final train artifacts:
   - `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl`
   - `outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl`
