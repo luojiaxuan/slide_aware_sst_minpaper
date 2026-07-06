@@ -38,6 +38,7 @@ Rules:
 
 class SlideContextExtractor(Protocol):
     def extract(self, frame_path: str) -> dict[str, Any]: ...
+    def extract_batch(self, frame_paths: list[str]) -> list[dict[str, Any]]: ...
 
 
 @dataclass
@@ -53,6 +54,9 @@ class MockSlideContextExtractor:
             "actions": [],
             "spatial_relations": [],
         }
+
+    def extract_batch(self, frame_paths: list[str]) -> list[dict[str, Any]]:
+        return [self.extract(frame_path) for frame_path in frame_paths]
 
 
 class QwenVLSlideContextExtractor:
@@ -90,24 +94,29 @@ class QwenVLSlideContextExtractor:
         self.prompt = prompt
 
     def extract(self, frame_path: str) -> dict[str, Any]:
-        image = Image.open(frame_path).convert("RGB")
-        messages = [
-            {
-                "role": "user",
-                "content": [
-                    {"type": "image", "image": image},
-                    {"type": "text", "text": self.prompt},
-                ],
-            }
-        ]
-        text = self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        inputs = self.processor(text=[text], images=[image], padding=True, return_tensors="pt")
+        return self.extract_batch([frame_path])[0]
+
+    def extract_batch(self, frame_paths: list[str]) -> list[dict[str, Any]]:
+        images = [Image.open(frame_path).convert("RGB") for frame_path in frame_paths]
+        texts = []
+        for image in images:
+            messages = [
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "image", "image": image},
+                        {"type": "text", "text": self.prompt},
+                    ],
+                }
+            ]
+            texts.append(self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True))
+        inputs = self.processor(text=texts, images=images, padding=True, return_tensors="pt")
         if self.device != "auto":
             inputs = inputs.to(self.device)
         output_ids = self.model.generate(**inputs, max_new_tokens=self.max_new_tokens, do_sample=False)
         trimmed = [out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, output_ids)]
-        decoded = self.processor.batch_decode(trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
-        return parse_context_json(decoded)
+        decoded = self.processor.batch_decode(trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False)
+        return [parse_context_json(text) for text in decoded]
 
 
 def main() -> None:
@@ -125,8 +134,11 @@ def main() -> None:
     parser.add_argument("--offset", type=int, default=0)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--only-missing", action="store_true")
+    parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--max-ocr-terms", type=int, default=24)
     args = parser.parse_args()
+    if args.batch_size < 1:
+        raise ValueError("--batch-size must be at least 1")
 
     prompt = Path(args.prompt_file).read_text(encoding="utf-8") if args.prompt_file else DEFAULT_PROMPT
     extractor = build_extractor(args, prompt)
@@ -143,6 +155,20 @@ def main() -> None:
 
     processed = 0
     skipped = 0
+    pending: list[tuple[ChallengeItem, str]] = []
+
+    def flush_pending() -> None:
+        nonlocal processed
+        if not pending:
+            return
+        frame_paths = [frame_path for _, frame_path in pending]
+        contexts = extractor.extract_batch(frame_paths)
+        for (item, frame_path), context in zip(pending, contexts):
+            apply_context(item, context, frame_path, args.provider, args.model_id, args.max_ocr_terms)
+            write_item(out, item)
+            processed += 1
+        pending.clear()
+
     with output_path.open(mode, encoding="utf-8") as out:
         for item in tqdm(items, desc="Enriching slide context"):
             if item.id in done_ids:
@@ -157,10 +183,10 @@ def main() -> None:
                 write_item(out, item)
                 skipped += 1
                 continue
-            context = extractor.extract(frame_path)
-            apply_context(item, context, frame_path, args.provider, args.model_id, args.max_ocr_terms)
-            write_item(out, item)
-            processed += 1
+            pending.append((item, frame_path))
+            if len(pending) >= args.batch_size:
+                flush_pending()
+        flush_pending()
     print(f"Wrote {processed} enriched items to {output_path}; skipped {skipped}")
 
 
