@@ -153,8 +153,13 @@ or a stronger Qwen3-VL variant if available.
   - Run id: `qwen3_vl_train_20260706_164650`
   - Run directory:
     `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/enrichment/qwen3_vl_train_20260706_164650`
-  - Initial stability check: 8 shard processes running, one per H200, about
-    18.4GB GPU memory per process, no Traceback/OOM detected.
+  - Initial stability check: 8 shard processes ran successfully, one per H200,
+    about 18.4GB GPU memory per process, no Traceback/OOM detected.
+  - Resource update: the run was reduced to at most 4 concurrent GPUs on
+    Hyper00. Shards 0-3 remain active. Shards 4-7 were stopped after partial
+    progress and are resumable because the enrichment command uses `--resume`.
+    Future continuation must run at most four shards concurrently unless the
+    user explicitly authorizes more GPUs for that specific run.
 - Planned final train artifacts:
   - `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl`
   - `outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl`

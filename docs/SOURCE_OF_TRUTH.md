@@ -44,6 +44,7 @@ they are staged locally and recorded here with intended destinations.
 | Qwen2.5-VL pilot enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
 | Qwen3-VL enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl` | TBD, likely `<hf-owner>/slide-context-sst-chinese-lips` | Running locally |
 | Qwen3-VL enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl` | TBD, same dataset repo as above | Pending Qwen3-VL completion |
+| Qwen3-VL train diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen3_vl_context.csv` | TBD, same dataset repo as above or Git if kept as lightweight metadata | Pending Qwen3-VL completion |
 | Train diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen_vl_context.csv` | TBD, same dataset repo as above or Git if kept as lightweight metadata | Not uploaded |
 | Test diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_test/annotation/diagnostic_sample_500.csv` | TBD | Not uploaded |
 
@@ -58,12 +59,14 @@ Hugging Face and record the exact repo revision here.
 - Repo in container: `/data/projects/slide_aware_sst_minpaper`
 - Dataset staging: `/data/datasets/chinese_lips`
 - HF cache: `/root/.cache/huggingface`
+- Resource cap: at most 4 concurrent GPUs on Hyper00 unless explicitly
+  authorized for a specific run.
 
 ## Active Runs
 
 | Run | Host/container | Model | Input | Output | Status |
 | --- | --- | --- | --- | --- | --- |
-| `qwen3_vl_train_20260706_164650` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl` | Running locally |
+| `qwen3_vl_train_20260706_164650` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl` | Running locally on shards 0-3; shards 4-7 paused and resumable |
 
 ## Current Durable Decisions
 
