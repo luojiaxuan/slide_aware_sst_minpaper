@@ -147,6 +147,14 @@ or a stronger Qwen3-VL variant if available.
 - Code change: `repo/scripts/enrich_visual_context.py` now uses
   `AutoModelForImageTextToText` instead of the Qwen2.5-specific model class, so
   the same enrichment entry point can run Qwen3-VL and future VL models.
+- Smoke validation: `Qwen/Qwen3-VL-8B-Instruct` successfully enriched two test
+  examples on Hyper00 and produced compact JSON without markdown fences.
+- Active Qwen3 run:
+  - Run id: `qwen3_vl_train_20260706_164650`
+  - Run directory:
+    `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/enrichment/qwen3_vl_train_20260706_164650`
+  - Initial stability check: 8 shard processes running, one per H200, about
+    18.4GB GPU memory per process, no Traceback/OOM detected.
 - Planned final train artifacts:
   - `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl`
   - `outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl`
