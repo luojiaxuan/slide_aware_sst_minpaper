@@ -167,7 +167,7 @@ def main() -> None:
         frame_paths = [frame_path for _, frame_path in pending]
         contexts = extractor.extract_batch(frame_paths)
         for (item, frame_path), context in zip(pending, contexts):
-            apply_context(item, context, frame_path, args.provider, args.model_id, args.max_ocr_terms)
+            apply_context(item, context, frame_path, args.provider, args.model_id, args.max_ocr_terms, args.batch_size)
             write_item(out, item)
             processed += 1
         pending.clear()
@@ -237,6 +237,7 @@ def apply_context(
     provider: str,
     model_id: str,
     max_ocr_terms: int,
+    batch_size: int | None = None,
 ) -> None:
     visual = item.visual_context or VisualContext(video_id=item.lecture_id, clip_id=item.id)
     visual.ocr_text = _merge_terms(visual.ocr_text, context.get("ocr_text", []), max_ocr_terms)
@@ -256,6 +257,7 @@ def apply_context(
             "provider": provider,
             "model_id": model_id,
             "frame_path": frame_path,
+            "batch_size": batch_size,
             "raw_output": context.get("raw_output", ""),
         },
     }

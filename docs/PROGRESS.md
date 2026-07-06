@@ -172,7 +172,9 @@ or a stronger Qwen3-VL variant if available.
     outputs for batch=1 vs batch=2 and duplicate-image batch inputs. Exact
     object/action wording is not guaranteed to be byte-identical across batch
     shapes, so downstream quality checks should compare semantic fields rather
-    than raw strings.
+    than raw strings. New rows now record `batch_size` in
+    `visual_context.metadata.context_enrichment` so single-sample and batched
+    generations can be audited separately.
   - Tests: Hyper00 container passed `python3 -m pytest
     tests/test_enrich_visual_context.py` with batch ordering and missing-frame
     skip coverage; local syntax check passed
@@ -183,10 +185,11 @@ or a stronger Qwen3-VL variant if available.
     rows at 1.89 rows/s with 91.9% average GPU utilization and about 133GB peak
     memory.
   - Current continuation policy: run a longer 1-GPU shard trial with
-    `--batch-size 96` under `$gpu-utilization-monitor`; fall back to
-    `--batch-size 64` if memory pressure appears or utilization is unstable.
-    Do not use a second GPU until the single-GPU shard remains above 90% on the
-    longer trial.
+    `--batch-size 64` under `$gpu-utilization-monitor` because it leaves much
+    more H200 memory headroom. Treat `--batch-size 96` as opt-in only after a
+    wider image-size distribution profile confirms the 133GB peak is stable.
+    Do not use a second GPU until the single-GPU shard remains near or above
+    90% on the longer trial.
 - Planned final train artifacts:
   - `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl`
   - `outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl`
