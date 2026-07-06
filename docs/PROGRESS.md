@@ -216,10 +216,23 @@ or a stronger Qwen3-VL variant if available.
     - Monitoring: Codex heartbeat automation
       `monitor-vision-aware-sst-qwen3-run` checks this thread every 30 minutes
       for utilization, shard counts, worker status, and completion handling.
-- Planned final train artifacts:
-  - `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl`
-  - `outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl`
-  - `outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen3_vl_context.*`
+  - Completion:
+    - Shards completed: shard_0=7,331, shard_1=7,331, shard_2=7,330,
+      shard_3=7,330.
+    - Combined challenge:
+      `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl`,
+      29,322 rows, 29,322 unique ids.
+    - Enriched evidence:
+      `outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl`,
+      437,122 rows.
+    - Enriched diagnostic sample:
+      `outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen3_vl_context.jsonl`
+      and `.csv`, 500 rows.
+    - Diagnostic sample stats:
+      `ocr_support`: 286, `visual_non_ocr`: 173, `term_homophone`: 131,
+      `latency_critical`: 118, `distractor_risk`: 100, `no_context`: 1.
+    - Post-run checks passed: challenge row count and unique ids, evidence row
+      count, sample row count, and diagnostic stats JSON parse.
 
 ## Open Items
 

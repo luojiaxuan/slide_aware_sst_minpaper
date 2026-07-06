@@ -90,8 +90,9 @@ Configuration: 2 GPUs, 2 workers per GPU, 224 rows per worker, `batch_size=56`,
 | 1 | 91.5% | 91.2% | 94.2% | 122,331 MiB |
 
 This setting satisfies the 90% post-warmup target while keeping about 20GB H200
-memory headroom per active GPU in the short validation. The active full-train
-run remains the longer image-distribution validation for this configuration.
+memory headroom per active GPU in the short validation. The full-train run later
+completed successfully and served as the longer image-distribution validation
+for this configuration.
 
 ## Active Production Run
 
@@ -128,9 +129,9 @@ python3 scripts/enrich_visual_context.py \
 Startup validation reached 616 rows per shard with GPU0/GPU1 both at 100%
 instantaneous utilization and about 122GB memory per GPU.
 
-Do not treat the final Qwen3-VL enriched train challenge, evidence index, or
-diagnostic sample as paper-grade until this run finishes and post-run
-combine/schema/sample checks pass.
+The run finished successfully on 2026-07-06. Post-run checks passed for the
+combined challenge row count and ids, evidence row count, diagnostic sample row
+count, and diagnostic stats JSON parse. Hugging Face upload is still pending.
 
 ## Failure Handling Notes
 
