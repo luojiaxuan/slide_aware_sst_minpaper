@@ -40,8 +40,10 @@ they are staged locally and recorded here with intended destinations.
 | Artifact | Local path | Intended HF destination | Upload status |
 | --- | --- | --- | --- |
 | Chinese-LiPS frame-backed train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified.jsonl` | TBD, likely `<hf-owner>/slide-context-sst-chinese-lips` | Not uploaded |
-| Qwen-VL enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen_vl_context.jsonl` | TBD, same dataset repo as above | Not uploaded |
-| Qwen-VL enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen_vl_context.jsonl` | TBD, same dataset repo as above | Not uploaded |
+| Qwen2.5-VL pilot enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
+| Qwen2.5-VL pilot enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
+| Qwen3-VL enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl` | TBD, likely `<hf-owner>/slide-context-sst-chinese-lips` | Planned |
+| Qwen3-VL enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl` | TBD, same dataset repo as above | Planned |
 | Train diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen_vl_context.csv` | TBD, same dataset repo as above or Git if kept as lightweight metadata | Not uploaded |
 | Test diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_test/annotation/diagnostic_sample_500.csv` | TBD | Not uploaded |
 
@@ -74,8 +76,8 @@ Hugging Face and record the exact repo revision here.
 
 1. Upload reusable derived Chinese-LiPS artifacts to a Hugging Face dataset repo
    and record the revision.
-2. Run fresh pseudo-reference generation on
-   `challenge_verified_qwen_vl_context.jsonl`.
+2. Run Qwen3-VL enrichment and fresh pseudo-reference generation on
+   `challenge_verified_qwen3_vl_context.jsonl`.
 3. Build OCR/VLM vs OCR-only vs wrong-context experiments on the enriched train
    and test splits.
 4. Prepare human English translation workflow for the diagnostic 500-1,000 item

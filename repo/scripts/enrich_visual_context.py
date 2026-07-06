@@ -67,7 +67,7 @@ class QwenVLSlideContextExtractor:
         prompt: str,
     ) -> None:
         import torch
-        from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
+        from transformers import AutoModelForImageTextToText, AutoProcessor
 
         dtype_value = {
             "auto": "auto",
@@ -76,7 +76,7 @@ class QwenVLSlideContextExtractor:
             "float32": torch.float32,
         }[dtype]
         self.processor = AutoProcessor.from_pretrained(model_id, cache_dir=cache_dir, trust_remote_code=True)
-        self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+        self.model = AutoModelForImageTextToText.from_pretrained(
             model_id,
             cache_dir=cache_dir,
             dtype=dtype_value,

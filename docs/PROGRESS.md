@@ -93,11 +93,12 @@ instead of chat transcripts, Notion pages, or shared-machine scratch paths.
   heavy. Train had recovered frames but lacked OCR/VLM metadata, so automatic
   slide context enrichment became the next concrete step.
 
-## 2026-07-06 Qwen-VL Slide Context Enrichment
+## 2026-07-06 Qwen2.5-VL Slide Context Enrichment Pilot
 
 - Added `repo/scripts/enrich_visual_context.py`.
 - Added `repo/tests/test_enrich_visual_context.py`.
-- Validated `Qwen/Qwen2.5-VL-3B-Instruct` on Hyper00.
+- Validated `Qwen/Qwen2.5-VL-3B-Instruct` on Hyper00 as a pipeline and
+  throughput pilot.
 - Smoke test showed usable slide OCR-like terms and scene summaries.
 - Long run:
   - Run id: `qwen_vl_train_20260706_095137`
@@ -131,11 +132,31 @@ instead of chat transcripts, Notion pages, or shared-machine scratch paths.
     - `latency_critical`: 45
     - `distractor_risk`: 120
 
+### Status Update
+
+This Qwen2.5-VL run is not the final data construction teacher. It validated the
+pipeline, sharding, prompt, parsing, and evidence rebuild. For dataset quality,
+the next enrichment run should use the newer cached `Qwen/Qwen3-VL-8B-Instruct`
+or a stronger Qwen3-VL variant if available.
+
+## 2026-07-06 Qwen3-VL Migration
+
+- Rationale: training-set construction quality matters more than the small-model
+  throughput pilot. Qwen3-VL is the newer and stronger Qwen VL generation, and
+  Hyper00 already has `Qwen/Qwen3-VL-8B-Instruct` in the shared HF cache.
+- Code change: `repo/scripts/enrich_visual_context.py` now uses
+  `AutoModelForImageTextToText` instead of the Qwen2.5-specific model class, so
+  the same enrichment entry point can run Qwen3-VL and future VL models.
+- Planned final train artifacts:
+  - `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl`
+  - `outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl`
+  - `outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen3_vl_context.*`
+
 ## Open Items
 
 1. Upload reusable derived artifacts to Hugging Face and record repo revisions in
    `docs/SOURCE_OF_TRUTH.md`.
-2. Generate fresh pseudo references using the enriched Qwen-VL context artifacts.
+2. Generate fresh pseudo references using the enriched Qwen3-VL context artifacts.
 3. Build OCR-only, VLM-summary, OCR+VLM, policy, and wrong-context experiment
    runs on the enriched split.
 4. Select and send a 500-1,000 item diagnostic set for human English
