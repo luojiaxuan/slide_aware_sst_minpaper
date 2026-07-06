@@ -164,10 +164,11 @@ def main() -> None:
         nonlocal processed
         if not pending:
             return
+        actual_batch_size = len(pending)
         frame_paths = [frame_path for _, frame_path in pending]
         contexts = extractor.extract_batch(frame_paths)
         for (item, frame_path), context in zip(pending, contexts):
-            apply_context(item, context, frame_path, args.provider, args.model_id, args.max_ocr_terms, args.batch_size)
+            apply_context(item, context, frame_path, args.provider, args.model_id, args.max_ocr_terms, actual_batch_size)
             write_item(out, item)
             processed += 1
         pending.clear()

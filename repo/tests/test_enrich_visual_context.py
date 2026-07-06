@@ -86,6 +86,7 @@ def test_enrich_visual_context_mock_batch_preserves_order(tmp_path):
     assert [row["id"] for row in got] == ["clip_0", "clip_1", "clip_2"]
     assert got[0]["visual_context"]["ocr_text"] == ["mock visible term: clip_0_PPT"]
     assert got[2]["visual_context"]["ocr_text"] == ["mock visible term: clip_2_PPT"]
+    assert got[2]["visual_context"]["metadata"]["context_enrichment"]["batch_size"] == 1
 
 
 def test_enrich_visual_context_mock_batch_preserves_order_with_missing_frame(tmp_path):
@@ -146,6 +147,8 @@ def test_enrich_visual_context_mock_batch_preserves_order_with_missing_frame(tmp
     assert [row["id"] for row in got] == ["clip_0", "clip_1", "clip_2", "clip_3"]
     assert got[1]["visual_context"]["ocr_text"] == ["existing"]
     assert got[2]["visual_context"]["ocr_text"] == ["mock visible term: clip_2_PPT"]
+    assert got[0]["visual_context"]["metadata"]["context_enrichment"]["batch_size"] == 1
+    assert got[2]["visual_context"]["metadata"]["context_enrichment"]["batch_size"] == 2
 
 
 def test_qwen_batch_sets_left_padding_and_preserves_row_outputs(monkeypatch, tmp_path):
@@ -162,6 +165,7 @@ def test_qwen_batch_sets_left_padding_and_preserves_row_outputs(monkeypatch, tmp
     Image.new("RGB", (7, 3), color="black").save(image_b)
 
     processor_instances = []
+    seen_input_lengths = []
 
     class FakeInputs(dict):
         @property
@@ -188,7 +192,9 @@ def test_qwen_batch_sets_left_padding_and_preserves_row_outputs(monkeypatch, tmp
         def __call__(self, text, images, padding=True, return_tensors="pt"):
             assert self.tokenizer.padding_side == "left"
             inputs = FakeInputs()
-            inputs["input_ids"] = [[idx] * (len(prompt) % 5 + 2) for idx, prompt in enumerate(text)]
+            lengths = [image.size[0] + 1 for image in images]
+            seen_input_lengths.append(lengths)
+            inputs["input_ids"] = [[idx] * length for idx, length in enumerate(lengths)]
             return inputs
 
         def batch_decode(self, trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False):
@@ -240,5 +246,6 @@ def test_qwen_batch_sets_left_padding_and_preserves_row_outputs(monkeypatch, tmp
 
     assert processor_instances[0].tokenizer.padding_side == "left"
     got = extractor.extract_batch([str(image_a), str(image_b)])
+    assert seen_input_lengths == [[4, 8]]
     assert [row["ocr_text"] for row in got] == [["row-0"], ["row-1"]]
     assert [row["scene_summary"] for row in got] == ["summary-0", "summary-1"]
