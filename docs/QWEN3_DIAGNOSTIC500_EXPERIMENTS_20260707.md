@@ -194,3 +194,23 @@ system comparison and inspected during case-study selection.
    batch-shape sensitivity。
 4. 在人工标签和指标语义修好前，不扩大宣传性结论；最多扩大 pseudo-reference
    generation 用于模型训练或更多探索。
+
+## Diagnostic Review Sheet
+
+为了推进人工审核，已生成并上传 diagnostic 500 review sheet：
+
+- Script: `repo/scripts/export_diagnostic_review_sheet.py`
+- Local CSV:
+  `outputs/chinese_lips_train/annotation/diagnostic_review_sheet_500_qwen3_context_experiments_20260707.csv`
+- HF commit:
+  `3d681ebe85babdacffe5e984bf59af6cade9c2f1`
+- HF tag:
+  `qwen3_32b_diagnostic500_review_sheet_20260707`
+- HF path:
+  `annotation/qwen3_32b_diagnostic500_review_sheet_20260707/`
+
+The sheet has 500 rows and includes the candidate Qwen3 reference, reference
+audit flags, visual/OCR context, V4/V6 evidence packets, all 7 parent-run
+hypotheses, and blank columns for human reference, reference quality,
+requires-visual/requires-OCR labels, supporting evidence ids, hallucination
+conditions, and reviewer notes.

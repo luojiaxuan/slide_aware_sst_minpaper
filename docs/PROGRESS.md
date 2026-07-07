@@ -443,13 +443,31 @@ or a stronger Qwen3-VL variant if available.
       `qwen3_32b_diagnostic500_batch160_visual_policy_20260707`
     - Path:
       `experiments/qwen3_32b_diagnostic500_batch160_visual_policy_20260707/`
+- Human review sheet:
+  - Added `repo/scripts/export_diagnostic_review_sheet.py` and
+    `repo/tests/test_export_diagnostic_review_sheet.py`.
+  - Generated a 500-row CSV with source transcript, candidate Qwen3 reference,
+    reference audit flags, visual/OCR context, V4/V6 evidence packets, all 7
+    parent-run hypotheses, and blank human review columns for reference quality,
+    visual/OCR requirement, supporting evidence ids, hallucination conditions,
+    and notes.
+  - Local path:
+    `outputs/chinese_lips_train/annotation/diagnostic_review_sheet_500_qwen3_context_experiments_20260707.csv`
+  - Uploaded the review sheet bundle to the private HF dataset repo:
+    - HF commit:
+      `3d681ebe85babdacffe5e984bf59af6cade9c2f1`
+    - HF tag:
+      `qwen3_32b_diagnostic500_review_sheet_20260707`
+    - Path:
+      `annotation/qwen3_32b_diagnostic500_review_sheet_20260707/`
 
 ## Open Items
 
-1. Add independent or human references for diagnostic 500 before treating BLEU
-   as a method ranking.
-2. Add manual hard-label, supporting-evidence, and hallucination-review labels
-   for diagnostic 500 so HDA/evidence/visual metrics become meaningful.
+1. Use the uploaded diagnostic review sheet to collect independent/human
+   references before treating BLEU as a method ranking.
+2. Use the same sheet to collect hard-label, supporting-evidence, and
+   hallucination-review labels for diagnostic 500 so HDA/evidence/visual
+   metrics become meaningful.
 3. Treat the batch160 V4/V5/V6/V8 sensitivity artifact as the current
    batch-shape check for visual/policy conditions; do not run a full all-condition
    uniform batch unless V0/no-context can meet the 90% utilization rule.
