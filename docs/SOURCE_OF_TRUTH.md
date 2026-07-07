@@ -96,7 +96,7 @@ confirmed.
 | `qwen3_parse_failure_repair512_20260706_231750` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | 3,387 failed Qwen3-VL rows from the initial combined artifact | repair outputs under `outputs/chinese_lips_train/repair/qwen3_parse_failure_repair512_20260706_231750/` | Completed locally; 512/768/compact/strict passes repaired all initial parse failures |
 | `qwen3_32b_reference_pilot_20260706` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-32B` | 100 rows from private HF revision `a83770446ded4599bf9d95d2b77cdcc7fe359ef7` diagnostic sample | `outputs/chinese_lips_train/reference_generation/qwen3_32b_hf_revision_a837704/pilot_100_refs_repaired.jsonl` and HF path `reference_pilots/qwen3_32b_reference_pilot_20260706/` | Completed; uploaded to private HF commit `ee785604ba51a5c65335de12bfcfd99d3c4febff`; tag `qwen3_32b_reference_pilot_20260706` |
 | `qwen3_32b_reference_diagnostic500_20260707` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-32B` | 500 rows from private HF revision `a83770446ded4599bf9d95d2b77cdcc7fe359ef7` diagnostic sample | `outputs/chinese_lips_train/reference_generation/qwen3_32b_hf_revision_a837704/diagnostic_500_refs_repaired.jsonl` and HF path `reference_pilots/qwen3_32b_reference_diagnostic500_20260707/` | Completed; batch=40 after batch=48 OOM; final audit 435 pass, 65 review, 0 reject; uploaded to private HF commit `5ca0c090fc6d76ac50938924b28a57b1026c3043`; tag `qwen3_32b_reference_diagnostic500_20260707` |
-| `qwen3_32b_diagnostic500_experiments_20260707` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-32B` | repaired diagnostic 500 references plus Qwen3-VL evidence index | 7 condition outputs under `outputs/chinese_lips_train/experiments/qwen3_32b_diagnostic500/` and HF path `experiments/qwen3_32b_diagnostic500_experiments_20260707/` | Completed; uploaded to private HF commit `3cc7249d45eca71a4f0b5c06a6b0773efead128a`; tag `qwen3_32b_diagnostic500_experiments_20260707`; BLEU best is `V4_ocr_plus_visual` at 85.17, but hard-label/evidence metrics are not paper-grade until manual labels are added |
+| `qwen3_32b_diagnostic500_experiments_20260707` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-32B` | repaired diagnostic 500 references plus Qwen3-VL evidence index | 7 condition outputs under `outputs/chinese_lips_train/experiments/qwen3_32b_diagnostic500/` and HF path `experiments/qwen3_32b_diagnostic500_experiments_20260707/` | Completed; uploaded to private HF commit `3cc7249d45eca71a4f0b5c06a6b0773efead128a`; tag `qwen3_32b_diagnostic500_experiments_20260707`; diagnostic self-BLEU only, not a method ranking until independent references and uniform-batch checks are added |
 | `qwen3_vl_train_20260706_164650` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | partial shards under `outputs/chinese_lips_train/enrichment/qwen3_vl_train_20260706_164650/` | Paused/superseded; do not resume with old one-sample-per-process settings |
 
 ## Current Durable Decisions
@@ -114,10 +114,12 @@ confirmed.
 
 ## Current Next Actions
 
-1. Add manual hard-label/supporting-evidence annotations for the diagnostic
+1. Add independent or human references for the diagnostic 500 before treating
+   BLEU as a method ranking; the current BLEU table is Qwen3-32B self-BLEU.
+2. Add manual hard-label/supporting-evidence annotations for the diagnostic
    500 before claiming HDA, evidence precision/recall, or paper-grade visual
    hallucination metrics.
-2. Inspect why `V6_policy_visual` underperforms `V4_ocr_plus_visual` on BLEU
-   before scaling policy experiments.
-3. Decide whether to scale Qwen3-32B pseudo references beyond diagnostic 500
+3. Equalize or quantify batch-shape sensitivity before comparing V0-V5
+   batch=192 outputs with V6/V8 batch=128 outputs.
+4. Decide whether to scale Qwen3-32B pseudo references beyond diagnostic 500
    after manual diagnostic labels and metric semantics are fixed.

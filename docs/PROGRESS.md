@@ -383,7 +383,8 @@ or a stronger Qwen3-VL variant if available.
   - Each condition has exactly 500 outputs.
   - `V0`-`V5` were generated with batch=192.
   - `V6` and `V8` were generated with batch=128.
-- Main BLEU results against repaired Qwen3-32B diagnostic references:
+- Diagnostic self-BLEU results against repaired Qwen3-32B diagnostic
+  references:
   - `V0_no_context`: 76.50
   - `V2_ocr_only`: 83.41
   - `V3_visual_caption_only`: 83.88
@@ -391,13 +392,16 @@ or a stronger Qwen3-VL variant if available.
   - `V5_naive_all_visual`: 84.75
   - `V6_policy_visual`: 83.24
   - `V8_wrong_visual`: 81.66
-- Interpretation:
-  - OCR/visual context improves strongly over no-context on this diagnostic
-    slice.
-  - `V4_ocr_plus_visual` is currently the best BLEU condition.
-  - Wrong visual context hurts relative to matched visual context, as expected.
-  - `V6_policy_visual` underperforms `V4_ocr_plus_visual`, so policy evidence
-    selection needs diagnosis before scaling.
+- Interpretation boundary:
+  - These BLEU values are pipeline sanity signals only. References and
+    hypotheses both come from `Qwen/Qwen3-32B`, so the table can reward
+    stylistic self-agreement and evidence overlap rather than translation
+    correctness.
+  - `V0`-`V5` used batch=192 while `V6`/`V8` used batch=128 after a V6 OOM;
+    cross-condition ranking is therefore confounded until uniform-batch or
+    batch-sensitivity checks are run.
+  - Do not use the current table as a paper-grade claim that one condition is
+    better than another.
 - Metric caveat:
   - Diagnostic 500 does not yet have manual `hard_label`, `supporting_ids`, or
     verified hallucination labels.
@@ -415,12 +419,15 @@ or a stronger Qwen3-VL variant if available.
 
 ## Open Items
 
-1. Add manual hard-label, supporting-evidence, and hallucination-review labels
+1. Add independent or human references for diagnostic 500 before treating BLEU
+   as a method ranking.
+2. Add manual hard-label, supporting-evidence, and hallucination-review labels
    for diagnostic 500 so HDA/evidence/visual metrics become meaningful.
-2. Diagnose why `V6_policy_visual` underperforms `V4_ocr_plus_visual`.
-3. Decide whether to scale the reference pipeline and experiments beyond
+3. Run a uniform-batch or batch-sensitivity check before comparing `V6` against
+   the batch=192 conditions.
+4. Decide whether to scale the reference pipeline and experiments beyond
    diagnostic 500 after the metric semantics are fixed.
-4. Select and send a 500-1,000 item diagnostic set for human English
+5. Select and send a 500-1,000 item diagnostic set for human English
    translation.
-5. Add an ST-native no-visual sanity check dataset such as BSTC for pipeline
+6. Add an ST-native no-visual sanity check dataset such as BSTC for pipeline
    validation.

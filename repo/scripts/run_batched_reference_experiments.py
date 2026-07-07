@@ -16,8 +16,12 @@ from slidesst.data.schema import ChallengeItem, EvidenceItem, ModelOutput
 from slidesst.streaming.simulator import StreamState
 from slidesst.translation.adapters import build_translator
 from slidesst.vision.evidence_builder import build_visual_evidence
-from generate_references import _translation_config
-from run_stream_translate import evidence_for_item, select_condition_packet
+try:
+    from generate_references import _translation_config
+    from run_stream_translate import evidence_for_item, select_condition_packet
+except ModuleNotFoundError:
+    from scripts.generate_references import _translation_config
+    from scripts.run_stream_translate import evidence_for_item, select_condition_packet
 
 
 DEFAULT_CONDITIONS = (

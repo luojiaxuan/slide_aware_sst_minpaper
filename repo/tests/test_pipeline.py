@@ -1,9 +1,10 @@
 from slidesst.context.policy import EvidencePolicy
 from slidesst.context.retriever import EvidenceRetriever
 from slidesst.data.mining import mine_hard_examples
-from slidesst.data.schema import ChallengeItem, EvidenceItem
+from slidesst.data.schema import ChallengeItem, EvidenceItem, SlideInfo, StreamingUnit, VideoSpan, VisualContext
 from slidesst.translation.adapters import OpenAICompatibleTranslator, _build_messages, _chat_template_kwargs
 from scripts.generate_references import _translation_config
+from scripts.run_batched_reference_experiments import _condition_evidence, _final_state, _packet_for_condition
 
 
 def test_mine_hard_examples_adds_homophone_item():
@@ -68,3 +69,62 @@ def test_generate_references_keeps_config_prompt_version_by_default():
     assert _translation_config(cfg, None, None, None, None)["prompt_version"] == "config_v"
     assert _translation_config(cfg, None, None, None, "cli_v")["prompt_version"] == "cli_v"
     assert _translation_config(cfg, None, None, "cuda:1", None)["device"] == "cuda:1"
+
+
+def test_batched_runner_uses_final_streaming_state():
+    item = ChallengeItem(
+        id="x",
+        lecture_id="l",
+        source_transcript="这里讨论线程调度。",
+        streaming_units=[
+            StreamingUnit(t=1.0, partial_transcript="这里讨论"),
+            StreamingUnit(t=2.0, partial_transcript="这里讨论线程调度。"),
+        ],
+        slides=SlideInfo(matched_slide_id="s1"),
+    )
+
+    state = _final_state(item)
+
+    assert state.partial_transcript == item.source_transcript
+    assert state.current_slide_id == "s1"
+    assert state.video_time_sec == 2.0
+
+
+def test_batched_runner_v8_packet_is_wrong_visual_only_and_does_not_leak():
+    item = ChallengeItem(
+        id="x",
+        lecture_id="l",
+        source_transcript="这里讨论线程调度。",
+        video=VideoSpan(start_sec=0.0, end_sec=2.0),
+        slides=SlideInfo(matched_slide_id="s1"),
+        visual_context=VisualContext(
+            video_id="v",
+            clip_id="c",
+            scene_summary="A lecture slide about thread scheduling.",
+            ocr_text=["Thread scheduling"],
+            objects=["diagram"],
+        ),
+    )
+    indexed = [
+        EvidenceItem(
+            evidence_id="correct_ocr",
+            item_id="x",
+            source_type="video_ocr",
+            modality="video",
+            text="Thread scheduling",
+        )
+    ]
+    cfg = {"context": {"packet_top_k": 5}}
+    policy = EvidencePolicy(use_threshold=0.3, delay_threshold=0.2, top_k=5)
+    state = _final_state(item)
+
+    item.evidence = _condition_evidence(item, {"x": indexed}, "V8_wrong_visual", "matched")
+    packet, policy_log = _packet_for_condition(item, state, "V8_wrong_visual", policy, cfg)
+
+    assert policy_log == []
+    assert packet
+    assert {ev.source_type for ev in packet} <= {"wrong_video", "wrong_clip", "negative_visual"}
+    assert "correct_ocr" not in {ev.evidence_id for ev in packet}
+
+    next_evidence = _condition_evidence(item, {"x": indexed}, "V2_ocr_only", "matched")
+    assert [ev.evidence_id for ev in next_evidence] == ["correct_ocr"]
