@@ -365,13 +365,62 @@ or a stronger Qwen3-VL variant if available.
     - Path:
       `reference_pilots/qwen3_32b_reference_diagnostic500_20260707/`
 
+## 2026-07-07 Qwen3-32B Diagnostic 500 Context Ablation
+
+- Added batched final-state experiment support:
+  - `repo/scripts/run_batched_reference_experiments.py`
+  - `repo/configs/chinese_lips_qwen3_diagnostic500_eval.yaml`
+- Ran 7 repaired-diagnostic-500 conditions with `Qwen/Qwen3-32B`:
+  `V0_no_context`, `V2_ocr_only`, `V3_visual_caption_only`,
+  `V4_ocr_plus_visual`, `V5_naive_all_visual`, `V6_policy_visual`, and
+  `V8_wrong_visual`.
+- GPU utilization:
+  - `V5` batch=192 tune reached about 95% average utilization.
+  - Full run monitor windows reached 96% and 100% while running `V0`-`V5`.
+  - `V6` OOMed at batch=192, then completed with batch=128 and a 99% monitor
+    window.
+- Output completeness:
+  - Each condition has exactly 500 outputs.
+  - `V0`-`V5` were generated with batch=192.
+  - `V6` and `V8` were generated with batch=128.
+- Main BLEU results against repaired Qwen3-32B diagnostic references:
+  - `V0_no_context`: 76.50
+  - `V2_ocr_only`: 83.41
+  - `V3_visual_caption_only`: 83.88
+  - `V4_ocr_plus_visual`: 85.17
+  - `V5_naive_all_visual`: 84.75
+  - `V6_policy_visual`: 83.24
+  - `V8_wrong_visual`: 81.66
+- Interpretation:
+  - OCR/visual context improves strongly over no-context on this diagnostic
+    slice.
+  - `V4_ocr_plus_visual` is currently the best BLEU condition.
+  - Wrong visual context hurts relative to matched visual context, as expected.
+  - `V6_policy_visual` underperforms `V4_ocr_plus_visual`, so policy evidence
+    selection needs diagnosis before scaling.
+- Metric caveat:
+  - Diagnostic 500 does not yet have manual `hard_label`, `supporting_ids`, or
+    verified hallucination labels.
+  - HDA, evidence precision/recall, and paper-grade visual hallucination
+    metrics are not meaningful yet.
+- Uploaded the full experiment bundle to the private HF dataset repo:
+  - HF commit:
+    `3cc7249d45eca71a4f0b5c06a6b0773efead128a`
+  - HF tag:
+    `qwen3_32b_diagnostic500_experiments_20260707`
+  - Path:
+    `experiments/qwen3_32b_diagnostic500_experiments_20260707/`
+- Detailed record:
+  [`docs/QWEN3_DIAGNOSTIC500_EXPERIMENTS_20260707.md`](QWEN3_DIAGNOSTIC500_EXPERIMENTS_20260707.md).
+
 ## Open Items
 
-1. Build OCR-only, VLM-summary, OCR+VLM, policy, and wrong-context experiment
-   runs on the repaired diagnostic 500 references.
-2. Decide whether to scale the reference pipeline and experiments beyond
-   diagnostic 500 after the first method comparison.
-3. Select and send a 500-1,000 item diagnostic set for human English
+1. Add manual hard-label, supporting-evidence, and hallucination-review labels
+   for diagnostic 500 so HDA/evidence/visual metrics become meaningful.
+2. Diagnose why `V6_policy_visual` underperforms `V4_ocr_plus_visual`.
+3. Decide whether to scale the reference pipeline and experiments beyond
+   diagnostic 500 after the metric semantics are fixed.
+4. Select and send a 500-1,000 item diagnostic set for human English
    translation.
-4. Add an ST-native no-visual sanity check dataset such as BSTC for pipeline
+5. Add an ST-native no-visual sanity check dataset such as BSTC for pipeline
    validation.
