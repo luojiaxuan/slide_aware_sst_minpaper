@@ -11,7 +11,7 @@ paths:
 translation:
   provider: hf_transformers
   model: Qwen/Qwen3-32B
-  device: cuda:3
+  device: cuda:0
   torch_dtype: bfloat16
   trust_remote_code: true
   enable_thinking: false
