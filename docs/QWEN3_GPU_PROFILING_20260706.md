@@ -129,9 +129,14 @@ python3 scripts/enrich_visual_context.py \
 Startup validation reached 616 rows per shard with GPU0/GPU1 both at 100%
 instantaneous utilization and about 122GB memory per GPU.
 
-The run finished successfully on 2026-07-06. Post-run checks passed for the
-combined challenge row count and ids, evidence row count, diagnostic sample row
-count, and diagnostic stats JSON parse. Hugging Face upload is still pending.
+The run finished successfully on 2026-07-06. The initial combined artifact had
+the expected challenge row count and ids, but stricter post-run QA found 3,387
+fallback rows caused by truncated raw model JSON. A targeted repair pass rebuilt
+the final challenge, evidence, and diagnostic sample. The final repaired
+artifact has 29,322 challenge rows, 526,597 evidence rows, 500 diagnostic rows,
+0 missing raw model outputs, and 0 raw parse failures. See
+[`docs/QWEN3_CONTEXT_QA_20260706.md`](QWEN3_CONTEXT_QA_20260706.md) for the
+quality audit and repair record. Hugging Face upload is still pending.
 
 ## Failure Handling Notes
 

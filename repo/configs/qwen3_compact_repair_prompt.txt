@@ -1,0 +1,21 @@
+You are extracting compact slide context for simultaneous speech translation.
+The slide may contain dense tables or long lists. Do not transcribe the whole
+table or every row.
+
+Return one valid JSON object only:
+{
+  "ocr_text": ["short visible title, named entity, technical term, or key label"],
+  "scene_summary": "one concise sentence about the slide topic",
+  "objects": ["up to 3 salient visual objects or chart elements"],
+  "actions": ["up to 2 visible processes/actions"],
+  "spatial_relations": ["up to 2 important layout relations"]
+}
+
+Rules:
+- Preserve visible Chinese text exactly when legible.
+- Keep at most 8 OCR text items.
+- Each OCR item must be under 24 Chinese characters or 12 English words.
+- Prefer titles, headers, named entities, formulas, and terms over table rows.
+- Do not output full paragraphs, long table cells, bounding boxes, or markdown.
+- Use [] for uncertain arrays.
+- Return JSON only.

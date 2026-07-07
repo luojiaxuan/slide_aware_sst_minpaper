@@ -24,6 +24,8 @@ links, or handoff state.
 - Progress log: [`docs/PROGRESS.md`](PROGRESS.md)
 - Qwen3-VL GPU profiling evidence:
   [`docs/QWEN3_GPU_PROFILING_20260706.md`](QWEN3_GPU_PROFILING_20260706.md)
+- Qwen3-VL context QA and repair record:
+  [`docs/QWEN3_CONTEXT_QA_20260706.md`](QWEN3_CONTEXT_QA_20260706.md)
 
 ## Dataset and Artifact Truth
 
@@ -44,9 +46,10 @@ they are staged locally and recorded here with intended destinations.
 | Chinese-LiPS frame-backed train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified.jsonl` | TBD, likely `<hf-owner>/slide-context-sst-chinese-lips` | Not uploaded |
 | Qwen2.5-VL pilot enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
 | Qwen2.5-VL pilot enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
-| Qwen3-VL enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl` | TBD, likely `<hf-owner>/slide-context-sst-chinese-lips` | Local staging complete; 29,322 rows; not uploaded |
-| Qwen3-VL enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl` | TBD, same dataset repo as above | Local staging complete; 437,122 rows; not uploaded |
-| Qwen3-VL train diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen3_vl_context.csv` | TBD, same dataset repo as above or Git if kept as lightweight metadata | Local staging complete; 500 rows; not uploaded |
+| Qwen3-VL enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl` | TBD, likely `<hf-owner>/slide-context-sst-chinese-lips` | Local staging QA passed after targeted repair; 29,322 rows; not uploaded |
+| Qwen3-VL enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl` | TBD, same dataset repo as above | Local staging QA passed after rebuild; 526,597 rows; not uploaded |
+| Qwen3-VL train diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen3_vl_context.csv` | TBD, same dataset repo as above or Git if kept as lightweight metadata | Local staging QA passed after rebuild; 500 rows; not uploaded |
+| Qwen3-VL context QA report | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/qa/qwen3_vl_context_qa.json` | Git doc summary now; raw QA JSON can be included in the HF dataset repo manifest if useful | Local staging complete; not uploaded |
 | Train diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen_vl_context.csv` | TBD, same dataset repo as above or Git if kept as lightweight metadata | Not uploaded |
 | Test diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_test/annotation/diagnostic_sample_500.csv` | TBD | Not uploaded |
 
@@ -67,14 +70,18 @@ Hugging Face and record the exact repo revision here.
   GPU, `--batch-size 56` per worker, `--max-new-tokens 256`, and
   `--prefetch-batches 1`. A 2026-07-06 Hyper00 short run sustained at least
   91% utilization after warmup on both active GPUs with about 122GB peak memory
-  per GPU. The full-train run completed on 2026-07-06 and post-run
-  combine/schema/sample checks passed.
+  per GPU. The full-train run completed on 2026-07-06. Post-run QA found 3,387
+  fallback rows caused by truncated raw model JSON, then a targeted Qwen3-VL
+  repair pass replaced exactly those rows. Final QA has 0 missing raw model
+  outputs and 0 raw parse failures; the rebuilt evidence index also passes an
+  internal source-count consistency check against the repaired challenge.
 
 ## Active Runs
 
 | Run | Host/container | Model | Input | Output | Status |
 | --- | --- | --- | --- | --- | --- |
-| `qwen3_vl_train_bs56x2_2gpu_20260706_214711` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | final combined artifacts under `outputs/chinese_lips_train/{data,index,annotation}/` plus shard outputs under `outputs/chinese_lips_train/enrichment/qwen3_vl_train_bs56x2_2gpu_20260706_214711/` | Completed locally; 29,322 challenge rows, 437,122 evidence rows, 500 diagnostic rows; HF upload pending |
+| `qwen3_vl_train_bs56x2_2gpu_20260706_214711` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | final repaired artifacts under `outputs/chinese_lips_train/{data,index,annotation,qa}/` plus shard outputs under `outputs/chinese_lips_train/enrichment/qwen3_vl_train_bs56x2_2gpu_20260706_214711/` | Completed and repaired locally; final QA has 29,322 challenge rows, 526,597 evidence rows, 500 diagnostic rows, 0 missing raw model outputs, 0 raw parse failures; HF upload pending |
+| `qwen3_parse_failure_repair512_20260706_231750` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | 3,387 failed Qwen3-VL rows from the initial combined artifact | repair outputs under `outputs/chinese_lips_train/repair/qwen3_parse_failure_repair512_20260706_231750/` | Completed locally; 512/768/compact/strict passes repaired all initial parse failures |
 | `qwen3_vl_train_20260706_164650` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | partial shards under `outputs/chinese_lips_train/enrichment/qwen3_vl_train_20260706_164650/` | Paused/superseded; do not resume with old one-sample-per-process settings |
 
 ## Current Durable Decisions

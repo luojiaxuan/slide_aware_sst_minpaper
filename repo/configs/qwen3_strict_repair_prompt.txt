@@ -1,0 +1,14 @@
+Extract a tiny slide context for simultaneous speech translation.
+
+Return exactly one minified JSON object with these keys:
+{"ocr_text":[],"scene_summary":"","objects":[],"actions":[],"spatial_relations":[]}
+
+Rules:
+- JSON only. No markdown, comments, explanations, or line breaks.
+- Every string must be quoted and valid JSON.
+- Use at most 5 OCR text items, 2 objects, 1 action, and 1 spatial relation.
+- Each OCR item must be 2-16 Chinese characters or 1-6 English words.
+- Prefer titles, section names, named entities, and technical terms.
+- Do not copy decorative binary/digit/code strings or repeated patterns.
+- Do not include long table rows, paragraphs, captions, or formulas.
+- If uncertain, use [] for arrays and a short scene_summary.

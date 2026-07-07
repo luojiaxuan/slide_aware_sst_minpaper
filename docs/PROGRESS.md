@@ -222,17 +222,44 @@ or a stronger Qwen3-VL variant if available.
     - Combined challenge:
       `outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl`,
       29,322 rows, 29,322 unique ids.
-    - Enriched evidence:
+    - Initial coarse checks passed for row counts and ids, but the stricter QA
+      pass found 3,387 rows with truncated raw model JSON and generic fallback
+      context. Those rows were not accepted as final Qwen3-VL context.
+  - QA and repair:
+    - Added `repo/scripts/audit_visual_context_quality.py` and
+      `repo/tests/test_audit_visual_context_quality.py`.
+    - Claude diagnostic review agreed that the truncated rows should be rerun,
+      not salvaged from partial raw JSON.
+    - Targeted repair run:
+      `outputs/chinese_lips_train/repair/qwen3_parse_failure_repair512_20260706_231750`.
+    - Repair sequence: 512-token rerun fixed 3,259/3,387 rows, 768-token rerun
+      fixed 96/128 remaining rows, compact prompt fixed 28/32 remaining rows,
+      and strict prompt fixed the final 4 rows.
+    - The final merge replaced exactly 3,387 ids and preserved the 29,322-row
+      challenge order.
+    - Final QA report:
+      `outputs/chinese_lips_train/qa/qwen3_vl_context_qa.json`.
+    - Final QA metrics: 29,322 rows, 29,322 unique ids, 0 duplicate ids,
+      0 missing visual contexts, 0 missing enrichment metadata, 0 empty
+      contexts, 0 missing raw model outputs, 0 raw parse failures, and 1 valid
+      no-OCR image scene.
+    - Rebuilt evidence:
       `outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl`,
-      437,122 rows.
-    - Enriched diagnostic sample:
+      526,597 rows. Internal source-count deltas are 0 for `video_action`,
+      `video_object`, `video_ocr`, `video_scene`, and `video_spatial`, meaning
+      the index rebuild is consistent with the repaired challenge fields.
+    - Rebuilt diagnostic sample:
       `outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen3_vl_context.jsonl`
       and `.csv`, 500 rows.
-    - Diagnostic sample stats:
-      `ocr_support`: 286, `visual_non_ocr`: 173, `term_homophone`: 131,
-      `latency_critical`: 118, `distractor_risk`: 100, `no_context`: 1.
-    - Post-run checks passed: challenge row count and unique ids, evidence row
-      count, sample row count, and diagnostic stats JSON parse.
+    - Final selected sample stats:
+      `ocr_support`: 337, `visual_non_ocr`: 142, `term_homophone`: 128,
+      `latency_critical`: 115, `distractor_risk`: 101, `no_context`: 2.
+    - The all-row `no_context` count increased because 1,195 repaired rows
+      moved from the previous empty-OCR `visual_non_ocr` bucket to valid
+      non-overlapping OCR/context rows that do not meet other diagnostic slice
+      thresholds.
+    - Detailed QA record:
+      [`docs/QWEN3_CONTEXT_QA_20260706.md`](QWEN3_CONTEXT_QA_20260706.md).
 
 ## Open Items
 
