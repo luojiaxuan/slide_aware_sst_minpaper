@@ -272,9 +272,8 @@ or a stronger Qwen3-VL variant if available.
     research group unless the upstream maintainers grant permission.
 - Prepared a private/gated HF upload bundle on Hyper00:
   `/data/projects/slide_aware_sst_minpaper/repo/outputs/hf_upload/slide-context-sst-chinese-lips/qwen3_vl_context_v1`
-- Intended HF repo id: `luojiaxuan/slide-context-sst-chinese-lips`, variant
-  `qwen3_vl_context_v1`. The owner is inferred from this Git/GitHub project and
-  should be confirmed before upload.
+- HF repo id: `gavinlaw/slide-context-sst-chinese-lips`, variant
+  `qwen3_vl_context_v1`.
 - Bundle source Git commit:
   `c983c91cbfaaa5f400be556b0fcbb9cd24b6258e`.
 - Bundle contents:
@@ -286,20 +285,19 @@ or a stronger Qwen3-VL variant if available.
   - `annotation/diagnostic_sample_500_qwen3_vl_context.stats.json`.
   - `qa/qwen3_vl_context_qa.json`.
   - `README.md` and `manifest.json` with checksums and access notes.
-- Upload was not performed. The token available in the Hyper00 container is for
-  `gaoyang07` and is a fine-grained token without dataset write/create
-  permission. Upload requires the correct HF owner/token and a private or
-  otherwise access-controlled repo.
+- Uploaded the bundle to the private HF dataset repo:
+  <https://huggingface.co/datasets/gavinlaw/slide-context-sst-chinese-lips>
+- HF commit:
+  `a83770446ded4599bf9d95d2b77cdcc7fe359ef7`
+- HF tag: `qwen3_vl_context_v1`
+- Verified repo privacy via the HF API: `private=True`.
 
 ## Open Items
 
-1. Upload the prepared private/gated HF bundle after confirming the HF owner,
-   token, and Chinese-LiPS redistribution permission/access policy. Record repo
-   URL and revision in `docs/SOURCE_OF_TRUTH.md`.
-2. Generate fresh pseudo references using the enriched Qwen3-VL context artifacts.
-3. Build OCR-only, VLM-summary, OCR+VLM, policy, and wrong-context experiment
+1. Generate fresh pseudo references using the enriched Qwen3-VL context artifacts.
+2. Build OCR-only, VLM-summary, OCR+VLM, policy, and wrong-context experiment
    runs on the enriched split.
-4. Select and send a 500-1,000 item diagnostic set for human English
+3. Select and send a 500-1,000 item diagnostic set for human English
    translation.
-5. Add an ST-native no-visual sanity check dataset such as BSTC for pipeline
+4. Add an ST-native no-visual sanity check dataset such as BSTC for pipeline
    validation.
