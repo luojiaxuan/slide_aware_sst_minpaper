@@ -30,6 +30,8 @@ links, or handoff state.
   [`docs/QWEN3_REFERENCE_PILOT_20260706.md`](QWEN3_REFERENCE_PILOT_20260706.md)
 - Qwen3-32B diagnostic-500 context ablation:
   [`docs/QWEN3_DIAGNOSTIC500_EXPERIMENTS_20260707.md`](QWEN3_DIAGNOSTIC500_EXPERIMENTS_20260707.md)
+- Diagnostic human review guide:
+  [`docs/DIAGNOSTIC_REVIEW_GUIDE.md`](DIAGNOSTIC_REVIEW_GUIDE.md)
 
 ## Dataset and Artifact Truth
 
