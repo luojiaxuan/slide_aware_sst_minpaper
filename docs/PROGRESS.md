@@ -416,6 +416,33 @@ or a stronger Qwen3-VL variant if available.
     `experiments/qwen3_32b_diagnostic500_experiments_20260707/`
 - Detailed record:
   [`docs/QWEN3_DIAGNOSTIC500_EXPERIMENTS_20260707.md`](QWEN3_DIAGNOSTIC500_EXPERIMENTS_20260707.md).
+- Claude hostile review flagged the initial interpretation as too strong
+  because the table is Qwen3-32B self-BLEU and V0-V5 used batch=192 while
+  V6/V8 used batch=128. Accepted fixes:
+  - Reframed BLEU as diagnostic self-BLEU only.
+  - Added explicit per-condition batch-size provenance to
+    `repo/configs/chinese_lips_qwen3_diagnostic500_eval.yaml`.
+  - Verified the final streaming transcript equals `source_transcript` for all
+    500 rows.
+  - Added tests covering final-state selection and V8 wrong-visual packet
+    isolation.
+- Batch160 sensitivity:
+  - Full V4/V5/V6/V8 rerun used one selected Hyper00 H200, `cuda:0`.
+  - Stable GPU monitor windows: V4 99%, V5 100%, V6 91%.
+  - V0 batch160 tune was only 83%, so a full all-condition uniform-batch run
+    was not continued under the 90% utilization rule.
+  - Self-BLEU deltas relative to the parent experiment:
+    - `V4_ocr_plus_visual`: 85.1712 to 85.2877, delta +0.1165.
+    - `V5_naive_all_visual`: 84.7461 to 84.9740, delta +0.2279.
+    - `V6_policy_visual`: 83.2369 to 83.5166, delta +0.2797.
+    - `V8_wrong_visual`: 81.6593 to 81.6652, delta +0.0060.
+  - Uploaded the batch160 sensitivity bundle to the private HF dataset repo:
+    - HF commit:
+      `03f59f1babc0c37e778e8f415bc85ab5fb36f573`
+    - HF tag:
+      `qwen3_32b_diagnostic500_batch160_visual_policy_20260707`
+    - Path:
+      `experiments/qwen3_32b_diagnostic500_batch160_visual_policy_20260707/`
 
 ## Open Items
 
@@ -423,8 +450,9 @@ or a stronger Qwen3-VL variant if available.
    as a method ranking.
 2. Add manual hard-label, supporting-evidence, and hallucination-review labels
    for diagnostic 500 so HDA/evidence/visual metrics become meaningful.
-3. Run a uniform-batch or batch-sensitivity check before comparing `V6` against
-   the batch=192 conditions.
+3. Treat the batch160 V4/V5/V6/V8 sensitivity artifact as the current
+   batch-shape check for visual/policy conditions; do not run a full all-condition
+   uniform batch unless V0/no-context can meet the 90% utilization rule.
 4. Decide whether to scale the reference pipeline and experiments beyond
    diagnostic 500 after the metric semantics are fixed.
 5. Select and send a 500-1,000 item diagnostic set for human English

@@ -123,6 +123,49 @@ The diagnostic 500 artifact does not yet have manual `hard_label`,
 - The current result is suitable for pipeline validation and a first ablation,
   not final paper claims.
 
+## Claude Review and Batch160 Sensitivity
+
+Claude hostile review marked the original interpretation as `NEEDS_FIX`.
+Accepted issues:
+
+- BLEU is Qwen3-32B self-BLEU because references and hypotheses were generated
+  by the same model family.
+- The parent run had a batch-shape confound: `V0`-`V5` used batch=192 while
+  `V6`/`V8` used batch=128.
+- The actual per-condition batch sizes needed to be recorded in Git config, not
+  only in prose.
+
+Rejected with evidence:
+
+- Reference source text mismatch: on the repaired diagnostic 500, every final
+  streaming partial equals `source_transcript`.
+- V8 correct-evidence leakage: the runner appends wrong evidence to the item,
+  but the V8 packet selector keeps only `wrong_video`, `wrong_clip`, or
+  `negative_visual`; a unit test now locks this behavior.
+
+Follow-up sensitivity run:
+
+- HF commit:
+  `03f59f1babc0c37e778e8f415bc85ab5fb36f573`
+- HF tag:
+  `qwen3_32b_diagnostic500_batch160_visual_policy_20260707`
+- Path in HF repo:
+  `experiments/qwen3_32b_diagnostic500_batch160_visual_policy_20260707/`
+- Local run:
+  `outputs/chinese_lips_train/experiments/qwen3_32b_diagnostic500/runs_batch160_visual_policy/`
+
+| Condition | Original batch | Original BLEU | Batch160 BLEU | Delta |
+| --- | ---: | ---: | ---: | ---: |
+| `V4_ocr_plus_visual` | 192 | 85.1712 | 85.2877 | +0.1165 |
+| `V5_naive_all_visual` | 192 | 84.7461 | 84.9740 | +0.2279 |
+| `V6_policy_visual` | 128 | 83.2369 | 83.5166 | +0.2797 |
+| `V8_wrong_visual` | 128 | 81.6593 | 81.6652 | +0.0060 |
+
+GPU monitor windows for the full batch160 sensitivity run were 99% on V4,
+100% on V5, and 91% on V6. A V0 batch160 tune reached only 83%, so the
+all-condition uniform-batch rerun was stopped under the project GPU utilization
+rule.
+
 ## 输出质量扫描
 
 No condition produced `<think>` leakage. Residual CJK rows are low but non-zero:

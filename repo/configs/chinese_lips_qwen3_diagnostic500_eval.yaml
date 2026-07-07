@@ -76,6 +76,16 @@ recorded_run:
     V5_naive_all_visual: 192
     V6_policy_visual: 128
     V8_wrong_visual: 128
+  sensitivity_artifacts:
+    - artifact_tag: qwen3_32b_diagnostic500_batch160_visual_policy_20260707
+      hf_commit: 03f59f1babc0c37e778e8f415bc85ab5fb36f573
+      path_in_hf_repo: experiments/qwen3_32b_diagnostic500_batch160_visual_policy_20260707/
+      status: visual_policy_batch160_self_bleu_sensitivity
+      conditions:
+        V4_ocr_plus_visual: 160
+        V5_naive_all_visual: 160
+        V6_policy_visual: 160
+        V8_wrong_visual: 160
 conditions:
   - V0_no_context
   - V2_ocr_only
