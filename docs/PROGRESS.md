@@ -303,9 +303,50 @@ or a stronger Qwen3-VL variant if available.
     matched stored `visual_context` fields for all rows.
   - Required enrichment metadata keys were present for all rows.
 
+## 2026-07-07 Qwen3-32B Reference Pilot
+
+- Fresh pseudo-reference generation gate used the private HF source revision:
+  `gavinlaw/slide-context-sst-chinese-lips@a83770446ded4599bf9d95d2b77cdcc7fe359ef7`.
+- Added Qwen3-32B reference-generation support:
+  - `repo/configs/chinese_lips_qwen3_hf_reference_pilot.yaml`
+  - batched `hf_transformers` generation in `repo/scripts/generate_references.py`
+  - Qwen3 `enable_thinking: false` chat-template passthrough
+  - optional `system_prompt`
+  - `repo/scripts/repair_references.py` for targeted CJK/overlong repairs
+  - `repo/scripts/package_reference_generation_bundle.py` for HF artifact packaging
+- The first Qwen3-32B smoke exposed default `<think>` output. After setting
+  `enable_thinking: false`, the 2-item smoke passed audit.
+- 100-row pilot:
+  - Base artifact:
+    `outputs/chinese_lips_train/reference_generation/qwen3_32b_hf_revision_a837704/pilot_100_refs.jsonl`
+  - Targeted repair artifact:
+    `outputs/chinese_lips_train/reference_generation/qwen3_32b_hf_revision_a837704/pilot_100_refs_repaired.jsonl`
+  - Repair fixed 3 rows with residual Chinese terms.
+  - Final audit: 100 rows, 84 pass, 16 review, 0 reject.
+- GPU utilization tuning:
+  - batch=16 triggered low-util alerts: 67-83% average in 10-second windows.
+  - batch=32 reached 88.3% average in a 10-second manual sample.
+  - batch=48 reached 100% in all 10 manual samples, used about 122GiB H200
+    memory, completed 48 rows in 45.9 seconds, and audited as 43 pass,
+    5 review, 0 reject.
+  - Current recommended single-GPU Qwen3-32B teacher setting is batch=48 plus
+    targeted repair.
+- Uploaded the repaired 100-row pilot to the private HF dataset repo:
+  - HF repo:
+    <https://huggingface.co/datasets/gavinlaw/slide-context-sst-chinese-lips>
+  - HF commit:
+    `ee785604ba51a5c65335de12bfcfd99d3c4febff`
+  - HF tag:
+    `qwen3_32b_reference_pilot_20260706`
+  - Path:
+    `reference_pilots/qwen3_32b_reference_pilot_20260706/`
+- Detailed record:
+  [`docs/QWEN3_REFERENCE_PILOT_20260706.md`](QWEN3_REFERENCE_PILOT_20260706.md).
+
 ## Open Items
 
-1. Generate fresh pseudo references using the enriched Qwen3-VL context artifacts.
+1. Run the batch=48 + targeted-repair Qwen3-32B pipeline on the full diagnostic
+   500 sample.
 2. Build OCR-only, VLM-summary, OCR+VLM, policy, and wrong-context experiment
    runs on the enriched split.
 3. Select and send a 500-1,000 item diagnostic set for human English

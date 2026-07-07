@@ -59,7 +59,7 @@ def audit_reference_item(
         flags.append(f"evidence_source_mention={evidence_source_phrase}")
 
     for text in _visual_texts(item):
-        if len(text) >= 2 and text in candidate:
+        if len(text) >= 2 and _contains_visual_text(candidate, text):
             flags.append(f"copied_visual_text={_shorten(text)}")
 
     source_chars = len(source)
@@ -150,7 +150,6 @@ def _severity(flags: list[str]) -> str:
     reject_prefixes = (
         "empty_translation",
         "visual_placeholder=",
-        "copied_visual_text=",
         "length_ratio_high=",
     )
     if any(flag.startswith(reject_prefixes) for flag in flags):
@@ -158,6 +157,7 @@ def _severity(flags: list[str]) -> str:
     review_prefixes = (
         "target_cjk_chars=",
         "evidence_source_mention=",
+        "copied_visual_text=",
         "length_ratio_review=",
     )
     if any(flag.startswith(review_prefixes) for flag in flags):
@@ -190,6 +190,18 @@ def _shorten(text: str, limit: int = 32) -> str:
     if len(text) <= limit:
         return text
     return text[: limit - 3] + "..."
+
+
+def _contains_visual_text(candidate: str, visual_text: str) -> bool:
+    text = re.sub(r"\s+", " ", visual_text).strip()
+    if not text:
+        return False
+    if CJK_RE.search(text):
+        return text in candidate
+    normalized_candidate = re.sub(r"\s+", " ", candidate.lower())
+    normalized_text = text.lower()
+    pattern = rf"(?<![a-z0-9]){re.escape(normalized_text)}(?![a-z0-9])"
+    return re.search(pattern, normalized_candidate) is not None
 
 
 def _flag_name(flag: str) -> str:

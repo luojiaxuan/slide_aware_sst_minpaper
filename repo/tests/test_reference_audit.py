@@ -41,3 +41,33 @@ def test_reference_audit_summary_counts_flag_families():
     assert summary["severity_counts"]["pass"] == 1
     assert summary["severity_counts"]["review"] == 1
     assert summary["flag_counts"]["evidence_source_mention"] == 1
+
+
+def test_reference_audit_uses_word_boundaries_for_visual_objects():
+    item = ChallengeItem(
+        id="clip_2",
+        lecture_id="lecture",
+        source_transcript="许多年轻人选择推迟结婚。",
+        reference=ReferenceInfo(translation="Many young people choose to postpone marriage."),
+        visual_context=VisualContext(objects=["man"]),
+    )
+
+    audit = audit_reference_item(item)
+
+    assert audit.severity == "pass"
+    assert audit.flags == []
+
+
+def test_reference_audit_reviews_copied_visual_text():
+    item = ChallengeItem(
+        id="clip_3",
+        lecture_id="lecture",
+        source_transcript="我们开始讨论。",
+        reference=ReferenceInfo(translation="SOCIAL MEDIA matters."),
+        visual_context=VisualContext(ocr_text=["SOCIAL MEDIA"]),
+    )
+
+    audit = audit_reference_item(item)
+
+    assert audit.severity == "review"
+    assert audit.flags == ["copied_visual_text=SOCIAL MEDIA"]

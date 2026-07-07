@@ -5,7 +5,7 @@ import json
 import os
 import urllib.error
 import urllib.request
-from typing import Protocol
+from typing import Protocol, Sequence
 
 from slidesst.data.schema import EvidenceItem
 from slidesst.streaming.simulator import StreamState
@@ -95,12 +95,17 @@ class HuggingFaceTransformersTranslator:
         self.temperature = float(cfg.get("temperature", 0.0))
         self.max_new_tokens = int(cfg.get("max_new_tokens", 128))
         self.device = cfg.get("device") or ("cuda" if torch.cuda.is_available() else "cpu")
+        self.chat_template_kwargs = _chat_template_kwargs(cfg)
+        self.system_prompt = cfg.get("system_prompt")
         dtype_name = cfg.get("torch_dtype") or ("bfloat16" if self.device.startswith("cuda") else "float32")
         dtype = getattr(torch, dtype_name)
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name,
             trust_remote_code=bool(cfg.get("trust_remote_code", False)),
         )
+        if self.tokenizer.pad_token_id is None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
+        self.tokenizer.padding_side = cfg.get("padding_side", "left")
         self.model = AutoModelForCausalLM.from_pretrained(
             self.model_name,
             torch_dtype=dtype,
@@ -109,33 +114,52 @@ class HuggingFaceTransformersTranslator:
         self.model.eval()
 
     def translate(self, state: StreamState, evidence_packet: list[EvidenceItem], condition: str) -> TranslationOutput:
-        prompt = build_prompt(state, evidence_packet, condition)
-        messages = [{"role": "user", "content": prompt}]
-        if hasattr(self.tokenizer, "apply_chat_template"):
-            encoded = self.tokenizer.apply_chat_template(
-                messages,
-                add_generation_prompt=True,
-                return_tensors="pt",
+        return self.translate_batch([state], [evidence_packet], condition)[0]
+
+    def translate_batch(
+        self,
+        states: Sequence[StreamState],
+        evidence_packets: Sequence[list[EvidenceItem]],
+        condition: str,
+    ) -> list[TranslationOutput]:
+        prompts = [build_prompt(state, evidence, condition) for state, evidence in zip(states, evidence_packets, strict=True)]
+        texts = self.complete_prompts(prompts)
+        return [
+            TranslationOutput(
+                text=text.strip(),
+                used_evidence_ids=[e.evidence_id for e in evidence],
+                prompt=prompt,
             )
-        else:
-            encoded = self.tokenizer(prompt, return_tensors="pt").input_ids
+            for text, evidence, prompt in zip(texts, evidence_packets, prompts, strict=True)
+        ]
+
+    def complete_prompts(self, prompts: Sequence[str]) -> list[str]:
+        encoded = self._encode_prompts(prompts)
         model_inputs, input_length = self._model_inputs(encoded)
         kwargs = {
             "max_new_tokens": self.max_new_tokens,
-            "pad_token_id": self.tokenizer.eos_token_id,
+            "pad_token_id": self.tokenizer.pad_token_id,
             "do_sample": self.temperature > 0,
         }
         if self.temperature > 0:
             kwargs["temperature"] = self.temperature
         with self.torch.inference_mode():
             output_ids = self.model.generate(**model_inputs, **kwargs)
-        new_tokens = output_ids[0, input_length:]
-        text = self.tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
-        return TranslationOutput(
-            text=text,
-            used_evidence_ids=[e.evidence_id for e in evidence_packet],
-            prompt=prompt,
-        )
+        new_token_batches = output_ids[:, input_length:]
+        return [text.strip() for text in self.tokenizer.batch_decode(new_token_batches, skip_special_tokens=True)]
+
+    def _encode_prompts(self, prompts: Sequence[str]):
+        conversations = [_build_messages(prompt, self.system_prompt) for prompt in prompts]
+        if hasattr(self.tokenizer, "apply_chat_template"):
+            chat_input = conversations[0] if len(conversations) == 1 else conversations
+            return self.tokenizer.apply_chat_template(
+                chat_input,
+                add_generation_prompt=True,
+                return_tensors="pt",
+                padding=len(conversations) > 1,
+                **self.chat_template_kwargs,
+            )
+        return self.tokenizer(list(prompts), return_tensors="pt", padding=True)
 
     def _model_inputs(self, encoded):
         if hasattr(encoded, "shape"):
@@ -158,6 +182,21 @@ def build_translator(cfg: dict) -> Translator:
     if provider == "hf_transformers":
         return HuggingFaceTransformersTranslator(cfg)
     raise ValueError(f"Unsupported translation provider: {provider}")
+
+
+def _chat_template_kwargs(cfg: dict) -> dict:
+    kwargs = dict(cfg.get("chat_template_kwargs") or {})
+    if "enable_thinking" in cfg:
+        kwargs["enable_thinking"] = bool(cfg["enable_thinking"])
+    return kwargs
+
+
+def _build_messages(prompt: str, system_prompt: str | None = None) -> list[dict[str, str]]:
+    messages: list[dict[str, str]] = []
+    if system_prompt:
+        messages.append({"role": "system", "content": system_prompt})
+    messages.append({"role": "user", "content": prompt})
+    return messages
 
 
 def build_prompt(state: StreamState, evidence_packet: list[EvidenceItem], condition: str) -> str:

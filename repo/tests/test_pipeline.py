@@ -2,7 +2,7 @@ from slidesst.context.policy import EvidencePolicy
 from slidesst.context.retriever import EvidenceRetriever
 from slidesst.data.mining import mine_hard_examples
 from slidesst.data.schema import ChallengeItem, EvidenceItem
-from slidesst.translation.adapters import OpenAICompatibleTranslator
+from slidesst.translation.adapters import OpenAICompatibleTranslator, _build_messages, _chat_template_kwargs
 
 
 def test_mine_hard_examples_adds_homophone_item():
@@ -41,3 +41,21 @@ def test_policy_prefers_supporting_current_slide_over_wrong_slide():
 def test_openai_compatible_translator_chat_url():
     translator = OpenAICompatibleTranslator({"model": "m", "base_url": "http://127.0.0.1:8000/v1"})
     assert translator._chat_url() == "http://127.0.0.1:8000/v1/chat/completions"
+
+
+def test_chat_template_kwargs_supports_qwen3_thinking_toggle():
+    kwargs = _chat_template_kwargs(
+        {
+            "enable_thinking": False,
+            "chat_template_kwargs": {"tokenize": False},
+        }
+    )
+
+    assert kwargs == {"tokenize": False, "enable_thinking": False}
+
+
+def test_build_messages_includes_optional_system_prompt():
+    assert _build_messages("Translate this.", "Return English only.") == [
+        {"role": "system", "content": "Return English only."},
+        {"role": "user", "content": "Translate this."},
+    ]

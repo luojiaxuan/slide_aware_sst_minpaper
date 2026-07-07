@@ -24,6 +24,7 @@ Current source-of-truth docs:
 - [`docs/SOURCE_OF_TRUTH.md`](docs/SOURCE_OF_TRUTH.md)
 - [`docs/PROGRESS.md`](docs/PROGRESS.md)
 - [`docs/QWEN3_CONTEXT_QA_20260706.md`](docs/QWEN3_CONTEXT_QA_20260706.md)
+- [`docs/QWEN3_REFERENCE_PILOT_20260706.md`](docs/QWEN3_REFERENCE_PILOT_20260706.md)
 - [`code_plan/SLIDE_CONTEXT_AWARE_MVP.md`](code_plan/SLIDE_CONTEXT_AWARE_MVP.md)
 
 ## Directory layout

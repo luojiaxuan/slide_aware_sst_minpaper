@@ -24,14 +24,24 @@ def generate_reference(
         video_time_sec=item.video.end_sec if item.video else None,
     )
     result = translator.translate(state, evidence, "reference_generation")
+    return attach_reference(item, result.text, evidence, model_name, prompt_version)
+
+
+def attach_reference(
+    item: ChallengeItem,
+    translation: str,
+    evidence: list[EvidenceItem],
+    model_name: str,
+    prompt_version: str = PROMPT_VERSION,
+) -> ChallengeItem:
     item.reference = ReferenceInfo(
-        translation=result.text,
+        translation=translation,
         status="llm_generated",
         teacher_models=[model_name],
         prompt_version=prompt_version,
-        verification_notes="; ".join(run_reference_checks(item, result.text, evidence)),
+        verification_notes="; ".join(run_reference_checks(item, translation, evidence)),
     )
-    item.reference_translation = result.text
+    item.reference_translation = translation
     return item
 
 

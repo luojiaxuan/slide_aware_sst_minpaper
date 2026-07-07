@@ -1,0 +1,22 @@
+project: chinese_lips_qwen3_reference_pilot
+seed: 13
+paths:
+  raw_data_root: /data/datasets/chinese_lips
+  challenge_jsonl: outputs/chinese_lips_train/hf_revision/a83770446ded4599bf9d95d2b77cdcc7fe359ef7/diagnostic_sample_500_qwen3_vl_context.jsonl
+  context_index_jsonl: outputs/chinese_lips_train/hf_revision/a83770446ded4599bf9d95d2b77cdcc7fe359ef7/evidence_qwen3_vl_context.jsonl
+  pseudo_refs_jsonl: outputs/chinese_lips_train/reference_generation/qwen3_32b_hf_revision_a837704/pilot_100_refs_v3_system_no_cjk.jsonl
+  repaired_pseudo_refs_jsonl: outputs/chinese_lips_train/reference_generation/qwen3_32b_hf_revision_a837704/pilot_100_refs_repaired.jsonl
+  annotation_csv: outputs/chinese_lips_train/reference_generation/qwen3_32b_hf_revision_a837704/pilot_100_reference_audit_v3_system_no_cjk.csv
+  repaired_annotation_csv: outputs/chinese_lips_train/reference_generation/qwen3_32b_hf_revision_a837704/pilot_100_reference_audit_repaired.csv
+translation:
+  provider: hf_transformers
+  model: Qwen/Qwen3-32B
+  device: cuda:3
+  torch_dtype: bfloat16
+  trust_remote_code: true
+  enable_thinking: false
+  system_prompt: "You are a Chinese-to-English speech translation engine. Return exactly one fluent English translation. Do not explain. Do not include notes. Do not output Chinese characters."
+  temperature: 0.0
+  max_new_tokens: 192
+  batch_size: 48
+  prompt_version: v3_visual_faithful_system_no_cjk_qwen3_32b_hf_revision_a837704

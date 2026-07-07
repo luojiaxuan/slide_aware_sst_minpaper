@@ -134,9 +134,11 @@ the expected challenge row count and ids, but stricter post-run QA found 3,387
 fallback rows caused by truncated raw model JSON. A targeted repair pass rebuilt
 the final challenge, evidence, and diagnostic sample. The final repaired
 artifact has 29,322 challenge rows, 526,597 evidence rows, 500 diagnostic rows,
-0 missing raw model outputs, and 0 raw parse failures. See
+0 missing raw model outputs, and 0 raw parse failures. The repaired Qwen3-VL
+context bundle was uploaded to the private HF dataset repo at revision
+`a83770446ded4599bf9d95d2b77cdcc7fe359ef7` with tag `qwen3_vl_context_v1`. See
 [`docs/QWEN3_CONTEXT_QA_20260706.md`](QWEN3_CONTEXT_QA_20260706.md) for the
-quality audit and repair record. Hugging Face upload is still pending.
+quality audit and repair record.
 
 ## Failure Handling Notes
 
