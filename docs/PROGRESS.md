@@ -261,10 +261,41 @@ or a stronger Qwen3-VL variant if available.
     - Detailed QA record:
       [`docs/QWEN3_CONTEXT_QA_20260706.md`](QWEN3_CONTEXT_QA_20260706.md).
 
+## 2026-07-06 Hugging Face Bundle Preparation
+
+- Added `repo/scripts/package_hf_dataset_bundle.py` and
+  `repo/tests/test_package_hf_dataset_bundle.py`.
+- Verified upstream `BAAI/Chinese-LiPS` metadata on Hugging Face:
+  - Revision: `db96948538811029011eee44602438a26710ecd9`
+  - License: `cc-by-nc-sa-4.0`
+  - Access: gated; terms restrict redistribution of derived works outside the
+    research group unless the upstream maintainers grant permission.
+- Prepared a private/gated HF upload bundle on Hyper00:
+  `/data/projects/slide_aware_sst_minpaper/repo/outputs/hf_upload/slide-context-sst-chinese-lips/qwen3_vl_context_v1`
+- Intended HF repo id: `luojiaxuan/slide-context-sst-chinese-lips`, variant
+  `qwen3_vl_context_v1`. The owner is inferred from this Git/GitHub project and
+  should be confirmed before upload.
+- Bundle source Git commit:
+  `c983c91cbfaaa5f400be556b0fcbb9cd24b6258e`.
+- Bundle contents:
+  - `data/challenge_verified_qwen3_vl_context.jsonl.gz`, 29,322 rows,
+    11,814,902 bytes.
+  - `index/evidence_qwen3_vl_context.jsonl.gz`, 526,597 rows, 19,092,763 bytes.
+  - `annotation/diagnostic_sample_500_qwen3_vl_context.jsonl.gz`, 500 rows.
+  - `annotation/diagnostic_sample_500_qwen3_vl_context.csv`, 500 rows.
+  - `annotation/diagnostic_sample_500_qwen3_vl_context.stats.json`.
+  - `qa/qwen3_vl_context_qa.json`.
+  - `README.md` and `manifest.json` with checksums and access notes.
+- Upload was not performed. The token available in the Hyper00 container is for
+  `gaoyang07` and is a fine-grained token without dataset write/create
+  permission. Upload requires the correct HF owner/token and a private or
+  otherwise access-controlled repo.
+
 ## Open Items
 
-1. Upload reusable derived artifacts to Hugging Face and record repo revisions in
-   `docs/SOURCE_OF_TRUTH.md`.
+1. Upload the prepared private/gated HF bundle after confirming the HF owner,
+   token, and Chinese-LiPS redistribution permission/access policy. Record repo
+   URL and revision in `docs/SOURCE_OF_TRUTH.md`.
 2. Generate fresh pseudo references using the enriched Qwen3-VL context artifacts.
 3. Build OCR-only, VLM-summary, OCR+VLM, policy, and wrong-context experiment
    runs on the enriched split.

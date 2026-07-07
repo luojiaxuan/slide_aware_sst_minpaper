@@ -11,7 +11,7 @@ links, or handoff state.
 | Code, configs, scripts, tests | GitHub: `luojiaxuan/slide_aware_sst_minpaper` | Active on `main` |
 | Paper notes and implementation plans | This Git repo under `paper/`, `code_plan/`, and `docs/` | Active |
 | Lightweight progress and artifact index | This Git repo under `docs/` | Active |
-| Reusable datasets and generated data artifacts | Hugging Face Hub | Not uploaded yet |
+| Reusable datasets and generated data artifacts | Hugging Face Hub | Upload bundle prepared; upload blocked pending correct HF owner/token and access policy |
 | Reusable checkpoints/adapters | Hugging Face Hub | None yet |
 | Local staging and active runs | Hyper00 `/data` paths | Temporary, not canonical |
 
@@ -39,22 +39,29 @@ links, or handoff state.
 ### Reusable Derived Artifacts
 
 Reusable derived artifacts are not yet uploaded to Hugging Face. Until upload,
-they are staged locally and recorded here with intended destinations.
+they are staged locally and recorded here with intended destinations. Because
+`BAAI/Chinese-LiPS` is gated and its terms restrict redistribution of derived
+works outside the research group without maintainer permission, any HF repo for
+these artifacts should be private or otherwise access-controlled unless that
+permission is obtained.
 
 | Artifact | Local path | Intended HF destination | Upload status |
 | --- | --- | --- | --- |
-| Chinese-LiPS frame-backed train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified.jsonl` | TBD, likely `<hf-owner>/slide-context-sst-chinese-lips` | Not uploaded |
+| Chinese-LiPS frame-backed train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified.jsonl` | Intended private/gated repo: `luojiaxuan/slide-context-sst-chinese-lips` or confirmed HF owner equivalent | Not uploaded |
 | Qwen2.5-VL pilot enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
 | Qwen2.5-VL pilot enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
-| Qwen3-VL enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl` | TBD, likely `<hf-owner>/slide-context-sst-chinese-lips` | Local staging QA passed after targeted repair; 29,322 rows; not uploaded |
-| Qwen3-VL enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl` | TBD, same dataset repo as above | Local staging QA passed after rebuild; 526,597 rows; not uploaded |
-| Qwen3-VL train diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen3_vl_context.csv` | TBD, same dataset repo as above or Git if kept as lightweight metadata | Local staging QA passed after rebuild; 500 rows; not uploaded |
-| Qwen3-VL context QA report | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/qa/qwen3_vl_context_qa.json` | Git doc summary now; raw QA JSON can be included in the HF dataset repo manifest if useful | Local staging complete; not uploaded |
-| Train diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen_vl_context.csv` | TBD, same dataset repo as above or Git if kept as lightweight metadata | Not uploaded |
+| Qwen3-VL HF upload bundle | `/data/projects/slide_aware_sst_minpaper/repo/outputs/hf_upload/slide-context-sst-chinese-lips/qwen3_vl_context_v1` | Intended private/gated repo: `luojiaxuan/slide-context-sst-chinese-lips`, variant `qwen3_vl_context_v1` | Bundle prepared; not uploaded because current Hyper00 HF token is `gaoyang07` fine-grained without dataset write/create permission |
+| Qwen3-VL enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen3_vl_context.jsonl` | Same intended private/gated repo as bundle above | Local staging QA passed after targeted repair; 29,322 rows; bundled as gzip; not uploaded |
+| Qwen3-VL enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen3_vl_context.jsonl` | Same intended private/gated repo as bundle above | Local staging QA passed after rebuild; 526,597 rows; bundled as gzip; not uploaded |
+| Qwen3-VL train diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen3_vl_context.csv` | Same intended private/gated repo as bundle above or Git if kept as lightweight metadata | Local staging QA passed after rebuild; 500 rows; bundled; not uploaded |
+| Qwen3-VL context QA report | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/qa/qwen3_vl_context_qa.json` | Same intended private/gated repo as bundle above | Local staging complete; bundled; not uploaded |
+| Train diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen_vl_context.csv` | Same intended private/gated repo as above or Git if kept as lightweight metadata | Not uploaded |
 | Test diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_test/annotation/diagnostic_sample_500.csv` | TBD | Not uploaded |
 
-Before any paper-grade or cross-repo reuse, upload the derived JSONL/CSV files to
-Hugging Face and record the exact repo revision here.
+Before any paper-grade or cross-repo reuse, upload the prepared HF bundle with a
+correct owner/token and record the exact repo revision here. Do not upload this
+derived Chinese-LiPS bundle to a public repo unless upstream permission is
+confirmed.
 
 ## Active Compute Context
 
@@ -100,7 +107,8 @@ Hugging Face and record the exact repo revision here.
 ## Current Next Actions
 
 1. Upload reusable derived Chinese-LiPS artifacts to a Hugging Face dataset repo
-   and record the revision.
+   and record the revision. This is blocked until the correct HF owner/token and
+   private/gated access policy are available.
 2. Generate fresh pseudo references on
    `challenge_verified_qwen3_vl_context.jsonl`.
 3. Build OCR/VLM vs OCR-only vs wrong-context experiments on the enriched train
