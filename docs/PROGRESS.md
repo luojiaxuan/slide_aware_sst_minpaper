@@ -291,6 +291,17 @@ or a stronger Qwen3-VL variant if available.
   `a83770446ded4599bf9d95d2b77cdcc7fe359ef7`
 - HF tag: `qwen3_vl_context_v1`
 - Verified repo privacy via the HF API: `private=True`.
+- Pre-generation gate on the HF revision passed:
+  - HF revision checked:
+    `a83770446ded4599bf9d95d2b77cdcc7fe359ef7`
+  - All uploaded file SHA-256 values matched `manifest.json`.
+  - Row counts matched: 29,322 challenge rows, 526,597 evidence rows, and 500
+    diagnostic rows.
+  - QA fields matched the uploaded report: `missing_raw_output=0` and
+    `raw_parse_failures=0`.
+  - Re-parsing `context_enrichment.raw_output` with the tracked enrichment parser
+    matched stored `visual_context` fields for all rows.
+  - Required enrichment metadata keys were present for all rows.
 
 ## Open Items
 
