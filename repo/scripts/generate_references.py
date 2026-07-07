@@ -21,19 +21,14 @@ def main() -> None:
     parser.add_argument("--config", default="configs/vision_zh_en.yaml")
     parser.add_argument("--provider", default=None)
     parser.add_argument("--model", default=None)
-    parser.add_argument("--prompt-version", default=PROMPT_VERSION)
+    parser.add_argument("--prompt-version", default=None)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--offset", type=int, default=0)
     parser.add_argument("--batch-size", type=int, default=None)
     args = parser.parse_args()
 
     cfg = yaml.safe_load(Path(args.config).read_text()) if Path(args.config).exists() else {}
-    translation_cfg = cfg.get("translation", {"provider": "mock", "model": "mock-translator"})
-    if args.provider:
-        translation_cfg["provider"] = args.provider
-    if args.model:
-        translation_cfg["model"] = args.model
-    translation_cfg["prompt_version"] = args.prompt_version
+    translation_cfg = _translation_config(cfg, args.provider, args.model, args.prompt_version)
     translator = build_translator(translation_cfg)
     items = read_jsonl(args.input, ChallengeItem)
     if args.offset:
@@ -75,6 +70,17 @@ def _load_evidence(cfg: dict) -> list[EvidenceItem]:
     if path and Path(path).exists():
         return read_jsonl(path, EvidenceItem)
     return []
+
+
+def _translation_config(cfg: dict, provider: str | None, model: str | None, prompt_version: str | None) -> dict:
+    translation_cfg = dict(cfg.get("translation", {"provider": "mock", "model": "mock-translator"}))
+    if provider:
+        translation_cfg["provider"] = provider
+    if model:
+        translation_cfg["model"] = model
+    if prompt_version:
+        translation_cfg["prompt_version"] = prompt_version
+    return translation_cfg
 
 
 def _generate_batched(

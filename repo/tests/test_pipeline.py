@@ -3,6 +3,7 @@ from slidesst.context.retriever import EvidenceRetriever
 from slidesst.data.mining import mine_hard_examples
 from slidesst.data.schema import ChallengeItem, EvidenceItem
 from slidesst.translation.adapters import OpenAICompatibleTranslator, _build_messages, _chat_template_kwargs
+from scripts.generate_references import _translation_config
 
 
 def test_mine_hard_examples_adds_homophone_item():
@@ -59,3 +60,10 @@ def test_build_messages_includes_optional_system_prompt():
         {"role": "system", "content": "Return English only."},
         {"role": "user", "content": "Translate this."},
     ]
+
+
+def test_generate_references_keeps_config_prompt_version_by_default():
+    cfg = {"translation": {"provider": "hf_transformers", "model": "m", "prompt_version": "config_v"}}
+
+    assert _translation_config(cfg, None, None, None)["prompt_version"] == "config_v"
+    assert _translation_config(cfg, None, None, "cli_v")["prompt_version"] == "cli_v"
