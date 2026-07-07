@@ -26,11 +26,14 @@ def main() -> None:
     parser.add_argument("--config", default="configs/vision_zh_en.yaml")
     parser.add_argument("--prompt-version", default=f"{PROMPT_VERSION}_repair_no_cjk")
     parser.add_argument("--batch-size", type=int, default=None)
+    parser.add_argument("--device", default=None)
     parser.add_argument("--target-flag", action="append", default=None)
     args = parser.parse_args()
 
     cfg = yaml.safe_load(Path(args.config).read_text()) if Path(args.config).exists() else {}
-    translation_cfg = cfg.get("translation", {"provider": "mock", "model": "mock-translator"})
+    translation_cfg = dict(cfg.get("translation", {"provider": "mock", "model": "mock-translator"}))
+    if args.device:
+        translation_cfg["device"] = args.device
     batch_size = args.batch_size or int(translation_cfg.get("batch_size", 1))
     target_flags = tuple(args.target_flag or DEFAULT_TARGET_FLAGS)
     items = read_jsonl(args.input, ChallengeItem)

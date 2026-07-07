@@ -65,5 +65,6 @@ def test_build_messages_includes_optional_system_prompt():
 def test_generate_references_keeps_config_prompt_version_by_default():
     cfg = {"translation": {"provider": "hf_transformers", "model": "m", "prompt_version": "config_v"}}
 
-    assert _translation_config(cfg, None, None, None)["prompt_version"] == "config_v"
-    assert _translation_config(cfg, None, None, "cli_v")["prompt_version"] == "cli_v"
+    assert _translation_config(cfg, None, None, None, None)["prompt_version"] == "config_v"
+    assert _translation_config(cfg, None, None, None, "cli_v")["prompt_version"] == "cli_v"
+    assert _translation_config(cfg, None, None, "cuda:1", None)["device"] == "cuda:1"
