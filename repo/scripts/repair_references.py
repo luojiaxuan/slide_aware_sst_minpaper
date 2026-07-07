@@ -33,17 +33,22 @@ def main() -> None:
     translation_cfg = cfg.get("translation", {"provider": "mock", "model": "mock-translator"})
     batch_size = args.batch_size or int(translation_cfg.get("batch_size", 1))
     target_flags = tuple(args.target_flag or DEFAULT_TARGET_FLAGS)
-    translator = build_translator(translation_cfg)
-    complete_prompts = getattr(translator, "complete_prompts", None)
-    if not callable(complete_prompts):
-        raise RuntimeError("Reference repair requires a translator with complete_prompts support")
-
     items = read_jsonl(args.input, ChallengeItem)
     repair_indices = [
         index
         for index, item in enumerate(items)
         if _needs_repair(audit_reference_item(item).flags, target_flags)
     ]
+    if not repair_indices:
+        write_jsonl(args.output, items)
+        print(json.dumps({"n": len(items), "repaired": 0, "target_flags": target_flags}, ensure_ascii=False, indent=2))
+        return
+
+    translator = build_translator(translation_cfg)
+    complete_prompts = getattr(translator, "complete_prompts", None)
+    if not callable(complete_prompts):
+        raise RuntimeError("Reference repair requires a translator with complete_prompts support")
+
     repaired = 0
     for index_batch in tqdm(list(_chunks(repair_indices, batch_size)), desc="Repairing reference batches"):
         prompts = [_repair_prompt(items[index]) for index in index_batch]
