@@ -329,8 +329,9 @@ or a stronger Qwen3-VL variant if available.
   - batch=48 reached 100% in all 10 manual samples, used about 122GiB H200
     memory, completed 48 rows in 45.9 seconds, and audited as 43 pass,
     5 review, 0 reject.
-  - Current recommended single-GPU Qwen3-32B teacher setting is batch=48 plus
-    targeted repair.
+  - Short-pilot recommended single-GPU Qwen3-32B teacher setting was batch=48
+    plus targeted repair, pending validation on the longer diagnostic-500
+    length distribution.
 - Uploaded the repaired 100-row pilot to the private HF dataset repo:
   - HF repo:
     <https://huggingface.co/datasets/gavinlaw/slide-context-sst-chinese-lips>
@@ -342,13 +343,34 @@ or a stronger Qwen3-VL variant if available.
     `reference_pilots/qwen3_32b_reference_pilot_20260706/`
 - Detailed record:
   [`docs/QWEN3_REFERENCE_PILOT_20260706.md`](QWEN3_REFERENCE_PILOT_20260706.md).
+- Diagnostic 500 follow-up:
+  - batch=48 OOMed on the first full-diagnostic batch because longer examples
+    pushed H200 memory past the available headroom.
+  - batch=40 was selected for diagnostic-scale generation. It reached 90%
+    average utilization on the 80-row tune run and passed two monitor windows
+    during the 500-row run: 97% and 94% average utilization.
+  - Base generation:
+    `outputs/chinese_lips_train/reference_generation/qwen3_32b_hf_revision_a837704/diagnostic_500_refs_v3_batch40.jsonl`
+  - Targeted repair:
+    `outputs/chinese_lips_train/reference_generation/qwen3_32b_hf_revision_a837704/diagnostic_500_refs_repaired.jsonl`
+  - Targeted repair fixed 5 rows with residual Chinese characters.
+  - Final diagnostic 500 audit: 435 pass, 65 review, 0 reject, 0
+    `target_cjk_chars`.
+  - Uploaded the repaired diagnostic 500 artifact to the private HF dataset
+    repo:
+    - HF commit:
+      `5ca0c090fc6d76ac50938924b28a57b1026c3043`
+    - HF tag:
+      `qwen3_32b_reference_diagnostic500_20260707`
+    - Path:
+      `reference_pilots/qwen3_32b_reference_diagnostic500_20260707/`
 
 ## Open Items
 
-1. Run the batch=48 + targeted-repair Qwen3-32B pipeline on the full diagnostic
-   500 sample.
-2. Build OCR-only, VLM-summary, OCR+VLM, policy, and wrong-context experiment
-   runs on the enriched split.
+1. Build OCR-only, VLM-summary, OCR+VLM, policy, and wrong-context experiment
+   runs on the repaired diagnostic 500 references.
+2. Decide whether to scale the reference pipeline and experiments beyond
+   diagnostic 500 after the first method comparison.
 3. Select and send a 500-1,000 item diagnostic set for human English
    translation.
 4. Add an ST-native no-visual sanity check dataset such as BSTC for pipeline

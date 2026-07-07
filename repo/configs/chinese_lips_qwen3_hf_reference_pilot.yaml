@@ -18,5 +18,5 @@ translation:
   system_prompt: "You are a Chinese-to-English speech translation engine. Return exactly one fluent English translation. Do not explain. Do not include notes. Do not output Chinese characters."
   temperature: 0.0
   max_new_tokens: 192
-  batch_size: 48
+  batch_size: 40
   prompt_version: v3_visual_faithful_system_no_cjk_qwen3_32b_hf_revision_a837704

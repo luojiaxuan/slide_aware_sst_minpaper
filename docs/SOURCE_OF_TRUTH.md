@@ -58,6 +58,7 @@ permission is obtained.
 | Qwen3-VL train diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen3_vl_context.csv` | `annotation/diagnostic_sample_500_qwen3_vl_context.*` in the private HF repo above | Uploaded; 500 rows |
 | Qwen3-VL context QA report | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/qa/qwen3_vl_context_qa.json` | `qa/qwen3_vl_context_qa.json` in the private HF repo above | Uploaded |
 | Qwen3-32B repaired reference pilot | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/reference_generation/qwen3_32b_hf_revision_a837704/pilot_100_refs_repaired.jsonl` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-context-sst-chinese-lips>, commit `ee785604ba51a5c65335de12bfcfd99d3c4febff`, tag `qwen3_32b_reference_pilot_20260706`, path `reference_pilots/qwen3_32b_reference_pilot_20260706/` | Uploaded; 100 rows; final audit 84 pass, 16 review, 0 reject |
+| Qwen3-32B repaired diagnostic 500 references | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/reference_generation/qwen3_32b_hf_revision_a837704/diagnostic_500_refs_repaired.jsonl` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-context-sst-chinese-lips>, commit `5ca0c090fc6d76ac50938924b28a57b1026c3043`, tag `qwen3_32b_reference_diagnostic500_20260707`, path `reference_pilots/qwen3_32b_reference_diagnostic500_20260707/` | Uploaded; 500 rows; final audit 435 pass, 65 review, 0 reject |
 | Train diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/annotation/diagnostic_sample_500_qwen_vl_context.csv` | Same private HF repo if retained as a pilot artifact | Not uploaded |
 | Test diagnostic sample sheet | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_test/annotation/diagnostic_sample_500.csv` | TBD | Not uploaded |
 
@@ -91,6 +92,7 @@ confirmed.
 | `qwen3_vl_train_bs56x2_2gpu_20260706_214711` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | final repaired artifacts under `outputs/chinese_lips_train/{data,index,annotation,qa}/` plus shard outputs under `outputs/chinese_lips_train/enrichment/qwen3_vl_train_bs56x2_2gpu_20260706_214711/` | Completed and repaired locally; final QA has 29,322 challenge rows, 526,597 evidence rows, 500 diagnostic rows, 0 missing raw model outputs, 0 raw parse failures; uploaded to private HF revision `a83770446ded4599bf9d95d2b77cdcc7fe359ef7` |
 | `qwen3_parse_failure_repair512_20260706_231750` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | 3,387 failed Qwen3-VL rows from the initial combined artifact | repair outputs under `outputs/chinese_lips_train/repair/qwen3_parse_failure_repair512_20260706_231750/` | Completed locally; 512/768/compact/strict passes repaired all initial parse failures |
 | `qwen3_32b_reference_pilot_20260706` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-32B` | 100 rows from private HF revision `a83770446ded4599bf9d95d2b77cdcc7fe359ef7` diagnostic sample | `outputs/chinese_lips_train/reference_generation/qwen3_32b_hf_revision_a837704/pilot_100_refs_repaired.jsonl` and HF path `reference_pilots/qwen3_32b_reference_pilot_20260706/` | Completed; uploaded to private HF commit `ee785604ba51a5c65335de12bfcfd99d3c4febff`; tag `qwen3_32b_reference_pilot_20260706` |
+| `qwen3_32b_reference_diagnostic500_20260707` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-32B` | 500 rows from private HF revision `a83770446ded4599bf9d95d2b77cdcc7fe359ef7` diagnostic sample | `outputs/chinese_lips_train/reference_generation/qwen3_32b_hf_revision_a837704/diagnostic_500_refs_repaired.jsonl` and HF path `reference_pilots/qwen3_32b_reference_diagnostic500_20260707/` | Completed; batch=40 after batch=48 OOM; final audit 435 pass, 65 review, 0 reject; uploaded to private HF commit `5ca0c090fc6d76ac50938924b28a57b1026c3043`; tag `qwen3_32b_reference_diagnostic500_20260707` |
 | `qwen3_vl_train_20260706_164650` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | partial shards under `outputs/chinese_lips_train/enrichment/qwen3_vl_train_20260706_164650/` | Paused/superseded; do not resume with old one-sample-per-process settings |
 
 ## Current Durable Decisions
@@ -108,8 +110,8 @@ confirmed.
 
 ## Current Next Actions
 
-1. Scale the Qwen3-32B batch=48 + targeted-repair reference pipeline from the
-   uploaded 100-row pilot to the full diagnostic 500 sample.
+1. Run the first OCR/VLM/policy/wrong-context method comparison on the repaired
+   diagnostic 500 references.
 2. Build OCR/VLM vs OCR-only vs wrong-context experiments on the enriched train
    and test splits.
 3. Prepare human English translation workflow for the diagnostic 500-1,000 item
