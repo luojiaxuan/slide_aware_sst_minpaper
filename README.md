@@ -37,6 +37,24 @@ code_plan/   Agent-facing implementation plan, data schema, experiment matrix, t
 repo/        Minimal code scaffold and config files for the implementation agent.
 ```
 
+## Eval and debug data (Hugging Face)
+
+- [`gavinlaw/mtedx-v-eval`](https://huggingface.co/datasets/gavinlaw/mtedx-v-eval) —
+  **mTEDx-V**: talk-level long-form X→En ST eval manifests (es/fr/it/ru/el → en,
+  test+valid, 100 talks / ~18 h speech). `talk_id` is the real YouTube video ID
+  (alive check 2026-07-16: 100/100), and segment timestamps sit on the original
+  video timeline, so frames can be aligned to speech directly. Manifests only —
+  no media is redistributed (mTEDx/TEDx are CC BY-NC-ND 4.0); obtain videos from
+  the original sources and extract frames locally with
+  `repo/scripts/extract_frames_by_manifest.py`. Built by
+  `repo/scripts/build_mtedx_v_manifest.py`.
+- [`gavinlaw/chinese-lips-longform-debug`](https://huggingface.co/datasets/gavinlaw/chinese-lips-longform-debug) —
+  three continuous zh long-speech streams (~97 min total) concatenated from
+  same-video Chinese-LiPS test segments (silence removed by construction), with
+  per-segment offsets, transcripts, and slide OCR/VL2 annotations. Debug/dev
+  resource only, not a benchmark (CC BY-NC-SA 4.0). Built by
+  `repo/scripts/build_chinese_lips_longform.py`.
+
 ## Recommended MVP scope
 
 1. Dataset: Chinese lecture or VASR-like local subset with transcript, video/audio path, and optional OCR/visual metadata.
