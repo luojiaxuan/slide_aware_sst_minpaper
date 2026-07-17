@@ -24,6 +24,13 @@ def main() -> None:
     parser.add_argument("--processed-dir", required=True, help="dir with <wav_id>.wav clips")
     parser.add_argument("--video-ids", nargs="+", required=True)
     parser.add_argument("--out-dir", required=True)
+    parser.add_argument(
+        "--timeline-dir",
+        default=None,
+        help="dir with <video_id>.orig_timeline.json (clip_id/orig_start/orig_end from the "
+        "raw release's per-segment JSONs). When set, clips are placed on the original "
+        "session timeline with real silence gaps restored, instead of back-to-back.",
+    )
     args = parser.parse_args()
 
     rows = json.loads(Path(args.meta_json).read_text(encoding="utf-8"))
@@ -43,10 +50,27 @@ def main() -> None:
             print(f"{video_id}: no segments found in meta, skipped")
             continue
         video_rows.sort(key=lambda r: int(Path(r["wav_path"]).stem.rsplit("_", 1)[1]))
-        _concat_video(video_id, video_rows, processed, out_dir)
+        timeline = _load_timeline(args.timeline_dir, video_id)
+        _concat_video(video_id, video_rows, processed, out_dir, timeline)
 
 
-def _concat_video(video_id: str, rows: list[dict], processed: Path, out_dir: Path) -> None:
+def _load_timeline(timeline_dir: str | None, video_id: str) -> dict[str, dict] | None:
+    if timeline_dir is None:
+        return None
+    path = Path(timeline_dir) / f"{video_id}.orig_timeline.json"
+    if not path.exists():
+        raise FileNotFoundError(f"--timeline-dir set but {path} not found")
+    records = json.loads(path.read_text(encoding="utf-8"))
+    return {r["clip_id"]: r for r in records}
+
+
+def _concat_video(
+    video_id: str,
+    rows: list[dict],
+    processed: Path,
+    out_dir: Path,
+    timeline: dict[str, dict] | None = None,
+) -> None:
     out_wav = out_dir / f"{video_id}.longform.wav"
     out_manifest = out_dir / f"{video_id}.longform.jsonl"
     params = None
@@ -56,10 +80,14 @@ def _concat_video(video_id: str, rows: list[dict], processed: Path, out_dir: Pat
     with out_manifest.open("w", encoding="utf-8") as mf:
         writer = None
         try:
+            timeline_origin = None
             for row in rows:
                 wav_id = Path(row["wav_path"]).stem
                 clip = processed / f"{wav_id}.wav"
                 if not clip.exists():
+                    missing += 1
+                    continue
+                if timeline is not None and wav_id not in timeline:
                     missing += 1
                     continue
                 with wave.open(str(clip), "rb") as r:
@@ -75,23 +103,33 @@ def _concat_video(video_id: str, rows: list[dict], processed: Path, out_dir: Pat
                         raise ValueError(f"{clip}: wav params mismatch")
                     frames = r.readframes(r.getnframes())
                     duration = r.getnframes() / r.getframerate()
+                if timeline is not None:
+                    seg = timeline[wav_id]
+                    if timeline_origin is None:
+                        timeline_origin = seg["orig_start"]
+                    target = seg["orig_start"] - timeline_origin
+                    gap = target - offset
+                    if gap > 0.001:  # restore real inter-segment silence
+                        writer.writeframes(
+                            b"\x00" * (int(gap * params.framerate) * params.nchannels * params.sampwidth)
+                        )
+                        offset = target
                 writer.writeframes(frames)
-                mf.write(
-                    json.dumps(
-                        {
-                            "video_id": video_id,
-                            "clip_id": wav_id,
-                            "start": round(offset, 3),
-                            "end": round(offset + duration, 3),
-                            "zh_transcript": row.get("gt_text", ""),
-                            "ocr_text": row.get("ocr_text") or [],
-                            "vl2_text": row.get("vl2_text") or [],
-                            "ppt_frame": row.get("ppt_path", ""),
-                        },
-                        ensure_ascii=False,
-                    )
-                    + "\n"
-                )
+                record = {
+                    "video_id": video_id,
+                    "clip_id": wav_id,
+                    "start": round(offset, 3),
+                    "end": round(offset + duration, 3),
+                    "zh_transcript": row.get("gt_text", ""),
+                    "ocr_text": row.get("ocr_text") or [],
+                    "vl2_text": row.get("vl2_text") or [],
+                    "ppt_frame": row.get("ppt_path", ""),
+                }
+                if timeline is not None:
+                    seg = timeline[wav_id]
+                    record["orig_start"] = round(seg["orig_start"], 3)
+                    record["orig_end"] = round(seg["orig_end"], 3)
+                mf.write(json.dumps(record, ensure_ascii=False) + "\n")
                 offset += duration
                 kept += 1
         finally:
