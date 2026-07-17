@@ -49,11 +49,28 @@ repo/        Minimal code scaffold and config files for the implementation agent
   `repo/scripts/extract_frames_by_manifest.py`. Built by
   `repo/scripts/build_mtedx_v_manifest.py`.
 - [`gavinlaw/chinese-lips-longform-debug`](https://huggingface.co/datasets/gavinlaw/chinese-lips-longform-debug) —
-  three continuous zh long-speech streams (~97 min total) concatenated from
-  same-video Chinese-LiPS test segments (silence removed by construction), with
-  per-segment offsets, transcripts, and slide OCR/VL2 annotations. Debug/dev
-  resource only, not a benchmark (CC BY-NC-SA 4.0). Built by
+  three continuous zh long-speech streams (~97 min total) reconstructed from
+  same-video Chinese-LiPS test segments, in two variants: `orig_timeline` (real
+  inter-segment silence restored from source timestamps) and `silence_removed`
+  (back-to-back). Per-segment offsets, transcripts, and slide OCR/VL2 annotations.
+  zh long-form ASR + slide benchmark as-is; becomes zh→En with added English
+  references (`repo/scripts/translate_zh_en_draft.py`). CC BY-NC-SA 4.0. Built by
   `repo/scripts/build_chinese_lips_longform.py`.
+
+### Visual-signal characterization
+
+- **mTEDx-V** carries the on-screen signal in a single edited camera feed: an OCR
+  pass over all 100 talks (`visual_signal/` in the dataset; `score_visual_signal.py`)
+  finds slides/screen-text in only ~12% of sampled frames on average (58 near-zero /
+  41 some-text / 1 slide-heavy), at 360–480p and often speaker-occluded. This is the
+  realistic-but-noisy setting; treat OCR numbers as a lower bound and use the VLM
+  backend for authoritative labels.
+- **Chinese-LiPS** ships a dedicated always-on 1080p slide feed (`PPT/*.mp4`): 100% of
+  clips have a slide frame, 99% carry readable OCR text (chi_sim OCR recovers 47–151
+  tokens on content slides vs 2–8 for the best mTEDx frames), never speaker-occluded.
+  This is the clean upper-bound / controlled slide setting. The two datasets are
+  complementary: Chinese-LiPS to show visual evidence *helps*, mTEDx-V for robustness
+  under realistic visibility.
 
 ## Recommended MVP scope
 
