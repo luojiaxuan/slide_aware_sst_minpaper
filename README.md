@@ -35,8 +35,10 @@ latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
 
 ## Current status (2026-07-17)
 
-- **Direction decided**: X→En primary, En→Zh secondary (MCIF transfer), X→X
-  dropped — rationale and cost accounting in
+- **Direction decided**: X→En primary; En→Zh control stratum on ACL 60/60
+  (gold translations + third-party tagged terms + recoverable slide video);
+  MCIF optional; X→X dropped — mechanism decomposition (M1 anticipation /
+  M2 recognition support / M3 target-form supply) and cost accounting in
   [docs/BENCHMARK_PLAN.md](docs/BENCHMARK_PLAN.md).
 - **Benchmark strata**:
   - S1 realistic-noisy: [gavinlaw/mtedx-v-eval](https://huggingface.co/datasets/gavinlaw/mtedx-v-eval)
@@ -65,7 +67,7 @@ latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
 3. VLM visual-signal pass over mTEDx-V (upgrade OCR lower bound).
 4. Streaming policy implementation (async slide worker + evidence gating) and
    faithfulness metrics (wrong-slide adoption, visible-but-unspoken rate).
-5. MCIF En→Zh transfer table.
+5. ACL 60/60 integration (frame recovery, term filter, En→Zh control).
 6. Paper: intro/method drafts; related work is written.
 
 ## Rules

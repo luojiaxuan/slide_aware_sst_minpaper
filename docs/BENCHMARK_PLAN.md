@@ -1,6 +1,6 @@
 # Benchmark Plan: Direction Decision and Test-Set Construction
 
-Date: 2026-07-17. Status: **decided — X→En primary, En→Zh secondary, X→X dropped.**
+Date: 2026-07-17. Status: **decided — X→En primary; En→X control on ACL 60/60; X→X dropped.**
 Principle: test sets must be reviewer-proof (real slides, human or human-verified
 references, no synthetic visual evidence in eval); training data is cheap and out
 of scope here.
@@ -11,25 +11,23 @@ of scope here.
 
 Reasons, in order of weight:
 
-1. **Both visual mechanisms coexist only here.** Decompose slide benefit into
-   (A) *temporal anticipation* — slides precede the speech discussing them by
-   30–60 s, so content/terms are available ahead of commit time; direction-
-   agnostic, helps En→X too — and (B) *target-form supply* — when slide language
-   = target language, the slide hands the system the target-side surface form of
-   upcoming terms, turning terminology translation into recognition + copying.
-   B requires slide-lang = target-lang ≠ source-lang, which is common in X→En
-   (English is the lingua franca of slides; observed directly in our probe:
-   Greek speech, English slides) and essentially nonexistent in En→X. So En→X
-   offers A only; X→En is the one direction where A and B coexist in real data
-   and can be dissected. ASR papers cannot exploit B by construction; OmniFusion
-   (En→X) structurally lacks it. **Slide language is therefore a per-talk
-   stratification variable**: Chinese-LiPS (zh slides, zh→En) and MCIF (en
-   slides, en→zh) are A-only regimes; mTEDx-V talks split by slide language
-   (e.g., Greek talk = A+B, Russian talk = A-only). Paired hypotheses: H1
-   (anticipation) — Pareto gains appear in both regimes; H2 (target supply) —
-   terminology gains and slide-string copy rates are significantly larger in
-   A+B. H2's regime contrast is the sharpest delta against both Do-Slides-Help
-   (ASR) and OmniFusion (En→X).
+1. **Mechanism decomposition and where each is measurable.** Slide benefit
+   decomposes into three mechanisms: **M1 anticipation** (slides precede the
+   speech discussing them by 30-60 s; direction-agnostic), **M2 recognition
+   support** (slide terms in the *source* language help the model hear/segment
+   rare terms - the mechanism Do-Slides-Help measures for ASR; also helps
+   translation, any direction), and **M3 target-form supply** (slide terms in
+   the *target* language hand the system the output string to copy; requires
+   slide-lang = target-lang, common in X->En because English is the lingua
+   franca of slides - observed directly in our probe: Greek speech, English
+   slides). The direction asymmetry that matters most is on the *measurement*
+   side: for X->En, whether an output token is a "term" is externally
+   verifiable (English Wikipedia/Wikidata linking); for En->X no equally
+   credible target-side term criterion exists. Slide language is a per-talk
+   stratification variable (Chinese-LiPS zh slides = M1+M2; mTEDx Greek talk =
+   M1+M3, Russian talk = M1+M2; ACL 60/60 = M1+M2). Paired hypotheses: H1
+   (anticipation) - Pareto gains appear in all regimes; H2 (target supply) -
+   terminology gains and slide-string copy rates are largest in M3 talks.
 2. **Avoids OmniFusion's home field.** They own En→{De,It} SimulST on MCIF;
    competing there head-on makes us a baseline-chaser.
 3. **Assets already exist.** mTEDx-V is built, alive-checked, human-referenced,
@@ -37,29 +35,48 @@ Reasons, in order of weight:
    verification language (zh).
 4. **RASST lineage continuity** (X→En terminology injection → visual self-provisioning).
 
-### En→Zh — SECONDARY (nearly free, run late)
+### En→X on ACL 60/60 — SECONDARY (terminology-credible control)
 
-MCIF (CC-BY 4.0, ACL talks, real slides, En→Zh) is ready-made and
-user-verifiable on both sides. Upgraded role after the mechanism decomposition
-above: MCIF is the **A-only control condition** for H2, not just a transfer
-table. Expected: anticipation (Pareto) gains persist, terminology/copy gains
-shrink relative to A+B talks — the contrast is direct evidence for the
-target-supply mechanism. Also meets OmniFusion on a direction they didn't
-evaluate (they did De/It SimulST). Verify MCIF reference provenance during
-integration.
+ACL 60/60 (IWSLT 2023): academic talks with real slides (slide frames already
+proven recoverable by Do-Slides-Help, which used it for ASR), professional gold
+translations En->10 languages, and **third-party tagged terminology**. Roles:
+(a) the terminology-credibility stratum - term metrics against an external tag
+set instead of self-constructed lists (imperfect tags like trivial "model"
+entries handled by a pre-registered frequency-based filter, reporting raw and
+filtered numbers); (b) the M1+M2 control condition for H2 (English slides =
+source language); (c) direct lineage comparability - RASST was evaluated on
+ACL6060-zh (HF: gavinlaw/rasst-demo-acl6060-zh-segments), and Do-Slides-Help
+reports ASR gains on the same talks, so ASR-vs-translation slide gains can be
+contrasted on identical material. Primary target language: zh (user-verifiable);
+optionally +de/ja. Earlier objection "ACL6060 too easy / BLEU saturated"
+applies to corpus-level BLEU only, not to term-level accuracy, Pareto, or
+faithfulness metrics - it does not block this role.
+
+### MCIF — OPTIONAL (demoted)
+
+Same ACL-talk domain as ACL 60/60 but without tagged terms or the user's prior
+results; retains one exclusive property (long-form instruction protocol).
+Integrate only if long-form En->Zh becomes a reviewer ask.
 
 ### X→X — DROPPED
 
 No assets, no verification ability, no reviewer constituency. Zero-shot X→X can
 be one analysis paragraph if the model happens to support it, not a benchmark.
 
-## 2. Test suite design (two strata + one transfer set)
+## 2. Test suite design (three strata + optional)
 
 | Stratum | Dataset | Directions | Visual regime | References | Status |
 |---|---|---|---|---|---|
 | S1 realistic-noisy | **mTEDx-V** (100 talks, ~18 h) | es/fr/it/ru/el→en | Sparse: ~12% frames w/ text, 58 near-zero talks (measured) | Human (TED translators, via mTEDx) | **DONE** (HF: gavinlaw/mtedx-v-eval) |
 | S2 clean-strong | **Chinese-LiPS-Long** | zh→en | Dedicated 1080p slide feed, 100% coverage, never occluded | Machine-draft + human post-edit (two-tier, FLORAS-style test/test_verified) | Audio+manifests done; **En refs = the one real cost** (§3) |
-| T transfer | **MCIF** subset | en→zh | Real ACL slides (source-lang) | MCIF-provided | Integration only, no construction |
+| S3 term-credible | **ACL 60/60** | en→zh (opt. de/ja) | Real ACL slides (source-lang) | Professional gold (IWSLT) + tagged terms | Integration + frame recovery |
+| T optional | MCIF subset | en→zh | Real ACL slides | MCIF-provided | Only if long-form En→X asked |
+
+Term measurement: S3 uses the external tagged-term set (transparent frequency
+filter, both raw and filtered reported); S1/S2 X->En term-hood is determined by
+English Wikipedia/Wikidata entity linking on the reference side - external and
+reproducible, avoiding self-constructed term lists (the credibility weakness of
+un-annotated Chinese-LiPS).
 
 Design rationale: S1 and S2 bracket the deployment space. S2 (slides always
 available and perfect) answers *"does visual anticipation work at all?"* — if no
@@ -82,7 +99,8 @@ measured on 3 rebuilt videos).
 | **Verified core** post-edit (FLORAS-style `test_verified`) | 6 videos ≈ 1,150 clips ≈ 2.8 h speech | **6–8 h user time** at 150–200 clips/h given good drafts | user (zh/en bilingual) |
 | Full-set post-edit (optional, later) | 3,908 clips | 20–26 h user time — defer; machine-draft tier is labeled as such | optional |
 | mTEDx-V | — | $0 (done) | — |
-| MCIF integration | — | ~0 (download + protocol adapter) | automated |
+| ACL 60/60 integration | dev+eval, en→zh | ~0 refs (gold exists); video/frame recovery + term filter ~1-2 days | automated |
+| MCIF integration (optional) | — | ~0 (download + protocol adapter) | automated |
 
 Total to a defensible benchmark: **one API run + one weekend of post-editing.**
 Reviewer story: "verified core translated by machine draft + bilingual human
@@ -107,4 +125,6 @@ discarded invalid spans; the PPT stream reconstructs on the same timeline
    machine drafts; user post-edits 6-video verified core.
 3. VLM pass over mTEDx-V visual labels (when API key available) to upgrade
    OCR-lower-bound stratification.
-4. MCIF En→Zh integration last (transfer table).
+4. ACL 60/60 integration: recover talk videos/frames, adapt term filter,
+   run En→Zh control condition.
+5. MCIF only if reviewers ask for long-form En→X.
