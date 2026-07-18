@@ -21,9 +21,14 @@ Reasons, in order of weight:
    slide-lang = target-lang, common in X->En because English is the lingua
    franca of slides - observed directly in our probe: Greek speech, English
    slides). The direction asymmetry that matters most is on the *measurement*
-   side: for X->En, whether an output token is a "term" is externally
-   verifiable (English Wikipedia/Wikidata linking); for En->X no equally
-   credible target-side term criterion exists. Slide language is a per-talk
+   side, and it is quantitative, not qualitative: term-hood and correct
+   renderings are verified via Wikidata cross-lingual entity records (QID ->
+   target-language label + aliases, matched with normalization), which works in
+   every direction but with unequal label coverage - near-universal for
+   English, substantially lower for zh/fr technical terms. Each stratum
+   therefore reports its term-coverage rate and scores terms only on the
+   covered subset; X->En stays primary as the highest-coverage, fullest-
+   measurement direction. Slide language is a per-talk
    stratification variable (Chinese-LiPS zh slides = M1+M2; mTEDx Greek talk =
    M1+M3, Russian talk = M1+M2; ACL 60/60 = M1+M2). Paired hypotheses: H1
    (anticipation) - Pareto gains appear in all regimes; H2 (target supply) -
@@ -69,8 +74,12 @@ the deployment pain the visual channel treats (goes in the intro motivation).
 Cheap honest X→X evidence exists: mTEDx ships human-translated X→X pairs
 (es-fr, es-it, es-pt, fr-es, fr-pt, it-es) over the same talk domain and the
 same video-recovery pipeline as mTEDx-V. Optional **S4**: extract es→fr/it with
-the existing script, report COMET-Pareto and slide-string copy-rate ONLY (no
-term-hood claims — no external term criterion in fr/es). Paper label:
+the existing script. Reporting: XCOMET-vs-AL Pareto and slide-string copy-rate
+primary; term accuracy secondary on the Wikidata-covered subset (fr label
+coverage reported). Do NOT lead with corpus BLEU/XCOMET deltas - context
+injection historically moves aggregate metrics little (the Do-Slides-Help /
+ACL6060-saturation lesson); the signal concentrates in term-level and
+latency-side metrics. Paper label:
 **direction-general**, never "X→X" (avoids promising untestable pairs, keeps
 the M3/X→En delta sharp, stays out of OmniFusion's unified-architecture game).
 
@@ -81,14 +90,17 @@ the M3/X→En delta sharp, stays out of OmniFusion's unified-architecture game).
 | S1 realistic-noisy | **mTEDx-V** (100 talks, ~18 h) | es/fr/it/ru/el→en | Sparse: ~12% frames w/ text, 58 near-zero talks (measured) | Human (TED translators, via mTEDx) | **DONE** (HF: gavinlaw/mtedx-v-eval) |
 | S2 clean-strong | **Chinese-LiPS-Long** | zh→en | Dedicated 1080p slide feed, 100% coverage, never occluded | Machine-draft + human post-edit (two-tier, FLORAS-style test/test_verified) | Audio+manifests done; **En refs = the one real cost** (§3) |
 | S3 term-credible | **ACL 60/60** | en→zh (opt. de/ja) | Real ACL slides (source-lang) | Professional gold (IWSLT) + tagged terms | Integration + frame recovery |
-| S4 optional | mTEDx X→X (es→fr/it) | es→fr, es→it | Same talks/pipeline as S1 | Human (mTEDx) | Pareto + copy-rate only, no term claims |
+| S4 optional | mTEDx X→X (es→fr/it) | es→fr, es→it | Same talks/pipeline as S1 | Human (mTEDx) | Pareto + copy-rate primary; Wikidata-covered term accuracy secondary (coverage reported) |
 | T optional | MCIF subset | en→zh | Real ACL slides | MCIF-provided | Only if long-form En→X asked |
 
-Term measurement: S3 uses the external tagged-term set (transparent frequency
-filter, both raw and filtered reported); S1/S2 X->En term-hood is determined by
-English Wikipedia/Wikidata entity linking on the reference side - external and
-reproducible, avoiding self-constructed term lists (the credibility weakness of
-un-annotated Chinese-LiPS).
+Term measurement (unified protocol, all strata): entity-link reference-side
+terms to Wikidata QIDs, take target-language labels+aliases, match with
+normalization; report per-stratum term-coverage rate and score only the covered
+subset. S3 additionally uses the official tagged-term set (transparent
+frequency filter, raw and filtered both reported). This keeps every term claim
+externally verifiable and avoids self-constructed lists (the credibility
+weakness of un-annotated Chinese-LiPS). Expected coverage: En >> zh/fr - the
+quantitative form of the direction asymmetry.
 
 Design rationale: S1 and S2 bracket the deployment space. S2 (slides always
 available and perfect) answers *"does visual anticipation work at all?"* — if no
