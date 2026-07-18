@@ -35,11 +35,12 @@ latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
 
 ## Current status (2026-07-17)
 
-- **Direction decided**: X→En primary; En→Zh control stratum on ACL 60/60
-  (gold translations + third-party tagged terms + recoverable slide video);
-  MCIF optional; X→X dropped — mechanism decomposition (M1 anticipation /
-  M2 recognition support / M3 target-form supply) and cost accounting in
-  [docs/BENCHMARK_PLAN.md](docs/BENCHMARK_PLAN.md).
+- **Direction decided**: **direction-general** policy on one unified
+  multilingual base — X→En primary evidence (M3 + Wiki-verifiable terms),
+  En→Zh control on ACL 60/60 (tagged terms), optional X→X generality stratum
+  (mTEDx es→fr/it human refs, Pareto/copy-rate only). Mechanism decomposition
+  (M1 anticipation / M2 recognition support / M3 target-form supply) and cost
+  accounting in [docs/BENCHMARK_PLAN.md](docs/BENCHMARK_PLAN.md).
 - **Benchmark strata**:
   - S1 realistic-noisy: [gavinlaw/mtedx-v-eval](https://huggingface.co/datasets/gavinlaw/mtedx-v-eval)
     — 100 long-form talks es/fr/it/ru/el→en (~18 h), talk_id = live YouTube ID

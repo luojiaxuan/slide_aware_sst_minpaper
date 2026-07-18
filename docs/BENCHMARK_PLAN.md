@@ -1,6 +1,6 @@
 # Benchmark Plan: Direction Decision and Test-Set Construction
 
-Date: 2026-07-17. Status: **decided — X→En primary; En→X control on ACL 60/60; X→X dropped.**
+Date: 2026-07-17. Status: **decided — direction-general framing; X→En primary evidence; En→X control on ACL 60/60; optional X→X generality stratum (mTEDx es→fr/it); unified base model across all strata.**
 Principle: test sets must be reviewer-proof (real slides, human or human-verified
 references, no synthetic visual evidence in eval); training data is cheap and out
 of scope here.
@@ -58,10 +58,21 @@ Same ACL-talk domain as ACL 60/60 but without tagged terms or the user's prior
 results; retains one exclusive property (long-form instruction protocol).
 Integrate only if long-form En->Zh becomes a reviewer ask.
 
-### X→X — DROPPED
+### X→X — no dedicated benchmark, but an optional generality stratum (S4)
 
-No assets, no verification ability, no reviewer constituency. Zero-shot X→X can
-be one analysis paragraph if the model happens to support it, not a benchmark.
+What was dropped (and stays dropped): constructing non-En↔non-En test sets as a
+main line — no verification ability, no credible term criterion. What is IN: the
+**unified-system framing**. One multilingual base model + one direction-agnostic
+policy is evaluated across all strata; unified multilingual models are exactly
+where term confusion / mishearing / language confusion bite hardest, which is
+the deployment pain the visual channel treats (goes in the intro motivation).
+Cheap honest X→X evidence exists: mTEDx ships human-translated X→X pairs
+(es-fr, es-it, es-pt, fr-es, fr-pt, it-es) over the same talk domain and the
+same video-recovery pipeline as mTEDx-V. Optional **S4**: extract es→fr/it with
+the existing script, report COMET-Pareto and slide-string copy-rate ONLY (no
+term-hood claims — no external term criterion in fr/es). Paper label:
+**direction-general**, never "X→X" (avoids promising untestable pairs, keeps
+the M3/X→En delta sharp, stays out of OmniFusion's unified-architecture game).
 
 ## 2. Test suite design (three strata + optional)
 
@@ -70,6 +81,7 @@ be one analysis paragraph if the model happens to support it, not a benchmark.
 | S1 realistic-noisy | **mTEDx-V** (100 talks, ~18 h) | es/fr/it/ru/el→en | Sparse: ~12% frames w/ text, 58 near-zero talks (measured) | Human (TED translators, via mTEDx) | **DONE** (HF: gavinlaw/mtedx-v-eval) |
 | S2 clean-strong | **Chinese-LiPS-Long** | zh→en | Dedicated 1080p slide feed, 100% coverage, never occluded | Machine-draft + human post-edit (two-tier, FLORAS-style test/test_verified) | Audio+manifests done; **En refs = the one real cost** (§3) |
 | S3 term-credible | **ACL 60/60** | en→zh (opt. de/ja) | Real ACL slides (source-lang) | Professional gold (IWSLT) + tagged terms | Integration + frame recovery |
+| S4 optional | mTEDx X→X (es→fr/it) | es→fr, es→it | Same talks/pipeline as S1 | Human (mTEDx) | Pareto + copy-rate only, no term claims |
 | T optional | MCIF subset | en→zh | Real ACL slides | MCIF-provided | Only if long-form En→X asked |
 
 Term measurement: S3 uses the external tagged-term set (transparent frequency
