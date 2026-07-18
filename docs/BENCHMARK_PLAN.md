@@ -11,13 +11,25 @@ of scope here.
 
 Reasons, in order of weight:
 
-1. **The unique scientific phenomenon lives here.** Non-English talks routinely
-   project English slides (observed directly in our mTEDx probe: Greek speech,
-   English slide text). For X→En the slide supplies the *target-side surface form*
-   of upcoming terms — vision doesn't just disambiguate, it hands the system its
-   output vocabulary ahead of time. En→X has no equivalent (slides = source
-   language), and ASR papers cannot exploit it by construction. This is the
-   sharpest delta against both Do-Slides-Help (ASR) and OmniFusion (En→X).
+1. **Both visual mechanisms coexist only here.** Decompose slide benefit into
+   (A) *temporal anticipation* — slides precede the speech discussing them by
+   30–60 s, so content/terms are available ahead of commit time; direction-
+   agnostic, helps En→X too — and (B) *target-form supply* — when slide language
+   = target language, the slide hands the system the target-side surface form of
+   upcoming terms, turning terminology translation into recognition + copying.
+   B requires slide-lang = target-lang ≠ source-lang, which is common in X→En
+   (English is the lingua franca of slides; observed directly in our probe:
+   Greek speech, English slides) and essentially nonexistent in En→X. So En→X
+   offers A only; X→En is the one direction where A and B coexist in real data
+   and can be dissected. ASR papers cannot exploit B by construction; OmniFusion
+   (En→X) structurally lacks it. **Slide language is therefore a per-talk
+   stratification variable**: Chinese-LiPS (zh slides, zh→En) and MCIF (en
+   slides, en→zh) are A-only regimes; mTEDx-V talks split by slide language
+   (e.g., Greek talk = A+B, Russian talk = A-only). Paired hypotheses: H1
+   (anticipation) — Pareto gains appear in both regimes; H2 (target supply) —
+   terminology gains and slide-string copy rates are significantly larger in
+   A+B. H2's regime contrast is the sharpest delta against both Do-Slides-Help
+   (ASR) and OmniFusion (En→X).
 2. **Avoids OmniFusion's home field.** They own En→{De,It} SimulST on MCIF;
    competing there head-on makes us a baseline-chaser.
 3. **Assets already exist.** mTEDx-V is built, alive-checked, human-referenced,
@@ -28,12 +40,13 @@ Reasons, in order of weight:
 ### En→Zh — SECONDARY (nearly free, run late)
 
 MCIF (CC-BY 4.0, ACL talks, real slides, En→Zh) is ready-made and
-user-verifiable on both sides. One experiment table: does the same policy
-transfer to En→X where slides are source-language? Expected: terminology gains
-shrink (no target-side supply), anticipation gains persist. This *contrast* is
-itself evidence for the target-side-supply mechanism, and it meets OmniFusion on
-a direction they didn't evaluate (they did De/It SimulST). Verify MCIF reference
-provenance during integration.
+user-verifiable on both sides. Upgraded role after the mechanism decomposition
+above: MCIF is the **A-only control condition** for H2, not just a transfer
+table. Expected: anticipation (Pareto) gains persist, terminology/copy gains
+shrink relative to A+B talks — the contrast is direct evidence for the
+target-supply mechanism. Also meets OmniFusion on a direction they didn't
+evaluate (they did De/It SimulST). Verify MCIF reference provenance during
+integration.
 
 ### X→X — DROPPED
 
