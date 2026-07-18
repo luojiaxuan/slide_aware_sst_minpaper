@@ -9,7 +9,7 @@ links, or handoff state.
 | Material | Canonical home | Current status |
 | --- | --- | --- |
 | Code, configs, scripts, tests | GitHub: `luojiaxuan/slide_aware_sst_minpaper` | Active on `main` |
-| Paper notes and implementation plans | This Git repo under `paper/`, `code_plan/`, and `docs/` | Active |
+| Paper notes and implementation plans | This Git repo under `latex/`, `docs/planning/`, and `docs/` | Active |
 | Lightweight progress and artifact index | This Git repo under `docs/` | Active |
 | Reusable datasets and generated data artifacts | Hugging Face Hub | Qwen3-VL bundle uploaded to a private dataset repo |
 | Reusable checkpoints/adapters | Hugging Face Hub | None yet |
@@ -18,9 +18,9 @@ links, or handoff state.
 ## Current Git Pointers
 
 - GitHub repo: <https://github.com/luojiaxuan/slide_aware_sst_minpaper>
-- Current project framing: [`code_plan/SLIDE_CONTEXT_AWARE_MVP.md`](../code_plan/SLIDE_CONTEXT_AWARE_MVP.md)
-- Agent handoff plan: [`code_plan/AGENT_START_HERE.md`](../code_plan/AGENT_START_HERE.md)
-- Experiment matrix: [`code_plan/EXPERIMENT_MATRIX.md`](../code_plan/EXPERIMENT_MATRIX.md)
+- Current project framing: [`docs/planning/SLIDE_CONTEXT_AWARE_MVP.md`](planning/SLIDE_CONTEXT_AWARE_MVP.md)
+- Agent handoff plan: [`docs/planning/AGENT_START_HERE.md`](planning/AGENT_START_HERE.md)
+- Experiment matrix: [`docs/planning/EXPERIMENT_MATRIX.md`](planning/EXPERIMENT_MATRIX.md)
 - Progress log: [`docs/PROGRESS.md`](PROGRESS.md)
 - Qwen3-VL GPU profiling evidence:
   [`docs/QWEN3_GPU_PROFILING_20260706.md`](QWEN3_GPU_PROFILING_20260706.md)

@@ -1,0 +1,77 @@
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Simultaneous speech translation.}
+Simultaneous ST couples a translation model with a READ/WRITE policy, from fixed
+wait-$k$ schedules \citep{ma2019stacl} to agreement- and attention-based adaptive
+policies \citep{liu2020lowlatency,papi2023alignatt}, evaluated by quality jointly
+with Average Lagging \citep{ma2019stacl,ma2020simuleval}. Recent work extends SST
+to long-form and unbounded streams with computation-aware latency
+\citep{ouyang2025infinisst,papi2026doa}. All of these systems are audio-only: at
+commit time the model's knowledge of the future is limited to what it can guess
+from the source prefix. Our work adds exactly the modality that carries future
+information in talk settings.
+
+\paragraph{Visual context for simultaneous \emph{text} MT.}
+A line of work initiated by \citet{caglayan2020simultaneous} shows that a paired
+image improves low-latency wait-$k$ text MT because ``visual information can
+compensate for the missing source context,'' with follow-ups using RL policies
+\citep{ive2021exploiting}, multimodal encoders \citep{imankulova2020multimodal},
+and supervised visual attention \citep{haralampieva2022supervised}. These studies
+establish the \emph{anticipation} value of vision in simultaneous translation, but
+in a toy regime: text input (no speech), single caption-style photographs
+(Multi30k), and sentence-level decoding. We transfer this insight to its natural
+deployment habitat --- long-form talks where the visual channel is a slide stream
+that \emph{temporally precedes} the speech discussing it.
+
+\paragraph{Slides and screen text for speech tasks.}
+Slide-rich corpora --- SlideSpeech \citep{wang2023slidespeech}, Chinese-LiPS
+\citep{zhao2025chineselips}, M3AV \citep{chen2024m3av}, and alignment tooling such
+as MaViLS \citep{anderer2024mavils} --- established that projected slides carry
+transcription-relevant content. \citet{sinhamahapatra2025slides} demonstrate on
+ACL conference talks that slide-derived terminology reduces domain-term WER by
+35\% relative, and Slide-EC applies slide terms to post-hoc ASR correction
+\citep{piao2025slideec}. All of this work is \emph{offline ASR}: no translation,
+no latency dimension, and no policy for deciding when visual evidence should be
+trusted. Notably, slide text frequently appears in English even when the talk is
+not --- so for X$\rightarrow$En translation (unlike ASR), slides can supply the
+\emph{target-side} surface form of upcoming terms, a signal unavailable to
+transcription systems by construction.
+
+\paragraph{Multimodal simultaneous ST systems.}
+Closest to our setting, OmniFusion \citep{koneru2025omnifusion} fuses a multimodal
+foundation model with a translation LLM and evaluates En$\rightarrow$\{De,It\}
+SimulST on scientific talks from MCIF \citep{papi2025mcif}. Its latency gain
+($\sim$1\,s) is architectural --- removing the ASR$\rightarrow$MT cascade --- and
+its visual input is processed \emph{synchronously on the decoding path}: the
+authors report that ``image processing introduces additional delay.'' It is
+evaluated only against a self-constructed cascade of the same components, assumes
+an English source, and neither models the temporal lead of slides nor measures
+faithfulness of visual-evidence use. We differ on each axis: X$\rightarrow$En,
+an \emph{asynchronous} slide channel off the audio critical path (zero added
+per-token latency), an explicit evidence-gating policy, and metrics that separate
+vision-induced latency gains from architectural ones.
+
+\paragraph{Audio-visual (lip-based) speech translation.}
+MuAViC \citep{anwar2023muavic} and AV-TranSpeech \citep{huang2023avtranspeech} use
+lip movements as \emph{phonetic} visual evidence for robust offline ST. Slides
+provide \emph{semantic} evidence instead --- readable terms and structure --- which
+survives low video quality, requires no face visibility, and is interpretable for
+faithfulness auditing; the two channels are complementary.
+
+\paragraph{Retrieval-augmented SST and terminology.}
+RASST \citep{luo2026rasst} shows that injecting retrieved glossary terms into SST
+improves terminology translation, but assumes the glossary is \emph{prepared in
+advance} --- rarely true in open-domain deployment. Our visual channel is the
+missing supplier: an on-the-fly glossary harvested from the slide stream,
+turning retrieval-augmented SST into a self-provisioning system. Document-level
+context for (re-)translation \citep{zhang2021beyond} is similarly complementary:
+we focus on context that is external to the speech stream and arrives with
+temporal lead.
+
+\paragraph{Positioning.}
+No prior work (i) treats vision as a zero-latency \emph{lookahead} channel for
+\emph{speech} translation, (ii) evaluates visual evidence under a quality--latency
+Pareto rather than offline quality alone, or (iii) measures faithfulness of visual
+grounding (visible-but-unspoken hallucination, wrong-slide adoption) in a
+streaming regime. These three gaps define our contribution.
