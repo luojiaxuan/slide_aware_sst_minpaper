@@ -1,35 +1,66 @@
-\section{Experiments}
+\section{Experimental Setup}
+\label{sec:experiments}
 
-\subsection{Systems}
+\subsection{Probe protocol (\S\ref{sec:probe-results})}
 
-We compare the following systems:
-\begin{enumerate}[leftmargin=*]
-    \item \textbf{No context}: streaming translation from speech/transcript only.
-    \item \textbf{Glossary only}: only term-translation pairs are available.
-    \item \textbf{Slide OCR only}: current slide OCR text is injected.
-    \item \textbf{Background only}: background snippets are retrieved.
-    \item \textbf{Naive all-context}: raw or lightly compressed slides, glossary, and background are all injected.
-    \item \textbf{\policyname{}}: top-$K$ evidence selected by the context policy.
-    \item \textbf{Oracle context}: only human-verified relevant evidence; upper bound.
-\end{enumerate}
+The controlled probe isolates the information value of slide evidence from
+system engineering. Streaming is simulated over incrementally revealed source
+transcripts with the \textbf{Local Agreement} policy \citep{liu2020lowlatency}:
+at each READ step (2 words for Greek; 4 characters for Chinese) the translator
+produces a full translation of the prefix, and the longest common prefix of two
+consecutive outputs beyond already-committed words is committed (monotonic, no
+retraction; final step appends the tail). The translator is
+\textbf{Qwen3-32B} (temperature 0, thinking disabled) served with vLLM on one
+H200; the pilot replication uses Qwen2.5-7B-q4. Text-prefix simulation
+deliberately removes ASR noise so that evidence effects are attributable to
+translation, not recognition; the full-system evaluation adds the audio front
+end.
 
-\subsection{Streaming settings}
+\paragraph{Data.} 40 segments of a Greek TEDx talk with English slides
+(mTEDx-V; M3 regime; human references from TED translators) and 16 Chinese
+lecture segments (Chinese-LiPS; M1+M2 regime; author-drafted references),
+segment length $\geq 8$ reference words, sampled past the first minute.
 
-We evaluate chunk sizes of \{1s, 2s, 4s\} or transcript-equivalent token windows, depending on the front-end.  The MVP reports both oracle-transcript streaming and ASR-based streaming to separate translation/context effects from ASR noise.
+\paragraph{Conditions.} (A) audio-only baseline; (B) slide terms from the
+currently visible slide, extracted by 480p tesseract OCR or by a VLM reader
+(Qwen2.5-VL-7B) over the same frames with a 90\,s lookback; (C) oracle future
+terms: the reference's own rare content words --- a perfect-anticipation upper
+bound; (D) wrong-slide terms from a different moment of the talk (faithfulness
+control). Gating variants inject B's terms selectively: an oracle need gate
+(hard stratum only), a learned need-predictor (below), an LLM relevance gate,
+and rule-based uncertainty gates. A decode-level variant (\emph{soft
+injection}) applies the slide terms as a logit bias on hint tokens instead of
+prompt text, leaving the prompt untouched.
 
-\subsection{Metrics}
+\paragraph{Metrics.} chrF against references (sacreBLEU); term recall over the
+reference's rare terms; Average Lagging \citep{ma2019stacl} in READ units.
+Significance: paired bootstrap over segments ($10^4$ resamples, one-sided).
+The \emph{hard stratum} (baseline term recall $\leq 0.4$) is fixed before any
+condition comparison.
 
-General translation quality is measured with BLEU and COMET when references are available.  Since the benchmark targets context-sensitive behavior, primary metrics are:
-\begin{itemize}[leftmargin=*]
-    \item \textbf{Homophone Disambiguation Accuracy (HDA)}: whether the ambiguous source token receives the correct target rendering.
-    \item \textbf{Term Accuracy / Term F1}: exact or normalized match of technical terms and entities.
-    \item \textbf{Context Overuse Rate (COR)}: fraction of outputs containing context terms not supported by the current source segment.
-    \item \textbf{Wrong-Slide Adoption Rate (WSAR)}: fraction of mismatched-slide examples where the output follows the wrong slide.
-    \item \textbf{Latency}: StreamLAAL or token-level delay; include computation-aware latency if measured.
-\end{itemize}
+\subsection{Learned need-predictor}
 
-\subsection{Ablations}
+Failure labels are mined automatically: each of 1{,}540 Greek segments (18
+talks, test+valid) is translated offline by the same model; a segment is
+\emph{hard} if term recall $\leq 0.4$ (24\% base rate). Features must be
+online-computable: source-side surface statistics (word-length profile,
+long-word rates, digits, character diversity) and model-confidence features
+from the draft's token logprobs (mean, min, low-confidence fractions).
+A class-balanced logistic regression is trained with \textbf{talk-held-out}
+evaluation (the probe talk is never seen in training); the decision threshold
+is calibrated on training talks. End-task evaluation plugs the predictor's
+per-segment decisions into the gated condition on the probe.
 
-We ablate evidence source, top-$K$, policy thresholds, pinyin matching, temporal prior, and conflict penalty.  We also evaluate robustness under wrong current-slide detection, noisy OCR, and distractor glossary size.
+\subsection{Full-system evaluation (planned)}
 
-\todo{Insert exact model choices, decoding parameters, hardware/API cost, and reproducibility details.}
+The complete pipeline (streaming audio front end, asynchronous slide worker,
+gated/soft injection) is evaluated on the three benchmark strata of
+\S\ref{sec:benchmark}: S1 mTEDx-V (X$\rightarrow$En long-form, stratified by
+VLM-derived visual-signal class and slide language), S2 Chinese-LiPS-Long
+(original-timeline sessions, dedicated 1080p slide stream), S3 ACL 60/60
+(En$\rightarrow$Zh control with third-party tagged terms). Quality
+(chrF/XCOMET) is reported jointly with computation-aware Average Lagging;
+terminology follows the Wikidata cross-lingual protocol with per-stratum
+coverage; faithfulness metrics are wrong-slide adoption rate and
+visible-but-unspoken rate.
+\todo{Finalize full-system decoding parameters and hardware/cost details.}
