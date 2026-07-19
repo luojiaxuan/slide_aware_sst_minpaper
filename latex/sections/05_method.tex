@@ -102,7 +102,13 @@ wrong-time controls (adoption rate of planted bad evidence) and a
 visible-but-unspoken hallucination check against the slide text. At probe
 scale, prompt-level wrong terms are benign for a 32B translator (within
 $\pm1$ chrF of baseline); we expect --- and test for --- larger risks under
-image-input and fine-tuned injection modes.
+image-input and fine-tuned injection modes. An injection-form study further
+shows that uniform decode-time logit bias on hint tokens is benign but
+powerless (easy segments unharmed, hard-segment gains vanish; saturates by
+$+8$), indicating \emph{trie-constrained contextual biasing} --- boosting a
+term's continuation only when its prefix is already being generated, as in ASR
+shallow fusion --- as the injection form that is simultaneously powerful,
+benign, and gate-free; we adopt it for the full system.
 
 \subsection{Training-free core, learned extensions}
 

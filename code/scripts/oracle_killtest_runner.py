@@ -34,7 +34,8 @@ CONDITIONS = {"none": None, "slide": "slide_terms", "oracle": "oracle_terms",
               # gating prototypes: same hint source as "slide", but injected selectively
               "gated_oracle": "slide_terms",  # inject only if item["gate_on"] (hard-stratum oracle gate)
               "gated_llm": "slide_terms",     # inject once a runtime LLM relevance gate fires (sticky)
-              "gated_unc": "slide_terms"}     # inject once uncertainty/match signals fire (eq. gate, sticky)
+              "gated_unc": "slide_terms",     # inject once uncertainty/match signals fire (eq. gate, sticky)
+              "bias": "slide_terms"}          # no prompt injection: decode-time logit bias on hint tokens
 
 
 def main() -> None:
@@ -49,6 +50,8 @@ def main() -> None:
     parser.add_argument("--max-new-words", type=int, default=12)
     parser.add_argument("--conditions", default=None,
                         help="comma-separated subset of conditions to run")
+    parser.add_argument("--logit-bias", type=float, default=4.0,
+                        help="bias value for the 'bias' condition")
     args = parser.parse_args()
 
     items = json.load(open(args.items))
@@ -81,6 +84,7 @@ def run_incremental(it: dict, cond: str, args) -> dict:
     hints = it.get(hints_key) or [] if hints_key else []
     if cond == "gated_oracle" and not it.get("gate_on"):
         hints = []
+    bias_map = build_bias(hints, args) if cond == "bias" else None
     llm_gate_open = cond not in ("gated_llm", "gated_unc")  # gated variants start closed
     gate_step = None
     stall_count = 0
@@ -103,8 +107,8 @@ def run_incremental(it: dict, cond: str, args) -> dict:
             if stall_count >= 1 or long_word:
                 llm_gate_open = True
                 gate_step = n_read
-        step_hints = hints if llm_gate_open else []
-        full = full_translation(prefix, step_hints, it["src_lang"], args)
+        step_hints = [] if cond == "bias" else (hints if llm_gate_open else [])
+        full = full_translation(prefix, step_hints, it["src_lang"], args, bias_map)
         if final:
             agree = full if len(full) >= len(committed) else committed
         else:
@@ -164,7 +168,24 @@ def ask_gate(prefix: str, hints: list[str], lang: str, args) -> bool:
     return text.startswith("YES")
 
 
-def full_translation(prefix: str, hints: list[str], lang: str, args) -> list[str]:
+def build_bias(hints: list[str], args) -> dict:
+    """Tokenize hint terms (with leading-space variants) into a logit_bias map."""
+    ids = set()
+    for h in hints:
+        for variant in (h, " " + h):
+            body = json.dumps({"model": args.model, "prompt": variant}).encode()
+            req = urllib.request.Request(f"{args.ollama_url}/tokenize", data=body,
+                                         headers={"Content-Type": "application/json"})
+            try:
+                with urllib.request.urlopen(req, timeout=60) as r:
+                    ids.update(json.load(r)["tokens"])
+            except Exception:
+                pass
+    return {str(i): args.logit_bias for i in list(ids)[:250]}
+
+
+def full_translation(prefix: str, hints: list[str], lang: str, args,
+                     bias_map: dict | None = None) -> list[str]:
     hint_block = (f"Terminology from the talk's slides/context that may appear "
                   f"soon: {', '.join(hints)}\n" if hints else "")
     prompt = (f"Translate this partial {lang} speech transcript into English.\n"
@@ -172,15 +193,18 @@ def full_translation(prefix: str, hints: list[str], lang: str, args) -> list[str
               f"Partial source (speech so far, may stop mid-sentence): {prefix}\n"
               f"Output the complete English translation of ONLY what has been "
               f"spoken so far. No explanations, no notes - just the translation.")
-    text = ollama_generate(prompt, args).strip().split("\n")[0].strip().strip('"')
+    text = ollama_generate(prompt, args, bias_map).strip().split("\n")[0].strip().strip('"')
     return text.split()
 
 
-def ollama_generate(prompt: str, args) -> str:
+def ollama_generate(prompt: str, args, bias_map: dict | None = None) -> str:
     if args.api == "openai":
-        body = json.dumps({"model": args.model, "temperature": 0.0, "max_tokens": 200,
-                           "messages": [{"role": "user", "content": prompt}],
-                           "chat_template_kwargs": {"enable_thinking": False}}).encode()
+        payload = {"model": args.model, "temperature": 0.0, "max_tokens": 200,
+                   "messages": [{"role": "user", "content": prompt}],
+                   "chat_template_kwargs": {"enable_thinking": False}}
+        if bias_map:
+            payload["logit_bias"] = bias_map
+        body = json.dumps(payload).encode()
         req = urllib.request.Request(f"{args.ollama_url}/v1/chat/completions", data=body,
                                      headers={"Content-Type": "application/json"})
         for attempt in range(3):

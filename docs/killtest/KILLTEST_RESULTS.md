@@ -186,6 +186,29 @@ binary gate entirely via logits-level soft hint integration — since easy-harm
 is substantially LCP protocol sensitivity, a decoding-level scheme may make
 injection benign by construction, relaxing the selectivity requirement.
 
+## Follow-up 6: injection-form comparison — uniform logit bias is benign but powerless (2026-07-19, overnight)
+
+Soft injection via decode-time logit bias on VLM slide-term tokens (prompt
+untouched; vLLM logit_bias, sweep +2/+4/+8; `runs_bias{2,4,8}.jsonl`):
+
+| injection form (el, n=40) | hard-Δ | easy-Δ | verdict |
+|---|---|---|---|
+| prompt injection (ungated) | +14.1 | −18.6 | powerful but disruptive |
+| prompt + oracle need-gate | +13.3 | 0.0 | powerful and benign, needs a predictor |
+| uniform logit bias +2 | +0.0 | +0.0 | inert |
+| uniform logit bias +4/+8 | +1.3 | −0.4 | **benign but powerless** (saturates) |
+
+The soft-injection hypothesis splits: prompt-perturbation harm indeed vanishes
+(easy-Δ ≈ 0, confirming the LCP-sensitivity diagnosis), but so does the gain —
+an unconditional bias cannot flip greedy decoding toward terms the model
+doesn't already favor, and pushing single tokens without continuation
+constraints cannot produce multi-token terms. The indicated correct form is
+**trie/prefix-constrained contextual biasing** (shallow-fusion style, standard
+in ASR contextual biasing): boost a term's next token only when the generated
+prefix already matches the term's prefix — potentially powerful AND benign,
+removing the gate requirement. Requires a custom logits processor (not stock
+vLLM); scheduled for the full system.
+
 ## Caveats
 
 - Text-prefix simulation (transcript, not audio); segment-level, not long-form
