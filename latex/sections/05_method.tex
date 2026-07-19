@@ -110,7 +110,10 @@ The core pipeline is training-free (VLM reader + rule-based gate thresholds
 tuned on development talks), which keeps it portable across base translators.
 Learned extensions fit two places without touching the architecture: a small
 need-prediction classifier trained on (state, baseline-failure) pairs mined
-from development runs, and preference-tuning the translator to follow hint
+automatically from development runs (our pilot: 1{,}540 auto-labeled segments;
+draft-translation logprob features reach talk-held-out AUC 0.62 where source
+surface features are at chance, preserving the full hard-stratum gain
+end-to-end while easy-segment false fires remain the cost), and preference-tuning the translator to follow hint
 blocks conservatively (use terms when spoken, ignore otherwise) using
 synthetic slide augmentation \citep{sinhamahapatra2025slides} --- synthetic
 data is admissible in training precisely because our test sets forbid it.

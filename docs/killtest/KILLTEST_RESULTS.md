@@ -161,6 +161,31 @@ mismatch; logprob-feature collection is in progress. Honest status: gating
 selectivity remains open; the oracle-gate ceiling (+7.3) quantifies exactly
 what a working predictor is worth.
 
+## Follow-up 5: learned need-predictor closes part of the gap (2026-07-19)
+
+Adding model-confidence features (token logprobs of an offline draft
+translation) to the predictor lifts talk-held-out AUC from chance to **0.62**
+(prefix-30% scope; strongest feature lp_mean, coef −2.9): the model's own
+uncertainty does carry failure signal — "it knows what it doesn't know" —
+while source surface statistics do not. End-task (40 probe segments,
+predictor-gated VLM injection, fire 30/40):
+
+| condition | chrF | Δ pooled | hard-Δ | easy-Δ |
+|---|---|---|---|---|
+| ungated VLM | 39.9 | −0.6 | +14.1 | −18.6 |
+| **learned gate (AUC .62)** | **41.5** | **+1.3** | **+13.8** | −13.9 |
+| oracle gate | 45.3 | +7.3 | +13.3 | 0.0 |
+
+The learned gate preserves essentially the full hard-stratum gain (+13.8 vs
++13.3) — its recall is sufficient — but false-fires on easy segments
+(precision 0.16) keep pooled gains small. Signal ladder recorded: surface
+features (chance) → draft logprobs (AUC 0.62, +1.3 end-task) → oracle (+7.3
+= value of a perfect predictor). Two forward paths: (a) stronger predictors
+(fine-tuned classifier; slide-term/draft mismatch features); (b) remove the
+binary gate entirely via logits-level soft hint integration — since easy-harm
+is substantially LCP protocol sensitivity, a decoding-level scheme may make
+injection benign by construction, relaxing the selectivity requirement.
+
 ## Caveats
 
 - Text-prefix simulation (transcript, not audio); segment-level, not long-form
