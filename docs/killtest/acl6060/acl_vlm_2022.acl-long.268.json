@@ -1,0 +1,858 @@
+[
+ {
+  "t": 7.5,
+  "terms": [
+   "Detecting Unassimilated Borrowings in Spanish",
+   "An Annotated Corpus and Approaches to Modeling",
+   "Elena Álvarez-Mellado",
+   "Constantine Lignos",
+   "NLP & IR group, UNED",
+   "Michtom School of Computer Science, Brandeis University",
+   "ACL 2022"
+  ]
+ },
+ {
+  "t": 22.5,
+  "terms": [
+   "Table of Contents",
+   "What is lexical borrowing (and why it matters as an NLP task)",
+   "The task",
+   "The dataset",
+   "Modeling",
+   "Conditional Random Fields",
+   "Transformer-based models",
+   "BiLSTM-CRF with word and subword embeddings",
+   "Transfer learning from codeswitching",
+   "Conclusions"
+  ]
+ },
+ {
+  "t": 37.5,
+  "terms": [
+   "lexical borrowing",
+   "linguistic borrowing",
+   "code-switching",
+   "continuum",
+   "podcast",
+   "app",
+   "online",
+   "crowdfunding",
+   "spin-off",
+   "big data",
+   "fake news",
+   "Haugen (1950)",
+   "Clyne et al. (2003)",
+   "Poplack (1980)",
+   "Poplack et al. (1988)"
+  ]
+ },
+ {
+  "t": 52.5,
+  "terms": [
+   "lexical borrowing",
+   "linguistic borrowing",
+   "code-switching",
+   "continuum",
+   "podcast",
+   "app",
+   "online",
+   "crowdfunding",
+   "spin-off",
+   "big data",
+   "fake news",
+   "Haugen (1950)",
+   "Clyne et al. (2003)",
+   "Poplack (1980)",
+   "Poplack et al. (1988)"
+  ]
+ },
+ {
+  "t": 67.5,
+  "terms": [
+   "lexical borrowing",
+   "linguistic borrowing",
+   "code-switching",
+   "continuum",
+   "podcast",
+   "app",
+   "online",
+   "crowdfunding",
+   "spin-off",
+   "big data",
+   "fake news",
+   "Haugen (1950)",
+   "Clyne et al. (2003)",
+   "Poplack (1980)",
+   "Poplack et al. (1988)"
+  ]
+ },
+ {
+  "t": 82.5,
+  "terms": [
+   "Lexical borrowing vs Code switching",
+   "Code Switching",
+   "Lexical Borrowing",
+   "Speaker",
+   "bilinguals",
+   "monolinguals",
+   "Grammar compliance",
+   "both languages",
+   "recipient language",
+   "Level of integration",
+   "not integrated",
+   "can be integrated",
+   "NLP approach",
+   "one tag per token",
+   "(à la POS-tagging)",
+   "extraction of spans of interest",
+   "(à la NER)",
+   "see Computational Approaches to Linguistic Code-Switching workshops (CALCS)",
+   "Soler et al. (2014)",
+   "Diab et al. (2015)"
+  ]
+ },
+ {
+  "t": 97.5,
+  "terms": [
+   "Lexical borrowing vs Code switching",
+   "Code Switching",
+   "Lexical Borrowing",
+   "Speaker",
+   "bilinguals",
+   "monolinguals",
+   "Grammar compliance",
+   "both languages",
+   "recipient language",
+   "Level of integration",
+   "not integrated",
+   "can be integrated",
+   "NLP approach",
+   "one tag per token",
+   "(à la POS-tagging)",
+   "extraction of spans of interest",
+   "(à la NER)",
+   "see Computational Approaches to Linguistic Code-Switching workshops (CALCS)",
+   "Soler et al. (2014)",
+   "Diab et al. (2015)"
+  ]
+ },
+ {
+  "t": 112.5,
+  "terms": [
+   "borrowing",
+   "linguistics",
+   "manifestation",
+   "languages",
+   "change",
+   "interact",
+   "diachronic",
+   "linguistics",
+   "contact",
+   "linguistics",
+   "Weinreich",
+   "(1963)",
+   "lexical",
+   "borrowings",
+   "source",
+   "new",
+   "words",
+   "online",
+   "software",
+   "streaming"
+  ]
+ },
+ {
+  "t": 127.5,
+  "terms": [
+   "borrowing",
+   "linguistics",
+   "lexical borrowings",
+   "new words",
+   "online",
+   "software",
+   "streaming",
+   "NLP",
+   "out-of-vocabulary words",
+   "Gering Salas et al.",
+   "2018",
+   "lexical borrowings",
+   "text",
+   "downstream tasks",
+   "Parsing Alex",
+   "2008",
+   "Text-to-speech synthesis Leidig et al.",
+   "2014",
+   "Machine translation Tsvetkov and Dyer",
+   "2016"
+  ]
+ },
+ {
+  "t": 142.5,
+  "terms": [
+   "English borrowing detection",
+   "Growing interest in the influence of English in other languages",
+   "Görlach (2002)",
+   "With a focus on English lexical borrowings (a.k.a anglicisms)",
+   "Previous work on automatic detection of borrowings in different European languages: German, French, Italian, Norwegian, Finnish, Spanish",
+   "Andersen (2012); Chesley (2010); Furrasi and Hofland (2007); Garley and Hockenmaier (2012); Losnegaard and Lyse (2012); Mansikkaniemi and Kurimo (2012); Serigos (2017); Álvarez Mellado (2020)"
+  ]
+ },
+ {
+  "t": 157.5,
+  "terms": [
+   "Table of Contents",
+   "What is lexical borrowing (and why it matters as an NLP task)",
+   "The task",
+   "The dataset",
+   "Modeling",
+   "Conditional Random Fields",
+   "Transformer-based models",
+   "BiLSTM-CRF with word and subword embeddings",
+   "Transfer learning from codeswitching",
+   "Conclusions"
+  ]
+ },
+ {
+  "t": 172.5,
+  "terms": [
+   "The task",
+   "Unassimilated",
+   "lexical borrowings",
+   "in Spanish newswire",
+   "not (yet) integrated into the recipient language",
+   "words borrowed from other languages",
+   "used in Spanish newspapers",
+   "Words from other languages (mainly English) that have recently been imported into Spanish and that are being used in Spanish newspapers",
+   "Ex: Las prendas bestsellers se estampan con motivos florales, 'animal print' o a retales tipo patchwork",
+   "Best-seller clothes show flower print, animal print or patchwork style",
+   "Alvarez-Mellado E., Lignos C.",
+   "Detecting Borrowings in Spanish",
+   "ACL 2022",
+   "9 / 29"
+  ]
+ },
+ {
+  "t": 187.5,
+  "terms": [
+   "The task",
+   "Unassimilated",
+   "lexical borrowings",
+   "in Spanish newswire",
+   "not (yet) integrated into the recipient language",
+   "words borrowed from other languages",
+   "used in Spanish newspapers",
+   "Words from other languages (mainly English) that have recently been imported into Spanish and that are being used in Spanish newspapers",
+   "Ex: Las prendas bestsellers se estampan con motivos florales, 'animal print' o a retales tipo patchwork",
+   "Best-seller clothes show flower print, animal print or patchwork style",
+   "Alvarez-Mellado E., Lignos C.",
+   "Detecting Borrowings in Spanish",
+   "ACL 2022",
+   "9 / 29"
+  ]
+ },
+ {
+  "t": 202.5,
+  "terms": [
+   "CRF model",
+   "anglicism detection",
+   "Spanish newswire",
+   "F1 = 86",
+   "Alvarez Mellado, 2020",
+   "dataset limitations",
+   "headlines",
+   "single source of news",
+   "limited borrowings",
+   "overlap in borrowings",
+   "generalize to previously unseen borrowings",
+   "best results by CRF model",
+   "more sophisticated approaches"
+  ]
+ },
+ {
+  "t": 217.5,
+  "terms": [
+   "CRF model",
+   "anglicism detection",
+   "Spanish newswire",
+   "F1=86",
+   "Alvarez Mellado, 2020",
+   "dataset consisted only of headlines",
+   "dataset focused exclusively on a single source of news",
+   "number and variety of borrowings were limited",
+   "significant overlap in borrowings between the training set and the test set",
+   "generalizing to previously unseen borrowings",
+   "best results obtained by a CRF model",
+   "more sophisticated approaches were not explored"
+  ]
+ },
+ {
+  "t": 232.5,
+  "terms": [
+   "CRF model",
+   "anglicism detection",
+   "Spanish newswire",
+   "F1=86",
+   "Alvarez Mellado, 2020",
+   "dataset consisted only of headlines",
+   "dataset focused exclusively on a single source of news",
+   "number and variety of borrowings were limited",
+   "significant overlap in borrowings between the training set and the test set",
+   "generalizing to previously unseen borrowings",
+   "best results obtained by a CRF model",
+   "more sophisticated approaches were not explored"
+  ]
+ },
+ {
+  "t": 247.5,
+  "terms": [
+   "Dataset creation",
+   "The aim was to create a test set as difficult as possible with minimal overlap in words and topics between the training set and the test set.",
+   "The test set:",
+   "comes from sources and dates not seen in the training set"
+  ]
+ },
+ {
+  "t": 262.5,
+  "terms": [
+   "Dataset creation",
+   "The aim was to create a test set as difficult as possible with minimal overlap in words and topics between the training set and the test set.",
+   "The test set:",
+   "comes from sources and dates not seen in the training set"
+  ]
+ },
+ {
+  "t": 277.5,
+  "terms": [
+   "Dataset creation",
+   "The aim was to create a test set as difficult as possible with minimal overlap in words and topics between the training set and the test set.",
+   "The test set:",
+   "comes from sources and dates not seen in the training set",
+   "Training set: Aug-Dec 2020; Test set: Feb-March 2021",
+   "is very borrowing-dense"
+  ]
+ },
+ {
+  "t": 292.5,
+  "terms": [
+   "Dataset creation",
+   "The aim was to create a test set as difficult as possible with minimal overlap in words and topics between the training set and the test set.",
+   "The test set:",
+   "comes from sources and dates not seen in the training set",
+   "Training set: Aug-Dec 2020; Test set: Feb-March 2021",
+   "is very borrowing-dense",
+   "Training set: 6 bor/1,000 tokens. Test set: 20 bor/1,000 tokens",
+   "contain as many out-of-vocabulary (OOV) words as possible"
+  ]
+ },
+ {
+  "t": 307.5,
+  "terms": [
+   "The corpus",
+   "composed of a collection of texts from Spanish newspapers",
+   "annotated with lexical borrowings with 2 tags: ENG for English borrowings OTHER for borrowings from other languages",
+   "in CoNLL format",
+   "with BIO encoding",
+   "because borrowings can be single token app or multitoken machine learning"
+  ]
+ },
+ {
+  "t": 322.5,
+  "terms": [
+   "The corpus",
+   "composed of a collection of texts from Spanish newspapers",
+   "annotated with lexical borrowings with 2 tags: ENG for English borrowings OTHER for borrowings from other languages",
+   "in CoNLL format",
+   "with BIO encoding",
+   "because borrowings can be single token (app) or multitoken (machine learning)",
+   "Alvarez-Mellado E.",
+   "Lignos C.",
+   "Detecting Borrowings in Spanish",
+   "ACL 2022"
+  ]
+ },
+ {
+  "t": 337.5,
+  "terms": [
+   "Training",
+   "231,126",
+   "Tokens",
+   "1,493",
+   "ENG",
+   "28",
+   "OTHER",
+   "380",
+   "Development",
+   "82,578",
+   "Tokens",
+   "306",
+   "OTHER",
+   "49",
+   "Test",
+   "58,997",
+   "Tokens",
+   "1,239",
+   "OTHER",
+   "46"
+  ]
+ },
+ {
+  "t": 352.5,
+  "terms": [
+   "En",
+   "0",
+   "este",
+   "mes",
+   "especialmente",
+   "puede",
+   "ser",
+   "de",
+   "utilidad",
+   "apuntarnos",
+   "al",
+   "batch",
+   "cooking",
+   "Benching",
+   "estar",
+   "en",
+   "el",
+   "banquillo",
+   "crush",
+   "mientras"
+  ]
+ },
+ {
+  "t": 367.5,
+  "terms": [
+   "En",
+   "0",
+   "este",
+   "mes",
+   "especialmente",
+   "puede",
+   "ser",
+   "de",
+   "utilidad",
+   "apuntarnos",
+   "al",
+   "batch",
+   "cooking",
+   "Benching",
+   ",",
+   "estar",
+   "en",
+   "el",
+   "banquillo",
+   "crush"
+  ]
+ },
+ {
+  "t": 382.5,
+  "terms": [
+   "En",
+   "0",
+   "este",
+   "mes",
+   "especialmente",
+   "puede",
+   "ser",
+   "de",
+   "utilidad",
+   "apuntarnos",
+   "al",
+   "batch",
+   "cooking",
+   "Benching",
+   "estar",
+   "en",
+   "el",
+   "banquillo",
+   "crush",
+   "mientras"
+  ]
+ },
+ {
+  "t": 397.5,
+  "terms": [
+   "Conditional Random Fields model",
+   "A CRF model with handcrafted features.",
+   "Bias",
+   "Token",
+   "Uppercase",
+   "Titlecase",
+   "Character trigram",
+   "Quotation marks",
+   "Suffix",
+   "POS tag (provided by spaCy)",
+   "Word shape (provided by spaCy)",
+   "Word embedding (Spanish word2vec by Cardellino (2019))",
+   "URL (provided by spaCy)",
+   "Email (provided by spaCy)",
+   "Twitter (#hashtag or @username)"
+  ]
+ },
+ {
+  "t": 412.5,
+  "terms": [
+   "Conditional Random Fields model",
+   "A CRF model with handcrafted features.",
+   "Bias",
+   "Token",
+   "Uppercase",
+   "Titlecase",
+   "Character trigram",
+   "Quotation marks",
+   "Suffix",
+   "POS tag (provided by spaCy)",
+   "Word shape (provided by spaCy)",
+   "Word embedding (Spanish word2vec by Cardellino (2019))",
+   "URL (provided by spaCy)",
+   "Email (provided by spaCy)",
+   "Twitter (#hashtag or @username)"
+  ]
+ },
+ {
+  "t": 427.5,
+  "terms": [
+   "CRF results",
+   "F1 score of 86.41",
+   "Alvarez Mellado, 2020",
+   "F1=55.44",
+   "Precision",
+   "Recall",
+   "F1",
+   "Development",
+   "ALL",
+   "74.13",
+   "59.72",
+   "66.15",
+   "ENG",
+   "74.20",
+   "68.63",
+   "71.31",
+   "OTHER",
+   "66.67",
+   "4.08",
+   "7.69"
+  ]
+ },
+ {
+  "t": 442.5,
+  "terms": [
+   "CRF results",
+   "F1 score of 86.41",
+   "Alvarez Mellado, 2020",
+   "F1=55.44",
+   "Precision",
+   "Recall",
+   "F1",
+   "Development",
+   "ALL",
+   "74.13",
+   "59.72",
+   "66.15",
+   "ENG",
+   "74.20",
+   "68.63",
+   "71.31",
+   "OTHER",
+   "66.67",
+   "4.08",
+   "7.69"
+  ]
+ },
+ {
+  "t": 457.5,
+  "terms": [
+   "CRF results",
+   "F1 score of 86.41",
+   "Alvarez Mellado, 2020",
+   "F1=55.44",
+   "Precision",
+   "Recall",
+   "F1",
+   "Development",
+   "ALL",
+   "74.13",
+   "59.72",
+   "66.15",
+   "ENG",
+   "74.20",
+   "68.63",
+   "71.31",
+   "OTHER",
+   "66.67",
+   "4.08",
+   "7.69"
+  ]
+ },
+ {
+  "t": 472.5,
+  "terms": [
+   "Transformer-based models",
+   "BETO base case model",
+   "monolingual BERT model trained for Spanish",
+   "(Cañete et al., 2020)",
+   "mBERT: multilingual BERT, trained on Wikipedia in 104 languages",
+   "(Devlin et al., 2019)",
+   "Both models were run using the Transformers library by HuggingFace",
+   "(Wolf et al., 2020)",
+   "Detecting Borrowings in Spanish",
+   "ACL 2022"
+  ]
+ },
+ {
+  "t": 487.5,
+  "terms": [
+   "Transformer-based models results",
+   "Development",
+   "Test",
+   "Precision",
+   "Recall",
+   "F1",
+   "BETO",
+   "ALL",
+   "73.36",
+   "73.46",
+   "73.35",
+   "86.76",
+   "75.50",
+   "80.71",
+   "ENG",
+   "74.30",
+   "84.05",
+   "78.81",
+   "87.33",
+   "77.99"
+  ]
+ },
+ {
+  "t": 502.5,
+  "terms": [
+   "Transformer-based models results",
+   "Development",
+   "Test",
+   "Precision",
+   "Recall",
+   "F1",
+   "BETO",
+   "ALL",
+   "73.36",
+   "73.46",
+   "73.35",
+   "86.76",
+   "75.50",
+   "80.71",
+   "ENG",
+   "74.30",
+   "84.05",
+   "78.81",
+   "87.33",
+   "77.99"
+  ]
+ },
+ {
+  "t": 517.5,
+  "terms": [
+   "BiLSTM-CRF model",
+   "different types of embeddings",
+   "linguistic information",
+   "Transformer-based models",
+   "outperform",
+   "results",
+   "Detecting Borrowings in Spanish",
+   "ACL 2022"
+  ]
+ },
+ {
+  "t": 532.5,
+  "terms": [
+   "BiLSTM-CRF model",
+   "different types of embeddings",
+   "linguistic information",
+   "Transformer-based models",
+   "FastText",
+   "one-hot",
+   "byte pair",
+   "character embeddings",
+   "preliminary experiments",
+   "Detecting Borrowings in Spanish",
+   "ACL 2022"
+  ]
+ },
+ {
+  "t": 547.5,
+  "terms": [
+   "BiLSTM-CRF model",
+   "different types of embeddings",
+   "Transformer-based models",
+   "Transformer-based embeddings",
+   "non-contextualized embeddings",
+   "English BERT + Spanish BETO embeddings",
+   "mBERT embeddings"
+  ]
+ },
+ {
+  "t": 562.5,
+  "terms": []
+ },
+ {
+  "t": 577.5,
+  "terms": []
+ },
+ {
+  "t": 592.5,
+  "terms": []
+ },
+ {
+  "t": 607.5,
+  "terms": [
+   "BiLSTM-CRF model with codeswitch embeddings",
+   "Can lexical borrowing detection be framed as transfer learning from language identification in codeswitching?",
+   "Alvarez-Mellado E.",
+   "Lignos C.",
+   "Detecting Borrowings in Spanish",
+   "ACL 2022",
+   "23 / 29"
+  ]
+ },
+ {
+  "t": 622.5,
+  "terms": [
+   "BiLSTM-CRF model",
+   "codeswitch embeddings",
+   "lexical borrowing detection",
+   "transfer learning",
+   "language identification",
+   "codeswitching",
+   "Transformer embeddings",
+   "unadapted",
+   "Detecting Borrowings in Spanish",
+   "ACL 2022"
+  ]
+ },
+ {
+  "t": 637.5,
+  "terms": [
+   "BiLSTM-CRF model",
+   "codeswitch embeddings",
+   "lexical borrowing detection",
+   "transfer learning",
+   "language identification",
+   "codeswitching",
+   "Sarker, 2020",
+   "fine-tuned",
+   "Transformer-based embeddings",
+   "pretrained for language identification",
+   "Spanish-English section",
+   "LinCE codeswitching dataset",
+   "Aguilar et al., 2020",
+   "Detecting Borrowings in Spanish",
+   "ACL 2022"
+  ]
+ },
+ {
+  "t": 652.5,
+  "terms": [
+   "BiLSTM-CRF",
+   "codeswitching embeddings",
+   "Precision",
+   "Recall",
+   "F1",
+   "Development",
+   "Test",
+   "Codeswitch",
+   "ALL",
+   "ENG",
+   "OTHER",
+   "Codeswitch + char",
+   "ALL",
+   "ENG",
+   "OTHER",
+   "Codeswitch + BPE",
+   "ALL",
+   "ENG",
+   "OTHER",
+   "Codeswitch + BPE + char"
+  ]
+ },
+ {
+  "t": 667.5,
+  "terms": []
+ },
+ {
+  "t": 682.5,
+  "terms": [
+   "Discussion and wrap-up",
+   "A new dataset of Spanish newswire annotated with unassimilated lexical borrowings (more borrowing-dense, OOV-rich)",
+   "4 types of models for lexical borrowing detection:",
+   "> CRF model with handcrafted features (F1=55)",
+   "> Transformer-based models (BETO: F1=80, mBERT: F1=82)",
+   "> BiLSTM with Transformer-based word embeddings (BERT+BETO) and subword embeddings (BPE, char) (F1=83.6)",
+   "> BiLSTM with embeddings pretrained on codeswitched data (F1=84.2)",
+   "Error analysis: Recall was a weak point for all models. Most frequent false negatives:",
+   "> upper-case borrowings (such as Big Data)",
+   "> borrowings in sentence-initial position (in titlecase)",
+   "> words that exist both in English and Spanish (like primer or red)",
+   "BPE embeddings seem to improve F1 score.",
+   "Character embeddings seem to improve recall",
+   "Alvarez-Mellado E., Lignos C.",
+   "Detecting Borrowings in Spanish",
+   "ACL 2022",
+   "26 / 29"
+  ]
+ },
+ {
+  "t": 697.5,
+  "terms": [
+   "Discussion and wrap-up",
+   "A new dataset of Spanish newswire annotated with unassimilated lexical borrowings (more borrowing-dense, OOV-rich)",
+   "4 types of models for lexical borrowing detection:",
+   "> CRF model with handcrafted features (F1=55)",
+   "> Transformer-based models (BETO: F1=80, mBERT: F1=82)",
+   "> BiLSTM with Transformer-based word embeddings (BERT+BETO) and subword embeddings (BPE, char) (F1=83.6)",
+   "> BiLSTM with embeddings pretrained on codeswitched data (F1=84.2)",
+   "Error analysis: Recall was a weak point for all models. Most frequent false negatives:",
+   "> upper-case borrowings (such as Big Data)",
+   "> borrowings in sentence-initial position (in titlecase)",
+   "> words that exist both in English and Spanish (like primer or red)",
+   "BPE embeddings seem to improve F1 score.",
+   "Character embeddings seem to improve recall"
+  ]
+ },
+ {
+  "t": 712.5,
+  "terms": [
+   "Discussion and wrap-up",
+   "A new dataset of Spanish newswire annotated with unassimilated lexical borrowings (more borrowing-dense, OOV-rich)",
+   "4 types of models for lexical borrowing detection:",
+   "> CRF model with handcrafted features (F1=55)",
+   "> Transformer-based models (BETO: F1=80, mBERT: F1=82)",
+   "> BiLSTM with Transformer-based word embeddings (BERT+BETO) and subword embeddings (BPE, char) (F1=83.6)",
+   "> BiLSTM with embeddings pretrained on codeswitched data (F1=84.2)",
+   "Error analysis: Recall was a weak point for all models. Most frequent false negatives:",
+   "> upper-case borrowings (such as Big Data)",
+   "> borrowings in sentence-initial position (in titlecase)",
+   "> words that exist both in English and Spanish (like primer or red)",
+   "BPE embeddings seem to improve F1 score.",
+   "Character embeddings seem to improve recall"
+  ]
+ },
+ {
+  "t": 727.5,
+  "terms": [
+   "Discussion and wrap-up",
+   "A new dataset of Spanish newswire annotated with unassimilated lexical borrowings (more borrowing-dense, OOV-rich)",
+   "4 types of models for lexical borrowing detection:",
+   "> CRF model with handcrafted features (F1=55)",
+   "> Transformer-based models (BETO: F1=80, mBERT: F1=82)",
+   "> BiLSTM with Transformer-based word embeddings (BERT+BETO) and subword embeddings (BPE, char) (F1=83.6)",
+   "> BiLSTM with embeddings pretrained on codeswitched data (F1=84.2)",
+   "Error analysis: Recall was a weak point for all models. Most frequent false negatives:",
+   "> upper-case borrowings (such as Big Data)",
+   "> borrowings in sentence-initial position (in titlecase)",
+   "> words that exist both in English and Spanish (like primer or red)",
+   "BPE embeddings seem to improve F1 score.",
+   "Character embeddings seem to improve recall"
+  ]
+ }
+]

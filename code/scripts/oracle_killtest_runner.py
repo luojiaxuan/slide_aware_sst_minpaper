@@ -52,6 +52,8 @@ def main() -> None:
                         help="comma-separated subset of conditions to run")
     parser.add_argument("--logit-bias", type=float, default=4.0,
                         help="bias value for the 'bias' condition")
+    parser.add_argument("--tgt-lang", default="English",
+                        help="target language name used in prompts")
     args = parser.parse_args()
 
     items = json.load(open(args.items))
@@ -119,7 +121,9 @@ def run_incremental(it: dict, cond: str, args) -> dict:
         prev_full = full
 
     return {"id": it["id"], "condition": cond, "n_src_units": len(src_units),
-            "events": events, "hypothesis": " ".join(committed),
+            "events": events,
+            "hypothesis": ("".join(committed) if args.tgt_lang in ("Chinese", "Japanese")
+                           else " ".join(committed)),
             "reference": it["reference"], "oracle_terms": it["oracle_terms"],
             "hints_used": hints, "gate_step": gate_step}
 
@@ -186,14 +190,17 @@ def build_bias(hints: list[str], args) -> dict:
 
 def full_translation(prefix: str, hints: list[str], lang: str, args,
                      bias_map: dict | None = None) -> list[str]:
+    tgt = args.tgt_lang
     hint_block = (f"Terminology from the talk's slides/context that may appear "
                   f"soon: {', '.join(hints)}\n" if hints else "")
-    prompt = (f"Translate this partial {lang} speech transcript into English.\n"
+    prompt = (f"Translate this partial {lang} speech transcript into {tgt}.\n"
               f"{hint_block}"
               f"Partial source (speech so far, may stop mid-sentence): {prefix}\n"
-              f"Output the complete English translation of ONLY what has been "
+              f"Output the complete {tgt} translation of ONLY what has been "
               f"spoken so far. No explanations, no notes - just the translation.")
     text = ollama_generate(prompt, args, bias_map).strip().split("\n")[0].strip().strip('"')
+    if args.tgt_lang in ("Chinese", "Japanese"):
+        return list(text.replace(" ", ""))
     return text.split()
 
 

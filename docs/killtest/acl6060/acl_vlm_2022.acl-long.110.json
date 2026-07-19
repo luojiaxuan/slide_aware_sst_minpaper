@@ -1,0 +1,697 @@
+[
+ {
+  "t": 7.5,
+  "terms": [
+   "Online Semantic Parsing for Latency Reduction in Task-Oriented Dialogue",
+   "Jiawei (Joe) Zhou",
+   "Jason Eisner",
+   "Michael Newman",
+   "Emmanouil Antonios Platanios",
+   "Sam Thomson",
+   "jzhou02@g.harvard.edu",
+   "{jason.eisner,mike.newman,anthony.platanios,samuel.thomson}@microsoft.com",
+   "Harvard University",
+   "Microsoft",
+   "semanticmachines"
+  ]
+ },
+ {
+  "t": 22.5,
+  "terms": [
+   "Task-Oriented Dialogue",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Sure. Is this what you are looking for?"
+  ]
+ },
+ {
+  "t": 37.5,
+  "terms": [
+   "Task-Oriented Dialogue",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Semantic Parsing",
+   "Create Event",
+   "Subject",
+   "pool party",
+   "Tomorrow",
+   "Date/Time",
+   "start",
+   "Attendees",
+   "contains",
+   "FindPerson",
+   "Barack Obama",
+   "Joe",
+   "Program Execution"
+  ]
+ },
+ {
+  "t": 52.5,
+  "terms": [
+   "Task-Oriented Dialogue",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Semantic Parsing",
+   "Create Event",
+   "Subject",
+   "pool party",
+   "Tomorrow",
+   "Date/Time",
+   "start",
+   "Attendees",
+   "contains",
+   "FindPerson",
+   "Barack Obama",
+   "Joe",
+   "Program Execution"
+  ]
+ },
+ {
+  "t": 67.5,
+  "terms": [
+   "Task-Oriented Dialogue",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Faster Response",
+   "Can we start generating the program and executing it before the user finishes speaking?",
+   "Sure. Is this what you are looking for?"
+  ]
+ },
+ {
+  "t": 82.5,
+  "terms": [
+   "Online Prediction/Decision Problems",
+   "E.g.",
+   "Simultaneous translation",
+   "Text Auto-completion",
+   "Uber pool",
+   "Etc."
+  ]
+ },
+ {
+  "t": 97.5,
+  "terms": [
+   "Online Prediction/Decision Problems",
+   "E.g.",
+   "Simultaneous translation",
+   "Text Auto-completion",
+   "Uber pool",
+   "Etc."
+  ]
+ },
+ {
+  "t": 112.5,
+  "terms": [
+   "Online Prediction/Decision Problems",
+   "E.g.",
+   "Simultaneous translation",
+   "Text Auto-completion",
+   "Uber pool",
+   "Etc.",
+   "Beneficial to start making decisions before seeing all the input!",
+   "Ours:",
+   "Online Semantic Parsing",
+   "Learn the anticipation?",
+   "How to formally evaluate?",
+   "7 / 54"
+  ]
+ },
+ {
+  "t": 127.5,
+  "terms": [
+   "Offline System",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Parse at the end of the utterance"
+  ]
+ },
+ {
+  "t": 142.5,
+  "terms": [
+   "Online System",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Create Event",
+   "subject",
+   "pool",
+   "start",
+   "DateAt",
+   "Time",
+   "Friday",
+   "PM",
+   "13",
+   "Parse at every utterance prefix"
+  ]
+ },
+ {
+  "t": 157.5,
+  "terms": [
+   "Online System",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Create Event",
+   "subject",
+   "pool party",
+   "Friday",
+   "Start",
+   "Set-at-Time",
+   "PM",
+   "3",
+   "attendees",
+   "contains",
+   "FinalPerson",
+   "Barack Obama"
+  ]
+ },
+ {
+  "t": 172.5,
+  "terms": [
+   "Offline System Execution",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Prediction",
+   "Execution"
+  ]
+ },
+ {
+  "t": 187.5,
+  "terms": [
+   "Offline System Execution",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Prediction",
+   "Execution"
+  ]
+ },
+ {
+  "t": 202.5,
+  "terms": [
+   "Offline System Execution",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Prediction",
+   "Execution"
+  ]
+ },
+ {
+  "t": 217.5,
+  "terms": [
+   "Online System Execution",
+   "Prediction",
+   "Execution",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM"
+  ]
+ },
+ {
+  "t": 232.5,
+  "terms": [
+   "Online System Execution",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Prediction",
+   "Execution"
+  ]
+ },
+ {
+  "t": 247.5,
+  "terms": [
+   "Online System Execution",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Prediction",
+   "Execution"
+  ]
+ },
+ {
+  "t": 262.5,
+  "terms": [
+   "Online System Execution",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Prediction",
+   "Execution"
+  ]
+ },
+ {
+  "t": 277.5,
+  "terms": [
+   "Online System Execution",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Prediction",
+   "Execution"
+  ]
+ },
+ {
+  "t": 292.5,
+  "terms": [
+   "Online Semantic Parsing",
+   "Assumptions:",
+   "Execution time dominates",
+   "⇒ predict early",
+   "Consistent parsing history unnecessary (unlike simultaneous MT)",
+   "⇒ reparse from scratch after each token (like re-translation: Arivazhagan et al., 2020)",
+   "26 / 54"
+  ]
+ },
+ {
+  "t": 307.5,
+  "terms": [
+   "Online Semantic Parsing",
+   "Assumptions:",
+   "Execution time dominates",
+   "predict early",
+   "Consistent parsing history unnecessary",
+   "(unlike simultaneous MT)",
+   "reparse from scratch after each token",
+   "(like re-translation: Arivazhagan et al., 2020)",
+   "We propose a two-step approach",
+   "Propose:",
+   "predict a complete graph from the current utterance prefix",
+   "Select:",
+   "select the graph nodes (function invocations) that are worth executing at this time",
+   "27 / 54"
+  ]
+ },
+ {
+  "t": 322.5,
+  "terms": [
+   "Propose a Program/Graph",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Approach (a)",
+   "LMCOMPLETE",
+   "+",
+   "FULLTOGRAPH",
+   "utterance prefix",
+   "full utterance",
+   "full program"
+  ]
+ },
+ {
+  "t": 337.5,
+  "terms": [
+   "Propose a Program/Graph",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "fine-tuned BART",
+   "full parser",
+   "Approach (a)",
+   "LMCOMPLETE",
+   "+",
+   "FULLTOGRAPH",
+   "Yield",
+   "Create Event",
+   "subject",
+   "\"pool party\"",
+   "Tomorrow",
+   "DateAt Time",
+   "AM",
+   "9",
+   "attendees",
+   "contains",
+   "FindPerson",
+   "\"Barack Obama\""
+  ]
+ },
+ {
+  "t": 352.5,
+  "terms": [
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Add a pool party with Barack Obama",
+   "<MASK>",
+   "(specialized parser)",
+   "Approach (b)",
+   "PrefixToGraph",
+   "Yield",
+   "Create Event",
+   "subject",
+   "pool party",
+   "Tomorrow",
+   "start",
+   "DateAt Time",
+   "AM",
+   "9",
+   "attendees",
+   "contains",
+   "FindPerson",
+   "Barack Obama",
+   "Joe"
+  ]
+ },
+ {
+  "t": 367.5,
+  "terms": [
+   "Graph-based Semantic Parser",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM"
+  ]
+ },
+ {
+  "t": 382.5,
+  "terms": [
+   "Graph-based Semantic Parser",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Yield",
+   "CreateEvent",
+   "-RA-(0,:arg0)"
+  ]
+ },
+ {
+  "t": 397.5,
+  "terms": [
+   "pool party",
+   "Barack Obama",
+   "Joe",
+   "tomorrow",
+   "9:00 AM"
+  ]
+ },
+ {
+  "t": 412.5,
+  "terms": [
+   "Subgraph Selection",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "Graph Action Probabilities",
+   "Yield",
+   "CreatEvent",
+   "-RA-(0,_arg0)",
+   "subject",
+   "...",
+   "FindPerson",
+   "-RA-(22,_arg0)",
+   "<str>",
+   "Barack",
+   "Obama",
+   "</str>",
+   "-RA-(24,_arg0)",
+   "Create Event",
+   "subject",
+   "\"pool party\"",
+   "Friday",
+   "start"
+  ]
+ },
+ {
+  "t": 427.5,
+  "terms": [
+   "Final Latency Reduction (FLR)",
+   "Offline System",
+   "Utterance Start",
+   "Utterance End",
+   "Execution End",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "FindPerson",
+   "Barack Obama",
+   "FindPerson",
+   "Joe",
+   "Create Event",
+   "subject",
+   "pool party",
+   "Tomorrow",
+   "AM",
+   "9",
+   "attendees",
+   "contains",
+   "FindPerson",
+   "FindPerson"
+  ]
+ },
+ {
+  "t": 442.5,
+  "terms": [
+   "Final Latency Reduction (FLR)",
+   "Online System",
+   "Utterance Start",
+   "Utterance End",
+   "Execution End",
+   "Add a pool party with Barack Obama and Joe for tomorrow at 9:00 AM",
+   "FindPerson",
+   "Barack Obama",
+   "Joe",
+   "Create Event",
+   "subject",
+   "pool party",
+   "Tomorrow",
+   "DateAt Time",
+   "AM",
+   "9",
+   "Yield",
+   "Create Event",
+   "attendees",
+   "contains"
+  ]
+ },
+ {
+  "t": 457.5,
+  "terms": [
+   "Data and Base Models",
+   "# utterances in training",
+   "121,024",
+   "121,652",
+   "# utterances in validation",
+   "13,496",
+   "22,910",
+   "Best reported accuracy†",
+   "80.4",
+   "88.3",
+   "FULLTOGRAPH accuracy",
+   "80.7",
+   "90.8",
+   "Prefix BLEU (no completion)",
+   "38.04",
+   "37.54",
+   "LMCOMPLETE BLEU",
+   "53.51",
+   "55.93",
+   "† both from Platanios et al. (2021)"
+  ]
+ },
+ {
+  "t": 472.5,
+  "terms": [
+   "SMCalFlow",
+   "TreeDST",
+   "# utterances in training",
+   "121,024",
+   "121,652",
+   "# utterances in validation",
+   "13,496",
+   "22,910",
+   "Best reported accuracy†",
+   "80.4",
+   "88.3",
+   "FULLTOGRAPH accuracy",
+   "80.7",
+   "90.8",
+   "Prefix BLEU (no completion)",
+   "38.04",
+   "37.54",
+   "LMCOMPLETE BLEU",
+   "53.51",
+   "55.93"
+  ]
+ },
+ {
+  "t": 487.5,
+  "terms": [
+   "Tuple Match F1 (%)",
+   "Relative Prefix Length (%)",
+   "PREFIXToGRAPH performance on SMCalFlow validation data of varying prefix lengths"
+  ]
+ },
+ {
+  "t": 502.5,
+  "terms": [
+   "Tuple Match F1 (%)",
+   "Relative Prefix Length (%)",
+   "PREFIXToGRAPH performance on SMCalFlow validation data of varying prefix lengths"
+  ]
+ },
+ {
+  "t": 517.5,
+  "terms": [
+   "Tuple Match F1 (%)",
+   "Relative Prefix Length (%)",
+   "PREFIXToGRAPH performance on SMCalFlow validation data of varying prefix lengths"
+  ]
+ },
+ {
+  "t": 532.5,
+  "terms": [
+   "Tuple Match F1 (%)",
+   "Relative Prefix Length (%)",
+   "PREFIXToGRAPH performance on SMCalFlow validation data of varying prefix lengths"
+  ]
+ },
+ {
+  "t": 547.5,
+  "terms": [
+   "Final Latency Reduction vs. Cost",
+   "Timing measured by the number of source tokens",
+   "[SMCalFlow] Execution Time: 1.0",
+   "[TreeDST] Execution Time: 1.0",
+   "Average FLR",
+   "Best Possible Reduction: 1.85",
+   "Best Possible Reduction: 2.21",
+   "offline full-to-graph",
+   "prefix with full-to-graph",
+   "LM-completion + full-to-graph",
+   "prefix-to-graph",
+   "Average # Excessive Function Calls"
+  ]
+ },
+ {
+  "t": 562.5,
+  "terms": [
+   "Final Latency Reduction vs. Cost",
+   "Timing measured by the number of source tokens",
+   "[SMCalFlow] Execution Time: 1.0",
+   "[TreeDST] Execution Time: 1.0",
+   "Best Possible Reduction: 1.85",
+   "Best Possible Reduction: 2.21",
+   "Average FLR",
+   "Average # Excessive Function Calls"
+  ]
+ },
+ {
+  "t": 577.5,
+  "terms": [
+   "Final Latency Reduction vs. Cost",
+   "Timing measured by the number of source tokens",
+   "[SMCalFlow] Execution Time: 1.0",
+   "[TreeDST] Execution Time: 1.0",
+   "Average FLR",
+   "Best Possible Reduction: 1.85",
+   "Best Possible Reduction: 2.21",
+   "offline full-to-graph",
+   "prefix with full-to-graph",
+   "LM-completion + full-to-graph",
+   "prefix-to-graph",
+   "Average # Excessive Function Calls"
+  ]
+ },
+ {
+  "t": 592.5,
+  "terms": [
+   "Final Latency Reduction vs. Cost",
+   "Timing measured by the number of source tokens",
+   "[SMCalFlow] Execution Time: 1.0",
+   "[TreeDST] Execution Time: 1.0",
+   "Average FLR",
+   "Average # Excessive Function Calls",
+   "Best Possible Reduction: 1.85",
+   "Best Possible Reduction: 2.21",
+   "offline full-to-graph",
+   "prefix with full-to-graph",
+   "LM-completion + full-to-graph",
+   "prefix-to-graph"
+  ]
+ },
+ {
+  "t": 607.5,
+  "terms": [
+   "Final Latency Reduction vs. Cost",
+   "Faster Execution",
+   "[SMCalFlow] Execution Time: 0.2",
+   "[TreeDST] Execution Time: 0.2",
+   "Average FLR",
+   "Best Possible Reduction: 0.37",
+   "Best Possible Reduction: 0.45",
+   "Average # Excessive Function Calls",
+   "offline full-to-graph",
+   "prefix with full-to-graph",
+   "LM-completion + full-to-graph",
+   "prefix-to-graph"
+  ]
+ },
+ {
+  "t": 622.5,
+  "terms": [
+   "Final Latency Reduction vs. Cost",
+   "Slower Execution",
+   "[SMCalFlow] Execution Time: 3.0",
+   "[TreeDST] Execution Time: 3.0",
+   "Average FLR",
+   "Best Possible Reduction: 4.91",
+   "Best Possible Reduction: 5.61",
+   "Average # Excessive Function Calls",
+   "offline full-to-graph",
+   "prefix with full-to-graph",
+   "LM-completion + full-to-graph",
+   "prefix-to-graph"
+  ]
+ },
+ {
+  "t": 637.5,
+  "terms": [
+   "Average Latency Reduction per Function",
+   "Function Call",
+   "FindEventWrapperWithDefaults",
+   "Yield",
+   "DeletePreflightEventWrapper",
+   "DeleteCommitEventWrapper",
+   "CreatePreflightEventWrapper",
+   "CreateCommitEventWrapper",
+   "RecipientWithNameLike",
+   "UpdatePreflightEventWrapper",
+   "UpdateCommitEventWrapper",
+   "FindManager",
+   "EventAttendance",
+   "RecipientAvailability",
+   "FindReports",
+   "offline latency",
+   "latency reduction",
+   "Time Unit",
+   "0",
+   "1"
+  ]
+ },
+ {
+  "t": 652.5,
+  "terms": [
+   "Average Latency Reduction per Function",
+   "Function Call",
+   "FindEventWrapperWithDefaults",
+   "Yield",
+   "DeletePreflightEventWrapper",
+   "DeleteCommitEventWrapper",
+   "CreatePreflightEventWrapper",
+   "CreateCommitEventWrapper",
+   "RecipientWithNameLike",
+   "UpdatePreflightEventWrapper",
+   "UpdateCommitEventWrapper",
+   "FindManager",
+   "EventAttendance",
+   "RecipientAvailability",
+   "FindReports",
+   "offline latency",
+   "latency reduction",
+   "Time Unit",
+   "0",
+   "1"
+  ]
+ },
+ {
+  "t": 667.5,
+  "terms": [
+   "Online Semantic Parsing",
+   "latency reduction",
+   "30% - 63%",
+   "graph-based semantic parser",
+   "prefix directly",
+   "utterance completion",
+   "language model",
+   "executable semantic representations"
+  ]
+ },
+ {
+  "t": 682.5,
+  "terms": [
+   "Online Semantic Parsing",
+   "latency reduction",
+   "30% - 63%",
+   "graph-based semantic parser",
+   "prefix directly",
+   "utterance completion",
+   "language model",
+   "executable semantic representations"
+  ]
+ },
+ {
+  "t": 697.5,
+  "terms": [
+   "Online Semantic Parsing",
+   "latency reduction",
+   "30% - 63%",
+   "graph-based semantic parser",
+   "prefix directly",
+   "utterance completion",
+   "language model",
+   "executable semantic representations"
+  ]
+ }
+]

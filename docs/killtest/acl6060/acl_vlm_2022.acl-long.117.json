@@ -1,0 +1,889 @@
+[
+ {
+  "t": 7.5,
+  "terms": [
+   "Retrieval Augmented Counterfactuals for QA",
+   "Bhargavi Paranjape",
+   "Matthew Lamm",
+   "Ian Tenney",
+   "*University of Washington, Google Research",
+   "PAUL G. ALLEN SCHOOL OF COMPUTER SCIENCE & ENGINEERING",
+   "Google Research"
+  ]
+ },
+ {
+  "t": 22.5,
+  "terms": [
+   "Counterfactuals",
+   "Small perturbations of input that changes the outcome.",
+   "\"Election\" is a highly fascinating and thoroughly captivating thriller-drama. [POSITIVE]",
+   "\"Election\" is a highly expected and thoroughly mind-numbing thriller-drama. [NEGATIVE]"
+  ]
+ },
+ {
+  "t": 37.5,
+  "terms": [
+   "Counterfactuals",
+   "Small perturbations of input that changes the outcome.",
+   "\"Election\" is a highly fascinating and thoroughly captivating thriller-drama. [POSITIVE]",
+   "\"Election\" is a highly expected and thoroughly mind-numbing thriller-drama. [NEGATIVE]",
+   "Where is final four being held in 2019 ?",
+   "Ans: Minneapolis, MN",
+   "Where is the women's final four being held in 2019 ?",
+   "Ans: Tampa, FL"
+  ]
+ },
+ {
+  "t": 52.5,
+  "terms": [
+   "Counterfactuals",
+   "Humans",
+   "models",
+   "perturbations",
+   "dataset",
+   "systematic gaps",
+   "simple decision boundary",
+   "i.i.d.",
+   "test data",
+   "Counterfactual (Contrast Set)",
+   "model's decision boundary",
+   "gaps in its reasoning"
+  ]
+ },
+ {
+  "t": 67.5,
+  "terms": [
+   "Counterfactuals",
+   "How can models be made more robust?",
+   "Counterfactual Data Augmentation (CDA) learns complex decision boundary.",
+   "Adjusted decision boundary"
+  ]
+ },
+ {
+  "t": 82.5,
+  "terms": [
+   "Text Counterfactuals",
+   "NEGATIVE",
+   "Hardly one to be faulted for his ambition.",
+   "it was surprising to see all Park's efforts add up to so very little.",
+   "The premise is promising, gags are copious, but",
+   "Hardly one to be faulted for his ambition.",
+   "here we see all Park's efforts come to fruition",
+   "The premise is perfect, gags are hilarious, but",
+   "POSITIVE",
+   "Who wrote the script for Treasure of Sierra Madre?",
+   "Who wrote Treasure of Sierra Madre?",
+   "B. TRAVEN",
+   "FOR",
+   "Claim: Should uniforms be worn at school.",
+   "Perspective: School uniforms emphasize the socio-economic divisions",
+   "AGAINST",
+   "Claim: Should uniforms be banned at school.",
+   "Perspective: School uniforms emphasize the socio-economic divisions",
+   "JOHN HUSTON"
+  ]
+ },
+ {
+  "t": 97.5,
+  "terms": [
+   "Generating Counterfactuals",
+   "Method",
+   "Prior Work",
+   "Challenges",
+   "Human Annotation",
+   "Ross et. al 2022 (TAILOR)",
+   "Geva et. al 2022 (BPP)",
+   "Zmigrod et. al, 2019",
+   "Expensive",
+   "Recurring patterns, Heuristics",
+   "Heuristics, semantic and syntactic decomposition",
+   "Ross et. al 2022 (TAILOR)",
+   "Geva et. al 2022 (BPP)",
+   "Zmigrod et. al, 2019",
+   "Limited perturbations",
+   "Missing labels for new examples."
+  ]
+ },
+ {
+  "t": 112.5,
+  "terms": [
+   "Generating Counterfactuals",
+   "Human Annotation",
+   "Prior Work",
+   "Challenges",
+   "Expensive",
+   "Recurring patterns, Heuristics",
+   "Heuristics, semantic and syntactic decomposition",
+   "Mask filling by PLMs",
+   "Ross et. al 2022 (TAILOR)",
+   "Geva et. al 2022 (BPP)",
+   "Zmigrod et. al, 2019",
+   "Ross et. al 2022 (TAILOR)",
+   "Geva et. al 2022 (BPP)",
+   "Zmigrod et. al, 2019",
+   "Limited perturbations Missing labels for new examples.",
+   "Ross et. al 2021 (MiCE)",
+   "Wu et. al 2019",
+   "What text attributes to perturb to change outcome?"
+  ]
+ },
+ {
+  "t": 127.5,
+  "terms": [
+   "Counterfactuals for QA - Challenges",
+   "Background information",
+   "Unanswerable Questions",
+   "Control for minimal semantic perturbation",
+   "Is Indiana Jones 'temple of doom' a prequel?",
+   "Is Raiders of the Lost Ark a prequel?",
+   "Is Indiana Jones 'the last crusade' a sequel?",
+   "Is Indiana Jones 'temple of doom' a sequel?",
+   "Is Indian Jones practising child slavery in Temple of doom?",
+   "Indiana Jones and the Last Crusade",
+   "1989 American action-adventure film directed by...",
+   "the third installment in the Indiana Jones franchise and a sequel to Raiders of the Lost Ark.",
+   "Indiana Jones and the Temple of Doom",
+   "1984 American action-adventure film",
+   "...a prequel to the 1981 film Raiders of the Lost Ark, featuring...",
+   "...After arriving in North India, Indiana Jones is asked by desperate villagers to find..."
+  ]
+ },
+ {
+  "t": 142.5,
+  "terms": [
+   "Counterfactuals for QA - Challenges",
+   "Background information",
+   "Unanswerable Questions",
+   "Control for minimal semantic perturbation",
+   "Is Indiana Jones 'temple of doom' a prequel?",
+   "Is Raiders of the Lost Ark a prequel?",
+   "Is Indiana Jones 'the last crusade' a sequel?",
+   "Is Indiana Jones 'temple of doom' a sequel?",
+   "Is Indian Jones practising child slavery in Temple of doom?",
+   "Indiana Jones and the Last Crusade",
+   "1989 American action-adventure film directed by...",
+   "the third installment in the Indiana Jones franchise and a sequel to Raiders of the Lost Ark.",
+   "Indiana Jones and the Temple of Doom",
+   "1984 American action-adventure film",
+   "...a prequel to the 1981 film Raiders of the Lost Ark, featuring...",
+   "...After arriving in North India, Indiana Jones is asked by desperate villagers to find..."
+  ]
+ },
+ {
+  "t": 157.5,
+  "terms": [
+   "Counterfactuals for QA - Challenges",
+   "Background information",
+   "Unanswerable Questions",
+   "Control for minimal semantic perturbation",
+   "Is Indiana Jones 'temple of doom' a prequel?",
+   "Is Raiders of the Lost Ark a prequel?",
+   "Is Indiana Jones 'the last crusade' a sequel?",
+   "Is Indiana Jones 'temple of doom' a sequel?",
+   "Is Indian Jones practising child slavery in Temple of doom?",
+   "Indiana Jones and the Last Crusade",
+   "1989 American action-adventure film directed by...",
+   "the third installment in the Indiana Jones franchise and a sequel to Raiders of the Lost Ark.",
+   "Indiana Jones and the Temple of Doom",
+   "1984 American action-adventure film",
+   "...a prequel to the 1981 film Raiders of the Lost Ark, featuring...",
+   "...After arriving in North India, Indiana Jones is asked by desperate villagers to find..."
+  ]
+ },
+ {
+  "t": 172.5,
+  "terms": [
+   "Retrieve Generate Filter (RGF)"
+  ]
+ },
+ {
+  "t": 187.5,
+  "terms": [
+   "Intuition",
+   "Near misses by the model can help create interesting counterfactuals.",
+   "Overgenerate potential perturbations for questions using retrieved background information and alternate outcomes (answers), and post-hoc filter",
+   "Original Passage: List of Richmond Football Club captains",
+   ">> Jeff Hogg 1994 – 1996 Tony Free 1997 – 2000 Matthew Knightie 2001 – 2003 Trent Cotchin 2004 – 2006 Trent Cotchin 2007 – 2017 Captain Reference ( edit ) Richmond Football Club Honour Roll Richmond Football ... Captain Trent Cotchin",
+   "Reference Answer/Label: Trent Cotchin",
+   "Who is the captain of richmond football club?",
+   "Retrieved Passage: The 2018 season – Richmond Football Club participated in the VFL / AFL . Nominations. The 2018 season marked the fifth consecutive year the Richmond Football club had a stand - alone reserves team in the Victorian Football League ( VFL ) ... The team was captained by former AFL listed defender - answer Steve Morris -. Flipped Answer/Label: Steve Morris",
+   "Retrieved Passage: The 2018 season marked the first year the Richmond Football club ran a women’s team and the first year in the VFL Women’s competition ( VFLW ). Former men’s VFL ... Jess Kennedy * was named the team’s inaugural captain in May 2018. Flipped Answer/Label: Jess Kennedy"
+  ]
+ },
+ {
+  "t": 202.5,
+  "terms": [
+   "Intuition",
+   "Near misses by the model can help create interesting counterfactuals.",
+   "Overgenerate potential perturbations for questions using retrieved background information and alternate outcomes (answers), and post-hoc filter",
+   "Original Passage: List of Richmond Football Club captains",
+   ">> Jeff Hogg 1994 – 1996 Tony Free 1997 – 2000 Matthew Knightie 2001 – 2003 Trent Cotchin 2004 – 2005 Trent Cotchin 2006 – 2007 Trent Cotchin 2008 – 2017 Trent Cotchin",
+   "Reference ( edit ) Richmond Football Club Honour Roll Richmond Football ... Captain Trent Cotchin",
+   "Reference Answer/Label: Trent Cotchin",
+   "Who is the captain of richmond football club?",
+   "Retrieved Passage: The 2018 season – Richmond Football Club participated in the VFL / AFL . Nominations. The 2018 season marked the fifth consecutive year the Richmond Football club had a stand - alone reserves team in the Victorian Football League ( VFL ) ... The team was captained by former AFL listed defender - answer Steve Morris",
+   "Flipped Answer/Label: Steve Morris",
+   "Retrieved Passage: The 2018 season marked the first year the Richmond Football club ran a women ' s team and the first year in the VFL Women ' s competition ( VFLW ) . Former men ' s VFL ... Jess Kennedy * was named the team ' s inaugural captain in May 2018.",
+   "Flipped Answer/Label: Jess Kennedy"
+  ]
+ },
+ {
+  "t": 217.5,
+  "terms": [
+   "RGF - Summary",
+   "Retrieve background information and alternative outcome (answer)",
+   "Generate appropriate question perturbation for new answer, context.",
+   "Filter generated questions based on minimality or which attribute we want to perturb.",
+   "Who is the captain of the Richmond Football Club?",
+   "RETRIEVE (REALM)",
+   "Wikipedia",
+   "List of Richmond Football Club captains > Jeff Hogg 1994 – 1996",
+   "Current Captain: Trent Cotchin",
+   "The Richmond Football Club ran a women's team and Jess Kennedy was named the team’s captain",
+   "Who captained Richmond Football Club’s women’s team?",
+   "Who won the inaugural best in VFL 2018 season?",
+   "FILTER"
+  ]
+ },
+ {
+  "t": 232.5,
+  "terms": [
+   "RGF - Summary",
+   "Retrieve background information and alternative outcome (answer)",
+   "Generate appropriate question perturbation for new answer, context.",
+   "Filter generated questions based on minimality or which attribute we want to perturb.",
+   "Who is the captain of the Richmond Football Club?",
+   "RETRIEVE (REALM)",
+   "Wikipedia",
+   "List of Richmond Football Club captains > Jeff Hogg 1994 – 1996",
+   "Current Captain: Trent Cotchin",
+   "The Richmond Football Club ran a women's team and Jess Kennedy was named the team’s captain",
+   "Who captained Richmond Football Club’s women’s team?",
+   "Who won the inaugural best in VFL 2018 season?",
+   "FILTER"
+  ]
+ },
+ {
+  "t": 247.5,
+  "terms": [
+   "REALM",
+   "Guu et. al.",
+   "2019",
+   "top-K",
+   "contexts",
+   "reference answers",
+   "retriever module",
+   "dense index of passages",
+   "reader module",
+   "span",
+   "Richmond Football Club",
+   "Jeff Hogg",
+   "1994 - 1996",
+   "Trent",
+   "Jess Kennedy",
+   "Steve Morris",
+   "VFL",
+   "Graham",
+   "Patrick Cripps"
+  ]
+ },
+ {
+  "t": 262.5,
+  "terms": [
+   "REALM",
+   "Guu et. al.",
+   "2019",
+   "top-K",
+   "contexts",
+   "reference answers",
+   "retriever module",
+   "dense index of passages",
+   "reader module",
+   "span",
+   "Richmond Football Club",
+   "Jeff Hogg",
+   "1994 - 1996",
+   "Trent",
+   "Jess Kennedy",
+   "Steve Morris",
+   "VFL",
+   "Graham",
+   "Patrick Cripps"
+  ]
+ },
+ {
+  "t": 277.5,
+  "terms": [
+   "Generation",
+   "Train a text-to-text model (like T5) that takes as input a context with marked answer span, and generates the corresponding question to the answer.",
+   "This model is trained on original NQ data, but uses alternative answers and contexts during inference.",
+   "Top K Contexts and Passages",
+   "Who is the captain of the Richmond Football Club?",
+   "REALM",
+   "Wikipedia",
+   "The Richmond Football club ran a reserves team in the Victorian Football League(VFL) captained by Steve Morris.",
+   "Richmond Football Club premiership player Graham repeated the negating role onto Patrick Cripps",
+   "QGEN",
+   "Who captained Richmond Football Club's first women's team?",
+   "Who captained Richmond's VFL Reserve team?",
+   "Who did graham negate in the grand final last year?"
+  ]
+ },
+ {
+  "t": 292.5,
+  "terms": [
+   "Generation",
+   "Train a text-to-text model (like T5) that takes as input a context with marked answer span, and generates the corresponding question to the answer.",
+   "This model is trained on original NQ data, but uses alternative answers and contexts during inference.",
+   "Top K Contexts and Passages",
+   "Who is the captain of the Richmond Football Club?",
+   "REALM",
+   "Wikipedia",
+   "The Richmond Football club ran a reserves team in the Victorian Football League(VFL) captained by Steve Morris.",
+   "Richmond Football Club premiership player Graham repeated the negating role onto Patrick Cripps",
+   "QGEN",
+   "Who captained Richmond Football Club's first women's team?",
+   "Who captained Richmond's VFL Reserve team?",
+   "Who did graham negate in the grand final last year?"
+  ]
+ },
+ {
+  "t": 307.5,
+  "terms": [
+   "Generation",
+   "Train a text-to-text model (like T5) that takes as input a context with marked answer span, and generates the corresponding question to the answer.",
+   "This model is trained on original NQ data, but uses alternative answers and contexts during inference.",
+   "Top K Contexts and Passages",
+   "Who is the captain of the Richmond Football Club?",
+   "REALM",
+   "Wikipedia",
+   "The Richmond Football club ran a reserves team in the Victorian Football League(VFL) captained by Steve Morris.",
+   "Richmond Football Club premiership player Graham repeated the negating role onto Patrick Cripps",
+   "QGEN",
+   "Who captained Richmond Football Club's first women's team?",
+   "Who captained Richmond's VFL Reserve team?",
+   "Who did graham negate in the grand final last year?"
+  ]
+ },
+ {
+  "t": 322.5,
+  "terms": [
+   "Generation",
+   "Train a text-to-text model (like T5) that takes as input a context with marked answer span, and generates the corresponding question to the answer.",
+   "This model is trained on original NQ data, but uses alternative answers and contexts during inference.",
+   "Top K Contexts and Passages",
+   "Who is the captain of the Richmond Football Club?",
+   "REALM",
+   "Wikipedia",
+   "The Richmond Football club ran a reserves team in the Victorian Football League(VFL) captained by Steve Morris.",
+   "Richmond Football Club premiership player Graham repeated the negating role onto Patrick Cripps",
+   "QGEN",
+   "Who captained Richmond Football Club's first women's team?",
+   "Who captained Richmond's VFL Reserve team?",
+   "Who did graham negate in the grand final last year?"
+  ]
+ },
+ {
+  "t": 337.5,
+  "terms": [
+   "Filtering - Heuristics",
+   "Levenshtein distance",
+   "training data",
+   "augmentation",
+   "Top K Contexts and Passages",
+   "Who is the captain of the Richmond Football Club?",
+   "REALM",
+   "Wikipedia",
+   "The Richmond Football Club ran a reserves team in the Victorian Football League(VFL) captained by Steve Morris.",
+   "Richmond Football Club premiership player Graham repeated the negative role onto Patrick Cripps.",
+   "QGEN",
+   "Who captained Richmond Football Club's first women's team?",
+   "Who captained Richmond's VFL Reserve team?",
+   "Who did graham negate in the grand final last year?",
+   "FILTER",
+   "Who captained Richmond Football Club's first women's team?",
+   "Jess Kennedy was named the team's inaugural captain.",
+   "Who captained RFC's VFL Reserve team?",
+   "... in the Victorian Football League (VFL)",
+   "captained by Steve Morris."
+  ]
+ },
+ {
+  "t": 352.5,
+  "terms": [
+   "Filtering - Heuristics",
+   "Levenshtein distance",
+   "training data",
+   "augmentation",
+   "Top K Contexts and Passages",
+   "Who is the captain of the Richmond Football Club?",
+   "REALM",
+   "Wikipedia",
+   "The Richmond Football Club ran a reserves team in the Victorian Football League(VFL) captained by Steve Morris.",
+   "Richmond Football Club premiership player Graham repeated the negative role onto Patrick Cripps.",
+   "QGEN",
+   "Who captained Richmond Football Club's first women's team?",
+   "Who captained Richmond's VFL Reserve team?",
+   "Who did graham negate in the grand final last year?",
+   "FILTER",
+   "Who captained Richmond Football Club's first women's team?",
+   "Jess Kennedy was named the team's inaugural captain.",
+   "Who captained RFC's VFL Reserve team?",
+   "... in the Victorian Football League (VFL)",
+   "captained by Steve Morris."
+  ]
+ },
+ {
+  "t": 367.5,
+  "terms": [
+   "Filtering - Semantic Decomposition",
+   "Referential equality between noun phrases in question and context.",
+   "Predicates that entail sentences in the context",
+   "Who captained Richmond's first ever woman's team?",
+   "The 2018 season marked the first year the Richmond Football Club ran a women's team and the first year in the VFL Women's competition (VFLW). Former men's VFL assistant coach Tom Hunter was named the team's head coach in November 2017. Jess Kennedy was named the team's inaugural captain in May 2018."
+  ]
+ },
+ {
+  "t": 382.5,
+  "terms": [
+   "Filtering - Semantic Decomposition",
+   "Referential equality between noun phrases in question and context.",
+   "Predicates that entail sentences in the context",
+   "Who captained Richmond's first ever woman's team?",
+   "The 2018 season marked the first year the Richmond Football Club ran a women's team and the first year in the VFL Women's competition (VFLW). Former men's VFL assistant coach Tom Hunter was named the team's head coach in November 2017. Jess Kennedy was named the team's inaugural captain in May 2018."
+  ]
+ },
+ {
+  "t": 397.5,
+  "terms": [
+   "Filtering - Semantic Decomposition",
+   "Referential equality between noun phrases in question and context.",
+   "Predicates that entail sentences in the context",
+   "Who captained Richmond's first ever woman's team?",
+   "The 2018 season marked the first year the Richmond Football Club ran a women's team and the first year in the VFL Women's competition (VFLW). Former men's VFL assistant coach Tom Hunter was named the team's head coach in November 2017. Jess Kennedy was named the team's inaugural captain in May 2018."
+  ]
+ },
+ {
+  "t": 412.5,
+  "terms": [
+   "Filtering",
+   "Semantic Decomposition",
+   "QED decompositions",
+   "categorize",
+   "filter by perturbations type",
+   "RGF evaluation data",
+   "Q undergoes a reference change in Q'",
+   "Q undergoes a predicate change with optionally added references in Q'",
+   "Question from NQ",
+   "Original: who is the captain of Richmond football club?",
+   "Predicate: who is the captain of X?",
+   "Reference Change",
+   "CF1: who is the captain of Richmond's vfl reserve team?",
+   "Predicate: who is the captain of X?",
+   "Predicate Change",
+   "CF2: who wears number 9 for Richmond football club?",
+   "Predicate: who wears Y for X?"
+  ]
+ },
+ {
+  "t": 427.5,
+  "terms": [
+   "Filtering",
+   "Semantic Decomposition",
+   "QED decompositions",
+   "perturbations type",
+   "RGF evaluation data",
+   "Q undergoes a reference change in Q'",
+   "Q undergoes a predicate change with optionally added references in Q'",
+   "Question from NQ",
+   "Original: who is the captain of Richmond football club?",
+   "Predicate: who is the captain of X?",
+   "Reference Change",
+   "CF1: who is the captain of Richmond's vfl reserve team?",
+   "Predicate: who is the captain of X?",
+   "Predicate Change",
+   "CF2: who wears number 9 for Richmond football club?",
+   "Predicate: who wears Y for X?"
+  ]
+ },
+ {
+  "t": 442.5,
+  "terms": [
+   "Counterfactual Data Augmentation"
+  ]
+ },
+ {
+  "t": 457.5,
+  "terms": [
+   "Rand Agen Qgen",
+   "Gold Agen Qgen",
+   "REALM",
+   "Indiana Jones and the Last Crusade",
+   "1989",
+   "American action-adventure film",
+   "Steven Spielberg",
+   "executive producer George Lucas",
+   "Michigan Stadium",
+   "The Big House",
+   "football stadium for the University of Michigan in Ann Arbor, Michigan",
+   "largest stadium in the United States",
+   "Richmond Football Club",
+   "captain",
+   "Jeff Hogg 1994 -- 1996",
+   "Current Captain :Trent Cotchin"
+  ]
+ },
+ {
+  "t": 472.5,
+  "terms": [
+   "Rand Agen Qgen",
+   "Gold Agen Qgen",
+   "REALM",
+   "Indiana Jones and the Last Crusade",
+   "1989",
+   "American action-adventure film",
+   "Steven Spielberg",
+   "executive producer George Lucas",
+   "Michigan Stadium",
+   "The Big House",
+   "football stadium for the University of Michigan in Ann Arbor, Michigan",
+   "largest stadium in the United States",
+   "Richmond Football Club",
+   "captain",
+   "Jeff Hogg 1994 -- 1996",
+   "Current Captain :Trent Cotchin"
+  ]
+ },
+ {
+  "t": 487.5,
+  "terms": [
+   "OOD Generalization",
+   "Reading Comprehension",
+   "Exact Match (RC)",
+   "Train Size",
+   "NQ",
+   "SQuAD",
+   "TriviaQA",
+   "HotpotQA",
+   "BioASQ",
+   "AQA",
+   "AmbigQA",
+   "Original NQ",
+   "Ensemble",
+   "Gold Agen-Qgen",
+   "Rand. Agen-Qgen",
+   "RGF (REALM-Qgen)",
+   "90K + 90K",
+   "Table 3: Exact Match results for the reading comprehension task for in-domain NQ development set, out-of-domain datasets from MRQA 2019 Challenge (Fisch et al., 2019), Adversarial QA (Bartolo et al., 2020) and AmbigQA (Min et al., 2020b). RGF improves out-of-domain and challenge-set performance compared to other data augmentation baselines."
+  ]
+ },
+ {
+  "t": 502.5,
+  "terms": [
+   "OOD Generalization",
+   "Reading Comprehension",
+   "Exact Match (RC)",
+   "Train Size",
+   "NQ",
+   "SQuAD",
+   "TriviaQA",
+   "HotpotQA",
+   "BioASQ",
+   "AQA",
+   "AmbigQA",
+   "Original NQ",
+   "Ensemble",
+   "Gold Agen-QGen",
+   "Rand. Agen-QGen",
+   "RGF (REALM-QGen)",
+   "90K + 90K",
+   "70.91",
+   "80.26",
+   "13.67"
+  ]
+ },
+ {
+  "t": 517.5,
+  "terms": [
+   "OOD Generalization",
+   "Reading Comprehension",
+   "Exact Match (RC)",
+   "Train Size",
+   "NQ",
+   "SQuAD",
+   "TriviaQA",
+   "HotpotQA",
+   "BioASQ",
+   "AQA",
+   "AmbigQA",
+   "Original NQ",
+   "Ensemble",
+   "Gold Agen-QGen",
+   "Rand. Agen-QGen",
+   "RGF (REALM-QGen)",
+   "90K + 90K",
+   "70.22",
+   "79.87",
+   "15.39"
+  ]
+ },
+ {
+  "t": 532.5,
+  "terms": [
+   "OOD Generalization",
+   "Reading Comprehension",
+   "Exact Match (RC)",
+   "Train Size",
+   "NQ",
+   "SQuAD",
+   "TriviaQA",
+   "HotpotQA",
+   "BioASQ",
+   "AQA",
+   "AmbigQA",
+   "Original NQ",
+   "Ensemble",
+   "Gold Agen-QGen",
+   "Rand. Agen-QGen",
+   "RGF (REALM-QGen)",
+   "90K + 90K",
+   "70.22",
+   "79.87",
+   "15.39"
+  ]
+ },
+ {
+  "t": 547.5,
+  "terms": [
+   "OOD Generalization",
+   "Open-Domain Setting",
+   "Exact Match (OD)",
+   "Train Size",
+   "NQ",
+   "TriviaQA",
+   "AmbigQA",
+   "SQuAD v1.0",
+   "TREC",
+   "Original",
+   "Gold Agen-Qgen",
+   "Rand. Agen-Qgen",
+   "RGF (REALM-Qgen)",
+   "90K + 90K",
+   "37.65",
+   "26.75",
+   "22.43",
+   "14.25",
+   "31.93",
+   "37.86"
+  ]
+ },
+ {
+  "t": 562.5,
+  "terms": [
+   "OOD Generalization",
+   "Open-Domain Setting",
+   "Exact Match (OD)",
+   "Train Size",
+   "NQ",
+   "TriviaQA",
+   "AmbigQA",
+   "SQuAD v1.0",
+   "TREC",
+   "Original",
+   "Gold Agen-Qgen",
+   "Rand. Agen-Qgen",
+   "RGF (REALM-Qgen)",
+   "90K + 90K",
+   "37.65",
+   "26.75",
+   "22.43",
+   "14.25",
+   "31.93",
+   "37.86"
+  ]
+ },
+ {
+  "t": 577.5,
+  "terms": []
+ },
+ {
+  "t": 592.5,
+  "terms": []
+ },
+ {
+  "t": 607.5,
+  "terms": [
+   "Consistency",
+   "RC",
+   "Train Size",
+   "AQA",
+   "AmbigQA",
+   "QUOREF-C",
+   "RGF (∆ Ref)",
+   "RGF (∆ Pred)",
+   "Original NQ",
+   "Ensemble",
+   "Gold Agen-Qgen",
+   "Rand. Agen-Qgen",
+   "RGF (REALM-Qgen)",
+   "90K",
+   "90K + 90K",
+   "90K + 90K",
+   "90K + 90K",
+   "Table 5: Results for pairwise consistency §6.1 on reading comprehension, measured for datasets containing pairs of very similar questions. QUOREF-C refers to the QUOREF contrast set from (Gardner et al., 2020). RGF leads to better consistency in RC and open-domain settings (Appendix C.2). Results on effect of perturbation type during"
+  ]
+ },
+ {
+  "t": 622.5,
+  "terms": [
+   "Consistency",
+   "RC",
+   "Train Size",
+   "AQA",
+   "AmbigQA",
+   "QUOREF-C",
+   "RGF (∆ Ref)",
+   "RGF (∆ Pred)",
+   "Original NQ",
+   "90K",
+   "63.22",
+   "51.72",
+   "44.86",
+   "64.65",
+   "52.93",
+   "Ensemble",
+   "90K",
+   "63.87",
+   "48.33",
+   "46.02"
+  ]
+ },
+ {
+  "t": 637.5,
+  "terms": [
+   "Consistency",
+   "RC",
+   "Train Size",
+   "AQA",
+   "AmbigQA",
+   "QUOREF-C",
+   "RGF (∆ Ref)",
+   "RGF (∆ Pred)",
+   "Original NQ",
+   "Ensemble",
+   "Gold Agen-Qgen",
+   "Rand. Agen-Qgen",
+   "RGF (REALM-Qgen)",
+   "90K",
+   "63.22",
+   "51.72",
+   "44.86",
+   "64.65",
+   "52.93",
+   "90K"
+  ]
+ },
+ {
+  "t": 652.5,
+  "terms": [
+   "Walnut Grove",
+   "Washington",
+   "Apple Valley",
+   "Minnesota",
+   "Population",
+   "Country",
+   "State Name",
+   "Town Name",
+   "Locative (Predicate/Change)",
+   "Misc",
+   "Population based",
+   "Students",
+   "Secondary School",
+   "Percentage",
+   "Poverty Line",
+   "Walnut Grove Secondary School",
+   "California",
+   "Nursing Home",
+   "Caught on Fire"
+  ]
+ },
+ {
+  "t": 667.5,
+  "terms": [
+   "Walnut Grove",
+   "Washington",
+   "Apple Valley",
+   "Minnesota",
+   "Population",
+   "Country",
+   "State Name",
+   "Town Name",
+   "Locative (Predicate/Change)",
+   "Misc",
+   "Population based",
+   "Students",
+   "Secondary School",
+   "Percentage",
+   "Poverty Line",
+   "Walnut Grove Secondary School",
+   "Walnut Grove",
+   "California",
+   "Twig Beetle",
+   "Nursing Home"
+  ]
+ },
+ {
+  "t": 682.5,
+  "terms": [
+   "Semantic Diversity",
+   "Who did Osaka beat at the finals of Indian Wells?",
+   "Who did Serena Williams best in the Wimbledon finals 2015?",
+   "Who won the women's singles Australian Open?",
+   "Who won the men's singles at wimbledon?",
+   "Who won the women's doubles at Wimbledon 2015?",
+   "Who won the runner's up in the women's singles at Wimbledon in 2018?",
+   "Who has won the women's single wimbledon tennis tournament in 2018?",
+   "How many games in Wimbledon final set tie break?",
+   "Who is the patron of Wimbledon tennis club?",
+   "Tournament Name",
+   "Game Type",
+   "Player Specific",
+   "Game outcome",
+   "Tournament year",
+   "Misc.",
+   "Who won the Wimbledon women's singles title in 2016"
+  ]
+ },
+ {
+  "t": 697.5,
+  "terms": [
+   "Retrieval for Counterfactual Generation",
+   "RGF addresses challenges to counterfactual generation for QA",
+   "No additional supervision and examples are automatically labeled",
+   "Effective augmentation for OOD generalization",
+   "Effective augmentation for neighborhood consistency",
+   "Semantic diversity without introducing bias"
+  ]
+ },
+ {
+  "t": 712.5,
+  "terms": [
+   "Retrieval for Counterfactual Generation",
+   "RGF addresses challenges to counterfactual generation for QA",
+   "No additional supervision and examples are automatically labeled",
+   "Effective augmentation for OOD generalization",
+   "Effective augmentation for neighborhood consistency",
+   "Semantic diversity without introducing bias"
+  ]
+ },
+ {
+  "t": 727.5,
+  "terms": [
+   "Thanks!",
+   "Paper:",
+   "https://arxiv.org/abs/2110.07596",
+   "Code:",
+   "https://github.com/google-research/language/tree/master/language/qa_counterfactuals"
+  ]
+ }
+]

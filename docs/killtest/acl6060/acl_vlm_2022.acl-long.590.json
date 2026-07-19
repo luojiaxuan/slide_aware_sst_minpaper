@@ -1,0 +1,658 @@
+[
+ {
+  "t": 7.5,
+  "terms": [
+   "ACL 2022",
+   "DUBLIN",
+   "SPARSIFYING TRANSFORMER MODELS",
+   "WITH TRAINABLE REPRESENTATION POOLING",
+   "Michal Pietruszka",
+   "Lukasz Borczkowski",
+   "Lukasz Baranowski"
+  ]
+ },
+ {
+  "t": 22.5,
+  "terms": [
+   "PROBLEMS TARGETED",
+   "WHERE IS THIS METHOD WELL-SUITED?",
+   "inputs are long (> 2k tokens)",
+   "_and outputs are shorter than inputs.",
+   "michal.pietruszka@applica.ai"
+  ]
+ },
+ {
+  "t": 37.5,
+  "terms": [
+   "PROBLEMS TARGETED",
+   "WHERE IS THIS METHOD WELL-SUITED?",
+   "Examples from NLP include:",
+   "- Summarization",
+   "- Classification",
+   "- Question Answering",
+   "- Key Information Extraction",
+   "- Keyphrase Extraction",
+   "...and more"
+  ]
+ },
+ {
+  "t": 52.5,
+  "terms": [
+   "CONNECTIVITY IN VANILLA TRANSFORMER",
+   "Self-attention:",
+   "1 x n x n x d",
+   "Cross-attention:",
+   "1 x t x n x d",
+   "Decoder",
+   "Input length",
+   "Target length",
+   "Relations computed in self-attention (encoder) and cross-attention (decoder)."
+  ]
+ },
+ {
+  "t": 67.5,
+  "terms": [
+   "CONNECTIVITY IN VANILLA TRANSFORMER",
+   "Self-attention:",
+   "l x n x n x d",
+   "Cross-attention:",
+   "l x t x n x d",
+   "Decoder",
+   "Input length",
+   "Target length",
+   "Relations computed in self-attention (encoder) and cross-attention (decoder)."
+  ]
+ },
+ {
+  "t": 82.5,
+  "terms": [
+   "CONNECTIVITY IN VANILLA TRANSFORMER",
+   "Self-attention:",
+   "1 x n x n x d",
+   "Cross-attention:",
+   "1 x t x n x d",
+   "Decoder",
+   "Input length",
+   "Target length",
+   "Relations computed in self-attention (encoder) and cross-attention (decoder)."
+  ]
+ },
+ {
+  "t": 97.5,
+  "terms": [
+   "CONNECTIVITY IN VANILLA TRANSFORMER",
+   "Self-attention:",
+   "1 x n x n x d",
+   "Cross-attention:",
+   "1 x t x n x d",
+   "Decoder",
+   "Input length",
+   "Target length",
+   "Relations computed in self-attention (encoder) and cross-attention (decoder)."
+  ]
+ },
+ {
+  "t": 112.5,
+  "terms": [
+   "CONNECTIVITY IN VANILLA TRANSFORMER",
+   "Self-attention:",
+   "1 x n x n x d",
+   "Cross-attention:",
+   "1 x t x n x d",
+   "Decoder",
+   "Input length",
+   "Target length",
+   "Relations computed in self-attention (encoder) and cross-attention (decoder)."
+  ]
+ },
+ {
+  "t": 127.5,
+  "terms": [
+   "VANILLA TRANSFORMER WITH BLOCKWISE ENCODER",
+   "Self-attention: 1 × m × n × d",
+   "Cross-attention: 1 × t × n × d",
+   "Block size",
+   "Decoder",
+   "Input length",
+   "Target length"
+  ]
+ },
+ {
+  "t": 142.5,
+  "terms": [
+   "VANILLA TRANSFORMER WITH BLOCKWISE ENCODER",
+   "Self-attention: 1 × m × n × d",
+   "Cross-attention: 1 × t × n × d",
+   "Block size",
+   "Decoder",
+   "Input length",
+   "Target length"
+  ]
+ },
+ {
+  "t": 157.5,
+  "terms": [
+   "INTUITION BEHIND THE IDEA",
+   "KEY OBSERVATION",
+   "INPUT",
+   "The Minimum Age is thirteen (13). You have to be the Minimum to use Tumblr. We're serious: it's a hard rule.",
+   "But I'm, like, almost old enough!",
+   "you plead. Nope, sorry. If you're not old enough, don't use Tumblr.",
+   "OUTPUT",
+   "Minimum Tumblr user's age is 13."
+  ]
+ },
+ {
+  "t": 172.5,
+  "terms": [
+   "INTUITION BEHIND THE IDEA",
+   "KEY OBSERVATION",
+   "INPUT",
+   "The Minimum Age is thirteen (13). You have to be the Minimum to use Tumblr. We're serious: it's a hard rule.",
+   "But I'm, like, almost old enough!",
+   "you plead. Nope, sorry. If you're not old enough, don't use Tumblr.",
+   "OUTPUT",
+   "Minimum Tumblr user's age is 13."
+  ]
+ },
+ {
+  "t": 187.5,
+  "terms": [
+   "INTUITION BEHIND THE IDEA",
+   "KEY OBSERVATION",
+   "INPUT",
+   "The Minimum Age is thirteen (13)",
+   "MIDDLE STAGE",
+   "[...],Minimum Age is thirteen [...], to use Tumblr [...]",
+   "OUTPUT",
+   "Minimum Tumblr user's age is 13."
+  ]
+ },
+ {
+  "t": 202.5,
+  "terms": [
+   "INTUITION BEHIND THE IDEA",
+   "KEY OBSERVATION",
+   "MIDDLE STAGE",
+   "The Minimum Age is thirteen (13)",
+   "Minimum Age is thirteen [... to use Tumblr [...",
+   "Minimum Tumblr user's age is 13.",
+   "michal.pietruszka@applica.ai"
+  ]
+ },
+ {
+  "t": 217.5,
+  "terms": [
+   "INTUITION BEHIND THE IDEA",
+   "KEY OBSERVATION",
+   "INPUT",
+   "The Minimum Age is thirteen (13)",
+   "MIDDLE STAGE",
+   "[...] Minimum Age is thirteen [...] to use Tumblr [...]",
+   "OUTPUT",
+   "Minimum Tumblr user's age is 13.",
+   "michal.pietruszka@applica.ai"
+  ]
+ },
+ {
+  "t": 232.5,
+  "terms": [
+   "FINE",
+   "BUT",
+   "HOW",
+   "TO",
+   "SELECT",
+   "IMPORTANT",
+   "TOKENS",
+   "AND",
+   "BACKPROPAGATE",
+   "GRADIENT",
+   "THROUGH",
+   "THAT",
+   "SELECTION?",
+   "EVERY",
+   "PERSON",
+   "SEEING",
+   "THIS"
+  ]
+ },
+ {
+  "t": 247.5,
+  "terms": [
+   "TRAINABLE TOP-K",
+   "TO THE RESCUE",
+   "E1",
+   "E2",
+   "E3",
+   "E4",
+   "10",
+   "3",
+   "8",
+   "15",
+   "15",
+   "3",
+   "10",
+   "8",
+   "0.99",
+   "0.01",
+   "0.95",
+   "0.05",
+   "0.99",
+   "0.01"
+  ]
+ },
+ {
+  "t": 262.5,
+  "terms": [
+   "TRAINABLE TOP-K",
+   "TO THE RESCUE",
+   "E1",
+   "E2",
+   "E3",
+   "E4",
+   "0.99",
+   "0.01",
+   "0.95",
+   "0.05",
+   "14.9",
+   "9.8"
+  ]
+ },
+ {
+  "t": 277.5,
+  "terms": [
+   "TRAINABLE TOP-K",
+   "TO THE RESCUE",
+   "E1",
+   "E2",
+   "E3",
+   "E4",
+   "10",
+   "3",
+   "8",
+   "15",
+   "15",
+   "3",
+   "10",
+   "8",
+   "0.99",
+   "0.01",
+   "0.95",
+   "0.05",
+   "0.99",
+   "0.01"
+  ]
+ },
+ {
+  "t": 292.5,
+  "terms": [
+   "TRAINABLE TOP-K",
+   "TO THE RESCUE",
+   "E1",
+   "E2",
+   "E3",
+   "E4",
+   "10",
+   "3",
+   "8",
+   "15",
+   "15",
+   "3",
+   "10",
+   "8",
+   "0.99",
+   "0.01",
+   "0.99",
+   "0.01",
+   "0.99",
+   "0.01"
+  ]
+ },
+ {
+  "t": 307.5,
+  "terms": [
+   "TRAINABLE TOP-K",
+   "TO THE RESCUE",
+   "E1",
+   "E2",
+   "E3",
+   "E4",
+   "10",
+   "3",
+   "8",
+   "15",
+   "15",
+   "3",
+   "10",
+   "8",
+   "0.99",
+   "0.01",
+   "0.95",
+   "0.05",
+   "0.99",
+   "0.01"
+  ]
+ },
+ {
+  "t": 322.5,
+  "terms": [
+   "REPRESENTATION POOLING IN TRANSFORMER",
+   "ENCODING",
+   "Block 1",
+   "Block Z"
+  ]
+ },
+ {
+  "t": 337.5,
+  "terms": [
+   "REPRESENTATION POOLING IN TRANSFORMER",
+   "ENCODING",
+   "Block 1",
+   "Block Z"
+  ]
+ },
+ {
+  "t": 352.5,
+  "terms": [
+   "BLOCKWISE ENCODER WITH REPRESENTATION POOLING",
+   "Self-attention:",
+   "1 x m x n x d",
+   "Cross-attention:",
+   "1 x t x k x d",
+   "Block size",
+   "POOL",
+   "Target length",
+   "Decoder"
+  ]
+ },
+ {
+  "t": 367.5,
+  "terms": [
+   "BLOCKWISE ENCODER WITH REPRESENTATION POOLING",
+   "Self-attention:",
+   "1 x m x n x d",
+   "Cross-attention:",
+   "1 x t x k x d",
+   "Block size",
+   "POOL",
+   "Target length",
+   "Pooled length"
+  ]
+ },
+ {
+  "t": 382.5,
+  "terms": [
+   "BLOCKWISE ENCODER WITH REPRESENTATION POOLING",
+   "Self-attention:",
+   "1 x m x n x d",
+   "Cross-attention:",
+   "1 x t x k x d",
+   "Block size",
+   "POOL",
+   "Target length",
+   "Decoder"
+  ]
+ },
+ {
+  "t": 397.5,
+  "terms": [
+   "BLOCKWISE ENCODER WITH REPRESENTATION POOLING",
+   "Self-attention:",
+   "1 x m x n x d",
+   "Cross-attention:",
+   "1 x t x k x d",
+   "Block size",
+   "POOL",
+   "Target length",
+   "Decoder"
+  ]
+ },
+ {
+  "t": 412.5,
+  "terms": [
+   "PYRAMIDION",
+   "BLOCKWISE ENCODER",
+   "WITH EARLY REPRESENTATION POOLING",
+   "Self-attention:",
+   "c x m x n x d",
+   "Cross-attention:",
+   "1 x t x k x d",
+   "POOL",
+   "Block size",
+   "POOL",
+   "Decoder",
+   "Pooled length",
+   "Target length"
+  ]
+ },
+ {
+  "t": 427.5,
+  "terms": [
+   "PYRAMIDION",
+   "BLOCKWISE",
+   "ENCODER",
+   "WITH",
+   "EARLY",
+   "REPRESENTATION",
+   "POOLING",
+   "Self-attention:",
+   "c x m x n x d",
+   "Cross-attention:",
+   "1 x t x k x d",
+   "POOL",
+   "Block size",
+   "POOL",
+   "Decoder",
+   "Pooled length",
+   "Target length"
+  ]
+ },
+ {
+  "t": 442.5,
+  "terms": [
+   "PYRAMIDION",
+   "BLOCKWISE ENCODER",
+   "WITH EARLY REPRESENTATION POOLING",
+   "Self-attention:",
+   "c x m x n x d",
+   "Cross-attention:",
+   "1 x t x k x d",
+   "POOL",
+   "Block size",
+   "POOL",
+   "Decoder",
+   "Pooled length",
+   "Target length"
+  ]
+ },
+ {
+  "t": 457.5,
+  "terms": [
+   "PYRAMIDION",
+   "BLOCKWISE ENCODER",
+   "WITH EARLY REPRESENTATION POOLING",
+   "Self-attention:",
+   "c x m x n x d",
+   "Cross-attention:",
+   "l x t x k x d",
+   "POOL",
+   "Block size",
+   "POOL",
+   "Decoder",
+   "Pooled length",
+   "Target length"
+  ]
+ },
+ {
+  "t": 472.5,
+  "terms": [
+   "PYRAMIDION",
+   "BLOCKWISE",
+   "ENCODER",
+   "WITH",
+   "EARLY",
+   "REPRESENTATION",
+   "POOLING",
+   "Self-attention:",
+   "c x m x n x d",
+   "Cross-attention:",
+   "l x t x k x d",
+   "Time (seconds)",
+   "15.0",
+   "(out of memory)",
+   "Pooling",
+   "Block",
+   "Vanilla",
+   "Layers (network depth)",
+   "2.5",
+   "5.0"
+  ]
+ },
+ {
+  "t": 487.5,
+  "terms": [
+   "PYRAMIDION - BLOCKWISE ENCODER",
+   "WITH EARLY REPRESENTATION POOLING",
+   "Self-attention:",
+   "c x m x n x d",
+   "Cross-attention:",
+   "l x t x k x d",
+   "Time (seconds)",
+   "15.0",
+   "(out of memory)",
+   "Type",
+   "Pooling",
+   "Block",
+   "Vanilla",
+   "Layers (network depth)",
+   "2.5",
+   "5",
+   "7.5",
+   "10.0",
+   "12.5",
+   "15.0"
+  ]
+ },
+ {
+  "t": 502.5,
+  "terms": [
+   "arXiv",
+   "R-1",
+   "20.23",
+   "PubMed",
+   "R-1",
+   "48.25",
+   "Params",
+   ">406M",
+   "Time",
+   "Train",
+   "Infer.",
+   "PoolingFormer",
+   "48.47",
+   "HAT-BART",
+   "46.74",
+   "BigBird-PEGASUS",
+   "46.63",
+   "Dancer PEGASUS",
+   "45.01",
+   "Blockwise (our baseline)"
+  ]
+ },
+ {
+  "t": 517.5,
+  "terms": [
+   "arXiv",
+   "R-1",
+   "20.23",
+   "PubMed",
+   "R-1",
+   "48.25",
+   "Params",
+   ">406M",
+   "Time",
+   "Train",
+   "Infer.",
+   "PoolingFormer",
+   "48.47",
+   "HAT-BART",
+   "46.74",
+   "BigBird-PEGASUS",
+   "46.63",
+   "Dancer PEGASUS",
+   "45.01",
+   "Blockwise (our baseline)"
+  ]
+ },
+ {
+  "t": 532.5,
+  "terms": [
+   "arXiv",
+   "R-1",
+   "20.23",
+   "R-2",
+   "PoolingFormer",
+   "48.47",
+   ">406M",
+   "HAT-BART",
+   "46.74",
+   ">406M",
+   "BigBird-PEGASUS",
+   "46.63",
+   "568M",
+   "Dancer PEGASUS",
+   "45.01",
+   "568M",
+   "Blockwise (our baseline)",
+   "46.85",
+   "19.39",
+   "124M"
+  ]
+ },
+ {
+  "t": 547.5,
+  "terms": [
+   "arXiv",
+   "PubMed",
+   "R-1",
+   "R-2",
+   "Params",
+   "Time",
+   "Train",
+   "Infer.",
+   ">406M",
+   "568M",
+   "568M",
+   "124M",
+   "4.85",
+   "37.15",
+   "124M",
+   "2.71",
+   "8.12"
+  ]
+ },
+ {
+  "t": 562.5,
+  "terms": [
+   "arXiv",
+   "R-1",
+   "20.23",
+   "PubMed",
+   "R-1",
+   "48.25",
+   "Params",
+   ">406M",
+   "Time",
+   "Train",
+   "Infer.",
+   "PoolingFormer",
+   "48.47",
+   "HAT-BART",
+   "46.74",
+   "BigBird-PEGASUS",
+   "46.63",
+   "Dancer PEGASUS",
+   "45.01",
+   "Blockwise (our baseline)"
+  ]
+ }
+]

@@ -1,0 +1,762 @@
+[
+ {
+  "t": 7.5,
+  "terms": [
+   "KinyaBERT",
+   "a Morphology-aware Kinyarwanda Language Model",
+   "ACL 2022",
+   "Antoine Nzeyimana",
+   "Andre Niyongabo Rubungo",
+   "University of Massachusetts Amherst",
+   "Polytechnic University of Catalonia"
+  ]
+ },
+ {
+  "t": 22.5,
+  "terms": [
+   "Table of contents",
+   "1. Motivation",
+   "2. KinyaBERT model architecture",
+   "3. Experimental results",
+   "4. Conclusions"
+  ]
+ },
+ {
+  "t": 37.5,
+  "terms": [
+   "Motivation",
+   "NLP advances",
+   "pre-trained language models",
+   "BERT",
+   "complex morphology",
+   "morphologically rich languages (MRLS)",
+   "ubiquitous BPE-based tokenization",
+   "exact sub-word lexical units",
+   "morphemes",
+   "effective representation",
+   "twagezeye 'we arrived there'",
+   "ndabyizeye 'I hope so'",
+   "umwarimu 'teacher'",
+   "tu.a.ger.ye.yo",
+   "n.ra.bi.izer.ye",
+   "u.mu.arimu",
+   "twag.ezeyo",
+   "ndab.izeye",
+   "umwarimu",
+   "_twag.ezeyo"
+  ]
+ },
+ {
+  "t": 52.5,
+  "terms": [
+   "Motivation",
+   "NLP advances",
+   "pre-trained language models",
+   "BERT",
+   "complex morphology",
+   "morphologically rich languages (MRLS)",
+   "ubiquitous BPE-based tokenization",
+   "exact sub-word lexical units",
+   "morphemes",
+   "effective representation",
+   "twagezeye 'we arrived there'",
+   "ndabyizeye 'I hope so'",
+   "umwarimu 'teacher'",
+   "morphemes",
+   "Monolingual BPE",
+   "Multilingual BPE"
+  ]
+ },
+ {
+  "t": 67.5,
+  "terms": [
+   "Motivation",
+   "NLP advances",
+   "pre-trained language models",
+   "BERT",
+   "complex morphology",
+   "morphologically rich languages (MRLS)",
+   "ubiquitous BPE-based tokenization",
+   "exact sub-word lexical units",
+   "morphemes",
+   "effective representation",
+   "twagezeye 'we arrived there'",
+   "ndabyizeye 'I hope so'",
+   "umwarimu 'teacher'",
+   "twa, ge, ze, yo",
+   "ndab, yiz, eye",
+   "_um, wari, mu"
+  ]
+ },
+ {
+  "t": 82.5,
+  "terms": [
+   "Motivation",
+   "NLP advances",
+   "pre-trained language models",
+   "BERT",
+   "complex morphology",
+   "morphologically rich languages (MRLS)",
+   "ubiquitous BPE-based tokenization",
+   "exact sub-word lexical units",
+   "morphemes",
+   "effective representation",
+   "twagezeye 'we arrived there'",
+   "ndabyizeye 'I hope so'",
+   "umwarimu 'teacher'",
+   "tu.a.ger.ye.yo",
+   "n.ra.bi.izer.ye",
+   "u.mu.arimu",
+   "_twa.ge.zeyo",
+   "_ndab.yizeye",
+   "_um.wari.miu"
+  ]
+ },
+ {
+  "t": 97.5,
+  "terms": [
+   "Motivation",
+   "BPE tokens",
+   "morphemes",
+   "single sequence",
+   "morphological compositionality",
+   "NLP",
+   "pre-trained language models",
+   "mainstream languages",
+   "low resource",
+   "diverse languages"
+  ]
+ },
+ {
+  "t": 112.5,
+  "terms": [
+   "Motivation",
+   "BPE tokens",
+   "morphemes",
+   "single sequence",
+   "morphological compositionality",
+   "NLP",
+   "pre-trained language models",
+   "mainstream languages",
+   "low resource",
+   "diverse languages"
+  ]
+ },
+ {
+  "t": 127.5,
+  "terms": [
+   "KinyaBERT",
+   "BERT",
+   "morphologically rich languages",
+   "Kinyarwanda",
+   "low resource"
+  ]
+ },
+ {
+  "t": 142.5,
+  "terms": [
+   "KinyaBERT model architecture"
+  ]
+ },
+ {
+  "t": 157.5,
+  "terms": [
+   "KinyaBERT model architecture: Input",
+   "John twarahamubonye biradutangaza",
+   "(We were surprised to find John there)"
+  ]
+ },
+ {
+  "t": 172.5,
+  "terms": [
+   "KinyaBERT model architecture",
+   "Morphological analyzer",
+   "John twarabamubonye biradutangaza",
+   "(We were surprised to find John there)"
+  ]
+ },
+ {
+  "t": 187.5,
+  "terms": [
+   "KinyaBERT model architecture",
+   "Input morphemes",
+   "John",
+   "tu ara ha mu bon ye",
+   "bi ra tu tangar ya a",
+   "Morphological Analyser",
+   "John twarabamubonye biradutangaza",
+   "(We were surprised to find John there)"
+  ]
+ },
+ {
+  "t": 202.5,
+  "terms": [
+   "KinyaBERT model architecture",
+   "POS Tagging",
+   "NP35 John",
+   "V5 tu ara ha mu bon ye",
+   "V9 bi ra tu tangar ya",
+   "Morphological Analyser",
+   "John twarabamubonye biradutangaza",
+   "(We were surprised to find John there)"
+  ]
+ },
+ {
+  "t": 217.5,
+  "terms": [
+   "KinyaBERT model architecture: Embedding (3)",
+   "NP35 John",
+   "V5 tu ara ha mu bon ye",
+   "V9 la ra tangar ya",
+   "Morphological Analyser",
+   "John twarabanubonye birudutangaza (We were surprised to find John there)"
+  ]
+ },
+ {
+  "t": 232.5,
+  "terms": [
+   "KinyaBERT model architecture",
+   "Morphology encoding",
+   "1",
+   "Morphology Encoder",
+   "NP35 John",
+   "V5 tu ara ha na son ye",
+   "V9 la ra anjag y a",
+   "Morphological Analyser",
+   "John twarabanubonye biradutangaza",
+   "(We were surprised to find John there)"
+  ]
+ },
+ {
+  "t": 247.5,
+  "terms": [
+   "KinyaBERT model architecture: Composition",
+   "Morphology Encoder",
+   "John",
+   "bon",
+   "tangir",
+   "NP35 John",
+   "V5 tu ara ha na bon ye",
+   "V9 bi ra tangir ya",
+   "Morphological Analyser",
+   "John twarabanubonye birudutangaza (We were surprised to find John there)"
+  ]
+ },
+ {
+  "t": 262.5,
+  "terms": [
+   "KinyaBERT model architecture: Composition",
+   "Morphology Encoder",
+   "NP35 John",
+   "V5 tu ara ha na bon ye",
+   "V9 la ra birutangaza",
+   "John twarabamubonye birutangaza",
+   "(We were surprised to find John there)"
+  ]
+ },
+ {
+  "t": 277.5,
+  "terms": [
+   "KinyaBERT model architecture",
+   "Sentence encoding",
+   "Sentence/Document-Level Encoder",
+   "Morphology Encoder",
+   "Morphology Encoder",
+   "Morphology Encoder",
+   "Morphological Analyser",
+   "John",
+   "NP35 John",
+   "V5 tu ara ha na",
+   "V9 la ra",
+   "tarigar",
+   "John twarabanabonye biradutangaza",
+   "(We were surprised to find John there)"
+  ]
+ },
+ {
+  "t": 292.5,
+  "terms": [
+   "Morphological analysis",
+   "POS tagging",
+   "finite state two-level morphology",
+   "Kinyarwanda language",
+   "morphology of all Kinyarwanda word types",
+   "verbs",
+   "nouns",
+   "demonstrative",
+   "possessive pronouns",
+   "numerals",
+   "unsupervised POS tagging",
+   "first order factored model",
+   "syntactic agreements",
+   "bidirectional inference",
+   "EMNLP 2005"
+  ]
+ },
+ {
+  "t": 307.5,
+  "terms": [
+   "Morphological analysis",
+   "POS tagging",
+   "finite state two-level morphology",
+   "Kinyarwanda language",
+   "morphology of all Kinyarwanda word types",
+   "verbs",
+   "nouns",
+   "demonstrative",
+   "possessive pronouns",
+   "numerals",
+   "unsupervised POS tagging",
+   "first order factored model",
+   "syntactic agreements",
+   "bidirectional inference",
+   "EMNLP 2005"
+  ]
+ },
+ {
+  "t": 322.5,
+  "terms": [
+   "Morphological analysis",
+   "POS tagging",
+   "finite state two-level morphology",
+   "Kinyarwanda language",
+   "morphology of all Kinyarwanda word types",
+   "verbs",
+   "nouns",
+   "demonstrative",
+   "possessive pronouns",
+   "numerals",
+   "unsupervised POS tagging",
+   "first order factored model",
+   "syntactic agreements",
+   "bidirectional inference",
+   "EMNLP 2005"
+  ]
+ },
+ {
+  "t": 337.5,
+  "terms": [
+   "Morphological analysis",
+   "POS tagging",
+   "finite state two-level morphology",
+   "Kinyarwanda language",
+   "morphology of all Kinyarwanda word types",
+   "verbs",
+   "nouns",
+   "demonstrative",
+   "possessive pronouns",
+   "numerals",
+   "unsupervised POS tagging",
+   "first order factored model",
+   "syntactic agreements",
+   "bidirectional inference",
+   "EMNLP 2005"
+  ]
+ },
+ {
+  "t": 352.5,
+  "terms": [
+   "morphology encoder",
+   "positional encoding",
+   "untied relative positional embeddings",
+   "ICLR 2021"
+  ]
+ },
+ {
+  "t": 367.5,
+  "terms": [
+   "morphology encoder",
+   "positional encoding",
+   "untied relative positional embeddings",
+   "ICLR 2021"
+  ]
+ },
+ {
+  "t": 382.5,
+  "terms": [
+   "Pre-training objective",
+   "BERT",
+   "masked language model (MLM)",
+   "stem",
+   "affixes",
+   "predict",
+   "15%",
+   "80%",
+   "10%",
+   "10%",
+   "affix prediction",
+   "multi-label classification",
+   "KinyaBERTASC",
+   "KinyaBERTADR"
+  ]
+ },
+ {
+  "t": 397.5,
+  "terms": [
+   "Pre-training objective",
+   "BERT",
+   "masked language model (MLM)",
+   "stem",
+   "affixes",
+   "predict",
+   "15%",
+   "80%",
+   "10%",
+   "random words",
+   "unchanged",
+   "multi-label classification",
+   "affix set (KinyaBERTASC)",
+   "probability vector of affixes (KinyaBERTADR)"
+  ]
+ },
+ {
+  "t": 412.5,
+  "terms": [
+   "Pre-training objective",
+   "BERT",
+   "masked language model (MLM)",
+   "stem",
+   "affixes",
+   "predict",
+   "15%",
+   "80%",
+   "10%",
+   "random words",
+   "unchanged",
+   "multi-label classification",
+   "affix set (KinyaBERTASC)",
+   "probability vector of affixes (KinyaBERTADR)"
+  ]
+ },
+ {
+  "t": 427.5,
+  "terms": [
+   "Pre-training objective",
+   "BERT",
+   "masked language model (MLM)",
+   "stem",
+   "affixes",
+   "predict",
+   "15%",
+   "80%",
+   "10%",
+   "random words",
+   "unchanged",
+   "multi-label classification",
+   "affix set (KinyaBERTASC)",
+   "probability vector of affixes (KinyaBERTADR)"
+  ]
+ },
+ {
+  "t": 442.5,
+  "terms": [
+   "Experimental Setup",
+   "KinyaBERT_ASC",
+   "KinyaBERT_ADR",
+   "2.4GB",
+   "Kinyarwanda text",
+   "3 baselines",
+   "XLM-R[3]",
+   "multilingual model pre-trained",
+   "2.5TB",
+   "multilingual text",
+   "BERT_BPE",
+   "RoBERTa model pre-trained",
+   "2.4GB text",
+   "BPE tokenization",
+   "BERT_MORPHO",
+   "RoBERTa model pre-trained",
+   "same 2.4GB text",
+   "morphological analyzer as KinyaBERT",
+   "single tier encoder",
+   "sequences of morphemes"
+  ]
+ },
+ {
+  "t": 457.5,
+  "terms": [
+   "Experimental Setup",
+   "KinyaBERT_ASC",
+   "KinyaBERT_ADR",
+   "2.4GB",
+   "Kinyarwanda text",
+   "3 baselines",
+   "XLM-R[3]",
+   "multilingual model pre-trained",
+   "2.5TB",
+   "multilingual text",
+   "BERT_BPE",
+   "RoBERTa model pre-trained",
+   "same 2.4GB text",
+   "BPE tokenization",
+   "BERT_MORPHO",
+   "RoBERTa model pre-trained",
+   "same 2.4GB text",
+   "morphological analyzer as KinyaBERT",
+   "single tier encoder",
+   "sequences of morphemes"
+  ]
+ },
+ {
+  "t": 472.5,
+  "terms": [
+   "Experimental Setup",
+   "BASE architecture",
+   "KinyaBERT",
+   "101M",
+   "105M",
+   "KinyaBERT_ADR",
+   "KinyaBERT_ASC",
+   "pre-trained for 32K steps",
+   "batches of at most 2560 sequences each"
+  ]
+ },
+ {
+  "t": 487.5,
+  "terms": [
+   "Experimental Setup",
+   "BASE architecture",
+   "KinyaBERT",
+   "101M",
+   "105M",
+   "KinyaBERT_ADR",
+   "KinyaBERT_ASC",
+   "pre-trained for 32K steps",
+   "batches of at most 2560 sequences each"
+  ]
+ },
+ {
+  "t": 502.5,
+  "terms": [
+   "Evaluation Tasks",
+   "We evaluate the models on three sets of tasks:",
+   "1. A machine translated GLUE benchmark([1]) for natural language inference",
+   "2. A high quality named entity recognition (NER) dataset",
+   "3. A news categorization (NEWS) dataset"
+  ]
+ },
+ {
+  "t": 517.5,
+  "terms": [
+   "Evaluation Tasks",
+   "We evaluate the models on three sets of tasks:",
+   "1. A machine translated GLUE benchmark([1]) for natural language inference",
+   "2. A high quality named entity recognition (NER) dataset",
+   "3. A news categorization (NEWS) dataset"
+  ]
+ },
+ {
+  "t": 532.5,
+  "terms": [
+   "Evaluation Tasks",
+   "We evaluate the models on three sets of tasks:",
+   "1. A machine translated GLUE benchmark([1]) for natural language inference",
+   "2. A high quality named entity recognition (NER) dataset",
+   "3. A news categorization (NEWS) dataset"
+  ]
+ },
+ {
+  "t": 547.5,
+  "terms": [
+   "Translated GLUE benchmark results",
+   "Task:",
+   "#Train examples:",
+   "Translation score:",
+   "Model",
+   "Validation Set",
+   "XLM-R",
+   "BERT",
+   "BERT",
+   "KinyabERT",
+   "KinyabERT",
+   "Model",
+   "Test Set",
+   "XLM-R",
+   "BERT",
+   "BERT",
+   "KinyabERT",
+   "KinyabERT",
+   "Table 1: Performance results on the machine translated GLUE benchmark [1]."
+  ]
+ },
+ {
+  "t": 562.5,
+  "terms": [
+   "Translated GLUE benchmark results",
+   "Task:",
+   "#Train examples:",
+   "Translation score:",
+   "Model",
+   "Validation Set",
+   "XLM-R",
+   "BERT",
+   "BERT",
+   "Kinyabert",
+   "Kinyabert",
+   "Model",
+   "Test Set",
+   "XLM-R",
+   "BERT",
+   "BERT",
+   "Kinyabert",
+   "Kinyabert",
+   "Table 1: Performance results on the machine translated GLUE benchmark [1]."
+  ]
+ },
+ {
+  "t": 577.5,
+  "terms": [
+   "Translated GLUE benchmark results",
+   "Task:",
+   "#Train examples:",
+   "Translation score:",
+   "Model",
+   "Validation Set",
+   "XLM-R",
+   "BERT",
+   "BERT",
+   "Kinyabert",
+   "Kinyabert",
+   "Model",
+   "Test Set",
+   "XLM-R",
+   "BERT",
+   "BERT",
+   "Kinyabert",
+   "Kinyabert",
+   "Table 1: Performance results on the machine translated GLUE benchmark [1]."
+  ]
+ },
+ {
+  "t": 592.5,
+  "terms": [
+   "Translated GLUE benchmark results",
+   "Task:",
+   "#Train examples:",
+   "Translation score:",
+   "Model",
+   "Validation Set",
+   "XLM-R",
+   "BERT",
+   "BERT",
+   "KinyabERT",
+   "KinyabERT",
+   "Model",
+   "Test Set",
+   "XLM-R",
+   "BERT",
+   "BERT",
+   "KinyabERT",
+   "KinyabERT",
+   "Table 1: Performance results on the machine translated GLUE benchmark [1]."
+  ]
+ },
+ {
+  "t": 607.5,
+  "terms": [
+   "Named Entity Recognition (NER)",
+   "Task:",
+   "NER",
+   "#Train examples:",
+   "2.1K",
+   "Model",
+   "Validation Set",
+   "Test Set",
+   "XLM-R",
+   "80.3±1.0",
+   "71.8±1.5",
+   "BERT_BPE",
+   "83.4±0.9",
+   "74.8±0.8",
+   "BERT_MORPHO",
+   "83.2±0.9",
+   "72.8±0.9",
+   "KinyaBERT_ADR",
+   "87.1±0.8",
+   "77.2±1.0"
+  ]
+ },
+ {
+  "t": 622.5,
+  "terms": [
+   "News Categorization",
+   "Task:",
+   "NEWS",
+   "#Train examples:",
+   "18.0K",
+   "Model",
+   "Validation Set",
+   "Test Set",
+   "XLM-R",
+   "83.8±0.3",
+   "84.0±0.2",
+   "BERT_BPE",
+   "87.6±0.4",
+   "88.3±0.3",
+   "BERT_MORPHO",
+   "86.9±0.4",
+   "86.9±0.3",
+   "KinyaBERT_ADR",
+   "88.8±0.3",
+   "88.0±0.3"
+  ]
+ },
+ {
+  "t": 637.5,
+  "terms": []
+ },
+ {
+  "t": 652.5,
+  "terms": []
+ },
+ {
+  "t": 667.5,
+  "terms": [
+   "Conclusions",
+   "effectiveness",
+   "explicit",
+   "morphological",
+   "information",
+   "pre-trained",
+   "language",
+   "models",
+   "two-tier",
+   "transformer",
+   "encoder",
+   "architecture",
+   "morphological",
+   "compositionality",
+   "motivate",
+   "further",
+   "research",
+   "morphology-aware",
+   "language",
+   "models"
+  ]
+ },
+ {
+  "t": 682.5,
+  "terms": [
+   "Conclusions",
+   "effectiveness",
+   "explicit",
+   "morphological",
+   "information",
+   "pre-trained",
+   "language",
+   "models",
+   "two-tier",
+   "transformer",
+   "encoder",
+   "architecture",
+   "capturing",
+   "morphological",
+   "compositionality",
+   "morphologically",
+   "rich",
+   "languages",
+   "motivate",
+   "further"
+  ]
+ }
+]
