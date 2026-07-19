@@ -64,17 +64,20 @@ latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
    +18.8 p<1e-4, termR 0.12→0.41; slide-OCR condition ≈ baseline → extraction is
    the bottleneck; wrong-slide neutral). Full report:
    [docs/killtest/KILLTEST_RESULTS.md](docs/killtest/KILLTEST_RESULTS.md).
-2. Chinese-LiPS En references — **full machine drafts DONE** (3,908/3,908 via
-   Qwen3-32B on hyper01, slide-term context; staged for HF upload pending token
-   renewal). Verified-core post-edit deferred (user unavailable); zh stratum is
-   machine-draft-labeled, quality headlines lean on human-ref strata.
-3. VLM visual-signal pass over mTEDx-V (upgrade OCR lower bound).
+2. ~~Chinese-LiPS En references~~ — **S2 COMPLETE**: all 21 test videos rebuilt
+   on the original session timeline (11.1 h, drift <10 ms) + 3,908 machine-draft
+   refs, all on HF. Verified-core post-edit deferred; machine-draft tier labeled.
+3. ~~VLM visual-signal pass over mTEDx-V~~ — DONE (visual_signal_vlm.json,
+   31/100 talks reclassified, sparsity confirmed real).
 4. Streaming policy implementation (async slide worker + evidence gating) and
    faithfulness metrics (wrong-slide adoption, visible-but-unspoken rate).
    **Probe-scale evidence in**: VLM terms + oracle-gate = +7.3 chrF pooled
    (p<0.001) ≈ oracle upper bound; naive LLM gate fails (no selectivity) →
    need-prediction is the method's core problem.
-5. ACL 60/60 integration (frame recovery, term filter, En→Zh control).
+5. ACL 60/60 integration — recon DONE (Anthology-hosted mp4s, zero obstacles,
+   [docs/ACL6060_INTEGRATION.md](docs/ACL6060_INTEGRATION.md)); execution ~1 day.
+   NEW: trie-constrained contextual biasing logits processor (injection-form
+   study verdict; see docs/NIGHT_REPORT_20260719.md).
 6. Paper: intro/method drafts; related work is written.
 
 ## Rules
