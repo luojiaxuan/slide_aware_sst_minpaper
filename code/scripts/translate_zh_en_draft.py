@@ -21,6 +21,40 @@ import argparse
 import json
 from pathlib import Path
 
+class _OpenAICompat:
+    """Minimal OpenAI-compatible chat client (vllm) matching the anthropic call shape."""
+
+    def __init__(self, url: str):
+        self.url = url.rstrip("/")
+        self.messages = self
+
+    def create(self, model, max_tokens, system, messages):
+        import json as _json
+        import urllib.request
+
+        body = _json.dumps({
+            "model": model, "temperature": 0.0, "max_tokens": max_tokens,
+            "messages": [{"role": "system", "content": system}] + messages,
+            "chat_template_kwargs": {"enable_thinking": False},
+        }).encode()
+        req = urllib.request.Request(self.url + "/v1/chat/completions", data=body,
+                                     headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=600) as r:
+            content = _json.load(r)["choices"][0]["message"]["content"]
+
+        class _Msg:
+            pass
+
+        class _Block:
+            pass
+
+        m = _Msg()
+        b = _Block()
+        b.text = content
+        m.content = [b]
+        return m
+
+
 SYSTEM = (
     "You are a professional Chinese-to-English translator for speech translation "
     "references. Translate the spoken Chinese faithfully and fluently. Translate ONLY "
@@ -36,11 +70,15 @@ def main() -> None:
     parser.add_argument("--out", required=True)
     parser.add_argument("--model", default="claude-sonnet-5")
     parser.add_argument("--batch", type=int, default=20, help="segments per LLM call")
+    parser.add_argument("--openai-url", default=None,
+                        help="OpenAI-compatible endpoint (e.g. vllm); uses stdlib HTTP, no SDK")
     args = parser.parse_args()
 
-    import anthropic
-
-    client = anthropic.Anthropic()
+    if args.openai_url:
+        client = _OpenAICompat(args.openai_url)
+    else:
+        import anthropic
+        client = anthropic.Anthropic()
     rows = [json.loads(l) for l in Path(args.inp).open(encoding="utf-8")]
 
     out_rows: list[dict] = []

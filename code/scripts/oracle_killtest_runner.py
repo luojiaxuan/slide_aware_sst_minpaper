@@ -42,9 +42,14 @@ def main() -> None:
     parser.add_argument("--words-per-read", type=int, default=2)
     parser.add_argument("--chars-per-read", type=int, default=4, help="for Chinese source")
     parser.add_argument("--max-new-words", type=int, default=12)
+    parser.add_argument("--conditions", default=None,
+                        help="comma-separated subset of conditions to run")
     args = parser.parse_args()
 
     items = json.load(open(args.items))
+    conds = list(CONDITIONS)
+    if args.conditions:
+        conds = [c for c in args.conditions.split(",") if c in CONDITIONS]
     out_path = Path(args.out)
     done = set()
     if out_path.exists():
@@ -53,7 +58,7 @@ def main() -> None:
             done.add((r["id"], r["condition"]))
 
     with out_path.open("a", encoding="utf-8") as out:
-        for it, cond in [(i, c) for i in items for c in CONDITIONS]:
+        for it, cond in [(i, c) for i in items for c in conds]:
             if (it["id"], cond) in done:
                 continue
             t0 = time.time()
