@@ -51,12 +51,16 @@ def features(source: str, prefix_frac: float = 1.0) -> list[float]:
 
 
 FEATURE_NAMES = ["n_words", "mean_wlen", "max_wlen", "n_long", "frac_long",
-                 "n_vlong", "n_digits", "char_div", "n_cap_long"]
+                 "n_vlong", "n_digits", "char_div", "n_cap_long",
+                 "lp_mean", "lp_min", "lp_frac15", "lp_frac25", "lp_n15"]
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--labels", required=True, help="np_labels.jsonl from offline_label")
+    parser.add_argument("--logprobs", default=None,
+                        help="np_logprobs.jsonl: adds model-confidence features "
+                             "(mean/min token logprob, low-confidence fractions)")
     parser.add_argument("--holdout-talk", required=True)
     parser.add_argument("--hard-threshold", type=float, default=0.4)
     parser.add_argument("--out-gates", default=None,
@@ -67,13 +71,30 @@ def main() -> None:
 
     rows = [json.loads(l) for l in open(args.labels)]
     rows = [r for r in rows if r.get("hypothesis")]
+    lp_map = {}
+    if args.logprobs:
+        for l in open(args.logprobs):
+            r = json.loads(l)
+            if r.get("logprobs"):
+                lp_map[r["id"]] = r["logprobs"]
+        rows = [r for r in rows if r["id"] in lp_map]
+        print(f"with logprobs: {len(rows)}")
     y = np.array([1 if term_recall(r["hypothesis"], r["oracle_terms"]) <= args.hard_threshold
                   else 0 for r in rows])
     talks = np.array([r["talk_id"] for r in rows])
     print(f"segments {len(rows)}, hard rate {y.mean():.2f}")
 
+    def lp_features(rid):
+        lps = lp_map[rid]
+        a = np.array(lps) if lps else np.array([0.0])
+        return [float(a.mean()), float(a.min()),
+                float((a < -1.5).mean()), float((a < -2.5).mean()),
+                float((a < -1.5).sum())]
+
     for scope, frac in [("full-segment", 1.0), ("prefix-30%", 0.30)]:
         X = np.array([features(r["source"], frac) for r in rows])
+        if lp_map:
+            X = np.hstack([X, np.array([lp_features(r["id"]) for r in rows])])
         tr = talks != args.holdout_talk
         te = ~tr
         clf = LogisticRegression(max_iter=2000, class_weight="balanced")
@@ -89,7 +110,7 @@ def main() -> None:
         print(f"[{scope}] holdout {args.holdout_talk}: AUC {auc:.3f} | "
               f"P {p:.2f} R {r:.2f} F1 {f:.2f} | fire rate {pred.mean():.2f} "
               f"(hard rate {y[te].mean():.2f})")
-        top = sorted(zip(FEATURE_NAMES, clf.coef_[0]), key=lambda kv: -abs(kv[1]))[:4]
+        top = sorted(zip(FEATURE_NAMES[:X.shape[1]], clf.coef_[0]), key=lambda kv: -abs(kv[1]))[:4]
         print(f"  top features: {[(n, round(c, 2)) for n, c in top]}")
         if args.out_gates and scope == "prefix-30%":
             gates = {rows[i]["id"]: bool(pred[j])

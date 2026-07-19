@@ -146,6 +146,21 @@ sell easy-harm as a faithfulness finding, (iii) logits-level integration
 (hint-biased decoding rather than prompt injection) should reduce the
 interference floor and is the right implementation for the full system.
 
+## Follow-up 4: learned need-predictor — surface features carry no signal (2026-07-19)
+
+Auto-mined failure labels at scale (1,540 el segments across 18 talks,
+offline Qwen3-32B translation, hard = term recall ≤ 0.4; 24% hard rate) with
+source-side surface features (word lengths, long-word rates, digits, char
+diversity), logistic regression, talk-held-out on the probe talk:
+**AUC 0.49–0.52 — chance level**, in both full-segment and prefix-30% scopes.
+Interpretation: terminology failure is a *model-knowledge* property (does the
+model know this term's English form), invisible in source surface statistics.
+The signal ladder moves to model-side confidence (token logprobs of a draft
+translation — "the model knows what it doesn't know") and slide-term/draft
+mismatch; logprob-feature collection is in progress. Honest status: gating
+selectivity remains open; the oracle-gate ceiling (+7.3) quantifies exactly
+what a working predictor is worth.
+
 ## Caveats
 
 - Text-prefix simulation (transcript, not audio); segment-level, not long-form
