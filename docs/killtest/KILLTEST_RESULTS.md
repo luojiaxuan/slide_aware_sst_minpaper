@@ -228,6 +228,38 @@ support), and the hard-stratum gain (+14.3) matches the el M3 regime —
 recognition support alone is strong when slides are clean (Chinese-LiPS 1080p
 OCR). Cross-regime M2-vs-M3 comparison at scale remains for the full system.
 
+## Follow-up 8: ACL 60/60 En→Zh (S3) first results (2026-07-19)
+
+S3 executed end-to-end: 5 Anthology-hosted talk mp4s, 229 frames, VLM slide
+pass (**95% of frames term-dense — 8× mTEDx density**; screen-recorded slides),
+60 En→Zh items each containing official tagged-glossary hits; runner extended
+with --tgt-lang (character-level LCP for zh). `docs/killtest/acl6060/`.
+
+| condition (n=60) | chrF | Δ | termAcc (official tags) | hard-Δ (n=38) | easy-Δ |
+|---|---|---|---|---|---|
+| none | 26.3 | — | 0.42 | — | — |
+| **slide (VLM, ungated)** | **28.3** | **+3.1** | **0.44** | **+9.1** | −7.3 |
+| oracle terms | 25.9 | −1.1 | 0.39 | +3.8 | −9.6 |
+| wrong slide | 23.1 | −3.2 | 0.32 | +3.3 | −14.3 |
+
+Findings:
+1. **H2's M2-regime prediction lands exactly: slide-string copy rate = 0.00**
+   (2/462) — English slide strings never enter zh output verbatim, vs the M3
+   copy channel central to X→En. First direct cross-regime evidence for the
+   mechanism decomposition.
+2. **Real slides help En→Zh ungated** (+3.1 pooled, +9.1 hard): with 95%-dense,
+   full-screen slides whose wording matches the speech (speakers read their
+   slides), hint injection aligns with the model's natural phrasing — little
+   perturbation, gains retained.
+3. **Protocol sensitivity amplifies on zh targets**: oracle/wrong regress via
+   char-level LCP truncation (worst cases commit once then stall, e.g. output
+   "但是"). Even helpful hints in unnatural list form disturb zh decoding more
+   than the slide's speech-aligned terms do. Reinforces (again) logits-level
+   integration for the full system; probe zh-target numbers carry this caveat.
+4. **Wrong-slide harm is directionally asymmetric**: benign on X→En (32B),
+   −3.2 with easy-Δ −14.3 on En→Zh — faithfulness evaluation must be
+   per-direction.
+
 ## Caveats
 
 - Text-prefix simulation (transcript, not audio); segment-level, not long-form
