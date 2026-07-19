@@ -59,9 +59,11 @@ latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
 
 ## TODOs (priority order)
 
-1. **Oracle anticipation kill test** — wait-k baseline ± current-slide terms ±
-   oracle future-transcript terms on the 3 rebuilt Chinese-LiPS talks; three
-   quality–latency curves. Decides the premise in ~1 week.
+1. ~~Oracle anticipation kill test~~ — **DONE 2026-07-19, PREMISE SURVIVES**
+   (Qwen3-32B, 224 runs: oracle vs none pooled ΔchrF +7.0 p=0.03; hard stratum
+   +18.8 p<1e-4, termR 0.12→0.41; slide-OCR condition ≈ baseline → extraction is
+   the bottleneck; wrong-slide neutral). Full report:
+   [docs/killtest/KILLTEST_RESULTS.md](docs/killtest/KILLTEST_RESULTS.md).
 2. Chinese-LiPS En references — orig-timeline rebuild for all 21 test videos;
    machine drafts (`translate_zh_en_draft.py`, needs API key); user post-edits
    6-video verified core (~6–8 h).

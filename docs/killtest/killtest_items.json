@@ -1,0 +1,1544 @@
+[
+ {
+  "id": "el_51",
+  "src_lang": "Greek",
+  "source": "Σήμερα, ένα κυρίαρχο πρότυπο λέει ότι η ανάπτυξη είναι υποδομές και οργάνωση.",
+  "reference": "Today, a dominant model says that growth is infrastructure and organization.",
+  "start": 432.8,
+  "slide_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ],
+  "oracle_terms": [
+   "Today",
+   "infrastructure",
+   "organization",
+   "dominant",
+   "growth",
+   "model"
+  ],
+  "wrong_terms": [
+   "Micro-businesses",
+   "Commercially",
+   "minded",
+   "Multi-activity",
+   "multi-income",
+   "indeper",
+   "Basic",
+   "assets"
+  ]
+ },
+ {
+  "id": "el_42",
+  "src_lang": "Greek",
+  "source": "Και εμείς τα προτυπά μας τυχαίνει να... ...δεν το δουλεύουμε ορθολογικά.",
+  "reference": "And our models happen to... ...we don't work rationally.",
+  "start": 387.55,
+  "slide_terms": [
+   "Micro-businesses",
+   "Commercially",
+   "minded",
+   "Multi-activity",
+   "multi-income",
+   "indeper",
+   "Basic",
+   "assets"
+  ],
+  "oracle_terms": [
+   "rationally",
+   "models",
+   "happen",
+   "don't"
+  ],
+  "wrong_terms": [
+   "Imitation",
+   "Competitive",
+   "Businesses"
+  ]
+ },
+ {
+  "id": "el_136",
+  "src_lang": "Greek",
+  "source": "Εμείς οι υπόλοιποι να μην τους υποτιμήσουμε γιατί αυτοί είναι που θα μας ξελασπώσουν.",
+  "reference": "We, the rest, should not underestimate them; because they are the ones that will get us out of this mess.",
+  "start": 1074.7,
+  "slide_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ],
+  "oracle_terms": [
+   "underestimate",
+   "because"
+  ],
+  "wrong_terms": [
+   "Micro-businesses",
+   "Commercially",
+   "minded",
+   "Multi-activity",
+   "multi-income",
+   "indeper",
+   "Basic",
+   "assets"
+  ]
+ },
+ {
+  "id": "el_117",
+  "src_lang": "Greek",
+  "source": "Εγώ ήμουνα πολύ επηρεασμένος εκείνη την εποχή απο τις νεομαρξιστικές θεωρίες της ανάπτυξης.",
+  "reference": "I was heavily influenced at that time by Neo-Marxist theories of development,",
+  "start": 914.3,
+  "slide_terms": [],
+  "oracle_terms": [
+   "Neo-Marxist",
+   "development",
+   "influenced",
+   "theories",
+   "heavily"
+  ],
+  "wrong_terms": [
+   "NON-TRADABLE",
+   "Government",
+   "Retail",
+   "Media",
+   "Lawyers"
+  ]
+ },
+ {
+  "id": "el_111",
+  "src_lang": "Greek",
+  "source": "Δηλαδή η ιδιομορφία τους αυτή που θα μπορούσε να είναι πλεονέκτημα καταντάει μειονέκτημα εξαιτίας της καχυποψίας του κράτους.",
+  "reference": "So their difference, which should be an advantage, ends up being a disadvantage because of the suspicious state.",
+  "start": 864.24,
+  "slide_terms": [],
+  "oracle_terms": [
+   "disadvantage",
+   "difference",
+   "suspicious",
+   "advantage",
+   "because"
+  ],
+  "wrong_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ]
+ },
+ {
+  "id": "el_114",
+  "src_lang": "Greek",
+  "source": "Κάποια στιγμή εμφανίστηκε ένας καθηγητής οικονομικής ιστορίας από ένα πολύ μεγάλο, γνωστό, αμερικάνικο πανεπιστήμιο.",
+  "reference": "At some point a professor of economic history appeared from a leading American university.",
+  "start": 891.24,
+  "slide_terms": [],
+  "oracle_terms": [
+   "American",
+   "university",
+   "professor",
+   "economic",
+   "appeared",
+   "history"
+  ],
+  "wrong_terms": [
+   "ACTION",
+   "NDXAcat",
+   "antly",
+   "organized"
+  ]
+ },
+ {
+  "id": "el_37",
+  "src_lang": "Greek",
+  "source": "Και ένα από τα πιο μεγάλα είναι τα πρότυπα που κουβαλάμε στο κεφάλι μας.",
+  "reference": "And one of the greatest obstacles is cultural models which we carry in our heads.",
+  "start": 353.0,
+  "slide_terms": [
+   "Micro-businesses",
+   "Commercially",
+   "minded",
+   "Multi-activity",
+   "multi-income",
+   "indeper",
+   "Basic",
+   "assets"
+  ],
+  "oracle_terms": [
+   "obstacles",
+   "greatest",
+   "cultural",
+   "models",
+   "carry"
+  ],
+  "wrong_terms": [
+   "Imitation",
+   "Competitive",
+   "Businesses"
+  ]
+ },
+ {
+  "id": "el_129",
+  "src_lang": "Greek",
+  "source": "Θα μου πείτε γιατί τα λέω αυτά; Προφανώς δεν τα λέω για να πω ότι οι δίσκοι θα σώσουν την οικονομία μας.",
+  "reference": "You may ask me, why am I saying all this? Obviously I'm not saying that the coffee trays will save our economy.",
+  "start": 1005.0,
+  "slide_terms": [
+   "Imitation",
+   "Competitive",
+   "Businesses"
+  ],
+  "oracle_terms": [
+   "Obviously",
+   "economy",
+   "saying",
+   "coffee"
+  ],
+  "wrong_terms": [
+   "Micro-businesses",
+   "Commercially",
+   "minded",
+   "Multi-activity",
+   "multi-income",
+   "indeper",
+   "Basic",
+   "assets"
+  ]
+ },
+ {
+  "id": "el_133",
+  "src_lang": "Greek",
+  "source": "Δεν θα θεωρούνται λειτούργημα ούτε θα 'χουν τη σιγουριά του δημοσίου, ούτε την αίγλη της καριέρας σε μια μεγάλη εταιρία, ούτε θα έχουν αντιγράψει πετυχημένα μοντέλα απο το Business Week.",
+  "reference": "They will not be considered a 'vocation', nor will they have the job security of the public sector nor the prestige of a career in a big company, nor will they have copied successful models from Business Week.",
+  "start": 1044.0,
+  "slide_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ],
+  "oracle_terms": [
+   "Business",
+   "considered",
+   "successful",
+   "vocation'",
+   "security",
+   "prestige"
+  ],
+  "wrong_terms": [
+   "TRADABLE",
+   "Manufacturing",
+   "Utilities",
+   "Airlines",
+   "Banks",
+   "Shipping",
+   "Telecoms",
+   "Tourism"
+  ]
+ },
+ {
+  "id": "el_11",
+  "src_lang": "Greek",
+  "source": "Να τις χωρίσουμε σε κλάδους που χρειάζονται μεγάλες και οργανωμένες επιχειρήσεις που σημαίνει κεφάλαια, ιεραρχίες κτλ. και αυτούς που μπορούνε να γίνουν και γίνονται σήμερα από μικροεπιχειρήσεις.",
+  "reference": "We can separate the sectors that need large and organized businesses which means capital, hierarchies etc. from sectors that can be created and are being created by small businesses today.",
+  "start": 81.17,
+  "slide_terms": [
+   "NON-TRADABLE",
+   "TRADABLE",
+   "Government",
+   "Manufacturing",
+   "Utilities",
+   "Airlines",
+   "Banks",
+   "Shipping"
+  ],
+  "oracle_terms": [
+   "hierarchies",
+   "businesses",
+   "organized",
+   "separate",
+   "sectors",
+   "capital"
+  ],
+  "wrong_terms": [
+   "ACTION",
+   "NDXAcat",
+   "antly",
+   "organized"
+  ]
+ },
+ {
+  "id": "el_38",
+  "src_lang": "Greek",
+  "source": "Τα πρότυπα που κουβαλάμε στο κεφάλι μας θα είναι ένα από τα πιο μεγάλα εμπόδια, πρότυπα για τι πράγμα; Για το τι για παράδειγμα είναι μια καλή δουλειά.",
+  "reference": "The obstacles in our head are going to be one of the biggest obstacles, models for what? For example, about what is a 'good job',",
+  "start": 362.0,
+  "slide_terms": [
+   "Micro-businesses",
+   "Commercially",
+   "minded",
+   "Multi-activity",
+   "multi-income",
+   "indeper",
+   "Basic",
+   "assets"
+  ],
+  "oracle_terms": [
+   "obstacles",
+   "biggest",
+   "example",
+   "models",
+   "going"
+  ],
+  "wrong_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ]
+ },
+ {
+  "id": "el_9",
+  "src_lang": "Greek",
+  "source": "Και για να ορθοποδήσουμε θα πρέπει εκατοντάδες χιλιάδες δουλειές να έρθουν από εκεί, εδώ.",
+  "reference": "Το get on the right track, hundreds of thousands of jobs will have to shift from there to here.",
+  "start": 71.05,
+  "slide_terms": [
+   "NON-TRADABLE",
+   "TRADABLE",
+   "Government",
+   "Manufacturing",
+   "Utilities",
+   "Airlines",
+   "Banks",
+   "Shipping"
+  ],
+  "oracle_terms": [
+   "track",
+   "shift"
+  ],
+  "wrong_terms": [
+   "TRADABLE",
+   "Manufacturing",
+   "Utilities",
+   "Airlines",
+   "Banks",
+   "Shipping",
+   "Telecoms",
+   "Tourism"
+  ]
+ },
+ {
+  "id": "el_89",
+  "src_lang": "Greek",
+  "source": "Απο πού και ως πού λοιπόν έλληνες εκδότες στην εκμάθηση αγγλικής γλώσσας.",
+  "reference": "So how come, Greek publishers in English language teaching?.",
+  "start": 712.78,
+  "slide_terms": [],
+  "oracle_terms": [
+   "English",
+   "Greek",
+   "publishers",
+   "language",
+   "teaching"
+  ],
+  "wrong_terms": [
+   "Micro-businesses",
+   "Commercially",
+   "minded",
+   "Multi-activity",
+   "multi-income",
+   "indeper",
+   "Basic",
+   "assets"
+  ]
+ },
+ {
+  "id": "el_103",
+  "src_lang": "Greek",
+  "source": "Αυτές είναι οι κυρίαρχες αφηγήσεις, τα κυρίαρχα πρότυπα για τα οποία έλεγα πριν που καμιά φορά μας εμποδίζουν.",
+  "reference": "These are the problems with dominant narratives, dominant models, which as I said sometimes get in our way.",
+  "start": 812.53,
+  "slide_terms": [],
+  "oracle_terms": [
+   "narratives",
+   "sometimes",
+   "dominant",
+   "models"
+  ],
+  "wrong_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ]
+ },
+ {
+  "id": "el_41",
+  "src_lang": "Greek",
+  "source": "Το 1980, το πρότυπο το κυρίαρχο, το δυτικό πρότυπο, ήτανε ότι ανάπτυξη σημαίνει βιομηχανία.",
+  "reference": "In 1980, the dominant model, the western model, was that development means manufacturing.",
+  "start": 378.34,
+  "slide_terms": [
+   "Micro-businesses",
+   "Commercially",
+   "minded",
+   "Multi-activity",
+   "multi-income",
+   "indeper",
+   "Basic",
+   "assets"
+  ],
+  "oracle_terms": [
+   "manufacturing",
+   "development",
+   "dominant",
+   "western",
+   "model"
+  ],
+  "wrong_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ]
+ },
+ {
+  "id": "el_71",
+  "src_lang": "Greek",
+  "source": "Από το πόσο είναι φιλόξενοι, πόσο είναι ευρηματικοί, πόσο φροντίζουν το περιβάλλον και πόσο πείθουν τον πελάτη να πληρώσει χωρίς να νοιώθει ότι τον κλέβουν.",
+  "reference": "On how hospitable they are, how inventive, how they take care of the environment, and whether they the customer can pay without feeling that he's being cheated.",
+  "start": 576.27,
+  "slide_terms": [],
+  "oracle_terms": [
+   "environment",
+   "hospitable",
+   "inventive",
+   "customer",
+   "whether",
+   "without"
+  ],
+  "wrong_terms": [
+   "ACTION",
+   "NDXAcat",
+   "antly",
+   "organized"
+  ]
+ },
+ {
+  "id": "el_44",
+  "src_lang": "Greek",
+  "source": "Υπάρχουν κυρίαρχες αφηγήσεις δυτικές που ταιριάζουνε στη δύση αλλά μπορεί να μην ταιριάζουν σε μας.",
+  "reference": "There are dominant western narratives which are appropriate for the west but may not be appropriate for us.",
+  "start": 393.75,
+  "slide_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ],
+  "oracle_terms": [
+   "appropriate",
+   "narratives",
+   "dominant",
+   "western"
+  ],
+  "wrong_terms": [
+   "NON-TRADABLE",
+   "TRADABLE",
+   "Government",
+   "Manufacturing",
+   "Utilities",
+   "Airlines",
+   "Banks",
+   "Shipping"
+  ]
+ },
+ {
+  "id": "el_66",
+  "src_lang": "Greek",
+  "source": "Και το απόγευμα θα πάνε και θα αγοράσουνε μέλι που έχει παραχθεί απο μία άλλη μικρή επιχείρηση στις εγκαταστάσεις της, που είναι αυτές.",
+  "reference": "which is here. And in the afternoon they will go to buy honey which has been produced by another small business at its facilities, which are these.",
+  "start": 527.0,
+  "slide_terms": [],
+  "oracle_terms": [
+   "facilities",
+   "afternoon",
+   "produced",
+   "business",
+   "honey"
+  ],
+  "wrong_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ]
+ },
+ {
+  "id": "el_109",
+  "src_lang": "Greek",
+  "source": "Και προσπαθεί με διάφορους τρόπους να τα κλείσει.",
+  "reference": "And it is indirectly trying to shut them down.",
+  "start": 853.63,
+  "slide_terms": [],
+  "oracle_terms": [
+   "indirectly",
+   "trying"
+  ],
+  "wrong_terms": [
+   "TRADABLE",
+   "Manufacturing",
+   "Utilities",
+   "Airlines",
+   "Banks",
+   "Shipping",
+   "Telecoms",
+   "Tourism"
+  ]
+ },
+ {
+  "id": "el_112",
+  "src_lang": "Greek",
+  "source": "Το 1976, στην πρώτη μου δουλειά, δούλευα σ' ένα ερευνητικό πρόγραμμα για το υπουργείο παιδείας και την παγκόσμια τράπεζα.",
+  "reference": "In 1976, at my first job, I worked in a research program for the Ministry of Education and the World Bank.",
+  "start": 875.58,
+  "slide_terms": [],
+  "oracle_terms": [
+   "Education",
+   "Ministry",
+   "research",
+   "program",
+   "worked"
+  ],
+  "wrong_terms": [
+   "NON-TRADABLE",
+   "TRADABLE",
+   "Government",
+   "Manufacturing",
+   "Utilities",
+   "Airlines",
+   "Banks",
+   "Shipping"
+  ]
+ },
+ {
+  "id": "el_69",
+  "src_lang": "Greek",
+  "source": "Και για να εξηγούμαι, δεν λέω ότι τα μικρά «Rooms to Let» είναι καλύτερα απο τις μεγάλες ξενοδοχειακές μονάδες.",
+  "reference": "To clarify, I'm not saying that small \"Rooms to Let\" are better than large hotel complexes.",
+  "start": 555.9,
+  "slide_terms": [],
+  "oracle_terms": [
+   "complexes",
+   "clarify",
+   "saying",
+   "better",
+   "hotel"
+  ],
+  "wrong_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ]
+ },
+ {
+  "id": "el_12",
+  "src_lang": "Greek",
+  "source": "Όσοι μιλάνε για επενδύσεις και ελπίζουν ότι θα έρθουν δουλειές με «επενδύσεις» σε εισαγωγικά, ελπίζουν στην πραγματικότητα ότι οι δουλειές θα έρθουνε σε έτοιμα πακέτα, εδώ, πάνω, στις μεγάλες ανταγωνιστικές εταιρίες καλοσχεδιάσμένες, χωροθετημένες, με τις ιεραρχίες τους και τον εξοπλισμό τους.",
+  "reference": "Those who speak of investments and hope that jobs will come by \"investment\" in quotation marks are hoping that jobs will appear in ready-made packages, up here, in the large competitive companies well planned, laid out, with their hierarchies and their equipment.",
+  "start": 99.69,
+  "slide_terms": [
+   "NON-TRADABLE",
+   "TRADABLE",
+   "Government",
+   "Manufacturing",
+   "Utilities",
+   "Airlines",
+   "Banks",
+   "Shipping"
+  ],
+  "oracle_terms": [
+   "investments",
+   "competitive",
+   "hierarchies",
+   "ready-made",
+   "quotation",
+   "companies"
+  ],
+  "wrong_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ]
+ },
+ {
+  "id": "el_73",
+  "src_lang": "Greek",
+  "source": "Χρειαζόμαστε τις καλές υποδομές που μόνο ο σχεδιασμός και οι μεγάλες ιεραρχίες και τα μεγάλα κεφάλαια μπορούν να παράσχουνε και σ' αυτό δεν πρέπει να διαφέρουμε απ' τη δύση.",
+  "reference": "We need good infrastructure which only planning and large hierarchies and big capital can provide; in this respect we must not differ from the west.",
+  "start": 602.07,
+  "slide_terms": [
+   "ACTION",
+   "NDXAcat",
+   "antly",
+   "organized"
+  ],
+  "oracle_terms": [
+   "infrastructure",
+   "hierarchies",
+   "planning",
+   "capital",
+   "provide",
+   "respect"
+  ],
+  "wrong_terms": [
+   "Micro-businesses",
+   "Commercially",
+   "minded",
+   "Multi-activity",
+   "multi-income",
+   "indeper",
+   "Basic",
+   "assets"
+  ]
+ },
+ {
+  "id": "el_57",
+  "src_lang": "Greek",
+  "source": "Το πάνω μέρος του πίνακα που έδειχνα πριν.",
+  "reference": "Namely, the upper half of the table I showed earlier.",
+  "start": 473.77,
+  "slide_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ],
+  "oracle_terms": [
+   "Namely",
+   "earlier",
+   "showed",
+   "upper",
+   "table"
+  ],
+  "wrong_terms": [
+   "NON-TRADABLE",
+   "TRADABLE",
+   "Government",
+   "Manufacturing",
+   "Utilities",
+   "Airlines",
+   "Banks",
+   "Shipping"
+  ]
+ },
+ {
+  "id": "el_27",
+  "src_lang": "Greek",
+  "source": "Τα ελληνικά νοικοκυριά θα τα καταφέρουνε γιατί έχουνε ορισμένα στοιχεία που δεν υπάρχουνε σε πολύ μεγάλη έκταση στη δύση.",
+  "reference": "Greek households will pull through because they have certain characteristics which are not prevalent in the west.",
+  "start": 233.44,
+  "slide_terms": [
+   "TRADABLE",
+   "Manufacturing",
+   "Utilities",
+   "Airlines",
+   "Banks",
+   "Shipping",
+   "Telecoms",
+   "Tourism"
+  ],
+  "oracle_terms": [
+   "Greek",
+   "characteristics",
+   "households",
+   "prevalent",
+   "because",
+   "certain"
+  ],
+  "wrong_terms": [
+   "Micro-businesses",
+   "Commercially",
+   "minded",
+   "Multi-activity",
+   "multi-income",
+   "indeper",
+   "Basic",
+   "assets"
+  ]
+ },
+ {
+  "id": "el_70",
+  "src_lang": "Greek",
+  "source": "Αυτό που λέω είναι ότι, απ' τη στιγμή που είτε δε θέλουμε είτε δε μπορούμε να έχουμε πολλές μεγάλες μονάδες, η επιτυχία του τουρισμού θα κριθεί απο τους μικρούς επαγγελματίες.",
+  "reference": "What I'm saying is that since we are either not willing or not able to have many large units the success of tourism will depend on the small businessmen.",
+  "start": 563.48,
+  "slide_terms": [],
+  "oracle_terms": [
+   "businessmen",
+   "willing",
+   "success",
+   "tourism",
+   "saying",
+   "either"
+  ],
+  "wrong_terms": [
+   "NON-TRADABLE",
+   "TRADABLE",
+   "Government",
+   "Manufacturing",
+   "Utilities",
+   "Airlines",
+   "Banks",
+   "Shipping"
+  ]
+ },
+ {
+  "id": "el_22",
+  "src_lang": "Greek",
+  "source": "Και απ' αυτό το 70%, οι μισοί τουλάχιστον είναι αυτοαπασχολούμενοι και αγρότες.",
+  "reference": "Of this 70%, at least half of them are self-employed and farmers.",
+  "start": 188.54,
+  "slide_terms": [
+   "NON-TRADABLE",
+   "Government",
+   "Retail",
+   "Media",
+   "Lawyers"
+  ],
+  "oracle_terms": [
+   "self-employed",
+   "farmers",
+   "least"
+  ],
+  "wrong_terms": [
+   "Micro-businesses",
+   "Commercially",
+   "minded",
+   "Multi-activity",
+   "multi-income",
+   "indeper",
+   "Basic",
+   "assets"
+  ]
+ },
+ {
+  "id": "el_50",
+  "src_lang": "Greek",
+  "source": "Πόσο διαφορετική αφήγηση θα υπήρχε για τον τουρισμό.",
+  "reference": "How different the narrative for tourism would be.",
+  "start": 428.16,
+  "slide_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ],
+  "oracle_terms": [
+   "narrative",
+   "tourism"
+  ],
+  "wrong_terms": [
+   "Imitation",
+   "Competitive",
+   "Businesses"
+  ]
+ },
+ {
+  "id": "el_30",
+  "src_lang": "Greek",
+  "source": "Ξέρει να στήνει νέες δουλειές, που ένα στέλεχος μιας μεγάλης εταιρίας στη δύση που 'χει κάνει την καριέρα του σε μια ιεραρχία δεν το ξέρει κατ' ανάγκη.",
+  "reference": "know how to set up a new business, whereas employees of large companies in the west, following careers within hierarchies, do not necessarily know this.",
+  "start": 250.47,
+  "slide_terms": [
+   "TRADABLE",
+   "Manufacturing",
+   "Utilities",
+   "Airlines",
+   "Banks",
+   "Shipping",
+   "Telecoms",
+   "Tourism"
+  ],
+  "oracle_terms": [
+   "hierarchies",
+   "necessarily",
+   "employees",
+   "companies",
+   "following",
+   "business"
+  ],
+  "wrong_terms": [
+   "Micro-businesses",
+   "Commercially",
+   "minded",
+   "Multi-activity",
+   "multi-income",
+   "indeper",
+   "Basic",
+   "assets"
+  ]
+ },
+ {
+  "id": "el_130",
+  "src_lang": "Greek",
+  "source": "Τα λέω γιατί νομίζω ότι έχει δίκιο, ο Νίκος Αναγνώστου, ο blogger που γράφει για τεχνολογία, όταν έγραψε σ' ένα πρόσφατο post πολύ ωραία: «Η εξωστρέφεια δεν χρειάζεται να είναι εντυπωσιακή».",
+  "reference": "I'm saying this because I agree with Nikos Anagnostou, the blogger who writes about technology as he put it in a recent post: \"Export orientation does not need to be impressive\".",
+  "start": 1011.0,
+  "slide_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive"
+  ],
+  "oracle_terms": [
+   "Anagnostou",
+   "Export",
+   "orientation",
+   "technology",
+   "impressive",
+   "because"
+  ],
+  "wrong_terms": [
+   "ACTION",
+   "NDXAcat",
+   "antly",
+   "organized"
+  ]
+ },
+ {
+  "id": "el_94",
+  "src_lang": "Greek",
+  "source": "Έτσι λοιπόν έχει δημιουργηθεί μία πολύ ανταγωνιστική αγορά εκδοτών για εκμάθηση αγγλικής γλώσσας, που είναι περίπου 15 αυτή τη στιγμή και οι πιο πολύ είναι εγχώριοι, είναι Έλληνες.",
+  "reference": "This way, a very competitive market has developed for publishers of English language books. They are about 15 at the moment and most are local, they are Greek.",
+  "start": 746.86,
+  "slide_terms": [],
+  "oracle_terms": [
+   "English",
+   "Greek",
+   "competitive",
+   "publishers",
+   "developed",
+   "language"
+  ],
+  "wrong_terms": [
+   "ACTION",
+   "NDXAcat",
+   "antly",
+   "organized"
+  ]
+ },
+ {
+  "id": "el_98",
+  "src_lang": "Greek",
+  "source": "Πιο γρήγορες απ' αυτές που έχουν αναπτύξει οι πολυεθνικοί εκδότες.",
+  "reference": "than the methods which have been developed by the multinational publishers.",
+  "start": 780.22,
+  "slide_terms": [],
+  "oracle_terms": [
+   "multinational",
+   "publishers",
+   "developed",
+   "methods"
+  ],
+  "wrong_terms": [
+   "NON-TRADABLE",
+   "Government",
+   "Retail",
+   "Media",
+   "Lawyers"
+  ]
+ },
+ {
+  "id": "el_61",
+  "src_lang": "Greek",
+  "source": "Αλλα πάλι δεν είναι ο λόγος που έρχονται το καράβι.",
+  "reference": "But again, the ferry is not the reason they come.",
+  "start": 498.18,
+  "slide_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ],
+  "oracle_terms": [
+   "reason",
+   "ferry"
+  ],
+  "wrong_terms": [
+   "Micro-businesses",
+   "Commercially",
+   "minded",
+   "Multi-activity",
+   "multi-income",
+   "indeper",
+   "Basic",
+   "assets"
+  ]
+ },
+ {
+  "id": "el_87",
+  "src_lang": "Greek",
+  "source": "Ξέρω τουλάχιστον 3 Έλληνες εκδότες, οι οποίοι είναι πολύ πετυχημένοι διεθνώς.",
+  "reference": "I know at least three Greek publishers, who are very successful internationally.",
+  "start": 698.81,
+  "slide_terms": [],
+  "oracle_terms": [
+   "Greek",
+   "internationally",
+   "publishers",
+   "successful",
+   "least"
+  ],
+  "wrong_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ]
+ },
+ {
+  "id": "el_122",
+  "src_lang": "Greek",
+  "source": "Μου εξήγησε λοιπόν πόσο καταπληκτικά σχεδιασμένος είναι, για να ακουμπάει χαλαρά στα δάχτυλα και με το βάρος του ποτηριού να σταθεροποιείται και όταν ανεβοκατεβαίνει ο καφετζής τις σκάλες του υπουργείου να μη χύνονται τα νερά.",
+  "reference": "He explained to me how amazingly designed it was, so that it can hang gently from the fingers and let the weight of the glass to stabilize it so when the waiter goes up and down the stairs of the Ministry water doesn't spill.",
+  "start": 956.0,
+  "slide_terms": [],
+  "oracle_terms": [
+   "Ministry",
+   "explained",
+   "amazingly",
+   "stabilize",
+   "designed",
+   "fingers"
+  ],
+  "wrong_terms": [
+   "TRADABLE",
+   "Manufacturing",
+   "Utilities",
+   "Airlines",
+   "Banks",
+   "Shipping",
+   "Telecoms",
+   "Tourism"
+  ]
+ },
+ {
+  "id": "el_135",
+  "src_lang": "Greek",
+  "source": "Οι ιδιοκτήτες μόνοι τους θα πρέπει να εφεύρουν την αφήγηση εκείνη που θα δώσει νόημα και διάρκεια σε αυτό που κάνουνε.",
+  "reference": "The owners will have to invent their own narrative, which will give meaning and longevity to what they are doing.",
+  "start": 1066.04,
+  "slide_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ],
+  "oracle_terms": [
+   "narrative",
+   "longevity",
+   "meaning",
+   "owners",
+   "invent",
+   "doing"
+  ],
+  "wrong_terms": [
+   "Micro-businesses",
+   "Commercially",
+   "minded",
+   "Multi-activity",
+   "multi-income",
+   "indeper",
+   "Basic",
+   "assets"
+  ]
+ },
+ {
+  "id": "el_95",
+  "src_lang": "Greek",
+  "source": "Το άλλο χαρακτηριστικό της Ελλάδας, η ιδιομορφία πάλι, είναι ότι οι Έλληνες μαθητές θέλουνε να 'χουν τελειώσει με τα Αγγλικά, με φροντιστήρια και εξετάσεις στα 16 τους.",
+  "reference": "One other distinctive characteristic of Greece, is that Greek students want to finish with English tutorial schools and exams by the age of 16.",
+  "start": 758.04,
+  "slide_terms": [],
+  "oracle_terms": [
+   "English",
+   "Greece",
+   "Greek",
+   "characteristic",
+   "distinctive",
+   "students"
+  ],
+  "wrong_terms": [
+   "TRADABLE",
+   "Manufacturing",
+   "Utilities",
+   "Airlines",
+   "Banks",
+   "Shipping",
+   "Telecoms",
+   "Tourism"
+  ]
+ },
+ {
+  "id": "el_127",
+  "src_lang": "Greek",
+  "source": "Ότι την πραγματική οικονομία δεν τη μαθαίνεις διαβάζοντας, τη μαθαίνεις παρατηρώντας.",
+  "reference": "You cannot understand the real economy by reading, you must understand it by observing.",
+  "start": 988.68,
+  "slide_terms": [],
+  "oracle_terms": [
+   "understand",
+   "observing",
+   "economy",
+   "reading",
+   "cannot"
+  ],
+  "wrong_terms": [
+   "NON-TRADABLE",
+   "TRADABLE",
+   "Government",
+   "Manufacturing",
+   "Utilities",
+   "Airlines",
+   "Banks",
+   "Shipping"
+  ]
+ },
+ {
+  "id": "el_83",
+  "src_lang": "Greek",
+  "source": "Αυτές τις ανακαλύπτουν οι επιχειρηματίες κάθε μέρα, οι μικροί επιχειρηματίες από δουλειά σε δουλειά.",
+  "reference": "These are discovered by entrepreneurs day by day, job by job.",
+  "start": 678.16,
+  "slide_terms": [
+   "ACTION",
+   "NDXAcat",
+   "antly",
+   "organized"
+  ],
+  "oracle_terms": [
+   "entrepreneurs",
+   "discovered"
+  ],
+  "wrong_terms": [
+   "Imitation",
+   "Competitive",
+   "Businesses"
+  ]
+ },
+ {
+  "id": "el_47",
+  "src_lang": "Greek",
+  "source": "Και χρωμάτισε αρνητικά τον τουρισμό για πολλά χρόνια.",
+  "reference": "And he tainted tourism negatively for many years.",
+  "start": 413.85,
+  "slide_terms": [
+   "Imitation",
+   "Improvisation",
+   "Competitive",
+   "Businesses"
+  ],
+  "oracle_terms": [
+   "negatively",
+   "tainted",
+   "tourism"
+  ],
+  "wrong_terms": [
+   "ACTION",
+   "NDXAcat",
+   "antly",
+   "organized"
+  ]
+ },
+ {
+  "id": "zh_001",
+  "src_lang": "Chinese",
+  "source": "大家好，今天，我非常荣幸能站在这里，与大家共同探讨一个正深刻改变我们生活方式的议题，人工助人工智能如何为交通管理带来前所未有的便利。",
+  "reference": "Hello everyone. Today I am truly honored to stand here and explore with you a topic that is profoundly changing the way we live: how artificial intelligence brings unprecedented convenience to traffic management.",
+  "start": 5.78,
+  "slide_terms": [
+   "人工智能对交通管",
+   "理带来的便利"
+  ],
+  "oracle_terms": [
+   "Hello",
+   "Today",
+   "unprecedented",
+   "intelligence",
+   "convenience",
+   "profoundly"
+  ],
+  "wrong_terms": [
+   "实时交通数",
+   "交通数据收集与分",
+   "深度学习预测与优",
+   "数据驱动交通新时",
+   "利用传感器和摄像头收集",
+   "通过深度学习算法预测交",
+   "交通流数据包括车辆位",
+   "通流量调整信号灯时序"
+  ]
+ },
+ {
+  "id": "zh_002",
+  "src_lang": "Chinese",
+  "source": "在这个科技日新月异的时代，人工智能如同一位智慧的引路人，正引领我们步入一个更加高效、安全、绿色的交通新时代。",
+  "reference": "In this era of rapidly advancing technology, artificial intelligence is like a wise guide, leading us into a new era of transportation that is more efficient, safer, and greener.",
+  "start": 19.073,
+  "slide_terms": [
+   "人工智能对交通管",
+   "理带来的便利"
+  ],
+  "oracle_terms": [
+   "transportation",
+   "intelligence",
+   "technology",
+   "artificial",
+   "advancing",
+   "efficient"
+  ],
+  "wrong_terms": [
+   "自适应信号灯系统",
+   "未来交通的关键",
+   "实时分析交通数据动态调整信号灯优化交通流",
+   "技术",
+   "量减少延误和排放",
+   "智能交通效率提",
+   "通过复杂算法预测交通模式减少车辆等待时间",
+   "升器"
+  ]
+ },
+ {
+  "id": "zh_003",
+  "src_lang": "Chinese",
+  "source": "今天咱们从六个方面讲述人工智能对交通管理带来的便利。",
+  "reference": "Today we will describe the conveniences that artificial intelligence brings to traffic management from six aspects.",
+  "start": 32.096,
+  "slide_terms": [
+   "智能交通监控系统的进步",
+   "目录",
+   "人工智能辅助公共交通优化",
+   "人工智能与道路安全"
+  ],
+  "oracle_terms": [
+   "Today",
+   "conveniences",
+   "intelligence",
+   "artificial",
+   "management",
+   "describe"
+  ],
+  "wrong_terms": [
+   "实时交通数",
+   "交通数据收集与分",
+   "深度学习预测与优",
+   "数据驱动交通新时",
+   "利用传感器和摄像头收集",
+   "通过深度学习算法预测交",
+   "交通流数据包括车辆位",
+   "通流量调整信号灯时序"
+  ]
+ },
+ {
+  "id": "zh_004",
+  "src_lang": "Chinese",
+  "source": "第一，人工智能交通管理趋势。",
+  "reference": "First, trends in AI traffic management.",
+  "start": 36.607,
+  "slide_terms": [
+   "智能交通监控系统的进步",
+   "目录",
+   "人工智能辅助公共交通优化",
+   "人工智能与道路安全"
+  ],
+  "oracle_terms": [
+   "management",
+   "traffic",
+   "trends"
+  ],
+  "wrong_terms": [
+   "实时交通数",
+   "交通数据收集与分",
+   "深度学习预测与优",
+   "数据驱动交通新时",
+   "利用传感器和摄像头收集",
+   "通过深度学习算法预测交",
+   "交通流数据包括车辆位",
+   "通流量调整信号灯时序"
+  ]
+ },
+ {
+  "id": "zh_005",
+  "src_lang": "Chinese",
+  "source": "第四，人工智能与道路安全。",
+  "reference": "Fourth, artificial intelligence and road safety.",
+  "start": 47.002,
+  "slide_terms": [
+   "智能交通监控系统的进步",
+   "目录",
+   "人工智能辅助公共交通优化",
+   "人工智能与道路安全"
+  ],
+  "oracle_terms": [
+   "Fourth",
+   "intelligence",
+   "artificial",
+   "safety"
+  ],
+  "wrong_terms": [
+   "自适应信号灯系统",
+   "未来交通的关键",
+   "实时分析交通数据动态调整信号灯优化交通流",
+   "技术",
+   "量减少延误和排放",
+   "智能交通效率提",
+   "通过复杂算法预测交通模式减少车辆等待时间",
+   "升器"
+  ]
+ },
+ {
+  "id": "zh_006",
+  "src_lang": "Chinese",
+  "source": "第一部分，我们来讲人工智能交通控制应用。",
+  "reference": "In the first part, we will talk about applications of AI in traffic control.",
+  "start": 51.749,
+  "slide_terms": [
+   "人工智能交通控制",
+   "应用"
+  ],
+  "oracle_terms": [
+   "applications",
+   "traffic",
+   "control"
+  ],
+  "wrong_terms": [
+   "实时交通数",
+   "交通数据收集与分",
+   "深度学习预测与优",
+   "数据驱动交通新时",
+   "利用传感器和摄像头收集",
+   "通过深度学习算法预测交",
+   "交通流数据包括车辆位",
+   "通流量调整信号灯时序"
+  ]
+ },
+ {
+  "id": "zh_007",
+  "src_lang": "Chinese",
+  "source": "实时交通数据分析是人工智能重塑未来交通管理的关键技术之一。",
+  "reference": "Real-time traffic data analysis is one of the key technologies through which AI is reshaping the future of traffic management.",
+  "start": 58.457,
+  "slide_terms": [
+   "实时交通数",
+   "交通数据收集与分",
+   "深度学习预测与优",
+   "数据驱动交通新时",
+   "利用传感器和摄像头收集",
+   "通过深度学习算法预测交",
+   "交通流数据包括车辆位",
+   "通流量调整信号灯时序"
+  ],
+  "oracle_terms": [
+   "Real-time",
+   "technologies",
+   "management",
+   "reshaping",
+   "analysis",
+   "traffic"
+  ],
+  "wrong_terms": [
+   "人工智能交通控制",
+   "应用"
+  ]
+ },
+ {
+  "id": "zh_008",
+  "src_lang": "Chinese",
+  "source": "通过部署先进的传感器和摄像头，交通管理中心能够收集到海量的交通流数据。",
+  "reference": "By deploying advanced sensors and cameras, traffic management centers can collect massive amounts of traffic-flow data.",
+  "start": 64.535,
+  "slide_terms": [
+   "实时交通数",
+   "交通数据收集与分",
+   "深度学习预测与优",
+   "数据驱动交通新时",
+   "利用传感器和摄像头收集",
+   "通过深度学习算法预测交",
+   "交通流数据包括车辆位",
+   "通流量调整信号灯时序"
+  ],
+  "oracle_terms": [
+   "traffic-flow",
+   "management",
+   "deploying",
+   "advanced",
+   "sensors",
+   "cameras"
+  ],
+  "wrong_terms": [
+   "自适应信号灯系统",
+   "未来交通的关键",
+   "实时分析交通数据动态调整信号灯优化交通流",
+   "技术",
+   "量减少延误和排放",
+   "智能交通效率提",
+   "通过复杂算法预测交通模式减少车辆等待时间",
+   "升器"
+  ]
+ },
+ {
+  "id": "zh_009",
+  "src_lang": "Chinese",
+  "source": "这些数据不仅包括车辆的实时位置和速度，还包括道路使用情况，事故报告以及天气条件等。",
+  "reference": "This data includes not only the real-time position and speed of vehicles, but also road usage, accident reports, and weather conditions.",
+  "start": 71.491,
+  "slide_terms": [
+   "实时交通数",
+   "交通数据收集与分",
+   "深度学习预测与优",
+   "数据驱动交通新时",
+   "利用传感器和摄像头收集",
+   "通过深度学习算法预测交",
+   "交通流数据包括车辆位",
+   "通流量调整信号灯时序"
+  ],
+  "oracle_terms": [
+   "conditions",
+   "real-time",
+   "includes",
+   "position",
+   "vehicles",
+   "accident"
+  ],
+  "wrong_terms": [
+   "智能交通监控系统的进步",
+   "目录",
+   "人工智能辅助公共交通优化",
+   "人工智能与道路安全"
+  ]
+ },
+ {
+  "id": "zh_010",
+  "src_lang": "Chinese",
+  "source": "例如使用深度学习算法，对这些数据进行分析，可以预测特定路段，在特定时间段内的交通流量。",
+  "reference": "For example, using deep learning algorithms to analyze this data, one can predict the traffic flow of a given road segment during a given time period.",
+  "start": 80.599,
+  "slide_terms": [
+   "实时交通数",
+   "交通数据收集与分",
+   "深度学习预测与优",
+   "数据驱动交通新时",
+   "利用传感器和摄像头收集",
+   "通过深度学习算法预测交",
+   "交通流数据包括车辆位",
+   "通流量调整信号灯时序"
+  ],
+  "oracle_terms": [
+   "algorithms",
+   "learning",
+   "example",
+   "analyze",
+   "predict",
+   "traffic"
+  ],
+  "wrong_terms": [
+   "智能交通监控系统的进步",
+   "目录",
+   "人工智能辅助公共交通优化",
+   "人工智能与道路安全"
+  ]
+ },
+ {
+  "id": "zh_011",
+  "src_lang": "Chinese",
+  "source": "从而提前调整信号灯的时序，优化交通流，正如数据科学家所言，数据是新时代的石油。",
+  "reference": "This makes it possible to adjust traffic-light timing in advance and optimize traffic flow. As data scientists say, data is the oil of the new era.",
+  "start": 90.724,
+  "slide_terms": [
+   "实时交通数",
+   "交通数据收集与分",
+   "深度学习预测与优",
+   "数据驱动交通新时",
+   "利用传感器和摄像头收集",
+   "通过深度学习算法预测交",
+   "交通流数据包括车辆位",
+   "通流量调整信号灯时序"
+  ],
+  "oracle_terms": [
+   "traffic-light",
+   "scientists",
+   "optimize",
+   "advance",
+   "traffic",
+   "adjust"
+  ],
+  "wrong_terms": [
+   "人工智能对交通管",
+   "理带来的便利"
+  ]
+ },
+ {
+  "id": "zh_012",
+  "src_lang": "Chinese",
+  "source": "通过分析这些石油，交通管理者可以更有效的应对交通拥堵，减少通行者的等待时间，提高整个交通网络的效率。",
+  "reference": "By analyzing this oil, traffic managers can respond to congestion more effectively, reduce travelers' waiting time, and improve the efficiency of the entire traffic network.",
+  "start": 99.662,
+  "slide_terms": [
+   "实时交通数",
+   "交通数据收集与分",
+   "深度学习预测与优",
+   "数据驱动交通新时",
+   "利用传感器和摄像头收集",
+   "通过深度学习算法预测交",
+   "交通流数据包括车辆位",
+   "通流量调整信号灯时序"
+  ],
+  "oracle_terms": [
+   "effectively",
+   "congestion",
+   "travelers'",
+   "efficiency",
+   "analyzing",
+   "managers"
+  ],
+  "wrong_terms": [
+   "智能交通监控系统的进步",
+   "目录",
+   "人工智能辅助公共交通优化",
+   "人工智能与道路安全"
+  ]
+ },
+ {
+  "id": "zh_013",
+  "src_lang": "Chinese",
+  "source": "在人工智能重塑未来交通管理的宏伟蓝图中，自适应信号灯系统扮演着至关重要的角色。",
+  "reference": "In the grand blueprint of AI reshaping the future of traffic management, adaptive traffic-light systems play a vital role.",
+  "start": 112.315,
+  "slide_terms": [
+   "自适应信号灯系统",
+   "未来交通的关键",
+   "实时分析交通数据动态调整信号灯优化交通流",
+   "技术",
+   "量减少延误和排放",
+   "智能交通效率提",
+   "通过复杂算法预测交通模式减少车辆等待时间",
+   "升器"
+  ],
+  "oracle_terms": [
+   "traffic-light",
+   "management",
+   "blueprint",
+   "reshaping",
+   "adaptive",
+   "traffic"
+  ],
+  "wrong_terms": [
+   "智能交通监控系统的进步",
+   "目录",
+   "人工智能辅助公共交通优化",
+   "人工智能与道路安全"
+  ]
+ },
+ {
+  "id": "zh_014",
+  "src_lang": "Chinese",
+  "source": "这种系统通过实时交通数据分析，能够动态调整信号灯的时序，以适应不断变化的交通流量。",
+  "reference": "Through real-time traffic data analysis, such a system can dynamically adjust traffic-light timing to adapt to constantly changing traffic flow.",
+  "start": 120.728,
+  "slide_terms": [
+   "自适应信号灯系统",
+   "未来交通的关键",
+   "实时分析交通数据动态调整信号灯优化交通流",
+   "技术",
+   "量减少延误和排放",
+   "智能交通效率提",
+   "通过复杂算法预测交通模式减少车辆等待时间",
+   "升器"
+  ],
+  "oracle_terms": [
+   "traffic-light",
+   "dynamically",
+   "constantly",
+   "real-time",
+   "analysis",
+   "changing"
+  ],
+  "wrong_terms": [
+   "智能交通监控系统的进步",
+   "目录",
+   "人工智能辅助公共交通优化",
+   "人工智能与道路安全"
+  ]
+ },
+ {
+  "id": "zh_015",
+  "src_lang": "Chinese",
+  "source": "例如，在繁忙的十字路口，自适应信号灯系统可以减少车辆等待时间，提高交通效率。",
+  "reference": "For example, at busy intersections, adaptive traffic-light systems can reduce vehicle waiting time and improve traffic efficiency.",
+  "start": 130.185,
+  "slide_terms": [
+   "自适应信号灯系统",
+   "未来交通的关键",
+   "实时分析交通数据动态调整信号灯优化交通流",
+   "技术",
+   "量减少延误和排放",
+   "智能交通效率提",
+   "通过复杂算法预测交通模式减少车辆等待时间",
+   "升器"
+  ],
+  "oracle_terms": [
+   "intersections",
+   "traffic-light",
+   "efficiency",
+   "adaptive",
+   "example",
+   "vehicle"
+  ],
+  "wrong_terms": [
+   "实时交通数",
+   "交通数据收集与分",
+   "深度学习预测与优",
+   "数据驱动交通新时",
+   "利用传感器和摄像头收集",
+   "通过深度学习算法预测交",
+   "交通流数据包括车辆位",
+   "通流量调整信号灯时序"
+  ]
+ },
+ {
+  "id": "zh_016",
+  "src_lang": "Chinese",
+  "source": "根据一项研究，自适应信号灯系统可以将交通延误减少高达百分之二十，同时降低车辆排放，改善空气质量。",
+  "reference": "According to one study, adaptive traffic-light systems can cut traffic delays by up to twenty percent while also lowering vehicle emissions and improving air quality.",
+  "start": 137.632,
+  "slide_terms": [
+   "自适应信号灯系统",
+   "未来交通的关键",
+   "实时分析交通数据动态调整信号灯优化交通流",
+   "技术",
+   "量减少延误和排放",
+   "智能交通效率提",
+   "通过复杂算法预测交通模式减少车辆等待时间",
+   "升器"
+  ],
+  "oracle_terms": [
+   "According",
+   "traffic-light",
+   "emissions",
+   "improving",
+   "adaptive",
+   "lowering"
+  ],
+  "wrong_terms": [
+   "智能交通监控系统的进步",
+   "目录",
+   "人工智能辅助公共交通优化",
+   "人工智能与道路安全"
+  ]
+ }
+]
