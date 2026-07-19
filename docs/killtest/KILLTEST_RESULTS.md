@@ -209,6 +209,25 @@ prefix already matches the term's prefix — potentially powerful AND benign,
 removing the gate requirement. Requires a custom logits processor (not stock
 vLLM); scheduled for the full system.
 
+## Follow-up 7: zh secondary set replicates every headline (2026-07-19, overnight)
+
+Chinese-LiPS 16 segments (zh slides = M1+M2 regime), same conditions:
+
+| condition (zh, n=16) | chrF | hard-Δ (n=6) | easy-Δ |
+|---|---|---|---|
+| none | 49.6 | — | — |
+| slide terms (prompt) | 51.6 | +14.3 | −7.2 |
+| **slide + oracle-gate** | **55.3** | +14.3 | 0.0 |
+| uniform bias +4 | 46.9 | +0.0 | −4.4 |
+| oracle terms | 55.6 | +27.8 | −5.5 |
+
+Every el finding replicates: gated injection matches the oracle-terms bound
+(55.3 vs 55.6); prompt injection helps hard and disturbs easy; uniform bias is
+powerless. Notably the zh slide terms are *source-language* (M2 recognition
+support), and the hard-stratum gain (+14.3) matches the el M3 regime —
+recognition support alone is strong when slides are clean (Chinese-LiPS 1080p
+OCR). Cross-regime M2-vs-M3 comparison at scale remains for the full system.
+
 ## Caveats
 
 - Text-prefix simulation (transcript, not audio); segment-level, not long-form
