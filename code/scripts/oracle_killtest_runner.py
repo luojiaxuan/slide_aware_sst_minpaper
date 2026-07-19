@@ -29,7 +29,11 @@ import time
 import urllib.request
 from pathlib import Path
 
-CONDITIONS = {"none": None, "slide": "slide_terms", "oracle": "oracle_terms", "wrong": "wrong_terms"}
+CONDITIONS = {"none": None, "slide": "slide_terms", "oracle": "oracle_terms",
+              "wrong": "wrong_terms",
+              # gating prototypes: same hint source as "slide", but injected selectively
+              "gated_oracle": "slide_terms",  # inject only if item["gate_on"] (hard-stratum oracle gate)
+              "gated_llm": "slide_terms"}     # inject once a runtime LLM relevance gate fires (sticky)
 
 
 def main() -> None:
@@ -74,6 +78,10 @@ def run_incremental(it: dict, cond: str, args) -> dict:
     src_units = source_units(it["source"], it["src_lang"], args)
     hints_key = CONDITIONS[cond]
     hints = it.get(hints_key) or [] if hints_key else []
+    if cond == "gated_oracle" and not it.get("gate_on"):
+        hints = []
+    llm_gate_open = cond != "gated_llm"  # for gated_llm, starts closed
+    gate_step = None
     committed: list[str] = []
     events = []  # (n_units_read, n_target_words_total_after_step)
 
@@ -81,7 +89,12 @@ def run_incremental(it: dict, cond: str, args) -> dict:
     for n_read in range(1, len(src_units) + 1):
         prefix = join_units(src_units[:n_read], it["src_lang"])
         final = n_read == len(src_units)
-        full = full_translation(prefix, hints, it["src_lang"], args)
+        if cond == "gated_llm" and not llm_gate_open and hints:
+            if ask_gate(prefix, hints, it["src_lang"], args):
+                llm_gate_open = True
+                gate_step = n_read
+        step_hints = hints if llm_gate_open else []
+        full = full_translation(prefix, step_hints, it["src_lang"], args)
         if final:
             agree = full if len(full) >= len(committed) else committed
         else:
@@ -94,7 +107,7 @@ def run_incremental(it: dict, cond: str, args) -> dict:
     return {"id": it["id"], "condition": cond, "n_src_units": len(src_units),
             "events": events, "hypothesis": " ".join(committed),
             "reference": it["reference"], "oracle_terms": it["oracle_terms"],
-            "hints_used": hints}
+            "hints_used": hints, "gate_step": gate_step}
 
 
 def source_units(text: str, lang: str, args) -> list[str]:
@@ -119,6 +132,16 @@ def lcp(a: list[str], b: list[str]) -> list[str]:
         else:
             break
     return out
+
+
+def ask_gate(prefix: str, hints: list[str], lang: str, args) -> bool:
+    prompt = (f"A simultaneous interpreter is translating {lang} speech into English.\n"
+              f"Speech so far: {prefix}\n"
+              f"Candidate terms read from the speaker's current slide: {', '.join(hints)}\n"
+              f"Question: are these slide terms likely to appear in, or help translate, "
+              f"the speech that is being given? Answer with exactly one word: YES or NO.")
+    text = ollama_generate(prompt, args).strip().upper()
+    return text.startswith("YES")
 
 
 def full_translation(prefix: str, hints: list[str], lang: str, args) -> list[str]:

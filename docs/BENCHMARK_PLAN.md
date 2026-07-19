@@ -120,7 +120,7 @@ measured on 3 rebuilt videos).
 |---|---|---|---|
 | Orig-timeline reconstruction | 21 videos | Script exists (`build_chinese_lips_longform.py --timeline-dir`); raw JSONs pulled per video via HTTP-range from test.zip; ~1 day compute/IO | done for 3, mechanical for rest |
 | Machine-draft En refs (slide-context-aware) | 3,908 clips ≈ 200k zh chars | API $5–15, half a day (`translate_zh_en_draft.py`, needs API key) | automated |
-| **Verified core** post-edit (FLORAS-style `test_verified`) | 6 videos ≈ 1,150 clips ≈ 2.8 h speech | **6–8 h user time** at 150–200 clips/h given good drafts | user (zh/en bilingual) |
+| **Verified core** post-edit (FLORAS-style `test_verified`) | 6 videos ≈ 1,150 clips | **DEFERRED** (2026-07-19: user unavailable) — zh stratum ships machine-draft-labeled; headline quality claims lean on S1 human refs (mTEDx) and S3 gold (ACL 60/60) | deferred |
 | Full-set post-edit (optional, later) | 3,908 clips | 20–26 h user time — defer; machine-draft tier is labeled as such | optional |
 | mTEDx-V | — | $0 (done) | — |
 | ACL 60/60 integration | dev+eval, en→zh | ~0 refs (gold exists); video/frame recovery + term filter ~1-2 days | automated |
