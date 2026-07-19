@@ -1,0 +1,902 @@
+{
+ "dd5R6wgQlp8": {
+  "n_frames": 37,
+  "text_frame_rate": 0.027,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "ru",
+  "split": "test"
+ },
+ "DG6plRkxX28": {
+  "n_frames": 25,
+  "text_frame_rate": 0.32,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "valid"
+ },
+ "5dMWx0AQ_sU": {
+  "n_frames": 54,
+  "text_frame_rate": 0.537,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "el",
+  "split": "valid"
+ },
+ "jYMtNfVqhVU": {
+  "n_frames": 54,
+  "text_frame_rate": 0.148,
+  "slide_frame_rate": 0.019,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "some_text",
+  "src_lang": "it",
+  "split": "valid"
+ },
+ "4zbIyD5JjgY": {
+  "n_frames": 56,
+  "text_frame_rate": 0.071,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "ru",
+  "split": "valid"
+ },
+ "82brCUkFOLQ": {
+  "n_frames": 52,
+  "text_frame_rate": 0.25,
+  "slide_frame_rate": 0.077,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "el",
+  "split": "test"
+ },
+ "6hoeGxsHS6c": {
+  "n_frames": 44,
+  "text_frame_rate": 0.659,
+  "slide_frame_rate": 0.205,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "ru",
+  "split": "test"
+ },
+ "U0bRlf7xmYs": {
+  "n_frames": 47,
+  "text_frame_rate": 0.106,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "test"
+ },
+ "qZ525d6Y-ww": {
+  "n_frames": 17,
+  "text_frame_rate": 1.0,
+  "slide_frame_rate": 0.059,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "fr",
+  "split": "test"
+ },
+ "y6qAgRwLtkA": {
+  "n_frames": 52,
+  "text_frame_rate": 0.423,
+  "slide_frame_rate": 0.212,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "it",
+  "split": "valid"
+ },
+ "qlZosMhZG4c": {
+  "n_frames": 45,
+  "text_frame_rate": 0.067,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "it",
+  "split": "test"
+ },
+ "u-fWSoBNf8o": {
+  "n_frames": 32,
+  "text_frame_rate": 0.031,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "valid"
+ },
+ "dyLvm7yXjPo": {
+  "n_frames": 18,
+  "text_frame_rate": 0.333,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "es",
+  "split": "test"
+ },
+ "0v8oh7lVpZA": {
+  "n_frames": 46,
+  "text_frame_rate": 0.109,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "el",
+  "split": "valid"
+ },
+ "sAmhlBczHIY": {
+  "n_frames": 11,
+  "text_frame_rate": 0.091,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "valid"
+ },
+ "F1mGMa9tmAM": {
+  "n_frames": 41,
+  "text_frame_rate": 0.317,
+  "slide_frame_rate": 0.098,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "E5hQj2WmvMM": {
+  "n_frames": 18,
+  "text_frame_rate": 0.444,
+  "slide_frame_rate": 0.167,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "rys0p5l-MYY": {
+  "n_frames": 27,
+  "text_frame_rate": 0.037,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "it",
+  "split": "valid"
+ },
+ "6HhNGU08KoE": {
+  "n_frames": 54,
+  "text_frame_rate": 0.481,
+  "slide_frame_rate": 0.13,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "el",
+  "split": "test"
+ },
+ "bInuBKb-mN0": {
+  "n_frames": 46,
+  "text_frame_rate": 0.109,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "it",
+  "split": "test"
+ },
+ "cnJANkJSxlg": {
+  "n_frames": 68,
+  "text_frame_rate": 0.118,
+  "slide_frame_rate": 0.074,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "some_text",
+  "src_lang": "fr",
+  "split": "valid"
+ },
+ "cPhc8OVB2Rk": {
+  "n_frames": 26,
+  "text_frame_rate": 0.231,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "ru",
+  "split": "test"
+ },
+ "9zMZaUUW_Xs": {
+  "n_frames": 50,
+  "text_frame_rate": 0.28,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "el",
+  "split": "test"
+ },
+ "Kp4QU2gmj1o": {
+  "n_frames": 37,
+  "text_frame_rate": 0.054,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "valid"
+ },
+ "wjtejXh2Vxg": {
+  "n_frames": 33,
+  "text_frame_rate": 0.061,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "9VA26uZPqYA": {
+  "n_frames": 17,
+  "text_frame_rate": 0.0,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "some_text",
+  "src_lang": "es",
+  "split": "test"
+ },
+ "i5ui_DrtcpU": {
+  "n_frames": 14,
+  "text_frame_rate": 0.143,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "7hkxVyhoMoQ": {
+  "n_frames": 35,
+  "text_frame_rate": 0.229,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "ru",
+  "split": "test"
+ },
+ "a1F_YF36bII": {
+  "n_frames": 41,
+  "text_frame_rate": 0.195,
+  "slide_frame_rate": 0.073,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "ru",
+  "split": "test"
+ },
+ "a0G1K1A269Y": {
+  "n_frames": 19,
+  "text_frame_rate": 0.158,
+  "slide_frame_rate": 0.105,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "es",
+  "split": "test"
+ },
+ "4-BKlUwjK7w": {
+  "n_frames": 51,
+  "text_frame_rate": 0.059,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "el",
+  "split": "valid"
+ },
+ "e3wtkFgp0G8": {
+  "n_frames": 5,
+  "text_frame_rate": 0.2,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "s8LVKRl4waA": {
+  "n_frames": 32,
+  "text_frame_rate": 0.0,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "valid"
+ },
+ "9hUjhIfs-bw": {
+  "n_frames": 44,
+  "text_frame_rate": 0.159,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "test"
+ },
+ "dJ3-_mboZJQ": {
+  "n_frames": 28,
+  "text_frame_rate": 0.321,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "test"
+ },
+ "ZoZmlhlwFEA": {
+  "n_frames": 20,
+  "text_frame_rate": 0.0,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "valid"
+ },
+ "4lxcAdrhXJc": {
+  "n_frames": 44,
+  "text_frame_rate": 0.0,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "some_text",
+  "src_lang": "ru",
+  "split": "valid"
+ },
+ "HLIJkmy3vy8": {
+  "n_frames": 68,
+  "text_frame_rate": 0.103,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "test"
+ },
+ "n5Pq6o9rIZQ": {
+  "n_frames": 58,
+  "text_frame_rate": 0.069,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "test"
+ },
+ "7TqiEZn5uBE": {
+  "n_frames": 55,
+  "text_frame_rate": 0.073,
+  "slide_frame_rate": 0.018,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "some_text",
+  "src_lang": "it",
+  "split": "test"
+ },
+ "tTcrwOjAo30": {
+  "n_frames": 37,
+  "text_frame_rate": 0.027,
+  "slide_frame_rate": 0.027,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "test"
+ },
+ "7g1qGVon49o": {
+  "n_frames": 29,
+  "text_frame_rate": 0.069,
+  "slide_frame_rate": 0.034,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "O7KrwO3pVZ8": {
+  "n_frames": 44,
+  "text_frame_rate": 0.205,
+  "slide_frame_rate": 0.068,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "it",
+  "split": "valid"
+ },
+ "f2TCJ9XBtvM": {
+  "n_frames": 33,
+  "text_frame_rate": 0.152,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "test"
+ },
+ "43I3PLO7UDY": {
+  "n_frames": 47,
+  "text_frame_rate": 0.0,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "some_text",
+  "src_lang": "ru",
+  "split": "valid"
+ },
+ "pdQAIPPvLNw": {
+  "n_frames": 19,
+  "text_frame_rate": 0.053,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "valid"
+ },
+ "2rvjNDfNrwk": {
+  "n_frames": 40,
+  "text_frame_rate": 0.05,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "el",
+  "split": "valid"
+ },
+ "pRLMJnMo3zI": {
+  "n_frames": 52,
+  "text_frame_rate": 0.096,
+  "slide_frame_rate": 0.096,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "it",
+  "split": "test"
+ },
+ "RBkbMFVIzd0": {
+  "n_frames": 39,
+  "text_frame_rate": 0.103,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "CPci7a8l-oU": {
+  "n_frames": 37,
+  "text_frame_rate": 0.297,
+  "slide_frame_rate": 0.162,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "ru",
+  "split": "test"
+ },
+ "7stbARI_S70": {
+  "n_frames": 60,
+  "text_frame_rate": 0.15,
+  "slide_frame_rate": 0.067,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "el",
+  "split": "test"
+ },
+ "FNlASyOKORM": {
+  "n_frames": 34,
+  "text_frame_rate": 0.029,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "valid"
+ },
+ "62zNBY3RhII": {
+  "n_frames": 27,
+  "text_frame_rate": 0.185,
+  "slide_frame_rate": 0.037,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "el",
+  "split": "test"
+ },
+ "9fxo9YJhnG8": {
+  "n_frames": 33,
+  "text_frame_rate": 0.182,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "valid"
+ },
+ "X3-Dn69r9DU": {
+  "n_frames": 16,
+  "text_frame_rate": 0.062,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "3jVzQAbmWk8": {
+  "n_frames": 45,
+  "text_frame_rate": 0.022,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "el",
+  "split": "valid"
+ },
+ "3c4ou3L7a_Q": {
+  "n_frames": 53,
+  "text_frame_rate": 0.075,
+  "slide_frame_rate": 0.019,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "ru",
+  "split": "valid"
+ },
+ "2jHYXaoi61U": {
+  "n_frames": 55,
+  "text_frame_rate": 0.018,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "el",
+  "split": "valid"
+ },
+ "tYmiDt35obk": {
+  "n_frames": 10,
+  "text_frame_rate": 0.1,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "some_text",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "gokjgamJgxQ": {
+  "n_frames": 57,
+  "text_frame_rate": 0.298,
+  "slide_frame_rate": 0.035,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "it",
+  "split": "valid"
+ },
+ "4TSRQyJ_FL0": {
+  "n_frames": 37,
+  "text_frame_rate": 0.351,
+  "slide_frame_rate": 0.216,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "el",
+  "split": "valid"
+ },
+ "iPk9VTATmGM": {
+  "n_frames": 51,
+  "text_frame_rate": 0.078,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "test"
+ },
+ "zJmV2ZOVvhA": {
+  "n_frames": 43,
+  "text_frame_rate": 0.116,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "test"
+ },
+ "91JfbWkv42Y": {
+  "n_frames": 76,
+  "text_frame_rate": 0.013,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "el",
+  "split": "test"
+ },
+ "Z7x1YqwdYRs": {
+  "n_frames": 52,
+  "text_frame_rate": 0.019,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "valid"
+ },
+ "B0f6kt4rnpM": {
+  "n_frames": 48,
+  "text_frame_rate": 0.021,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "ru",
+  "split": "test"
+ },
+ "1m5fDkZ2ZEc": {
+  "n_frames": 27,
+  "text_frame_rate": 0.0,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "P9avj3lbFV8": {
+  "n_frames": 6,
+  "text_frame_rate": 0.5,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "5JIxEPtBAk8": {
+  "n_frames": 54,
+  "text_frame_rate": 0.093,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "some_text",
+  "src_lang": "el",
+  "split": "valid"
+ },
+ "AGIKLAycA9E": {
+  "n_frames": 56,
+  "text_frame_rate": 0.054,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "el",
+  "split": "test"
+ },
+ "W4jIApDM3so": {
+  "n_frames": 37,
+  "text_frame_rate": 0.216,
+  "slide_frame_rate": 0.189,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "fr",
+  "split": "valid"
+ },
+ "4LxwbPFLUHY": {
+  "n_frames": 59,
+  "text_frame_rate": 0.22,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "ru",
+  "split": "valid"
+ },
+ "zlj5sRro7P4": {
+  "n_frames": 52,
+  "text_frame_rate": 0.058,
+  "slide_frame_rate": 0.019,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "it",
+  "split": "test"
+ },
+ "Fm_M5rej3eU": {
+  "n_frames": 55,
+  "text_frame_rate": 0.145,
+  "slide_frame_rate": 0.055,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "some_text",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "wm6MlAEJuO4": {
+  "n_frames": 48,
+  "text_frame_rate": 0.396,
+  "slide_frame_rate": 0.312,
+  "visual_class_vlm": "slide_heavy",
+  "visual_class_ocr": "some_text",
+  "src_lang": "it",
+  "split": "valid"
+ },
+ "TLXRnlJV25Y": {
+  "n_frames": 51,
+  "text_frame_rate": 0.255,
+  "slide_frame_rate": 0.098,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "it",
+  "split": "valid"
+ },
+ "7p0i1LsUkMo": {
+  "n_frames": 49,
+  "text_frame_rate": 0.388,
+  "slide_frame_rate": 0.224,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "el",
+  "split": "test"
+ },
+ "fcvTGnAR8lU": {
+  "n_frames": 60,
+  "text_frame_rate": 0.067,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "it",
+  "split": "valid"
+ },
+ "3zqoCaIG9yM": {
+  "n_frames": 46,
+  "text_frame_rate": 0.261,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "el",
+  "split": "valid"
+ },
+ "RjY6MZUGiHQ": {
+  "n_frames": 47,
+  "text_frame_rate": 0.191,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "it",
+  "split": "test"
+ },
+ "AILi62xo7j8": {
+  "n_frames": 62,
+  "text_frame_rate": 0.097,
+  "slide_frame_rate": 0.048,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "some_text",
+  "src_lang": "it",
+  "split": "test"
+ },
+ "0u7tTptBo9I": {
+  "n_frames": 40,
+  "text_frame_rate": 0.225,
+  "slide_frame_rate": 0.05,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "fr",
+  "split": "test"
+ },
+ "051ObIQbmVs": {
+  "n_frames": 39,
+  "text_frame_rate": 0.051,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "test"
+ },
+ "C82IwCttOlM": {
+  "n_frames": 5,
+  "text_frame_rate": 0.2,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "es",
+  "split": "test"
+ },
+ "3f3lEfZOLNc": {
+  "n_frames": 9,
+  "text_frame_rate": 0.333,
+  "slide_frame_rate": 0.111,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "5__oCiczisY": {
+  "n_frames": 41,
+  "text_frame_rate": 0.293,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "el",
+  "split": "valid"
+ },
+ "As7ngXw-X8U": {
+  "n_frames": 51,
+  "text_frame_rate": 0.118,
+  "slide_frame_rate": 0.02,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "some_text",
+  "src_lang": "ru",
+  "split": "test"
+ },
+ "wCPPrDCCn_k": {
+  "n_frames": 26,
+  "text_frame_rate": 0.154,
+  "slide_frame_rate": 0.038,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "test"
+ },
+ "jej8qlzlAGw": {
+  "n_frames": 32,
+  "text_frame_rate": 0.094,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "test"
+ },
+ "5jaBiaDlEEc": {
+  "n_frames": 44,
+  "text_frame_rate": 0.136,
+  "slide_frame_rate": 0.068,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "some_text",
+  "src_lang": "ru",
+  "split": "valid"
+ },
+ "TpJ2LjF16s8": {
+  "n_frames": 30,
+  "text_frame_rate": 0.067,
+  "slide_frame_rate": 0.033,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "some_text",
+  "src_lang": "it",
+  "split": "test"
+ },
+ "iFGXV3NQQmA": {
+  "n_frames": 7,
+  "text_frame_rate": 0.429,
+  "slide_frame_rate": 0.286,
+  "visual_class_vlm": "slide_heavy",
+  "visual_class_ocr": "slide_heavy",
+  "src_lang": "es",
+  "split": "test"
+ },
+ "0SaG9OnP0hs": {
+  "n_frames": 14,
+  "text_frame_rate": 0.071,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "9cHVi9AXZNQ": {
+  "n_frames": 13,
+  "text_frame_rate": 0.077,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "16MWHwqz0mQ": {
+  "n_frames": 32,
+  "text_frame_rate": 0.062,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "some_text",
+  "src_lang": "fr",
+  "split": "test"
+ },
+ "dll-jtmrD70": {
+  "n_frames": 59,
+  "text_frame_rate": 0.475,
+  "slide_frame_rate": 0.186,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "some_text",
+  "src_lang": "ru",
+  "split": "test"
+ },
+ "Tgr0mfEYhUs": {
+  "n_frames": 23,
+  "text_frame_rate": 0.0,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "es",
+  "split": "valid"
+ },
+ "0yundFhVn6E": {
+  "n_frames": 59,
+  "text_frame_rate": 0.0,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "near_zero",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "ru",
+  "split": "valid"
+ },
+ "UOY-nGZNNDM": {
+  "n_frames": 43,
+  "text_frame_rate": 0.163,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "test"
+ },
+ "16pE5tKZuxg": {
+  "n_frames": 27,
+  "text_frame_rate": 0.222,
+  "slide_frame_rate": 0.0,
+  "visual_class_vlm": "some_text",
+  "visual_class_ocr": "near_zero",
+  "src_lang": "fr",
+  "split": "test"
+ }
+}

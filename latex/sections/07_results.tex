@@ -1,32 +1,79 @@
 \section{Results}
+\label{sec:results}
 
-\begin{table*}[t]
+\subsection{Probe: the anticipation-value chain}
+\label{sec:probe-results}
+
+Table~\ref{tab:probe} reports the controlled probe (\S\ref{sec:experiments}) on
+Greek$\rightarrow$English TEDx segments with English slides (M3 regime, human
+references, $n{=}40$; Qwen3-32B translator, Local Agreement policy). The
+\emph{hard stratum} contains segments where the audio-only baseline misses most
+reference terminology (term recall $\leq 0.4$; $n{=}22$).
+
+\begin{table}[t]
 \centering
 \small
-\begin{tabular}{lcccccc}
+\begin{tabular}{lcccc}
 \toprule
-System & BLEU $\uparrow$ & COMET $\uparrow$ & HDA $\uparrow$ & Term F1 $\uparrow$ & COR $\downarrow$ & Latency $\downarrow$ \\
+Condition & chrF & $\Delta$ pooled & $p$ & $\Delta$ hard \\
 \midrule
-No context & -- & -- & -- & -- & -- & -- \\
-Glossary only & -- & -- & -- & -- & -- & -- \\
-Slide OCR only & -- & -- & -- & -- & -- & -- \\
-Naive all-context & -- & -- & -- & -- & -- & -- \\
-\policyname{} & -- & -- & -- & -- & -- & -- \\
-Oracle context & -- & -- & -- & -- & -- & -- \\
+A\; audio-only                & 38.8 & ---    & ---   & ---     \\
+B\; slide terms (OCR)         & 35.2 & $-2.9$ & n.s.  & $+2.3$  \\
+B\; slide terms (VLM)         & 39.9 & $-0.6$ & n.s.  & $+14.1$ \\
+B\; VLM + LLM-gate            & 38.0 & $-2.0$ & n.s.  & $+10.1$ \\
+B\; VLM + need-gate (oracle)  & \textbf{45.3} & $\mathbf{+7.3}$ & $<.001$ & $+13.3$ \\
+C\; oracle future terms       & 46.6 & $+7.0$ & .059  & $+16.3$ \\
+D\; wrong-slide terms         & 38.6 & $-0.2$ & n.s.  & ---     \\
 \bottomrule
 \end{tabular}
-\caption{Main results on \datasetname.  Fill with final numbers.  The expected pattern is that naive context improves HDA/Term F1 but increases context overuse, while \policyname{} keeps most gains with fewer wrong-context errors.}
-\label{tab:main-results}
-\end{table*}
+\caption{Anticipation-value probe (el$\rightarrow$en, $n{=}40$; paired
+bootstrap vs.\ A). Real slide evidence (VLM-read) with need-based injection
+matches the oracle-terms upper bound; extraction quality and injection timing
+are each individually necessary.}
+\label{tab:probe}
+\end{table}
 
-\paragraph{Main finding.}
-\todo{Report whether slide-aware context improves hard examples and whether the policy reduces context overuse.}
+\paragraph{The premise holds, and gains sit exactly where predicted.}
+Injecting the reference's own rare terms (C) --- a perfect-anticipation oracle
+--- yields $+7.0$ chrF pooled and $+18.8$ on the hard stratum
+($p{<}10^{-4}$), with hard-stratum term recall rising
+$0.12\!\rightarrow\!0.41$ ($3.4\times$). Gains concentrate on segments where
+the baseline fails on terminology and are neutral elsewhere --- the signature
+of anticipation value rather than generic prompt enrichment. The effect
+replicates across model scales (7B pilot) and both language regimes (zh
+secondary set: $+6.0$ pooled, term recall $0.52\!\rightarrow\!0.68$).
 
-\paragraph{Matched vs mismatched context.}
-\todo{Show that naive all-context is fragile under previous/next/random-slide conditions.}
+\paragraph{Extraction quality is load-bearing.}
+OCR slide terms are neutral-to-harmful (fragments such as
+``\textit{independen}'' from 480p projections), while VLM-read terms recover
+$+14.1$ chrF on hard segments --- 75\% of the oracle's hard-stratum gain,
+delivered by the \emph{real} visual channel.
 
-\paragraph{Latency trade-off.}
-\todo{Report whether retrieval/policy overhead changes latency meaningfully.}
+\paragraph{Injection timing closes the rest.}
+Ungated injection is flat pooled because easy segments are disturbed; gating
+injection on segments that need it recovers $+7.3$ pooled ($p{<}0.001$),
+statistically indistinguishable from --- and cleaner than --- the oracle-terms
+condition. Runtime gates tested so far lack selectivity (an LLM relevance
+gate fires on 88\% of segments; rule-based uncertainty signals either
+under-fire retrospectively or over-fire, \S\ref{sec:gating}), identifying
+learned failure prediction as the concrete open problem.
 
-\paragraph{Oracle gap.}
-\todo{Discuss how far the policy is from human-verified evidence selection.}
+\paragraph{Bad evidence is benign at prompt level; easy-segment interference
+is a protocol effect.}
+Wrong-slide terms (D) are within noise of the baseline. Per-stratum analysis
+shows the easy-stratum dips under \emph{all} hint conditions (including D) with
+truncation signatures, tracing to Local Agreement's sensitivity to prompt
+perturbations rather than term over-adoption; logits-level hint integration is
+the indicated remedy for the full system.
+
+\subsection{Full-system results}
+\todo{Main table over S1 (mTEDx-V, stratified by visual signal and slide
+language), S2 (Chinese-LiPS-Long), S3 (ACL 60/60 tagged terms): quality
+(chrF/XCOMET) $\times$ latency (AL/LAAL) curves, term accuracy under the
+Wikidata protocol, copy-rate by slide-language regime (M3 vs M1+M2),
+faithfulness (wrong-slide adoption, visible-but-unspoken rate).}
+
+\subsection{Mechanism analysis}
+\todo{H1/H2 tests: anticipation gains across regimes; target-form supply ---
+term accuracy and slide-string copy rate largest on M3 talks (slide language =
+target language).}
