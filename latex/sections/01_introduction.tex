@@ -1,18 +1,88 @@
 \section{Introduction}
+\label{sec:intro}
 
-Simultaneous speech translation (SST) generates target-language text incrementally from a partial source speech stream.  This setting is essential for real-time lectures, conferences, and multilingual classrooms, but it is also unusually brittle: the system must act before hearing the full utterance, and emitted translations are difficult to revise without disrupting the user experience.
+Simultaneous speech translation (SST) must commit target-language output before
+hearing the future of the source stream. Every design choice in the field ---
+wait-$k$ schedules \citep{ma2019stacl}, adaptive READ/WRITE policies
+\citep{liu2020lowlatency,papi2023alignatt}, long-form streaming architectures
+\citep{ouyang2025infinisst} --- is a way of coping with this single constraint:
+at commit time, the model knows only a prefix. The words most damaged by this
+constraint are the ones that matter most in talks and lectures: rare
+terminology, named entities, numbers --- exactly the content a translator cannot
+guess from a truncated prefix and cannot revise after committing.
 
-Most research settings treat the current speech stream as the primary input, optionally augmented with a narrow terminology glossary.  In real deployments, however, interpreters and audiences often have access to much richer context: presentation slides, a talk abstract, speaker information, prior lectures, paper PDFs, course notes, and a domain glossary.  Slides are particularly natural for academic talks and professional courses because they contain terminology, equations, names, and visual concepts that are often under-specified in the audio signal.
+Yet in the settings where SST is most needed --- conference talks, lectures,
+screen-shared meetings --- the future is, quite literally, projected on the
+wall. Speakers put up a slide and then discuss it, typically for 30--60 seconds;
+professional simultaneous interpreters exploit this routinely, requesting decks
+in advance and reading the projected slides from the booth. The visual channel
+is thus a \emph{legal lookahead}: it reveals upcoming terminology before it is
+spoken, at zero cost to the audio decision loop, because slides change on a
+timescale of tens of seconds and can be processed asynchronously off the
+critical path. We call this \emph{vision-as-anticipation}, and this paper builds
+the method, the evidence, and the evaluation protocol for it.
 
-We argue that slide-aware contextual SST is not simply a matter of adding more context to the prompt.  Slides are asynchronous and noisy.  Speakers may skip a slide, return to a previous slide, summarize future content, or discuss off-slide details.  Background documents can also be too broad, and glossary entries can conflict with the current utterance.  Under a streaming latency budget, irrelevant context can cause the model to translate a slide term before the speaker says it, or to select the wrong English rendering for a Chinese homophone.
+Prior work has approached the ingredients separately but never the combination.
+Slide context improves \emph{offline ASR} of conference talks
+\citep{sinhamahapatra2025slides}, but transcription has no latency dimension and
+cannot exploit the cross-lingual structure of slides. Images help
+\emph{simultaneous text MT} on caption datasets \citep{caglayan2020simultaneous,
+ive2021exploiting}, establishing the anticipation insight in a toy regime ---
+single photographs, no speech, sentence-level decoding. Most recently,
+OmniFusion \citep{koneru2025omnifusion} fuses a multimodal foundation model with
+a translation LLM for En$\rightarrow$X SimulST, but processes the image
+\emph{synchronously on the decoding path} (paying added latency for vision) and
+attributes its speed-up to removing the ASR--MT cascade, not to the visual
+channel itself. No existing system treats vision as a zero-latency anticipation
+channel for speech translation, and no existing evaluation separates
+vision-induced gains from architectural ones.
 
-This paper studies the following question: \emph{When do slides and deployment context help SST, and when do they hurt?}  We focus on Chinese-to-English lecture translation, where homophones and near-homophones make the value of slide context especially clear.  For example, the source pronunciation \emph{xiancheng} may correspond to ``thread'' or ``ready-made''; a current slide containing ``thread scheduling'' should help, but a stale slide about another topic should not.
+We decompose the benefit of slide evidence into three mechanisms:
+\textbf{M1 anticipation} (slides temporally precede the speech that discusses
+them; direction-agnostic), \textbf{M2 recognition support} (source-language
+slide terms help the model resolve rare or mis-heard words), and
+\textbf{M3 target-form supply} (when the slide language equals the target
+language --- common in X$\rightarrow$En, since English is the lingua franca of
+slides --- the slide hands the system the target surface form of an upcoming
+term, turning translation into recognition plus copying). The decomposition is
+testable: slide language is a per-talk stratification variable, and M3 predicts
+larger terminology gains and higher slide-string copy rates precisely on talks
+whose slides are in the target language.
 
-We make three contributions:
+A controlled probe validates the premise before any system building. On
+Greek$\rightarrow$English TEDx segments (English slides, human references) and
+Chinese lecture segments with a Local Agreement streaming policy
+\citep{liu2020lowlatency}, injecting the reference's own rare terms --- a
+perfect-anticipation oracle --- improves chrF by $+7.0$ pooled ($p{=}0.03$) and
+$+18.8$ on segments where the baseline fails on terminology ($p{<}10^{-4}$;
+term recall $0.12\!\rightarrow\!0.41$). The realistic channel initially
+delivers none of this: OCR-extracted slide terms are neutral-to-harmful. But
+replacing OCR with a VLM slide reader recovers $+14.1$ chrF on hard segments
+(75\% of the oracle gain), and adding need-based injection --- only on segments
+where the baseline is predicted to fail --- recovers $+7.3$ chrF pooled
+($p{<}0.001$), statistically indistinguishable from the oracle upper bound.
+The chain isolates the two problems a method must solve: \emph{what} to extract
+(VLM, not OCR) and \emph{when} to inject (a need predictor; we show a naive
+LLM relevance gate has no selectivity), while a wrong-slide control shows
+prompt-level bad evidence is benign for strong models.
+
+Our contributions:
 \begin{enumerate}[leftmargin=*]
-    \item We define \taskname, a slide-aware contextual SST task where a streaming translator can use audio, current/past slide evidence, glossary entries, and background documents under latency constraints.
-    \item We construct \datasetname, a minimal Chinese lecture challenge set targeting homophones, terminology, entity names, and slide-speech mismatch.  The benchmark includes adversarial context variants so that context overuse can be measured, not merely translation quality.
-    \item We propose \policyname, a lightweight evidence-aware context manager that retrieves compact evidence packets and applies a conservative use/ignore/delay policy.  Our experiments compare no-context, glossary-only, slide-only, naive all-context, and policy-based systems.
+    \item \textbf{Setting and mechanism analysis.} We formulate vision-as-anticipation
+    SST --- an asynchronous slide channel off the audio critical path --- and
+    decompose its benefit into anticipation, recognition support, and
+    target-form supply, each separately measurable via slide-language
+    stratification (\S\ref{sec:task}).
+    \item \textbf{Benchmark suite.} A direction-general evaluation over real
+    slides only: mTEDx-V (long-form X$\rightarrow$En, live video-recoverable
+    talks, human references, visual-signal stratification), Chinese-LiPS-Long
+    (dedicated 1080p slide stream rebuilt on the original session timeline),
+    and ACL 60/60 (En$\rightarrow$X control with third-party tagged
+    terminology), with a Wikidata-based cross-lingual term protocol
+    (\S\ref{sec:benchmark}).
+    \item \textbf{Method and evidence.} An asynchronous slide-evidence pipeline
+    (change-triggered VLM reading, term filtering, need-gated injection) whose
+    probe-scale ablation closes the full oracle gap, and an analysis showing
+    that need prediction --- not extraction --- is the remaining open problem
+    (\S\ref{sec:method}, \S\ref{sec:results}).
 \end{enumerate}
-
-\todo{Add exact dataset size, human annotation protocol, and main result numbers.}

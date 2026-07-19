@@ -1,63 +1,109 @@
-\section{Method}
+\section{Method: Asynchronous Slide Evidence for Streaming Translation}
+\label{sec:method}
 
-\subsection{Overview}
+\subsection{Design principle: off the critical path}
 
-\policyname{} is a lightweight context manager placed between the streaming speech front-end and the translator.  It has three components: an offline context builder, a streaming retriever, and an evidence policy.  The translator can be a cascaded ASR+MT/LLM system for the MVP or an end-to-end speech LLM in later versions.
+The central architectural commitment is that visual processing must never touch
+the audio decision loop. The streaming translator runs its READ/WRITE policy at
+audio rate; slides change on a timescale of 30--90 seconds. We therefore run a
+\emph{slide worker} as an asynchronous process: it watches the video stream,
+detects slide changes, reads the new slide with a VLM, filters the result into a
+compact evidence packet, and atomically updates a shared \emph{glossary store}.
+The translator consults the store at each WRITE --- a dictionary lookup, adding
+zero per-token latency. This contrasts with synchronous multimodal fusion
+\citep{koneru2025omnifusion}, where image tokens ride the decoding path and
+demonstrably add latency. In the worst case (the speaker names a term in the
+seconds before the worker finishes a new slide), the system degrades exactly to
+the audio-only baseline; visual evidence can arrive late, but can never slow
+the audio path down.
 
 \begin{figure}[t]
 \centering
 \fbox{\parbox{0.92\linewidth}{
 \centering
-\vspace{1.5em}
-Speech chunks $\rightarrow$ streaming ASR/encoder $\rightarrow$ retriever $\rightarrow$ evidence policy $\rightarrow$ translation decoder \\
-\vspace{0.5em}
-Slides / glossary / background docs $\rightarrow$ context builder $\rightarrow$ evidence index
-\vspace{1.5em}
+\vspace{1.2em}
+\textbf{audio path (ms-scale):} speech chunks $\rightarrow$ streaming
+translator (READ/WRITE) $\rightarrow$ committed target words \\[0.6em]
+\textbf{slide path (30--90\,s-scale, async):} video frames $\rightarrow$
+change detector $\rightarrow$ VLM slide reader $\rightarrow$ term filter
+$\rightarrow$ glossary store $\uparrow$ consulted at WRITE
+\vspace{1.2em}
 }}
-\caption{System overview.  Replace this placeholder with the final architecture figure.}
+\caption{Two-timescale architecture. The slide path updates a glossary store
+asynchronously; the audio path only reads it. Placeholder for final figure.}
 \label{fig:overview}
 \end{figure}
 
-\subsection{Offline context builder}
+\subsection{Slide worker: what to extract}
 
-Before the lecture begins, we process all available context:
-\begin{itemize}[leftmargin=*]
-    \item Slide OCR: extract visible text, equations, title lines, and bullet terms.
-    \item Slide visual summary: optional VLM summary for diagrams or terms not captured by OCR.
-    \item Glossary expansion: normalize terms, add pinyin, aliases, and target translations.
-    \item Background documents: chunk into short passages and extract entities/technical terms.
-\end{itemize}
-Each evidence item is represented by lexical features, pinyin features, embeddings, source type, and temporal metadata.
+\paragraph{Change detection.} Frame differencing on a low-rate sample
+(1 frame / 2--5 s) with a stability window, so partial animations and camera
+cuts to the speaker do not trigger re-reads; the current slide persists in the
+store until replaced (lookback bounded at 90 s in our probe).
 
-\subsection{Streaming retriever}
+\paragraph{VLM reading, not OCR.} The probe (\S\ref{sec:results}) shows this
+choice is load-bearing: 480p projected slides with glare and perspective reduce
+classical OCR to fragments (``\textit{independen}''), which \emph{hurt}
+translation ($-2.9$ chrF vs.\ no context), while a VLM reader returns full
+phrases (``\textit{On Imitation and Improvisation: New Competitive
+Businesses}'') and recovers $+14.1$ chrF on hard segments --- 75\% of the
+oracle-terms upper bound. The reader prompt requests distinct terms, named
+entities, and technical phrases in their original language, capped per slide.
 
-At each chunk $t$, the retriever receives a partial source hypothesis $\hat{x}_{\leq t}$ and returns the top $M$ evidence items.  The MVP implementation combines three signals:
+\paragraph{Term filtering.} Domain-specificity filtering against a general
+frequency list (following \citealp{sinhamahapatra2025slides}), dedup across
+consecutive slides, and language tagging (source-language terms serve
+recognition support, M2; target-language terms serve target-form supply, M3
+--- the copy channel that only X$\rightarrow$En enjoys at scale).
+
+\subsection{Need-gated injection: when to use it}
+\label{sec:gating}
+
+The probe's sharpest lesson is that \emph{what} is not enough: ungated VLM
+terms are flat pooled ($-0.6$ chrF) because easy segments are slightly hurt by
+irrelevant additions, cancelling the large hard-segment gains. Injecting only
+where needed changes everything: gating on the (oracle) hard stratum yields
+$+7.3$ chrF pooled ($p{<}0.001$), matching the oracle-terms upper bound. The
+open problem is therefore \emph{need prediction}: deciding, online, that the
+upcoming content is likely to defeat the audio-only translator.
+
+We formalize the gate as a scoring rule over the current state,
 \begin{equation}
-    r(e,t) = \lambda_1 \mathrm{BM25}(e, \hat{x}_{\leq t}) + \lambda_2 \mathrm{PinyinMatch}(e, \hat{x}_{\leq t}) + \lambda_3 \mathrm{TemporalPrior}(e,t).
+  g(t) \;=\; \alpha\,u(t) \;+\; \beta\,\mathrm{match}(G_t, \hat{x}_{\le t})
+  \;-\; \gamma\,\mathrm{staleness}(G_t),
+  \label{eq:gate}
 \end{equation}
-An embedding retriever can be added for background snippets and semantically related slide terms.
+where $u(t)$ is translator uncertainty (instability of consecutive hypotheses
+--- LCP stall rate --- or token-level entropy when logits are available),
+$\mathrm{match}$ measures phonetic/lexical affinity between stored slide terms
+$G_t$ and the recent source hypothesis (pinyin match for zh, subword overlap
+and loanword detection for European languages), and staleness discounts slides
+that have been superseded. Evidence is injected at WRITE $t$ iff
+$g(t) > \tau$, with terms rendered as a structured hint block (term, language,
+source slide, confidence), never as raw slide text. A naive alternative ---
+asking the translator LLM ``are these terms relevant?'' --- fails for lack of
+selectivity (it fires on 88\% of segments, including 94\% of easy ones); the
+gate must be grounded in \emph{failure prediction}, not topical relevance,
+because slide terms are almost always topically relevant.
 
-\subsection{Evidence policy}
+\subsection{Faithfulness constraints}
 
-Naively sending all retrieved context to the translator can cause overuse.  \policyname{} therefore applies conservative rules:
-\begin{align}
-    \mathrm{score}(e,t) &= r(e,t) + \alpha \mathrm{sourceTrust}(e) - \beta \mathrm{timeDistance}(e,t) - \gamma \mathrm{conflict}(e,t), \\
-    \pi(e,t) &=
-    \begin{cases}
-    \textsc{use}, & \mathrm{score}(e,t) > \tau_u \\
-    \textsc{delay}, & \tau_d < \mathrm{score}(e,t) \leq \tau_u \\
-    \textsc{ignore}, & \mathrm{otherwise.}
-    \end{cases}
-\end{align}
-For homophones, we require either a pinyin match plus matched-slide support or a glossary match plus local semantic support.  The final evidence packet is capped at $K$ items and rendered as structured prompts, not raw slide text.
+The injected hints carry an explicit instruction boundary: translate only what
+has been spoken; hints may disambiguate or spell a spoken term but never add
+visible-but-unspoken content. We evaluate this directly with wrong-slide and
+wrong-time controls (adoption rate of planted bad evidence) and a
+visible-but-unspoken hallucination check against the slide text. At probe
+scale, prompt-level wrong terms are benign for a 32B translator (within
+$\pm1$ chrF of baseline); we expect --- and test for --- larger risks under
+image-input and fine-tuned injection modes.
 
-\subsection{Prompt format}
+\subsection{Training-free core, learned extensions}
 
-The MVP translator uses a structured prompt:
-\begin{quote}\small
-You are doing low-latency Chinese-to-English lecture translation. Translate only what has been spoken. Use evidence only when it directly supports the current speech. Do not introduce slide terms that have not been spoken. Evidence: \{source, confidence, term, translation, reason\}. Current partial transcript: \{...\}. Previous translation: \{...\}.
-\end{quote}
-
-\subsection{Training-free MVP and learned extension}
-
-The minimal version is training-free: retriever weights and thresholds are tuned on development data.  A stronger version can train a small reranker or policy classifier using matched and mismatched context examples.
+The core pipeline is training-free (VLM reader + rule-based gate thresholds
+tuned on development talks), which keeps it portable across base translators.
+Learned extensions fit two places without touching the architecture: a small
+need-prediction classifier trained on (state, baseline-failure) pairs mined
+from development runs, and preference-tuning the translator to follow hint
+blocks conservatively (use terms when spoken, ignore otherwise) using
+synthetic slide augmentation \citep{sinhamahapatra2025slides} --- synthetic
+data is admissible in training precisely because our test sets forbid it.
