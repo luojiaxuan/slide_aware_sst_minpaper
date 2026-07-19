@@ -84,7 +84,14 @@ source slide, confidence), never as raw slide text. A naive alternative ---
 asking the translator LLM ``are these terms relevant?'' --- fails for lack of
 selectivity (it fires on 88\% of segments, including 94\% of easy ones); the
 gate must be grounded in \emph{failure prediction}, not topical relevance,
-because slide terms are almost always topically relevant.
+because slide terms are almost always topically relevant. Signal design also
+matters: a retrospective matcher (fire when slide terms appear in the model's
+own partial output) is provably too late --- by the time the term surfaces, no
+help is needed --- and conservative instability thresholds under-fire on strong
+translators (0/40 activations in our first implementation). Effective gates
+must be \emph{forward-looking}: source-side lexical cues of incoming
+terminology, phonetic affinity between the source stream and stored slide
+terms, and sensitive (not consecutive) instability counters.
 
 \subsection{Faithfulness constraints}
 

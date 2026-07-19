@@ -33,7 +33,8 @@ CONDITIONS = {"none": None, "slide": "slide_terms", "oracle": "oracle_terms",
               "wrong": "wrong_terms",
               # gating prototypes: same hint source as "slide", but injected selectively
               "gated_oracle": "slide_terms",  # inject only if item["gate_on"] (hard-stratum oracle gate)
-              "gated_llm": "slide_terms"}     # inject once a runtime LLM relevance gate fires (sticky)
+              "gated_llm": "slide_terms",     # inject once a runtime LLM relevance gate fires (sticky)
+              "gated_unc": "slide_terms"}     # inject once uncertainty/match signals fire (eq. gate, sticky)
 
 
 def main() -> None:
@@ -80,8 +81,9 @@ def run_incremental(it: dict, cond: str, args) -> dict:
     hints = it.get(hints_key) or [] if hints_key else []
     if cond == "gated_oracle" and not it.get("gate_on"):
         hints = []
-    llm_gate_open = cond != "gated_llm"  # for gated_llm, starts closed
+    llm_gate_open = cond not in ("gated_llm", "gated_unc")  # gated variants start closed
     gate_step = None
+    stall_count = 0
     committed: list[str] = []
     events = []  # (n_units_read, n_target_words_total_after_step)
 
@@ -91,6 +93,14 @@ def run_incremental(it: dict, cond: str, args) -> dict:
         final = n_read == len(src_units)
         if cond == "gated_llm" and not llm_gate_open and hints:
             if ask_gate(prefix, hints, it["src_lang"], args):
+                llm_gate_open = True
+                gate_step = n_read
+        if cond == "gated_unc" and not llm_gate_open and hints:
+            # forward-looking need signals: (a) any instability (stall >= 1);
+            # (b) long/rare word entering the source prefix (terminology incoming)
+            recent = src_units[max(0, n_read - 2):n_read]
+            long_word = any(len(w) >= 8 for u in recent for w in u.split())
+            if stall_count >= 1 or long_word:
                 llm_gate_open = True
                 gate_step = n_read
         step_hints = hints if llm_gate_open else []
@@ -132,6 +142,16 @@ def lcp(a: list[str], b: list[str]) -> list[str]:
         else:
             break
     return out
+
+
+def hint_match(hints: list[str], hypothesis: list[str]) -> bool:
+    """Stem-overlap between any hint word and the model's own partial hypothesis."""
+    hyp_stems = {w.lower().rstrip("s")[:6] for w in hypothesis if len(w) >= 5}
+    for h in hints:
+        for w in h.split():
+            if len(w) >= 5 and w.lower().rstrip("s")[:6] in hyp_stems:
+                return True
+    return False
 
 
 def ask_gate(prefix: str, hints: list[str], lang: str, args) -> bool:
