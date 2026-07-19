@@ -91,6 +91,33 @@ Narrative chain now complete: C≫A (premise) → B_OCR≈A (extraction bottlene
 B_VLM ≈ 0.75·C on hard segments (VLM fixes extraction) → pooled flat (gating
 needed) → policy.
 
+## Follow-up 2: gating recovers the full pooled gain (2026-07-19)
+
+Two gating prototypes over the VLM slide terms (`runs_gated.jsonl`; conditions
+in `oracle_killtest_runner.py`): *oracle-gate* injects only on hard segments
+(gating upper bound); *LLM-gate* asks the model per step whether the slide
+terms are relevant (sticky-on).
+
+| condition (el, n=40) | chrF | Δ vs none | p | hard-Δ |
+|---|---|---|---|---|
+| A none | 38.8 | — | — | — |
+| B slide-OCR | 35.2 | −2.9 | n.s. | +2.3 |
+| B slide-VLM | 39.9 | −0.6 | n.s. | +14.1 |
+| B VLM + LLM-gate | 38.0 | −2.0 | n.s. | +10.1 |
+| **B VLM + oracle-gate** | **45.3** | **+7.3** | **<0.001** | +13.3 |
+| C oracle terms | 46.6 | +7.0 | 0.059 | +16.3 |
+
+- **Headline: real visual channel + selective injection ≈ oracle upper bound.**
+  VLM-extracted slide terms with need-based gating deliver +7.3 chrF pooled
+  (p<0.001), statistically cleaner than even the oracle-terms condition (+7.0,
+  p=0.059) because easy segments are left untouched.
+- **Naive LLM relevance gating fails**: it fires on 35/40 items (17/18 easy) —
+  no selectivity — and degenerates to ungated injection. Predicting *when*
+  evidence is needed (model uncertainty, term-source matching) is the open
+  technical problem, i.e., the paper's method contribution.
+- Full six-condition chain: extraction quality (OCR→VLM) fixes *what* to
+  inject; gating fixes *when*; together they close ~100% of the oracle gap.
+
 ## Caveats
 
 - Text-prefix simulation (transcript, not audio); segment-level, not long-form

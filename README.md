@@ -71,6 +71,9 @@ latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
 3. VLM visual-signal pass over mTEDx-V (upgrade OCR lower bound).
 4. Streaming policy implementation (async slide worker + evidence gating) and
    faithfulness metrics (wrong-slide adoption, visible-but-unspoken rate).
+   **Probe-scale evidence in**: VLM terms + oracle-gate = +7.3 chrF pooled
+   (p<0.001) ≈ oracle upper bound; naive LLM gate fails (no selectivity) →
+   need-prediction is the method's core problem.
 5. ACL 60/60 integration (frame recovery, term filter, En→Zh control).
 6. Paper: intro/method drafts; related work is written.
 
