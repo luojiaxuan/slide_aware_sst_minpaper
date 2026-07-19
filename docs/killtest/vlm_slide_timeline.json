@@ -1,0 +1,448 @@
+[
+ {
+  "t": 10.0,
+  "terms": [
+   "A"
+  ]
+ },
+ {
+  "t": 30.0,
+  "terms": [
+   "NON-TRADABLE",
+   "Government",
+   "Utilities",
+   "Banks",
+   "Telecoms",
+   "Media",
+   "Retail",
+   "Building",
+   "Shops",
+   "Lawyers",
+   "Hairdressers",
+   "TRADABLE",
+   "Manufacturing",
+   "Airlines",
+   "Shipping",
+   "Tourism",
+   "Agriculture",
+   "Workshops",
+   "Digital Applications"
+  ]
+ },
+ {
+  "t": 50.0,
+  "terms": []
+ },
+ {
+  "t": 70.0,
+  "terms": [
+   "NON-TRADABLE",
+   "Government",
+   "Utilities",
+   "Banks",
+   "Telecoms",
+   "Media",
+   "Retail",
+   "Building",
+   "Shops",
+   "Lawyers",
+   "Hairdressers",
+   "TRADABLE",
+   "Manufacturing",
+   "Airlines",
+   "Shipping",
+   "Tourism",
+   "Agriculture",
+   "Workshops",
+   "Digital Applications"
+  ]
+ },
+ {
+  "t": 90.0,
+  "terms": [
+   "TEDx",
+   "independent"
+  ]
+ },
+ {
+  "t": 110.0,
+  "terms": [
+   "BIG",
+   ">250",
+   "NON-TRADABLE",
+   "Government",
+   "Utilities",
+   "Banks",
+   "Telecoms",
+   "Media",
+   "Retail",
+   "TRADEABLE",
+   "Manufacturing",
+   "Airlines",
+   "Shipping",
+   "Tourism",
+   "SME",
+   "<250",
+   "Media",
+   "Retail",
+   "Wholesaling",
+   "Shops"
+  ]
+ },
+ {
+  "t": 130.0,
+  "terms": [
+   "NON-TRADABLE",
+   "BIG >250",
+   "Government",
+   "Utilities",
+   "Banks",
+   "Telecoms",
+   "Media",
+   "Retail",
+   "TRADEABLE",
+   "Manufacturing",
+   "Airlines",
+   "Shipping",
+   "Tourism",
+   "SME <250",
+   "Media",
+   "Retail",
+   "Building",
+   "Shops",
+   "Lawyers",
+   "Hairdressers"
+  ]
+ },
+ {
+  "t": 150.0,
+  "terms": [
+   "Action",
+   "independently organized"
+  ]
+ },
+ {
+  "t": 170.0,
+  "terms": [
+   "BIG >250",
+   "~ 25%",
+   "SME <250",
+   "70%",
+   "NON-TRADABLE",
+   "Government",
+   "Utilities",
+   "Big",
+   "Traders",
+   "Media",
+   "Retail",
+   "TRADEABLE",
+   "Manufacturing",
+   "Airlines",
+   "Small",
+   "Tourism",
+   "Media",
+   "Retail",
+   "Building",
+   "Shops"
+  ]
+ },
+ {
+  "t": 190.0,
+  "terms": [
+   "BIG >250",
+   "SME <250",
+   "NON-TRADABLE",
+   "TRADEABLE",
+   "25%",
+   "<5%",
+   "70%",
+   "Media",
+   "Retail",
+   "Building",
+   "Shops",
+   "Hairdressers",
+   "Government",
+   "Utilities",
+   "Manufacturing",
+   "Airlines",
+   "Tourism",
+   "Small manufacture",
+   "Agriculture",
+   "Workshops"
+  ]
+ },
+ {
+  "t": 210.0,
+  "terms": [
+   "NON-TRADABLE",
+   "BIG",
+   ">250",
+   "Government",
+   "Utilities",
+   "Banks",
+   "Telecoms",
+   "Media",
+   "Retail",
+   "TRADEABLE",
+   "Manufacturing",
+   "Airlines",
+   "Shipping",
+   "Tourism",
+   "SME",
+   "<250",
+   "Media",
+   "Retail",
+   "Shops",
+   "Lawyers"
+  ]
+ },
+ {
+  "t": 230.0,
+  "terms": [
+   "ACTION"
+  ]
+ },
+ {
+  "t": 250.0,
+  "terms": [
+   "ACTI"
+  ]
+ },
+ {
+  "t": 270.0,
+  "terms": [
+   "TEDx"
+  ]
+ },
+ {
+  "t": 290.0,
+  "terms": [
+   "Micro-businesses",
+   "Commercially minded",
+   "Multi-activity and multi-income",
+   "Basic assets => entrepreneurship"
+  ]
+ },
+ {
+  "t": 310.0,
+  "terms": [
+   "Ad",
+   "organize"
+  ]
+ },
+ {
+  "t": 330.0,
+  "terms": [
+   "Micro-businesses",
+   "Commercially minded",
+   "Multi-activity and multi-income",
+   "Basic assets => entrepreneurship"
+  ]
+ },
+ {
+  "t": 350.0,
+  "terms": [
+   "ACTION",
+   "Academy",
+   "organized TED event"
+  ]
+ },
+ {
+  "t": 370.0,
+  "terms": []
+ },
+ {
+  "t": 390.0,
+  "terms": [
+   "On Imitation and Improvisation:",
+   "New Competitive Businesses"
+  ]
+ },
+ {
+  "t": 410.0,
+  "terms": [
+   "On Imitation and Improvisation:",
+   "New Competitive Businesses"
+  ]
+ },
+ {
+  "t": 430.0,
+  "terms": []
+ },
+ {
+  "t": 450.0,
+  "terms": [
+   "ACT"
+  ]
+ },
+ {
+  "t": 470.0,
+  "terms": [
+   "Z",
+   "TEDxAcademy"
+  ]
+ },
+ {
+  "t": 490.0,
+  "terms": [
+   "ACTION"
+  ]
+ },
+ {
+  "t": 510.0,
+  "terms": [
+   "ATVs"
+  ]
+ },
+ {
+  "t": 530.0,
+  "terms": [
+   "ACTIV",
+   "MAX"
+  ]
+ },
+ {
+  "t": 550.0,
+  "terms": [
+   "ACTION"
+  ]
+ },
+ {
+  "t": 570.0,
+  "terms": []
+ },
+ {
+  "t": 590.0,
+  "terms": [
+   "ACTION"
+  ]
+ },
+ {
+  "t": 610.0,
+  "terms": [
+   "control tower",
+   "quad bikes"
+  ]
+ },
+ {
+  "t": 630.0,
+  "terms": []
+ },
+ {
+  "t": 650.0,
+  "terms": []
+ },
+ {
+  "t": 670.0,
+  "terms": []
+ },
+ {
+  "t": 690.0,
+  "terms": []
+ },
+ {
+  "t": 710.0,
+  "terms": []
+ },
+ {
+  "t": 730.0,
+  "terms": []
+ },
+ {
+  "t": 750.0,
+  "terms": []
+ },
+ {
+  "t": 770.0,
+  "terms": [
+   "airport control tower",
+   "aircraft"
+  ]
+ },
+ {
+  "t": 790.0,
+  "terms": [
+   "airport control tower",
+   "aircraft maintenance"
+  ]
+ },
+ {
+  "t": 810.0,
+  "terms": []
+ },
+ {
+  "t": 830.0,
+  "terms": []
+ },
+ {
+  "t": 850.0,
+  "terms": []
+ },
+ {
+  "t": 870.0,
+  "terms": [
+   "airport control tower",
+   "quad bikes"
+  ]
+ },
+ {
+  "t": 890.0,
+  "terms": [
+   "ACTION"
+  ]
+ },
+ {
+  "t": 910.0,
+  "terms": []
+ },
+ {
+  "t": 930.0,
+  "terms": [
+   "On Imitation and Improvisation:",
+   "New Competitive Businesses"
+  ]
+ },
+ {
+  "t": 950.0,
+  "terms": [
+   "On Imitation and Improvisation:",
+   "New Competitive Businesses"
+  ]
+ },
+ {
+  "t": 970.0,
+  "terms": [
+   "AC",
+   "CREA"
+  ]
+ },
+ {
+  "t": 990.0,
+  "terms": [
+   "On Imitation and Improvisation:",
+   "New Competitive Businesses"
+  ]
+ },
+ {
+  "t": 1010.0,
+  "terms": [
+   "On Imitation and Improvisation:",
+   "New Competitive Businesses"
+  ]
+ },
+ {
+  "t": 1030.0,
+  "terms": [
+   "On Imitation and Improvisation:",
+   "New Competitive Businesses"
+  ]
+ },
+ {
+  "t": 1050.0,
+  "terms": []
+ },
+ {
+  "t": 1070.0,
+  "terms": []
+ }
+]

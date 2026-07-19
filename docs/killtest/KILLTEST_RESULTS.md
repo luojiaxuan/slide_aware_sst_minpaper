@@ -63,6 +63,34 @@ Hard-stratum term recall: **0.12 → 0.41 (3.4×)** under oracle.
    (image-input, fine-tuned) — the policy evaluation must construct harder
    adversarial settings than prompt-level wrong terms.
 
+## Follow-up: VLM extraction closes most of the hard-stratum gap (2026-07-19)
+
+Replacing 480p tesseract with Qwen2.5-VL-7B slide reading (same 54 frames, same
+lookback rule; `code/scripts/vlm_slide_terms.py`, timeline archived here) and
+re-running the B condition on the el group:
+
+| cond (el, n=40) | chrF | termR |
+|---|---|---|
+| none | 38.8 | 0.41 |
+| slide-OCR | 35.2 | 0.40 |
+| **slide-VLM** | **39.9** | 0.41 |
+| oracle | 46.6 | 0.53 |
+
+- VLM extraction **repairs OCR's damage** (35.2 → 39.9; VLM reads full phrases
+  like "On Imitation and Improvisation: New Competitive Businesses" where OCR
+  produced fragments like "independen").
+- **Hard stratum (baseline termR ≤ 0.4, n=22): VLM vs none ΔchrF +14.1** — about
+  75% of the oracle's +18.8 hard-stratum gain, realized by the *real* visual
+  channel.
+- Pooled VLM vs none is flat (−0.6, n.s.): easy segments are slightly hurt by
+  unneeded injection, cancelling hard-segment gains — the direct empirical case
+  for an **evidence-gating policy** (inject only under predicted need), which is
+  the method chapter's job.
+
+Narrative chain now complete: C≫A (premise) → B_OCR≈A (extraction bottleneck) →
+B_VLM ≈ 0.75·C on hard segments (VLM fixes extraction) → pooled flat (gating
+needed) → policy.
+
 ## Caveats
 
 - Text-prefix simulation (transcript, not audio); segment-level, not long-form
