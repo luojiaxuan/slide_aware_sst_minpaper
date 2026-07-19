@@ -118,6 +118,34 @@ terms are relevant (sticky-on).
 - Full six-condition chain: extraction quality (OCR→VLM) fixes *what* to
   inject; gating fixes *when*; together they close ~100% of the oracle gap.
 
+## Follow-up 3: need-prediction gate iterations + easy-harm diagnosis (2026-07-19)
+
+Two runtime gate implementations of the method's eq. (gate) were tested
+(`runs_gated_unc.jsonl`, `runs_gated_unc2.jsonl`):
+
+- **v1 (retrospective match + stall≥2)**: fired 0/40 — retrospective signals
+  (slide term already in hypothesis) are provably too late; conservative stall
+  thresholds under-fire on a stable 32B translator. Degenerates to baseline.
+- **v2 (forward-looking: stall≥1 OR incoming long source word)**: fired 36/40
+  (easy 18/18) — over-sensitive, no selectivity; pooled +1.4 (n.s.), better
+  than ungated only because sticky late opening spares early-segment
+  interference. Selectivity, not sensitivity, is the binding constraint;
+  a learned failure-predictor is the clear next step.
+
+**Easy-stratum harm diagnosis (important honesty note).** Per-stratum deltas
+show ALL hint conditions hurt the easy stratum (wrong −15.8, slide-OCR −9.2,
+slide-VLM −18.6, oracle −4.4) regardless of hint relevance, and worst cases
+are *truncations* (e.g., a 2-word committed output), not mistranslations.
+Mechanism: hint presence perturbs step-to-step wording, stalling the Local
+Agreement longest-common-prefix commit on segments the model would otherwise
+translate stably. The easy-harm is therefore substantially a **protocol
+sensitivity** (prompt-level LCP), not evidence of term over-adoption; the
+mirror image of the 7B completeness artifact. Implications: (i) gating remains
+valuable (oracle-gate easy Δ = 0.0 → pooled +7.3 p<0.001 stands), (ii) do not
+sell easy-harm as a faithfulness finding, (iii) logits-level integration
+(hint-biased decoding rather than prompt injection) should reduce the
+interference floor and is the right implementation for the full system.
+
 ## Caveats
 
 - Text-prefix simulation (transcript, not audio); segment-level, not long-form
