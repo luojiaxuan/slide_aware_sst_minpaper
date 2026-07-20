@@ -260,6 +260,24 @@ Findings:
    −3.2 with easy-Δ −14.3 on En→Zh — faithfulness evaluation must be
    per-direction.
 
+## Follow-up 9: decoding determinism is the root of LCP truncation (2026-07-19)
+
+Re-running the protocol with local transformers greedy decoding (Qwen3-14B,
+Taurus A6000, `runs_trie.jsonl`) instead of the vLLM server: baseline chrF
+jumps 38.8 → 62.7 and hard segments shrink 22 → 5 on the same items. Same
+protocol, same data — the difference is decoding determinism. **vLLM serving
+introduces float-level nondeterminism even at temperature 0** (batching/kernel
+scheduling), which makes consecutive-step outputs drift, stalling the Local
+Agreement longest-common-prefix commit; prompt hints amplify the drift. This
+completes the easy-harm causal chain: nondeterminism × prompt perturbation ×
+LCP. Implications: (i) full-system LA policies need deterministic decoding or
+drift-tolerant commit rules; (ii) earlier vLLM-based probe numbers measure the
+*relative* value of injection forms under a realistic (noisy-serving) regime —
+directionally valid, absolute chrF depressed; (iii) the first trie-vs-prompt
+comparison on 14B was uninformative for the "power" axis (baseline termR 0.71,
+ceiling) — being re-run on 14B-mined hard segments; trie's benignness (easy-Δ
+= 0.0) did confirm.
+
 ## Caveats
 
 - Text-prefix simulation (transcript, not audio); segment-level, not long-form
