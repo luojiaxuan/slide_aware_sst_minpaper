@@ -278,6 +278,35 @@ comparison on 14B was uninformative for the "power" axis (baseline termR 0.71,
 ceiling) — being re-run on 14B-mined hard segments; trie's benignness (easy-Δ
 = 0.0) did confirm.
 
+## Follow-up 10 (FINAL): injection-form endgame — deterministic decoding makes prompt injection both powerful and benign (2026-07-19)
+
+Power test on 50 14B-hard segments (deterministic transformers decoding,
+oracle hints, `runs_trie_hard.jsonl`; 14B hard rate 377/1540 = 24.5%, matching
+32B's 24% — failure rate is a data property, serving nondeterminism only added
+truncation):
+
+| condition | chrF | Δ | p | termR |
+|---|---|---|---|---|
+| none | 50.0 | — | — | 0.27 |
+| **prompt** | **55.4** | **+6.5** | **<0.001** | **0.46** |
+| trie bias (root +1.5 / in-term +6) | 50.7 | +0.7 | 0.006 | 0.29 |
+
+**Three-step reversal, now closed:**
+1. Under vLLM serving, prompt hints appeared to disturb easy segments →
+   motivated gates and soft injection.
+2. Logits-level forms (uniform and trie bias) are benign but powerless: term
+   failures are phrase-planning failures, not single-token near-misses; a
+   posterior logit nudge is too late and too local, while prompt hints act at
+   the planning level.
+3. Fixing the root cause (deterministic decoding) shows prompt injection was
+   never the problem: it is powerful (+6.5, p<0.001, termR +0.19) AND benign
+   (easy-Δ −0.4 ≈ 0 in the deterministic 14B run).
+
+**Full-system verdict**: deterministic decoding (or drift-tolerant commit) +
+prompt-level hint injection is the correct configuration; need-gating demotes
+from necessity to a token-budget optimization; trie biasing is recorded as a
+negative result. The method section is updated accordingly.
+
 ## Caveats
 
 - Text-prefix simulation (transcript, not audio); segment-level, not long-form
