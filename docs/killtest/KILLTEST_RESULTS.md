@@ -307,6 +307,37 @@ prompt-level hint injection is the correct configuration; need-gating demotes
 from necessity to a token-budget optimization; trie biasing is recorded as a
 negative result. The method section is updated accordingly.
 
+## Follow-up 11: session-level streaming — drift-tolerant commit works; context is a self-accumulating glossary (2026-07-19)
+
+First full-session run (el probe talk, 139 segments continuous,
+`session/session_el_{none,slide}.jsonl`; `session_stream_runner.py`:
+cross-segment context tail, dual-sample jitter averaging, bounded-drift resync):
+
+| condition | chrF | termR | hard chrF (n=16) | resyncs | wall |
+|---|---|---|---|---|---|
+| none | 61.7 | 0.69 | 43.9 | 61 | 18 min |
+| slide | 62.2 | 0.70 | 46.1 | 55 | 18 min |
+
+1. **Drift-tolerant commit reproduces deterministic-quality output on serving**
+   (61.7 ≈ local deterministic 62.7; probe-era vLLM+strict-LCP was 38.8; zero
+   empty segments). The deployment problem from Follow-up 9 is solved without
+   local kernels: dual sampling + bounded-drift resync (~1 resync / 2.3
+   segments, absorbed).
+2. **Session context is a self-accumulating glossary**: repeat-occurrence term
+   recall 0.76 vs first-occurrence 0.65 (baseline) — once a term has been
+   translated, cross-segment context maintains it. Slide gains shrink
+   accordingly (pooled +0.5, hard +2.2) and, contrary to our hypothesis, do
+   NOT concentrate on first occurrences (0.65→0.66): on this talk the
+   remaining failures are terms the model simply knows or misses regardless.
+3. **Calibrated expectation for the paper**: probe-scale gains (+7 pooled) are
+   partly an artifact of context-deprived segment-level baselines; session-level
+   value concentrates where model-unknown term density is high. This elevates
+   the benchmark's stratification (term density × slide density) from nicety to
+   the central experimental variable — S3 (ACL, 95% slide density, heavy
+   novel terminology) is where session-level gains should appear, and S1
+   generic-vocabulary talks are the honest null. Full-session cost: 18 min ×
+   condition × talk on one H200 → S1 full sweep needs sharding.
+
 ## Caveats
 
 - Text-prefix simulation (transcript, not audio); segment-level, not long-form
