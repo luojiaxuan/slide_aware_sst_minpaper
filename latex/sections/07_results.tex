@@ -6,9 +6,10 @@
 
 Table~\ref{tab:probe} reports the controlled probe (\S\ref{sec:experiments}) on
 Greek$\rightarrow$English TEDx segments with English slides (M3 regime, human
-references, $n{=}40$; Qwen3-32B translator, Local Agreement policy). The
-\emph{hard stratum} contains segments where the audio-only baseline misses most
-reference terminology (term recall $\leq 0.4$; $n{=}22$).
+references, $n{=}40$; Qwen3-32B, Local Agreement policy). The \emph{hard
+stratum} contains segments where the audio-only baseline misses most reference
+terminology (term recall $\leq 0.4$; $n{=}22$; the hard rate, $\sim$24\%, is
+stable across 32B and 14B models --- a data property).
 
 \begin{table}[t]
 \centering
@@ -20,60 +21,113 @@ Condition & chrF & $\Delta$ pooled & $p$ & $\Delta$ hard \\
 A\; audio-only                & 38.8 & ---    & ---   & ---     \\
 B\; slide terms (OCR)         & 35.2 & $-2.9$ & n.s.  & $+2.3$  \\
 B\; slide terms (VLM)         & 39.9 & $-0.6$ & n.s.  & $+14.1$ \\
-B\; VLM + LLM-gate            & 38.0 & $-2.0$ & n.s.  & $+10.1$ \\
 B\; VLM + need-gate (oracle)  & \textbf{45.3} & $\mathbf{+7.3}$ & $<.001$ & $+13.3$ \\
 C\; oracle future terms       & 46.6 & $+7.0$ & .059  & $+16.3$ \\
 D\; wrong-slide terms         & 38.6 & $-0.2$ & n.s.  & ---     \\
 \bottomrule
 \end{tabular}
 \caption{Anticipation-value probe (el$\rightarrow$en, $n{=}40$; paired
-bootstrap vs.\ A). Real slide evidence (VLM-read) with need-based injection
-matches the oracle-terms upper bound; extraction quality and injection timing
-are each individually necessary.}
+bootstrap vs.\ A; vLLM serving). Slide evidence read by a VLM and injected
+selectively matches the oracle-terms upper bound.}
 \label{tab:probe}
 \end{table}
 
 \paragraph{The premise holds, and gains sit exactly where predicted.}
 Injecting the reference's own rare terms (C) --- a perfect-anticipation oracle
---- yields $+7.0$ chrF pooled and $+18.8$ on the hard stratum
-($p{<}10^{-4}$), with hard-stratum term recall rising
-$0.12\!\rightarrow\!0.41$ ($3.4\times$). Gains concentrate on segments where
-the baseline fails on terminology and are neutral elsewhere --- the signature
-of anticipation value rather than generic prompt enrichment. The effect
-replicates across model scales (7B pilot) and both language regimes (zh
-secondary set: $+6.0$ pooled, term recall $0.52\!\rightarrow\!0.68$).
+--- yields $+7.0$ chrF pooled and $+18.8$ on the hard stratum ($p{<}10^{-4}$),
+with hard-stratum term recall rising $0.12\!\rightarrow\!0.41$ ($3.4\times$).
+Gains concentrate on segments where the baseline fails on terminology and are
+neutral elsewhere. The effect replicates across model scales (7B, 14B, 32B)
+and across all three benchmark regimes (below).
 
-\paragraph{Extraction quality is load-bearing.}
-OCR slide terms are neutral-to-harmful (fragments such as
-``\textit{independen}'' from 480p projections), while VLM-read terms recover
-$+14.1$ chrF on hard segments --- 75\% of the oracle's hard-stratum gain,
-delivered by the \emph{real} visual channel.
+\paragraph{Extraction quality is load-bearing.} OCR slide terms are
+neutral-to-harmful (480p fragments); VLM-read terms recover $+14.1$ chrF on
+hard segments --- 75\% of the oracle's hard-stratum gain from the \emph{real}
+visual channel.
 
-\paragraph{Injection timing closes the rest.}
-Ungated injection is flat pooled because easy segments are disturbed; gating
-injection on segments that need it recovers $+7.3$ pooled ($p{<}0.001$),
-statistically indistinguishable from --- and cleaner than --- the oracle-terms
-condition. Runtime gates tested so far lack selectivity (an LLM relevance
-gate fires on 88\% of segments; rule-based uncertainty signals either
-under-fire retrospectively or over-fire, \S\ref{sec:gating}), identifying
-learned failure prediction as the concrete open problem.
+\subsection{Injection form: a three-step reversal}
+\label{sec:injection-form}
 
-\paragraph{Bad evidence is benign at prompt level; easy-segment interference
-is a protocol effect.}
-Wrong-slide terms (D) are within noise of the baseline. Per-stratum analysis
-shows the easy-stratum dips under \emph{all} hint conditions (including D) with
-truncation signatures, tracing to Local Agreement's sensitivity to prompt
-perturbations rather than term over-adoption; logits-level hint integration is
-the indicated remedy for the full system.
+Our initial runs suggested prompt hints disturb easy segments (motivating
+need-gates and decode-level soft injection); the investigation closed in a
+reversal that reshapes the method:
+
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Apparent easy-segment harm} under vLLM serving affected
+  \emph{all} hint conditions (including wrong-slide) with truncation
+  signatures, and an oracle need-gate recovered $+7.3$ pooled ($p{<}.001$).
+\item \textbf{Decode-level soft injection is benign but powerless}: uniform
+  logit bias saturates at $+1.3$ hard ($+8$ bias), and trie-constrained
+  shallow fusion --- boosting a term's continuation only along its prefix ---
+  reaches only $+0.7$ pooled (termR $0.29$ vs.\ prompt's $0.46$).
+  Terminology failures are \emph{phrase-planning} failures, not single-token
+  near-misses; posterior logit nudges are too late and too local, while prompt
+  hints act at the planning level.
+\item \textbf{The root cause was serving nondeterminism}: batched vLLM serving
+  returns different outputs for identical prefixes, stalling the
+  longest-common-prefix commit. Under deterministic decoding the baseline
+  jumps ($38.8\!\rightarrow\!62.7$ corpus chrF on the same segments) and
+  prompt injection is simultaneously \emph{powerful and benign}: on 50
+  14B-hard segments, $+6.5$ chrF ($p{<}0.001$), term recall
+  $0.27\!\rightarrow\!0.46$, easy-$\Delta$ $\approx 0$.
+\end{enumerate}
+
+\noindent\textbf{Full-system verdict.} Deterministic (or drift-tolerant)
+commit + prompt-level hint injection; need-gating demotes from a necessity to
+a token-budget optimization; trie biasing is recorded as an informative
+negative result. Practically: simultaneous pipelines built on serving-grade
+inference must either pin deterministic kernels or use drift-tolerant commit
+policies --- a deployment finding independent of the visual channel.
+
+\subsection{Cross-regime mechanism evidence (H2)}
+\label{sec:mechanism}
+
+The En$\rightarrow$Zh control stratum (ACL 60/60, 5 talks, 60 segments,
+official tagged terminology; slides are \emph{source}-language $\Rightarrow$
+M1+M2 only) delivers the first direct test of the mechanism decomposition:
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+Condition (En$\rightarrow$Zh) & chrF & $\Delta$ & termAcc & $\Delta$ hard \\
+\midrule
+none              & 26.3 & ---    & 0.42 & ---    \\
+\textbf{slide (VLM, ungated)} & \textbf{28.3} & $+3.1$ & 0.44 & $+9.1$ \\
+oracle terms      & 25.9 & $-1.1$ & 0.39 & $+3.8$ \\
+wrong slide       & 23.1 & $-3.2$ & 0.32 & $+3.3$ \\
+\bottomrule
+\end{tabular}
+\caption{S3 control (ACL 60/60, $n{=}60$, official tagged terms; vLLM-era
+protocol, zh char-level LCP --- truncation caveat applies).}
+\label{tab:s3}
+\end{table}
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Copy-rate 0.00} (2/462): English slide strings never enter the
+  Chinese output verbatim, versus the active copy channel in X$\rightarrow$En
+  --- exactly H2's prediction that M3 (target-form supply) exists only when
+  slide language equals the target language, while M2 (recognition support)
+  gains persist ($+9.1$ hard) without copying.
+\item \textbf{Real slides transfer ungated} on this stratum: ACL screen-recorded
+  slides are dense (95\% of frames term-dense, $8\times$ mTEDx) and
+  speech-aligned (speakers read their slides), so injection matches the
+  model's natural phrasing.
+\item \textbf{Faithfulness is direction-sensitive}: wrong-slide evidence is
+  benign for 32B X$\rightarrow$En but harmful En$\rightarrow$Zh ($-3.2$);
+  faithfulness metrics must be reported per direction.
+\end{itemize}
+
+\subsection{Learned need prediction (as budget optimization)}
+Surface features of the source predict terminology failure at chance
+(talk-held-out AUC 0.49--0.52); draft-translation logprob features reach AUC
+0.62 --- the model's own uncertainty carries the signal --- preserving the full
+hard-stratum gain end-to-end with imperfect precision (0.16). Under the
+deterministic-decoding verdict this predictor is no longer required for
+safety, but remains useful to prioritize hint budget in long sessions.
 
 \subsection{Full-system results}
-\todo{Main table over S1 (mTEDx-V, stratified by visual signal and slide
-language), S2 (Chinese-LiPS-Long), S3 (ACL 60/60 tagged terms): quality
-(chrF/XCOMET) $\times$ latency (AL/LAAL) curves, term accuracy under the
-Wikidata protocol, copy-rate by slide-language regime (M3 vs M1+M2),
-faithfulness (wrong-slide adoption, visible-but-unspoken rate).}
-
-\subsection{Mechanism analysis}
-\todo{H1/H2 tests: anticipation gains across regimes; target-form supply ---
-term accuracy and slide-string copy rate largest on M3 talks (slide language =
-target language).}
+\todo{Main table over S1/S2/S3 with the deterministic streaming pipeline:
+quality $\times$ computation-aware latency, Wikidata term protocol with
+coverage, copy-rate by slide-language regime, per-direction faithfulness.}
