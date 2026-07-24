@@ -351,3 +351,29 @@ cross-segment context tail, dual-sample jitter averaging, bounded-drift resync):
 
 - `runs_qwen3_32b.jsonl` (224 runs, primary), `runs_qwen25_7b_local.jsonl`
   (224 runs, pilot), `killtest_items.json` (probe set), `killtest_32b_per_item.tsv`.
+
+## Follow-up 11: S3 (En→Zh) deterministic rerun — visual gain not separable from prompt-stabilization (2026-07-24)
+
+Re-ran ACL 60/60 (60 items) under deterministic decoding (Qwen3-14B, aries),
+after fixing two prompt bugs the vLLM-era run masked: (a) unfenced English
+glossary was itself translated and echoed as output on En→Zh (invisible on
+X→En, where hint language = target language) — now fenced `[GLOSSARY … END]`;
+(b) final-flush by LCP duplicated content — now flush-by-position.
+
+| cond (En→Zh, n=60) | chrF | Δ vs none | p | termAcc | copy-rate |
+|---|---|---|---|---|---|
+| none | 45.1 | — | — | 0.71 | 0.00 |
+| slide (VLM) | 47.5 | +2.5 | .037 | 0.70 | 0.02 |
+| oracle | 48.8 | +4.4 | .001 | 0.86 | 0.07 |
+| wrong | 47.6 | +2.6 | .013 | 0.75 | 0.00 |
+
+**Critical control: slide vs wrong = −0.1 (p=0.53).** On En→Zh the slide gain
+over baseline is NOT separable from a generic prompt-stabilization effect — any
+hint block (even wrong-slide terms) stabilizes the first decoding step and
+lifts chrF by ~+2.5, with zero foreign-token adoption (wrong terms are never
+copied in). Only the oracle shows a directional edge over wrong (+1.8, p=0.10).
+Copy-rate 0.00 confirms M3 (target-form supply) is absent when slides are
+source-language. **Honest verdict for En→Zh: source-language slides (M2 only)
+do not provide separable visual value on this protocol.** This scopes the
+headline claim to X→En and makes S3 the negative control — pending the X→En
+deterministic slide-vs-wrong test (Follow-up 12).

@@ -102,21 +102,30 @@ def run_condition(items, cond, tok, model, args):
         prompts = []
         for s in active:
             hints = (s["it"].get(field) or []) if field else []
-            hint_block = (f"Terminology from the talk's slides that may appear "
-                          f"soon: {', '.join(hints)}\n" if hints else "")
+            # The glossary must be unmistakably reference material: when the
+            # target language differs from the hint language (e.g. En->Zh with
+            # English slide terms), an unfenced hint line is itself translated
+            # and echoed as the output.
+            hint_block = (f"[GLOSSARY - reference only, never translate or "
+                          f"output these lines]\n{'; '.join(hints)}\n"
+                          f"[END GLOSSARY]\n" if hints else "")
             prompts.append(
-                f"Translate this partial {s['it']['src_lang']} speech transcript "
-                f"into {LANG_NAME.get(tgt, tgt)}.\n{hint_block}"
-                f"Partial source (may stop mid-sentence): "
+                f"You are a simultaneous interpreter translating "
+                f"{s['it']['src_lang']} speech into {LANG_NAME.get(tgt, tgt)}.\n"
+                f"{hint_block}"
+                f"[SPEECH SO FAR - may stop mid-sentence]\n"
                 f"{' '.join(s['units'][:step])}\n"
-                f"Output the complete {LANG_NAME.get(tgt, tgt)} translation of "
-                f"ONLY what has been spoken so far. No explanations - just the "
-                f"translation.")
+                f"[END SPEECH]\n"
+                f"Output ONLY the {LANG_NAME.get(tgt, tgt)} translation of the "
+                f"speech above. Do not output the glossary, the source text, or "
+                f"any explanation.")
         for s, text in zip(active, generate_batch(prompts, tok, model, args)):
             full = tokenize_target(
                 text.strip().split("\n")[0].strip().strip('"'), tgt)
             if step == len(s["units"]):
-                k = lcp_len(s["committed"], full, tgt)
+                # flush by position: emit the tail of the final hypothesis past
+                # what was already committed (monotonic, no duplication)
+                k = len(s["committed"])
                 if len(full) > k:
                     s["committed"] = s["committed"] + full[k:]
                     s["events"].append((step, len(s["committed"])))
