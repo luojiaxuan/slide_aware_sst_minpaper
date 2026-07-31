@@ -377,3 +377,48 @@ source-language. **Honest verdict for En→Zh: source-language slides (M2 only)
 do not provide separable visual value on this protocol.** This scopes the
 headline claim to X→En and makes S3 the negative control — pending the X→En
 deterministic slide-vs-wrong test (Follow-up 12).
+
+## Follow-up 12 (DECISIVE): speech + vision on Qwen3-Omni — slide content adds nothing beyond image presence (2026-07-31)
+
+**This is the first probe with the correct premise.** All earlier probes fed a
+*transcript* to a text LLM, which deletes the acoustic ambiguity that slide
+context is supposed to resolve — if the transcript already commits to the right
+homophone, the slide has nothing left to do. Here the model consumes **audio**
+incrementally (Qwen3-Omni-30B-A3B-Instruct, hyper01 GPU6) and the slide enters
+as an **image** through the omni vision encoder. Local Agreement commit;
+Chinese-LiPS technical lecture, zh→En, 206 segments × 3 conditions = 618 runs.
+Data: `gavinlaw/chinese-lips-speech-slide-probe`.
+
+| condition (n=206) | chrF | mean AL (chunks) |
+|---|---|---|
+| none (audio only) | 78.3 | 2.63 |
+| slide (audio + current slide image) | 80.7 | 2.42 |
+| wrong (audio + a *different* slide image) | 80.6 | 2.43 |
+
+| contrast | ΔchrF | p | ΔAL | p |
+|---|---|---|---|---|
+| slide vs none | **+2.63** | **<0.0001** | **−0.202** | **0.0003** |
+| wrong vs none | **+2.29** | **<0.0001** | **−0.199** | **0.0001** |
+| **slide vs wrong** | **+0.34** | **0.22 (n.s.)** | **−0.002** | **0.47 (n.s.)** |
+
+**Verdict: the gain comes from image *presence*, not slide *content*.** An
+entirely unrelated slide delivers essentially the same quality gain (+2.29 vs
++2.63) and the same earlier commits (−0.199 vs −0.202). Both hypothesised
+mechanisms fail their control:
+- *Latency*: vision does make the model commit earlier (−0.2 chunks, p<0.001) —
+  the user's intuition was directionally right — but this is content-independent.
+- *Disambiguation*: if vision were resolving word senses, the correct slide would
+  have to beat the wrong slide. It does not (+0.34, n.s.).
+
+Unlike previous null results, this one is credible: correct input modality
+(audio), correct visual pathway (vision encoder, not OCR text), and the model
+the user specified.
+
+**Two honest remaining possibilities** (neither tested):
+1. *Insufficient headroom*: baseline chrF is already 78.3 on clean, scripted
+   lecture audio; acoustic ambiguity is scarce. Noisy/accented/jargon-dense
+   speech would give vision more to do.
+2. *Relevance selection missing*: a whole slide covers 30–90 s of speech, so
+   ~96% of its content is irrelevant to the current segment and dilutes to
+   noise. Injecting only the currently-relevant fragment (RASST's retriever)
+   may be the effective form.
