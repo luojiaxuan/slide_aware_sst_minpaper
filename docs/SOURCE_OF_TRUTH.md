@@ -18,6 +18,10 @@ links, or handoff state.
 ## Current Git Pointers
 
 - GitHub repo: <https://github.com/luojiaxuan/slide_aware_sst_minpaper>
+- Current ACL paper and experiment contract:
+  [`docs/ACL_PAPER_BLUEPRINT_20260731.md`](ACL_PAPER_BLUEPRINT_20260731.md)
+- Independent ACL-style review and resolved/residual risks:
+  [`docs/ACL_BLUEPRINT_REVIEW_20260731.md`](ACL_BLUEPRINT_REVIEW_20260731.md)
 - Current research goal and route gates:
   [`docs/RESEARCH_GOAL_20260731.md`](RESEARCH_GOAL_20260731.md)
 - Current evidence and confidence:
@@ -41,6 +45,19 @@ links, or handoff state.
   [`docs/DIAGNOSTIC_REVIEW_GUIDE.md`](DIAGNOSTIC_REVIEW_GUIDE.md)
 
 ## Dataset and Artifact Truth
+
+### Current Benchmark Sources
+
+| Role | Canonical source | Status |
+| --- | --- | --- |
+| Primary long-form held-out benchmark | MCIF paper/project: <https://arxiv.org/abs/2507.19634>, <https://mt.fbk.eu/mcif/>; intended HF source `FBK-MT/MCIF` | Selected; exact HF revision, file hashes and local manifest not yet frozen |
+| Development and tagged-term replication | ACL60/60 official IWSLT release | Five dev videos currently integrated; eval media, translations and term annotations still need immutable manifests |
+| Private timing/diagnostic benchmark | Chinese-LiPS derived private HF repo below | Available; not a paper-grade ST ranking set |
+| Controlled acoustic corruptions | MUSAN <https://www.openslr.org/17/> and AcousticRooms <https://www.openslr.org/119/> | Selected; revisions/seeds/mixing manifests not yet frozen |
+
+No paper experiment may rely on an unfrozen local-only copy. The first Phase-A
+data task must record source URLs, accepted terms/licenses, immutable revisions
+or SHA256 manifests, and generation commands here or in a linked data card.
 
 ### Upstream Dataset
 
@@ -120,9 +137,9 @@ confirmed.
    across the dwell window. Do not re-run the visual encoder per audio chunk.
 3. Lip video and slide+lip hybrid experiments are out of scope. AVMuST-TED is
    retained only as a related-work and historical licensing note.
-4. Treat strong OCR, structured VLM evidence, and oracle text-equivalent context
-   as mandatory semantic baselines, not weak strawmen. Direct raw-image
-   embeddings are optional and earn a claim only if they beat these proxies.
+4. Use the nested representation chain linear OCR → OCR+2D layout → OCR-only
+   text-mode VLM semantics → image+OCR VLM semantics → human relation oracle.
+   R2/R3 must share weights, prompt, schema and decoding; only pixels differ.
 5. The current speech+image result does not establish correct-slide content
    use: its wrong slide comes from the same lecture.
 6. Measure slide dwell time and slide-to-speech lead/lag from timelines; do not
@@ -133,17 +150,35 @@ confirmed.
 8. Chinese-LiPS remains a private diagnostic candidate, not a settled main
    benchmark. Paper-grade claims require independent/human references and a
    confirmed usage scope.
-9. Use Qwen pseudo references for development only; use human or independently
+9. MCIF is the primary project-held-out long-form benchmark (En→Zh main,
+   En→De replication); ACL60/60 is the development/tagged-term replication set.
+10. Native clean/variable audio and controlled full-talk noise are reported
+    separately. Synthetic noise is a causal stress test, not evidence of
+    real-world noise prevalence.
+11. IWSLT 2026 PDF phrase boosting + BM25/RAG, strong current-slide OCR, and a
+    noise-robust audio-only system are mandatory baselines.
+12. The sole primary contribution is the causal benchmark/protocol and finding.
+    Cache is enabling infrastructure; generic gating/top-k is not novelty; the
+    evidence-budget policy is secondary only if its pre-registered gate passes.
+13. Use Qwen pseudo references for development only; use human or independently
    produced references for paper ranking.
-10. Use Git docs for progress and Hugging Face for reusable data/model artifacts.
+14. Use Git docs for progress and Hugging Face for reusable data/model artifacts.
+15. Before the first MCIF run, push the complete frozen config/prompt/model/noise
+    hashes. Run inference without mounted references and score only after an
+    append-only 21-talk completion ledger is closed.
+16. Phase A on five ACL60/60 dev talks is only a futility screen. It cannot pass
+    the confirmatory gates or substitute segment-level p-values for talk-level
+    power.
 
 ## Current Next Actions (2026-07-31)
 
-1. Reconstruct slide-change events and report dwell-time plus
-   slide-to-first-related-speech lead/lag distributions.
-2. Add cross-talk/cross-domain wrong images, same-talk stale images, strong OCR,
-   structured VLM, and oracle text-equivalent conditions to the 206-item probe.
-3. Human-check a small reference and beyond-OCR subset before interpreting
-   metric differences as translation improvements.
-4. Implement an async evidence cache runner and separately measure cold encode,
-   ready-time misses, amortized cost, and on-path retrieval before scaling.
+1. Freeze MCIF and ACL60/60 eval revisions/licenses/hashes, then reconstruct
+   causal slide timelines and measure dwell plus slide-to-speech lead/lag.
+2. Connect an IWSLT 2026 long-form SimulStream/OmniSTEval runner and implement
+   audio-only, robust-audio, PDF-RAG, nested R0→R3, stale, and wrong controls.
+3. Run Phase A on the five ACL60/60 dev talks at native/+5/0 dB. Keep all 21
+   MCIF talks project-held-out. Phase A only judges futility; it cannot pass the
+   confirmatory content-specificity gate.
+4. If Phase A does not stop, annotate 300–500 image-needed events, run MDE/power
+   analysis, and freeze the heuristic, hashes and one-shot evaluator before any
+   MCIF output. Learned selection remains secondary.

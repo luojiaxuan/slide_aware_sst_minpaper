@@ -15,8 +15,14 @@
 > updated, persistent semantic-evidence state. Encode it once on a slide-change
 > event, reuse it across its full dwell window, and let causal speech state
 > retrieve only relevant evidence. Lip video and slide+lip hybrid experiments
-> are out of scope. See
-> [docs/RESEARCH_GOAL_20260731.md](docs/RESEARCH_GOAL_20260731.md).
+> are out of scope. The current ACL paper contract, including the benchmark,
+> strong baselines, noise protocol, metrics, kill gates, and eight-week
+> execution order, is
+> [docs/ACL_PAPER_BLUEPRINT_20260731.md](docs/ACL_PAPER_BLUEPRINT_20260731.md).
+> [docs/RESEARCH_GOAL_20260731.md](docs/RESEARCH_GOAL_20260731.md) records the
+> underlying scope decision. The independent ACL-style cross-review and
+> remaining rejection risks are in
+> [docs/ACL_BLUEPRINT_REVIEW_20260731.md](docs/ACL_BLUEPRINT_REVIEW_20260731.md).
 
 ## Original hypothesis (for the record)
 
@@ -47,39 +53,44 @@ docs/    stage-by-stage progress, plans (BENCHMARK_PLAN.md), planning/ archive
 latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
 ```
 
-## Existing assets (built through 2026-07-17)
+## Current paper direction (decided 2026-07-31)
 
-- **Direction decided**: **direction-general** policy on one unified
-  multilingual base — X→En primary evidence (M3 + Wiki-verifiable terms),
-  En→Zh control on ACL 60/60 (tagged terms), optional X→X generality stratum
-  (mTEDx es→fr/it human refs, Pareto/copy-rate only). Mechanism decomposition
-  (M1 anticipation / M2 recognition support / M3 target-form supply) and cost
-  accounting in [docs/BENCHMARK_PLAN.md](docs/BENCHMARK_PLAN.md).
-- **Benchmark strata**:
-  - S1 realistic-noisy: [gavinlaw/mtedx-v-eval](https://huggingface.co/datasets/gavinlaw/mtedx-v-eval)
-    — 100 long-form talks es/fr/it/ru/el→en (~18 h), talk_id = live YouTube ID
-    (100/100 alive), human refs, OCR visual-signal stratification included. DONE.
-  - S2 clean-strong: [gavinlaw/chinese-lips-longform-debug](https://huggingface.co/datasets/gavinlaw/chinese-lips-longform-debug)
-    — zh long-form rebuilt on the original session timeline (real pauses
-    restored, drift ≤1 ms), dedicated 1080p slide feed upstream, 100% slide
-    coverage. En references pending (machine draft + human-verified core).
-- **Measured facts**: mTEDx visual signal is sparse (~12% text frames; 58/100
-  talks near-zero) → honest negative stratum; Chinese-LiPS slides are
-  never-occluded 1080p (chi_sim OCR 47–151 tokens/slide) → clean upper bound.
+- **Paper question:** when does a live slide provide useful semantic evidence
+  beyond strong OCR/PDF context for SimulST under controlled acoustic
+  corruption, and how much evidence should a causal system consume?
+- **Primary benchmark:** MCIF long-form scientific talks, En→Zh primary and
+  En→De replication. It has 21 talks, video/audio and professional references,
+  and is the official IWSLT 2026 SimulST development corpus.
+- **Replication benchmark:** ACL60/60 dev/eval En→Zh, using its external term
+  annotations and direct lineage to *Do Slides Help?*.
+- **Private diagnostic:** Chinese-LiPS-Long for slide dwell/change timing and
+  Chinese ASR/terminology probes. It is not a paper-grade ST ranking set without
+  independent human references and confirmed use scope.
+- **Historical assets:** mTEDx-V and Chinese-LiPS derived artifacts remain on
+  Hugging Face, but they no longer define the main paper. mTEDx/TED media are
+  blocked from new use without explicit permission.
 - **Scripts** in `code/scripts/`: `build_mtedx_v_manifest.py`,
   `extract_frames_by_manifest.py`, `build_chinese_lips_longform.py`
   (`--timeline-dir` for original timeline), `score_visual_signal.py`
   (`--backend ocr|vlm`), `translate_zh_en_draft.py`.
 
-## Next decision (see docs/RESEARCH_GOAL_20260731.md)
+The July 17 direction plan is retained only as history in
+[docs/BENCHMARK_PLAN.md](docs/BENCHMARK_PLAN.md); do not execute it as the
+current benchmark contract.
 
-1. Measure the real slide dwell-time and slide-to-related-speech lead/lag
-   distributions instead of assuming a 30–60 s window.
-2. Rebuild the 206-item probe around once-per-slide cached evidence, with strong
-   OCR, structured VLM, oracle text-equivalent, stale, and cross-talk controls.
-3. Measure cold visual encoding, dwell-normalized amortized cost, evidence-ready
-   misses, and on-path retrieval separately. Scale only if content specificity
-   and beyond-OCR gates pass.
+## Next execution milestone
+
+Build the Phase-A causal futility-screen package from the ACL paper blueprint:
+
+1. Freeze MCIF and ACL60/60 revisions/licenses and reconstruct causal slide
+   timelines, including measured dwell and slide-to-speech lead/lag.
+2. Connect a long-form IWSLT 2026 runner and implement audio-only,
+   noise-robust, PDF-RAG, nested linear-OCR/layout/text-mode-VLM-semantics/
+   image-semantics, stale, and wrong conditions.
+3. On the five ACL60/60 development talks, run native/+5/0 dB before training
+   any selector. Keep all 21 MCIF talks project-held-out until the system is
+   frozen. This five-talk phase may stop the project for futility, but cannot
+   establish the confirmatory claim.
 
 ## Rules
 

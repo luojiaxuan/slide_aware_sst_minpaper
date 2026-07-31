@@ -1,6 +1,14 @@
 # Benchmark Plan: Direction Decision and Test-Set Construction
 
-Date: 2026-07-17. Status: **decided — direction-general framing; X→En primary evidence; En→X control on ACL 60/60; optional X→X generality stratum (mTEDx es→fr/it); unified base model across all strata.**
+Date: 2026-07-17. Status: **SUPERSEDED on 2026-07-31. This file is retained as
+historical rationale and must not drive new experiments.** The active benchmark
+contract is
+[`ACL_PAPER_BLUEPRINT_20260731.md`](ACL_PAPER_BLUEPRINT_20260731.md): MCIF is
+the primary long-form test, ACL60/60 is the tagged-term replication set, and
+Chinese-LiPS is a private timing/diagnostic set. New TED/mTEDx use is blocked
+without explicit permission.
+
+Historical decision below: **direction-general framing; X→En primary evidence; En→X control on ACL 60/60; optional X→X generality stratum (mTEDx es→fr/it); unified base model across all strata.**
 Principle: test sets must be reviewer-proof (real slides, human or human-verified
 references, no synthetic visual evidence in eval); training data is cheap and out
 of scope here.

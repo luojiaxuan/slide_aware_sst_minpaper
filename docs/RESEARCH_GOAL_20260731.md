@@ -51,8 +51,10 @@ audio prefix x_<=t + decoder state y_<m --(retrieve/gate)--> small packet P_t
 | 邻近工作 | 已覆盖 | 本项目必须证明的差异 |
 | --- | --- | --- |
 | OmniFusion | scientific-talk speech+image SimulST；image 在推理路径上带来额外时延 | change-triggered once-per-slide encoding、跨 chunk cache、非阻塞读取、cold/amortized/on-path 分项成本，以及视觉内容必要性控制 |
+| IWSLT 2026 extra-context / MLLP-VRAIN | long-form SimulST 使用 ACL paper PDF；ASR phrase boosting + 预翻译 memory + BM25 RAG | live current slide 而非整篇静态 PDF；非文本结构、temporal alignment、wrong/stale controls 和 evidence budget。Context retrieval/top-k 本身不是 novelty |
+| LECTRANS | 383 h academic lectures；slide image/OCR + aligned ASR transcript 的 segment-level translation；直接讨论 slide 何时有帮助或成为噪声 | raw-audio unsegmented SimulST、真实 slide timing、controlled acoustic corruption、causal commits 和 async cost；不能再泛称“首个 lecture slide translation benchmark” |
 | EGTA / contextual SST | 从预先存在的 document terminology memory 按 streaming speech 选择文本证据 | evidence 来自随时间变化的 live visual state；保留非纯文本结构；测 slide-speech temporal alignment。若最终只剩静态术语 routing，则会与 EGTA 实质碰撞 |
-| Do Slides Help? | slide-conditioned offline ASR；大量训练图像由 transcript terms 合成 PDF/image | real slides、speech translation、causal commits、错误/过期证据和计算时延；不能用合成文字图片支撑 raw-vision claim |
+| Do Slides Help? | slide-conditioned offline ASR；ACL60/60 evaluation 使用真实 slide，MuST-C training augmentation 才由 transcript terms 合成 PDF/image | speech translation、causal commits、noise dose-response、错误/过期证据和计算时延；不能把训练合成图误写成其评测数据 |
 | Lip-based AVST | phonetic vision 对 noisy/offline ST 的鲁棒性 | 不属于本项目主张；related work 中用于区分 continuous phonetic vision 与 sparse persistent semantic vision |
 
 因此主问题不是泛化的“image 是否有用”，而是：
@@ -71,10 +73,14 @@ audio prefix x_<=t + decoder state y_<m --(retrieve/gate)--> small packet P_t
 
 - `A0`: audio only；
 - `A1`: audio + topic/metadata；
-- `A2`: audio + strong OCR（含标准清洗、去重和语言识别）；
-- `A3`: audio + VLM-derived structured semantic evidence；
-- `A4`: audio + cached raw/direct visual representation（模型支持时）；
-- `A5`: audio + oracle text-equivalent（人工覆盖可见文字、标签、公式和必要关系）。
+- `R0`: linear OCR；
+- `R1`: 相同 OCR strings + 2D bbox/reading order/layout hierarchy；
+- `R2`: OCR-only text-mode VLM semantics，与 R3 同一 VLM/prompt/schema/decoding，
+  只读 R1，不看 pixels；
+- `R3`: image + OCR VLM semantics，与 R2 唯一差异是增加 current pixels；
+- `R4`: human relation oracle；
+- `R5`: once-per-slide cached raw visual/KV；
+- `R6`: per-chunk raw image，仅作 cost ablation。
 
 每种 visual condition 都要配 matched current slide、same-talk stale/wrong slide 和
 cross-talk/cross-domain wrong slide。报告 chrF/BLEU、XCOMET、term/entity recall、
@@ -84,9 +90,9 @@ visible-but-unspoken hallucination、wrong-evidence adoption、copy rate、AL/LA
 
 1. `correct > stale/wrong` 的 paired 95% CI 下界大于 0，证明内容和时间对齐真的
    被使用，而不是 image presence 或 domain priming；
-2. `A3 > A2` 在预注册的 beyond-OCR slice 上成立，才能声称 layout、formula、
-   chart relation 或 emphasis 带来 OCR 之外的 semantic vision value；
-3. 只有 `A4 > max(A3, A5)` 时才声称 direct raw-pixel representation 不可替代。
+2. `R3 > R2` 在预注册 pooled `image_needed` slice 上成立，才能声称 pixels 提供
+   OCR-only semantics 之外的 incremental information；四个 subtype 不可单独挑显著；
+3. 只有 `R5 > max(R3, R4)` 时才声称 direct raw-pixel representation 不可替代。
    否则 method 应选择最便宜、最可审计且效果相当的结构化 evidence。
 
 若只通过第 1 层而不通过第 2 层，结果是 slide-derived contextual SST，而不是
@@ -126,7 +132,25 @@ per-chunk vision 的计算成本，并且相对 audio-only 不产生可测的 au
 
 ## 数据角色
 
-### Chinese-LiPS
+### MCIF：主 held-out test
+
+MCIF 包含 21 个 ACL 2023 scientific talks（约 1 h 58 m）、原始 MP4/WAV、人工
+English transcript 和专业 De/It/Zh translations，采用 CC BY 4.0，并已进入 IWSLT
+2026 long-form SimulST protocol。主方向为 En→Zh，En→De 作复制。它比只有 5 个
+eval talks 的 ACL60/60 更适合 talk-cluster inference，也是当前最优先接入的数据。
+
+MCIF 构建时排除了 inaudible/excessive-noise 和 distant-microphone 样本，因此不是
+天然 noisy benchmark。Native audio 必须单列；MUSAN babble 的 +10/+5/0/-5 dB
+只作为 full-talk controlled intervention，并配 held-out noise type/RIR。
+
+### ACL60/60：development 与 tagged-term replication
+
+ACL60/60 的 dev/eval 各 5 talks、专业多语 reference 和第三方 term tags 适合
+En→Zh replication，也直接延续 *Do Slides Help?*。其音频刻意选择为条件不影响理解
+的清晰演讲，不能单独承担 noisy robustness 主张。当前 repo 只接入 5 个 dev talks，
+执行前需要补齐 eval 和官方 term annotations。
+
+### Chinese-LiPS：private diagnostic
 
 当前最重要的 clean/strong-slide 内部候选：连续 session timeline、独立 1080p slide
 feed、speech 和 transcript 同时存在。它用于测 slide dwell distribution、构建真实
@@ -140,9 +164,9 @@ setting 下 `correct - same-talk wrong = +0.34 chrF (p=0.22)`，没有证明局�
 
 ### 其他 strata
 
-- ACL 60/60：term-credible control，前提是媒体和翻译使用范围确认；
-- mTEDx-V：历史上用于 sparse/noisy negative stratum，但当前 TED 条款风险不允许
-  把重新下载或自动抽取视为默认可行；
+- LECTRANS：待论文接收、数据实际发布和许可确认后再做外部验证，不作为 blocker；
+- mTEDx-V：历史 sparse/noisy negative stratum；当前 TED 条款风险不允许重新下载
+  或默认继续实验；
 - AVMuST-TED：退出执行计划，仅保留历史许可审计和 related-work 记录。
 
 ## Novelty audit
@@ -152,6 +176,10 @@ setting 下 `correct - same-talk wrong = +0.34 chrF (p=0.22)`，没有证明局�
 - OmniFusion 是任务先例，但没有 once-per-slide persistent cache、异步成本分解、
   OCR/text-equivalent/wrong-image controls，也未证明 vision content 的必要性；详见
   [`OMNIFUSION_REASSESSMENT_20260731.md`](OMNIFUSION_REASSESSMENT_20260731.md)。
+- LECTRANS 对“lecture slide + transcript translation + when slides help/noise”构成
+  直接边界；IWSLT 2026 context track 又覆盖 PDF phrase boosting 和 BM25/RAG。
+  因而论文必须是 raw-audio long-form SimulST、live temporal state、acoustic
+  intervention 和 matched controls，而不能只写 multimodal lecture translation。
 - EGTA 对“文本 memory + streaming selection”构成 **Level 2 / material collision**。
   因而本项目不能把 VLM 输出简单压成术语表后宣称 multimodal novelty；必须保留
   live visual state、非文本关系、temporal alignment 和 async cost protocol。
@@ -178,13 +206,13 @@ setting 下 `correct - same-talk wrong = +0.34 chrF (p=0.22)`，没有证明局�
 
 ## 接下来三步
 
-1. 从已有 long-form timeline 重建真实 slide change event，报告 dwell time 的
-   median、P25/P75/P90 和 slide-to-first-related-speech lead/lag；验证 30--60 秒假设。
-2. 把现有 206-item speech probe 改成 persistent evidence protocol：补 strong OCR、
-   structured VLM、oracle text-equivalent、same-talk stale 和 cross-talk wrong controls，
-   并人工核查小型 reference/beyond-OCR subset。
-3. 实现 async cache simulator/runner，分开测 cold encode、amortized cost、ready-time
-   miss 和 on-path retrieval；只在这三步通过后扩大数据或训练模型。
+1. 拉取并冻结 MCIF 与 ACL60/60 eval revisions/licenses；重建 causal slide change
+   events，报告 dwell median、P25/P75/P90 和 slide-to-first-related-speech lead/lag。
+2. 接通 IWSLT 2026 long-form runner，在 ACL60/60 五个 dev talks 上比较 audio-only、
+   robust-audio、PDF-RAG、nested R0→R3、same-talk stale 和 cross-talk wrong；先跑
+   native/+5/0 dB。该阶段只判 futility，不能凭 5 talks 宣告 G0/G1 通过。
+3. 未触发 futility stop 后，人工标注 300–500 个 `image_needed` events、做 MDE/power
+   audit、冻结 heuristic 与 one-shot evaluator；全部 21 个 MCIF talks 只运行一次。
 
 ## 主要相关工作
 
@@ -197,5 +225,14 @@ setting 下 `correct - same-talk wrong = +0.34 chrF (p=0.22)`，没有证明局�
   Context*: <https://aclanthology.org/2020.emnlp-main.184/>
 - Sinhamahapatra and Niehues, EMNLP 2025, *Do Slides Help?*:
   <https://aclanthology.org/2025.emnlp-main.814/>
+- IWSLT 2026, *Speech-to-Text with Extra Context*:
+  <https://iwslt.org/2026/simultaneous>
+- Iranzo-Sánchez et al., IWSLT 2026, *MLLP-VRAIN UPV System for the IWSLT 2026
+  Simultaneous Speech Translation Task*:
+  <https://aclanthology.org/2026.iwslt-1.24/>
+- *LECTRANS: A Multimodal Translation Benchmark for Academic Lectures*:
+  <https://openreview.net/pdf/b129e506359e5d129d72d135c11e28938b7e34d8.pdf>
+- Gaido et al., ICLR 2026, *MCIF*:
+  <https://arxiv.org/abs/2507.19634>
 - Cheng et al., ICCV 2023, *MixSpeech* / AVMuST-TED（excluded lip route）:
   <https://openaccess.thecvf.com/content/ICCV2023/html/Cheng_MixSpeech_Cross-Modality_Self-Learning_with_Audio-Visual_Stream_Mixup_for_Visual_Speech_ICCV_2023_paper.html>

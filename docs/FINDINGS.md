@@ -130,7 +130,9 @@ inference, not direct measurement. **Evidence:** `runs_bias{2,4,8}.jsonl`,
 The project is now scoped to **asynchronous, persistent slide-semantic
 evidence**. A slide is encoded once after a change event and reused across its
 dwell window; it is not re-encoded beside every audio chunk. The decision
-contract is in [`RESEARCH_GOAL_20260731.md`](RESEARCH_GOAL_20260731.md).
+contract is in [`RESEARCH_GOAL_20260731.md`](RESEARCH_GOAL_20260731.md), and the
+complete experiment/paper contract is in
+[`ACL_PAPER_BLUEPRINT_20260731.md`](ACL_PAPER_BLUEPRINT_20260731.md).
 
 - Generic contextual SST is no longer a safe fallback contribution: EGTA
   (arXiv:2607.17766) already performs streaming-evidence-conditioned terminology
@@ -151,6 +153,40 @@ The current defensible paper space is therefore a causal, computation-aware
 study of **when persistent slide-derived semantic evidence helps SimulST and
 when information beyond OCR is necessary**. This is a research target, not an
 established finding.
+
+### 2026 literature/data audit update (2026-07-31)
+
+- **[high] MCIF should be the primary held-out benchmark.** It has 21 ACL 2023
+  talks, original MP4/WAV, human English transcripts, professional De/It/Zh
+  translations, CC BY 4.0, and an official IWSLT 2026 long-form SimulST path.
+  This is stronger for talk-level inference than the five ACL60/60 eval talks.
+- **[high] ACL60/60 should be development/replication, not the only main test.**
+  Its professional translations and external term tags are valuable, but its
+  audio was selected to be clear and the current repo only integrates five dev
+  talks. **Evidence:** ACL60/60 paper/release and local video audit.
+- **[high] MCIF and ACL60/60 are not native noisy benchmarks.** Noise must be
+  described as a controlled full-talk intervention, with native audio reported
+  separately. Noise seeds are repeated measures, not independent talks.
+- **[high] IWSLT 2026 PDF context is a mandatory strong baseline.** MLLP-VRAIN
+  already combines KeyBERT/ASR word boosting and pretranslated BM25 RAG, with
+  reported context gains. Top-k retrieval or generic context injection is not
+  a new contribution.
+- **[high] LECTRANS materially narrows the claim.** Its 383 h academic-lecture
+  benchmark compares slide text/image for aligned-ASR-transcript segment MT and
+  asks when slides help or introduce noise. Our remaining delta requires raw
+  unsegmented speech, SimulST, live temporal state, controlled acoustic
+  corruption, wrong/stale controls, and computation-aware costs.
+- **[medium] Direct video remains difficult on current scientific-talk data.**
+  MCIF reports that video often provides no benefit or can hurt current MLLMs.
+  This supports a selective/evidence-state study but is not proof that the
+  proposed method will work.
+
+These conclusions come from primary paper/release inspection; they have not yet
+been validated by a local MCIF run. The immediate experiment is therefore a
+small causal kill test on ACL60/60 dev, not model training. MCIF's HF configs
+share the same 21 underlying talks rather than providing disjoint development
+and test talks, so all 21 are reserved as project-held-out until the system is
+frozen.
 
 ### OmniFusion reassessment (2026-07-31)
 
@@ -181,5 +217,8 @@ Level 3 / partial overlap, not a Level 2 material collision. See
   claims. Related-work survey remains valid.
 - `MVP_DEFINITION.md` — its "single decision experiment" has been executed
   (negative, with the caveats in §1).
+- `BENCHMARK_PLAN.md` — the 2026-07-17 mTEDx/Chinese-LiPS-primary benchmark is
+  historical. The current hierarchy is MCIF primary, ACL60/60 replication, and
+  Chinese-LiPS private diagnostic.
 - Any doc predating 2026-07-31 that reports slide gains **without** a
   wrong-slide control reflects the pre-control era.
