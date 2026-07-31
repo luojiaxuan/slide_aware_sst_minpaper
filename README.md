@@ -10,6 +10,11 @@
 > experiment. **Read [docs/FINDINGS.md](docs/FINDINGS.md) first** — it carries
 > per-claim confidence levels, raw-evidence pointers, and what would overturn
 > each conclusion.
+>
+> **Current research goal:** do not choose slide, lip, or hybrid vision by
+> intuition. Test when raw visual evidence adds information beyond strong text
+> and audio proxies, then let pre-registered decision gates select the paper
+> route. See [docs/RESEARCH_GOAL_20260731.md](docs/RESEARCH_GOAL_20260731.md).
 
 ## Original hypothesis (for the record)
 
@@ -39,7 +44,7 @@ docs/    stage-by-stage progress, plans (BENCHMARK_PLAN.md), planning/ archive
 latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
 ```
 
-## Current status (2026-07-17)
+## Existing assets (built through 2026-07-17)
 
 - **Direction decided**: **direction-general** policy on one unified
   multilingual base — X→En primary evidence (M3 + Wiki-verifiable terms),
@@ -63,19 +68,21 @@ latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
   (`--timeline-dir` for original timeline), `score_visual_signal.py`
   (`--backend ocr|vlm`), `translate_zh_en_draft.py`.
 
-## Open decision (see docs/FINDINGS.md §5)
+## Next decision (see docs/RESEARCH_GOAL_20260731.md)
 
-1. Re-test on **high-ambiguity speech** (noisy / accented / jargon-dense) where
-   the baseline leaves headroom — current baseline chrF is 78.3 on clean,
-   scripted lecture audio.
-2. Add **relevance selection** (RASST chunkwise retriever over the visual
-   channel) so injected evidence is not ~96% irrelevant to the current segment.
-3. Write up the **negative result + benchmark + methodology** as the
-   contribution.
+1. Complete the semantic necessity control: strong OCR, oracle text-equivalent,
+   same-talk wrong slide, and cross-talk/cross-domain wrong slide.
+2. Run a small causal lip feasibility probe with aligned, shuffled, and wrong
+   lip video under realistic noise, including computation-aware latency.
+3. Select one primary route only after its matched-control confidence interval
+   clears the pre-registered gate. Hybrid is deferred until both routes pass.
 
 ## Rules
 
 - Test sets: real slides only, no synthetic visual evidence; references human or
   human-verified (two-tier, FLORAS-style).
-- No media redistribution (TEDx CC BY-NC-ND); manifests + scripts only.
+- Do not access, re-download, train on, or evaluate with TED/TEDx media under an
+  assumed research exception. Current TED terms require a separate written
+  license for ML/AI datasets, training, and evaluation; legacy dataset claims
+  need explicit permission or institutional review.
 - Git + Hugging Face are the sources of truth; `data_prep/` staging is disposable.

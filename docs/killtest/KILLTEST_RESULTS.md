@@ -1,5 +1,11 @@
 # Oracle Anticipation Kill Test — Results and Verdict
 
+> **Status (2026-07-31): historical experiment log, not the current project
+> verdict.** Follow-ups 1–11 use transcript input and therefore cannot test
+> acoustic disambiguation by vision. Follow-up 12 uses speech+image, but its
+> wrong slide is from the same lecture. Read `docs/FINDINGS.md` and
+> `docs/RESEARCH_GOAL_20260731.md` before interpreting the chronology below.
+
 Date: 2026-07-19. Pre-registered in docs/BENCHMARK_PLAN.md §5.1; runner/analyzer
 in `code/scripts/oracle_killtest_{runner,analyze}.py`; raw runs in this directory.
 
@@ -401,18 +407,22 @@ Data: `gavinlaw/chinese-lips-speech-slide-probe`.
 | wrong vs none | **+2.29** | **<0.0001** | **−0.199** | **0.0001** |
 | **slide vs wrong** | **+0.34** | **0.22 (n.s.)** | **−0.002** | **0.47 (n.s.)** |
 
-**Verdict: the gain comes from image *presence*, not slide *content*.** An
-entirely unrelated slide delivers essentially the same quality gain (+2.29 vs
-+2.63) and the same earlier commits (−0.199 vs −0.202). Both hypothesised
-mechanisms fail their control:
+**Bounded verdict: the gain does not depend on which slide from this talk is
+shown.** A different slide from the **same lecture** delivers essentially the
+same quality gain (+2.29 vs +2.63) and the same earlier commits (−0.199 vs
+−0.202). This rules out a large segment-specific effect under this protocol,
+but it does not separate talk/domain priming from generic image presence. The
+cross-talk/cross-domain wrong-image control is still missing. Under this bound,
+both hypothesised segment-level mechanisms fail their current control:
 - *Latency*: vision does make the model commit earlier (−0.2 chunks, p<0.001) —
   the user's intuition was directionally right — but this is content-independent.
 - *Disambiguation*: if vision were resolving word senses, the correct slide would
   have to beat the wrong slide. It does not (+0.34, n.s.).
 
-Unlike previous null results, this one is credible: correct input modality
-(audio), correct visual pathway (vision encoder, not OCR text), and the model
-the user specified.
+Unlike previous transcript-input null results, this experiment has the correct
+input modality (audio) and visual pathway (vision encoder, not OCR text). Its
+interpretation is nevertheless limited by the same-talk wrong-image design,
+single talk, machine references, and one model.
 
 **Two honest remaining possibilities** (neither tested):
 1. *Insufficient headroom*: baseline chrF is already 78.3 on clean, scripted

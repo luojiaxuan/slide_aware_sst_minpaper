@@ -18,7 +18,12 @@ links, or handoff state.
 ## Current Git Pointers
 
 - GitHub repo: <https://github.com/luojiaxuan/slide_aware_sst_minpaper>
-- Current project framing: [`docs/planning/SLIDE_CONTEXT_AWARE_MVP.md`](planning/SLIDE_CONTEXT_AWARE_MVP.md)
+- Current research goal and route gates:
+  [`docs/RESEARCH_GOAL_20260731.md`](RESEARCH_GOAL_20260731.md)
+- Current evidence and confidence:
+  [`docs/FINDINGS.md`](FINDINGS.md)
+- Historical project framing (superseded by the goal above):
+  [`docs/planning/SLIDE_CONTEXT_AWARE_MVP.md`](planning/SLIDE_CONTEXT_AWARE_MVP.md)
 - Agent handoff plan: [`docs/planning/AGENT_START_HERE.md`](planning/AGENT_START_HERE.md)
 - Experiment matrix: [`docs/planning/EXPERIMENT_MATRIX.md`](planning/EXPERIMENT_MATRIX.md)
 - Progress log: [`docs/PROGRESS.md`](PROGRESS.md)
@@ -72,7 +77,7 @@ permission is obtained.
 Do not make this derived Chinese-LiPS repo public unless upstream permission is
 confirmed.
 
-## Active Compute Context
+## Historical Compute Context (not current allocation)
 
 - Host: `hyper00`
 - Hostname: `node-radixark-16-0000`
@@ -92,7 +97,7 @@ confirmed.
   outputs and 0 raw parse failures; the rebuilt evidence index also passes an
   internal source-count consistency check against the repaired challenge.
 
-## Active Runs
+## Historical Runs
 
 | Run | Host/container | Model | Input | Output | Status |
 | --- | --- | --- | --- | --- | --- |
@@ -105,27 +110,35 @@ confirmed.
 | `qwen3_32b_diagnostic500_review_sheet_20260707` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | n/a | repaired diagnostic 500 plus parent experiment outputs | review CSV at `outputs/chinese_lips_train/annotation/diagnostic_review_sheet_500_qwen3_context_experiments_20260707.csv` and HF path `annotation/qwen3_32b_diagnostic500_review_sheet_20260707/` | Completed; uploaded to private HF commit `3d681ebe85babdacffe5e984bf59af6cade9c2f1`; tag `qwen3_32b_diagnostic500_review_sheet_20260707` |
 | `qwen3_vl_train_20260706_164650` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | partial shards under `outputs/chinese_lips_train/enrichment/qwen3_vl_train_20260706_164650/` | Paused/superseded; do not resume with old one-sample-per-process settings |
 
-## Current Durable Decisions
+## Current Durable Decisions (2026-07-31)
 
-1. Keep Chinese-LiPS as the main dataset.
-2. Do not frame the first paper as pure vision-aware SST.
-3. Use the safer umbrella: slide/context-aware simultaneous speech translation
-   under latency constraints.
-4. Treat OCR terms as a strong baseline, not a failure.
-5. Treat VLM captions/summaries as beyond-OCR evidence to test on low-OCR and
-   visual-non-OCR slices.
-6. Use Qwen pseudo references for scale, but build a human English diagnostic
-   subset for paper-grade evaluation.
-7. Use Git docs for progress and Hugging Face for reusable data/model artifacts.
+1. The primary question is when raw visual evidence is necessary beyond strong
+   text/audio proxies in causal, computation-aware SimulST.
+2. Evaluate semantic slide evidence and lip phonetic evidence independently;
+   do not make hybrid the MVP.
+3. Treat strong OCR and oracle text-equivalent context as mandatory semantic
+   baselines, not weak strawmen.
+4. Treat noise-robust audio, shuffled lips, and speaker-matched wrong lips as
+   mandatory lip baselines.
+5. The current speech+image result does not establish correct-slide content
+   use: its wrong slide comes from the same lecture.
+6. Do not use AVMuST-TED as an indispensable training or primary test source
+   without written permission or institutional legal confirmation. Its repo
+   license statements do not resolve the current TED Terms of Use.
+7. Chinese-LiPS remains a private diagnostic candidate, not a settled main
+   benchmark. Paper-grade claims require independent/human references and a
+   confirmed usage scope.
+8. Use Qwen pseudo references for development only; use human or independently
+   produced references for paper ranking.
+9. Use Git docs for progress and Hugging Face for reusable data/model artifacts.
 
-## Current Next Actions
+## Current Next Actions (2026-07-31)
 
-1. Add independent or human references for the diagnostic 500 before treating
-   BLEU as a method ranking; the current BLEU table is Qwen3-32B self-BLEU.
-2. Add manual hard-label/supporting-evidence annotations for the diagnostic
-   500 before claiming HDA, evidence precision/recall, or paper-grade visual
-   hallucination metrics.
-3. Equalize or quantify batch-shape sensitivity before comparing V0-V5
-   batch=192 outputs with V6/V8 batch=128 outputs.
-4. Decide whether to scale Qwen3-32B pseudo references beyond diagnostic 500
-   after manual diagnostic labels and metric semantics are fixed.
+1. Add cross-talk/cross-domain wrong images, strong OCR, and oracle
+   text-equivalent conditions to the existing 206-item speech probe.
+2. Human-check a small reference subset before interpreting metric differences
+   as translation improvements.
+3. Run a 20–50 item causal lip feasibility probe with aligned, shuffled, and
+   wrong lips at clean, 0 dB, and −10 dB; record wall-clock encoder cost.
+4. Select semantic or lip as the primary route using the decision gates in
+   `docs/RESEARCH_GOAL_20260731.md`; only test hybrid if both pass.

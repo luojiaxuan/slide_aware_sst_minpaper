@@ -125,6 +125,25 @@ inference, not direct measurement. **Evidence:** `runs_bias{2,4,8}.jsonl`,
    most of the injected image is irrelevant. RASST-style chunkwise retrieval over
    the visual channel is a different mechanism and remains untested.
 
+### Route decision after related-work audit (2026-07-31)
+
+The project will not commit to slide-only, lip-only, or hybrid vision before
+matched controls establish that raw pixels are necessary. The decision contract
+is in [`RESEARCH_GOAL_20260731.md`](RESEARCH_GOAL_20260731.md).
+
+- Generic contextual SST is no longer a safe fallback contribution: EGTA
+  (arXiv:2607.17766) already performs streaming-evidence-conditioned terminology
+  selection with shuffled-memory and activation controls.
+- Semantic vision must beat strong OCR and an oracle text-equivalent, not just
+  audio-only. The current probe does not test this.
+- Lip vision must beat a strong noise-robust audio baseline and aligned lips must
+  beat shuffled/speaker-matched wrong lips under causal video prefixes.
+- Hybrid is tested only if both single channels pass independently.
+
+The current defensible paper space is therefore a causal, computation-aware
+study of **when raw visual evidence is necessary beyond text/audio proxies**.
+This is a research target, not an established finding.
+
 ## 4. Assets (all reusable regardless of the project's fate)
 
 | Asset | What |
