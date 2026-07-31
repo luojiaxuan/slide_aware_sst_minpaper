@@ -1,28 +1,32 @@
-# Vision-as-Anticipation: Slide-Aware Simultaneous Speech Translation
+# Slide-Aware Simultaneous Speech Translation — investigation record
 
-## Background
+> **Status (2026-07-31): the naive form of the core hypothesis was tested and
+> did not hold.** With audio input and the slide supplied through a vision
+> encoder (Qwen3-Omni-30B, 206 segments), a *correct* slide and a *wrong* slide
+> produce statistically indistinguishable gains in both quality
+> (+2.63 vs +2.29 chrF) and latency (AL −0.202 vs −0.199): the benefit comes
+> from image presence, not slide content. **Read
+> [docs/FINDINGS.md](docs/FINDINGS.md) first** — it is the single source of
+> truth and marks which older documents are superseded.
 
-Simultaneous speech translation (SST) must commit output before hearing the
-future. Slides in talks/lectures **temporally precede** the speech that discusses
-them — so the visual channel is a legal, zero-latency lookahead: an
-asynchronously harvested slide glossary can supply upcoming terminology (often in
-the *target* language, for X→En with English slides) without touching the audio
-critical path. This project builds the method, the benchmark, and the
-faithfulness evaluation for that claim.
+## Original hypothesis (for the record)
 
-Thesis: **vision buys latency** — visual evidence shifts the quality–latency
-Pareto (earlier commits at equal quality; higher terminology accuracy at equal
-lagging), and a policy must gate it (wrong-slide rejection, no
-visible-but-unspoken hallucination).
+Slides in talks temporally precede the speech that discusses them, so the visual
+channel could be a zero-latency lookahead: an asynchronously harvested slide
+context might improve terminology, resolve word senses, and let the model commit
+earlier. Three mechanisms were posited — M1 anticipation, M2 recognition support,
+M3 target-form supply — with slide language as a stratification variable.
 
-Lineage: extends RASST (retrieval-augmented SST with prepared glossaries) by
-making the glossary self-provisioning from the slide stream. Key neighbors, all
-differentiated in [latex/sections/02_related_work.tex](latex/sections/02_related_work.tex):
-Do-Slides-Help (EMNLP'25, offline ASR), OmniFusion (arXiv 2512.00234, En→X
-SimulST, synchronous vision on the decoding path), Caglayan'20 line (simultaneous
-*text* MT with caption images), MCIF (offline En→X benchmark from ACL talks).
-Scoop-check verdict (2026-07-17): Level 2–3, delta defensible, window closing —
-see `~/research_idea/step1–7.md`.
+What survived testing: vision does make the model commit earlier, and injected
+context does shift quality — but neither effect depends on what is on the slide.
+What remains untested: high-ambiguity speech (where headroom exists) and
+relevance-selected injection (RASST-style retrieval over the visual channel).
+
+Lineage and neighbours (survey retained in
+[latex/sections/02_related_work.tex](latex/sections/02_related_work.tex)):
+RASST (retrieval-augmented terminology for SST), Do-Slides-Help (EMNLP'25,
+offline ASR), OmniFusion (En→X SimulST with synchronous vision), Caglayan'20
+line (simultaneous *text* MT with caption images), MCIF.
 
 ## Directory layout
 
@@ -57,28 +61,15 @@ latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
   (`--timeline-dir` for original timeline), `score_visual_signal.py`
   (`--backend ocr|vlm`), `translate_zh_en_draft.py`.
 
-## TODOs (priority order)
+## Open decision (see docs/FINDINGS.md §5)
 
-1. ~~Oracle anticipation kill test~~ — **DONE 2026-07-19, PREMISE SURVIVES**
-   (Qwen3-32B, 224 runs: oracle vs none pooled ΔchrF +7.0 p=0.03; hard stratum
-   +18.8 p<1e-4, termR 0.12→0.41; slide-OCR condition ≈ baseline → extraction is
-   the bottleneck; wrong-slide neutral). Full report:
-   [docs/killtest/KILLTEST_RESULTS.md](docs/killtest/KILLTEST_RESULTS.md).
-2. ~~Chinese-LiPS En references~~ — **S2 COMPLETE**: all 21 test videos rebuilt
-   on the original session timeline (11.1 h, drift <10 ms) + 3,908 machine-draft
-   refs, all on HF. Verified-core post-edit deferred; machine-draft tier labeled.
-3. ~~VLM visual-signal pass over mTEDx-V~~ — DONE (visual_signal_vlm.json,
-   31/100 talks reclassified, sparsity confirmed real).
-4. Streaming policy implementation (async slide worker + evidence gating) and
-   faithfulness metrics (wrong-slide adoption, visible-but-unspoken rate).
-   **Probe-scale evidence in**: VLM terms + oracle-gate = +7.3 chrF pooled
-   (p<0.001) ≈ oracle upper bound; naive LLM gate fails (no selectivity) →
-   need-prediction is the method's core problem.
-5. ACL 60/60 integration — recon DONE (Anthology-hosted mp4s, zero obstacles,
-   [docs/ACL6060_INTEGRATION.md](docs/ACL6060_INTEGRATION.md)); execution ~1 day.
-   NEW: trie-constrained contextual biasing logits processor (injection-form
-   study verdict; see docs/NIGHT_REPORT_20260719.md).
-6. Paper: intro/method drafts; related work is written.
+1. Re-test on **high-ambiguity speech** (noisy / accented / jargon-dense) where
+   the baseline leaves headroom — current baseline chrF is 78.3 on clean,
+   scripted lecture audio.
+2. Add **relevance selection** (RASST chunkwise retriever over the visual
+   channel) so injected evidence is not ~96% irrelevant to the current segment.
+3. Write up the **negative result + benchmark + methodology** as the
+   contribution.
 
 ## Rules
 

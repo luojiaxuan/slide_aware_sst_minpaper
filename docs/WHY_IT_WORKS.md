@@ -1,3 +1,9 @@
+> **SUPERSEDED (2026-07-31).** The affirmative case below was explicitly
+> conditioned on the then-pending Qwen3-Omni speech+vision experiment. That
+> experiment ran: a wrong slide produced the same quality and latency gains as
+> the correct slide, so the content-based claims here are not supported. See
+> [FINDINGS.md](FINDINGS.md). The related-work survey below remains valid.
+
 # Why this paper works + related work (2026-07-24)
 
 Written to reflect corrected framing: (i) input must be SPEECH not transcript

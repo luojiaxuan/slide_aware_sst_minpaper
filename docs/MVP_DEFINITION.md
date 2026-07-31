@@ -1,3 +1,9 @@
+> **RESOLVED (2026-07-31).** The "single decision experiment" defined below
+> (slide > wrong under deterministic decoding) has been executed on both the
+> X→En text probe and the zh→En speech+vision probe. Both were negative:
+> slide vs wrong is not significant. See [FINDINGS.md](FINDINGS.md) for the
+> current state and the remaining untested paths.
+
 # MVP Definition — the minimal workable, publishable paper
 
 Date: 2026-07-24. Purpose: pin down the smallest coherent paper the current
