@@ -22,6 +22,8 @@ links, or handoff state.
   [`docs/RESEARCH_GOAL_20260731.md`](RESEARCH_GOAL_20260731.md)
 - Current evidence and confidence:
   [`docs/FINDINGS.md`](FINDINGS.md)
+- OmniFusion latency/control reassessment:
+  [`docs/OMNIFUSION_REASSESSMENT_20260731.md`](OMNIFUSION_REASSESSMENT_20260731.md)
 - Historical project framing (superseded by the goal above):
   [`docs/planning/SLIDE_CONTEXT_AWARE_MVP.md`](planning/SLIDE_CONTEXT_AWARE_MVP.md)
 - Agent handoff plan: [`docs/planning/AGENT_START_HERE.md`](planning/AGENT_START_HERE.md)

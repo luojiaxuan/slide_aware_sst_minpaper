@@ -33,8 +33,11 @@ Reasons, in order of weight:
    M1+M3, Russian talk = M1+M2; ACL 60/60 = M1+M2). Paired hypotheses: H1
    (anticipation) - Pareto gains appear in all regimes; H2 (target supply) -
    terminology gains and slide-string copy rates are largest in M3 talks.
-2. **Avoids OmniFusion's home field.** They own En→{De,It} SimulST on MCIF;
-   competing there head-on makes us a baseline-chaser.
+2. **Does not treat OmniFusion as a strong incumbent.** It is a task precedent
+   for En→{De,It} speech+image SimulST on MCIF, but its computation-aware AL is
+   roughly 5.5–10 s and it lacks OCR-equivalent and wrong-image controls. We use
+   different directions to test target-form supply and stronger causal controls,
+   not because OmniFusion “owns” MCIF.
 3. **Assets already exist.** mTEDx-V is built, alive-checked, human-referenced,
    stratified. Chinese-LiPS gives the clean-visual stratum with the user's own
    verification language (zh).

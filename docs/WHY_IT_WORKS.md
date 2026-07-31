@@ -45,7 +45,8 @@ retriever), Do Slides Help? (Sinhamahapatra & Niehues 2025, offline ASR),
 Slide-EC (Piao 2025).
 
 Multimodal/vision translation: OmniFusion (Koneru, Huck & Niehues 2025,
-synchronous vision, nearest system neighbor), Caglayan 2020 line (Imankulova
+synchronous high-latency vision, weak task precedent rather than a strong
+raw-vision baseline), Caglayan 2020 line (Imankulova
 2020, Ive 2021, Haralampieva 2022 — simultaneous text MT), MCIF (Papi 2025,
 En->X control).
 

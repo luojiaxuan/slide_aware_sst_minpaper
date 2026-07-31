@@ -144,6 +144,18 @@ The current defensible paper space is therefore a causal, computation-aware
 study of **when raw visual evidence is necessary beyond text/audio proxies**.
 This is a research target, not an established finding.
 
+### OmniFusion reassessment (2026-07-31)
+
+OmniFusion is a weak task precedent, not a strong method baseline. Its reported
+computation-aware AL is roughly 5.5–10 s for the E2E system; the advertised
+~1 s reduction is E2E vs. its own cascade, while adding an image raises offline
+OmniFusion inference from 1.98 s to 3.15 s. It has no OCR/text-equivalent,
+wrong-image, noisy-speech, or visual-grounding controls, and its public repo
+does not contain the SimulST evaluation pipeline needed to reproduce Figure 3.
+The overlap verdict for the main raw-vision-necessity question is therefore
+Level 3 / partial overlap, not a Level 2 material collision. See
+[`OMNIFUSION_REASSESSMENT_20260731.md`](OMNIFUSION_REASSESSMENT_20260731.md).
+
 ## 4. Assets (all reusable regardless of the project's fate)
 
 | Asset | What |

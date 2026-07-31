@@ -41,13 +41,16 @@ transcription systems by construction.
 \paragraph{Multimodal simultaneous ST systems.}
 Closest to our setting, OmniFusion \citep{koneru2025omnifusion} fuses a multimodal
 foundation model with a translation LLM and evaluates En$\rightarrow$\{De,It\}
-SimulST on scientific talks from MCIF \citep{papi2025mcif}. Its latency gain
-($\sim$1\,s) is architectural --- removing the ASR$\rightarrow$MT cascade --- and
+SimulST on scientific talks from MCIF \citep{papi2025mcif}. Its reported latency
+gain ($\sim$1\,s) is architectural --- removing the ASR$\rightarrow$MT cascade
+--- while its absolute computation-aware AL is approximately 5.5--10 seconds and
 its visual input is processed \emph{synchronously on the decoding path}: the
 authors report that ``image processing introduces additional delay.'' It is
 evaluated only against a self-constructed cascade of the same components, assumes
-an English source, and neither models the temporal lead of slides nor measures
-faithfulness of visual-evidence use. We differ on each axis: X$\rightarrow$En,
+an English source, and provides no OCR-equivalent, wrong-image, or noisy-speech
+control. It therefore does not establish that raw vision is necessary. It neither
+models the temporal lead of slides nor measures faithfulness of visual-evidence
+use. We differ on each axis: X$\rightarrow$En,
 an \emph{asynchronous} slide channel off the audio critical path (zero added
 per-token latency), an explicit evidence-gating policy, and metrics that separate
 vision-induced latency gains from architectural ones.

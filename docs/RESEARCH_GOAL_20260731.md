@@ -35,7 +35,7 @@ fusion 方法必然有效”，也不把任意 image-vs-none 增益解释为视�
 
 | 路线 | 已有工作边界 | 本项目可守住的 delta | 当前风险 | 决策 |
 | --- | --- | --- | --- | --- |
-| Semantic slide | Caglayan et al. 做 image-conditioned simultaneous **text** MT；OmniFusion 已做 speech+image SimulST；Do Slides Help? 做 offline ASR，并主要用 transcript 生成 synthetic PDF/images 扩充训练 | 对 raw slide、strong OCR、oracle text-equivalent、same-talk/cross-talk wrong slide 做因果对照，回答 raw pixels 何时超越文本代理 | 当前真实 speech probe 未显示 correct > same-talk wrong；可用样本中真正 beyond-OCR 的视觉语义稀疏 | 保留，先跑最低成本的 decisive controls |
+| Semantic slide | Caglayan et al. 做 image-conditioned simultaneous **text** MT；OmniFusion 是高延迟且缺少视觉必要性控制的 speech+image SimulST 任务先例；Do Slides Help? 做 offline ASR，并主要用 transcript 生成 synthetic PDF/images 扩充训练 | 对 raw slide、strong OCR、oracle text-equivalent、same-talk/cross-talk wrong slide 做因果对照，回答 raw pixels 何时超越文本代理 | 当前真实 speech probe 未显示 correct > same-talk wrong；可用样本中真正 beyond-OCR 的视觉语义稀疏 | 保留，先跑最低成本的 decisive controls |
 | Lip | MixSpeech/AVMuST-TED、MuAViC、XLAVS-R 主要是 offline robust AVST；SimulLR 是 online lip reading，不是 translation | causal lip prefixes 在真实噪声下是否改善 SimulST quality-latency frontier，并超过强 audio denoising/robustness baseline | 视频编码成本、嘴形歧义、可用翻译数据少；TED 当前条款造成高风险 | 与 semantic kill test 并行做小规模可行性验证 |
 | Hybrid | 两种证据理论上互补：lip 给 phonetic evidence，slide 给 semantic evidence | 只有在两路各自成立后，检验二者是否有正 interaction 或按需 routing 能否形成更优 Pareto frontier | 数据必须同时含 face、slide、连续音频和可靠翻译；实验矩阵和归因成本翻倍 | 暂不作为 MVP 或首篇 paper claim |
 
@@ -124,19 +124,24 @@ SimulST protocol。当前 206-segment probe 不能替代这些要求。
 
 ## Novelty audit
 
-当前候选问题的保守判断是 **Level 2 — High Overlap / material collision**：
+当前主问题的判断修正为 **Level 3 — Medium Overlap / partial overlap**。任务邻近
+不等于强 prior；详细复核见
+[`OMNIFUSION_REASSESSMENT_20260731.md`](OMNIFUSION_REASSESSMENT_20260731.md)：
 
-- OmniFusion 已覆盖 scientific-talk speech+image SimulST、multimodal fusion 和
-  computation-aware latency；我们只剩“raw evidence 相对 text-equivalent 的
-  necessity/causal diagnosis”这一条关键区别。
-- EGTA 对一般 contextual SimulST 构成更直接的 collision：document terminology
-  memory、stream-conditioned selection、shuffled-memory control 和 terminology
-  指标均已存在。
+- OmniFusion 是 scientific-talk speech+image SimulST 的任务先例，但其
+  computation-aware AL 约为 `5.5–10s`，所谓“快约 1 秒”来自 E2E 相对自建
+  cascade，不是 image 相对 audio-only；offline 加 image 令 OmniFusion inference
+  time 从 `1.98s` 增至 `3.15s`。它没有 OCR/text-equivalent、wrong-image 或
+  noisy-speech controls，因此没有覆盖 raw-vision necessity 这一核心问题。
+- 如果退化成一般 contextual SimulST，EGTA 仍构成 **Level 2 / material
+  collision**：document terminology memory、stream-conditioned selection、
+  shuffled-memory control 和 terminology 指标均已存在。
 - Lip-only online AVST 的重合度较低，但 MixSpeech/XLAVS-R 已覆盖 noisy AVST，
   SimulLR 已覆盖 online lip processing；delta 必须同时包含 translation、causal
   streaming 与计算时延，缺一项都会退回已有工作。
 
-因此目前不能写“首次把 vision 用于 SimulST”。可辩护的 delta 是：
+因此目前不能写“首次把 vision 用于 SimulST”，但 OmniFusion 也不封死低时延、
+可归因的 raw-vision 研究空间。可辩护的 delta 是：
 
 > 不再把 image-vs-none 当作视觉有效性的证据，而是在统一 causal SimulST
 > protocol 中，用 text-equivalent、matched wrong-vision、noise-robust audio 和
