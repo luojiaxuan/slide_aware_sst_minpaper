@@ -16,11 +16,12 @@ screen-shared meetings --- the future is, quite literally, projected on the
 wall. Speakers put up a slide and then discuss it, typically for 30--60 seconds;
 professional simultaneous interpreters exploit this routinely, requesting decks
 in advance and reading the projected slides from the booth. The visual channel
-is thus a \emph{legal lookahead}: it reveals upcoming terminology before it is
-spoken, at zero cost to the audio decision loop, because slides change on a
-timescale of tens of seconds and can be processed asynchronously off the
-critical path. We call this \emph{vision-as-anticipation}, and this paper builds
-the method, the evidence, and the evaluation protocol for it.
+is thus a \emph{legal lookahead}: it can reveal upcoming terminology before it
+is spoken. Visual processing is not free, but its cold cost can be paid once
+after a slide change, amortized over the slide's dwell window, and kept from
+blocking the audio decision loop. We call this \emph{vision-as-anticipation},
+and this paper builds the method, the evidence, and the evaluation protocol for
+it.
 
 Prior work has approached the ingredients separately but never the combination.
 Slide context improves \emph{offline ASR} of conference talks
@@ -33,9 +34,10 @@ OmniFusion \citep{koneru2025omnifusion} fuses a multimodal foundation model with
 a translation LLM for En$\rightarrow$X SimulST, but processes the image
 \emph{synchronously on the decoding path} (paying added latency for vision) and
 attributes its speed-up to removing the ASR--MT cascade, not to the visual
-channel itself. No existing system treats vision as a zero-latency anticipation
-channel for speech translation, and no existing evaluation separates
-vision-induced gains from architectural ones.
+channel itself. This leaves a narrower unresolved question: whether a
+change-triggered visual state that persists across speech chunks improves
+SimulST after strong OCR, wrong/stale-slide, causal-timing, and
+computation-aware controls.
 
 We decompose the benefit of slide evidence into three mechanisms:
 \textbf{M1 anticipation} (slides temporally precede the speech that discusses
@@ -49,27 +51,21 @@ testable: slide language is a per-talk stratification variable, and M3 predicts
 larger terminology gains and higher slide-string copy rates precisely on talks
 whose slides are in the target language.
 
-A controlled probe validates the premise before any system building. On
-Greek$\rightarrow$English TEDx segments (English slides, human references) and
-Chinese lecture segments with a Local Agreement streaming policy
-\citep{liu2020lowlatency}, injecting the reference's own rare terms --- a
-perfect-anticipation oracle --- improves chrF by $+7.0$ pooled ($p{=}0.03$) and
-$+18.8$ on segments where the baseline fails on terminology ($p{<}10^{-4}$;
-term recall $0.12\!\rightarrow\!0.41$). The realistic channel initially
-delivers none of this: OCR-extracted slide terms are neutral-to-harmful. But
-replacing OCR with a VLM slide reader recovers $+14.1$ chrF on hard segments
-(75\% of the oracle gain), and adding need-based injection --- only on segments
-where the baseline is predicted to fail --- recovers $+7.3$ chrF pooled
-($p{<}0.001$), statistically indistinguishable from the oracle upper bound.
-The chain isolates the two problems a method must solve: \emph{what} to extract
-(VLM, not OCR) and \emph{when} to inject (a need predictor; we show a naive
-LLM relevance gate has no selectivity), while a wrong-slide control shows
-prompt-level bad evidence is benign for strong models.
+Our probes show why these controls are necessary. Transcript-input experiments
+found large gains from oracle terms and selected VLM-derived terms, but remove
+the acoustic ambiguity that semantic evidence is supposed to resolve. A later
+speech-input Qwen3-Omni probe found that both the current slide and a different
+slide from the same lecture improve over audio-only, while current versus wrong
+is statistically indistinguishable ($+0.34$ chrF, $p{=}0.22$). This does not
+establish local slide-content use; it leaves domain priming, image presence,
+and repeated per-segment visual encoding confounded. The target study therefore
+tests a persistent once-per-slide state against strong OCR, text-equivalent,
+stale, and cross-talk controls before making a positive visual claim.
 
 Our contributions:
 \begin{enumerate}[leftmargin=*]
     \item \textbf{Setting and mechanism analysis.} We formulate vision-as-anticipation
-    SST --- an asynchronous slide channel off the audio critical path --- and
+    SST --- a change-triggered semantic state cached across speech chunks --- and
     decompose its benefit into anticipation, recognition support, and
     target-form supply, each separately measurable via slide-language
     stratification (\S\ref{sec:task}).
@@ -80,9 +76,9 @@ Our contributions:
     and ACL 60/60 (En$\rightarrow$X control with third-party tagged
     terminology), with a Wikidata-based cross-lingual term protocol
     (\S\ref{sec:benchmark}).
-    \item \textbf{Method and evidence.} An asynchronous slide-evidence pipeline
-    (change-triggered VLM reading, term filtering, need-gated injection) whose
-    probe-scale ablation closes the full oracle gap, and an analysis showing
-    that need prediction --- not extraction --- is the remaining open problem
+    \item \textbf{Method and evidence.} A non-blocking slide-evidence pipeline
+    with one-shot structured reading, persistent caching, and causal retrieval,
+    evaluated with content, temporal-alignment, and computation controls that
+    separate cold, amortized, and on-path costs
     (\S\ref{sec:method}, \S\ref{sec:results}).
 \end{enumerate}

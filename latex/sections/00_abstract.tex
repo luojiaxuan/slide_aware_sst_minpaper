@@ -1,3 +1,18 @@
 \begin{abstract}
-Real-world simultaneous speech translation (SST) is rarely context-free: lectures and scientific talks are accompanied by slides, glossaries, speaker biographies, abstracts, and background documents.  Yet streaming systems must emit translations under latency constraints, making external context a double-edged sword: it can disambiguate technical terms and homophones, but it can also induce premature or incorrect commitments when slides are asynchronous, noisy, or only loosely related to the current speech.  We introduce \taskname, a slide-aware contextual SST setting where the model receives a speech stream together with slides, glossary entries, and optional background documents.  We construct \datasetname, a Chinese-to-English lecture challenge set targeting homophones, technical terms, named entities, and slide-speech mismatches.  We further propose \policyname, a lightweight evidence-aware context manager that retrieves small evidence packets and decides whether, when, and how strongly to condition the translator on each source.  Experiments show that naive context injection improves terminology-heavy cases but increases wrong-context errors under mismatched slides, while \policyname{} improves hard-case accuracy with lower context overuse at comparable latency.  \todo{Replace with exact numbers after experiments.}
+Slides in lectures and technical talks often appear before the speech that
+discusses them and persist for tens of seconds. This makes them different from
+a synchronous video stream: a system can encode a stable slide once, cache its
+semantic evidence, and reuse that state across many simultaneous speech
+translation (SST) decisions. We formulate this asynchronous, persistent-slide
+setting and separate four questions that prior image-conditioned evaluations
+conflate: whether the correct slide content matters, whether visual structure
+adds information beyond strong OCR, whether evidence is available causally at
+the relevant speech time, and whether once-per-slide processing improves the
+computation-aware quality--latency frontier. We propose \policyname{}, a
+non-blocking evidence manager that extracts auditable text, layout, formula,
+chart-relation, and emphasis cues after slide changes and retrieves a compact
+packet from causal speech state. Our benchmark protocol includes matched,
+stale, cross-talk, OCR, structured-VLM, text-equivalent, and synchronous-vision
+controls, with cold, amortized, and on-path costs reported separately.
+\todo{Add results only after the persistent-evidence kill tests pass.}
 \end{abstract}

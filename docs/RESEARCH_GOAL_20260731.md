@@ -1,178 +1,190 @@
-# Research Goal：何时 SimulST 真正需要原始视觉证据？
+# Research Goal：异步、持久的 Slide Semantic Evidence for SimulST
 
 更新日期：2026-07-31
 
 ## 一句话目标
 
-在严格因果、计算时延可计量的 simultaneous speech translation（SimulST）
-设置中，判断 **raw visual evidence 何时提供了强文本代理无法提供的信息**：
-一类是 slide/screen 的 semantic evidence，另一类是 lips 的 phonetic
-evidence；只有单路证据分别通过预注册 kill test，才研究二者的 hybrid。
+研究 **once-per-slide semantic evidence** 能否在不阻塞音频流的前提下改善
+simultaneous speech translation（SimulST）：slide 出现或变化时只编码一次，把
+可审计的语义证据缓存为持续状态，在该 slide 的驻留窗口内由流式语音按需、因果
+地读取；重点检验 noisy、accented、jargon/entity-dense speech，以及 raw/structured
+visual evidence 何时提供 strong OCR 无法提供的信息。
 
-这是一项先诊断、后建模的研究。当前不把论文预设为“某个 multimodal
-fusion 方法必然有效”，也不把任意 image-vs-none 增益解释为视觉内容增益。
+## Scope lock
 
-## 当前判断
+1. **主线只有 semantic slide/screen evidence。** 目标信息包括文字、版式、公式、
+   图表关系、视觉强调和跨区域对应，不是说话人的嘴形。
+2. **lip video 退出主实验。** Lip 是 phonetic evidence，需要帧级同步、持续编码和
+   完全不同的数据/控制组；offline robust AVST 已较成熟，而本项目的优势恰好是
+   slide 可以提前出现并持续较长时间。
+3. **不做 slide+lip hybrid。** Hybrid 会扩大数据、计算和归因成本，却不帮助回答
+   当前核心问题。AVMuST-TED 只留作 related-work 参考，不再是数据候选或 blocker。
+4. **image 是提前到达的 context/evidence state，不是每个 audio chunk 都重编码的
+   同步输入。** 当前 slide 通常可支撑约 30--60 秒 speech，但这是待从真实 timeline
+   验证的经验假设，不作为未经测量的实验事实。
+5. **不预设 raw pixels 必须胜过所有文本代理。** Strong OCR、VLM-derived structured
+   evidence 和 oracle text-equivalent 都是必要对照。若 raw/direct visual embedding
+   没有额外收益，就采用更便宜、可审计的结构化证据，不声称 raw-vision necessity。
 
-1. **不直接做 hybrid。** semantic vision 和 lip vision 的信息类型、数据要求、
-   控制组和时延成本不同。现在混合会让正向结果无法归因，负向结果也无法诊断。
-2. **不退化成一般 contextual SST。** EGTA 已经实现了从 document memory 中按
-   当前 streaming speech evidence 选择术语，并在 MCIF-dev 和 ACL60/60-dev 上
-   做了 shuffled-memory 与 activation audit。只做 OCR/topic/glossary routing 的
-   外部新颖性风险很高。
-3. **semantic 路线仍未被否定，但当前证据只支持 talk-level priming。**
-   Qwen3-Omni speech+image probe 中，correct slide 与 same-talk wrong slide 的
-   差异为 `+0.34 chrF`（`p=0.22`），无法证明 segment-specific slide content
-   被利用。当前 wrong control 不是 unrelated-domain control。
-4. **lip 路线的空白更清楚，但数据合法性和在线成本是硬约束。** MixSpeech、
-   XLAVS-R 等已经覆盖 offline/noise-robust AVST，SimulLR 已覆盖 simultaneous
-   lip reading；相对空白是 causal online audio-visual ST，而不是一般 lip ST。
-5. **论文空间应放在 necessity，而不是 modality presence。** 核心问题不是
-   “加 image 是否涨分”，而是“在强 OCR/text、强 audio-only robustness、匹配
-   噪声控制和 computation-aware latency 下，raw pixels 是否仍有不可替代价值”。
+## 系统与因果协议
 
-## 三条路线的论文空间
+对第 (k\) 张 slide，记稳定出现时间为 (a_k\)，下一次 change 为 (a_{k+1}\)，
+驻留时长为 (D_k=a_{k+1}-a_k\)。视觉 worker 在 change event 后执行一次：
 
-| 路线 | 已有工作边界 | 本项目可守住的 delta | 当前风险 | 决策 |
-| --- | --- | --- | --- | --- |
-| Semantic slide | Caglayan et al. 做 image-conditioned simultaneous **text** MT；OmniFusion 是高延迟且缺少视觉必要性控制的 speech+image SimulST 任务先例；Do Slides Help? 做 offline ASR，并主要用 transcript 生成 synthetic PDF/images 扩充训练 | 对 raw slide、strong OCR、oracle text-equivalent、same-talk/cross-talk wrong slide 做因果对照，回答 raw pixels 何时超越文本代理 | 当前真实 speech probe 未显示 correct > same-talk wrong；可用样本中真正 beyond-OCR 的视觉语义稀疏 | 保留，先跑最低成本的 decisive controls |
-| Lip | MixSpeech/AVMuST-TED、MuAViC、XLAVS-R 主要是 offline robust AVST；SimulLR 是 online lip reading，不是 translation | causal lip prefixes 在真实噪声下是否改善 SimulST quality-latency frontier，并超过强 audio denoising/robustness baseline | 视频编码成本、嘴形歧义、可用翻译数据少；TED 当前条款造成高风险 | 与 semantic kill test 并行做小规模可行性验证 |
-| Hybrid | 两种证据理论上互补：lip 给 phonetic evidence，slide 给 semantic evidence | 只有在两路各自成立后，检验二者是否有正 interaction 或按需 routing 能否形成更优 Pareto frontier | 数据必须同时含 face、slide、连续音频和可靠翻译；实验矩阵和归因成本翻倍 | 暂不作为 MVP 或首篇 paper claim |
+```text
+I_k --(detect + encode once)--> E_k --(atomic cache update)--> persistent evidence state
+audio prefix x_<=t + decoder state y_<m --(retrieve/gate)--> small packet P_t
+```
+
+- (E_k\) 可包含 OCR text、术语、实体、公式、图表关系、layout/emphasis 和来源坐标；
+  glossary 只是 (E_k\) 的一种投影，不是完整表示。
+- 在 (a_k \le t < a_{k+1}\) 内，所有 audio chunks 复用同一个 (E_k\)，除非证据
+  被显式判 stale。系统不得为等待 vision 阻塞 READ/WRITE；证据未 ready 时退化为
+  audio-only。
+- Live-slide setting 只能使用时间 (t\) 前已观察到并稳定的 slide。只有在单独声明
+  `deck-known-in-advance` 条件时，才允许使用未来页，避免把整套 deck 偷换成 lookahead。
+- 视觉 evidence 按与当前 causal audio hypothesis 的匹配度、模型不确定性和 staleness
+  检索。一个 slide 长时间存在不等于它的全部内容在每个 chunk 都相关。
+
+## 可辩护的论文空间
+
+| 邻近工作 | 已覆盖 | 本项目必须证明的差异 |
+| --- | --- | --- |
+| OmniFusion | scientific-talk speech+image SimulST；image 在推理路径上带来额外时延 | change-triggered once-per-slide encoding、跨 chunk cache、非阻塞读取、cold/amortized/on-path 分项成本，以及视觉内容必要性控制 |
+| EGTA / contextual SST | 从预先存在的 document terminology memory 按 streaming speech 选择文本证据 | evidence 来自随时间变化的 live visual state；保留非纯文本结构；测 slide-speech temporal alignment。若最终只剩静态术语 routing，则会与 EGTA 实质碰撞 |
+| Do Slides Help? | slide-conditioned offline ASR；大量训练图像由 transcript terms 合成 PDF/image | real slides、speech translation、causal commits、错误/过期证据和计算时延；不能用合成文字图片支撑 raw-vision claim |
+| Lip-based AVST | phonetic vision 对 noisy/offline ST 的鲁棒性 | 不属于本项目主张；related work 中用于区分 continuous phonetic vision 与 sparse persistent semantic vision |
+
+因此主问题不是泛化的“image 是否有用”，而是：
+
+> Can semantic evidence computed once from a live slide, cached across its dwell
+> window, and causally selected during speech improve the quality--latency
+> frontier of noisy and terminology-heavy SimulST; and on which slices is
+> information beyond strong OCR actually necessary?
 
 ## 预注册 Kill Tests
 
-### A. Semantic necessity test
+### A. 内容与表示
 
-固定同一模型、同一 causal audio prefix、同一 decoding policy 和同一计算预算，
-至少比较：
+固定同一模型、causal audio prefix、decoding policy、evidence token budget 和
+计算预算，至少比较：
 
 - `A0`: audio only；
 - `A1`: audio + topic/metadata；
-- `A2`: audio + strong OCR/VLM-transcribed slide text；
-- `A3`: audio + raw correct slide；
-- `A4`: audio + same-talk wrong slide；
-- `A5`: audio + cross-talk/cross-domain wrong slide；
-- `A6`: audio + oracle text-equivalent（人工转录 slide 中所有可见文字、图表标签、
-  公式和必要的结构化描述）。
+- `A2`: audio + strong OCR（含标准清洗、去重和语言识别）；
+- `A3`: audio + VLM-derived structured semantic evidence；
+- `A4`: audio + cached raw/direct visual representation（模型支持时）；
+- `A5`: audio + oracle text-equivalent（人工覆盖可见文字、标签、公式和必要关系）。
 
-在 clean、真实噪声、accented、jargon/entity-dense 分层上报告 chrF/BLEU、
-XCOMET、term/entity recall、hallucination、copy rate、AL/LAAL 和 wall-clock
-computation-aware latency。
+每种 visual condition 都要配 matched current slide、same-talk stale/wrong slide 和
+cross-talk/cross-domain wrong slide。报告 chrF/BLEU、XCOMET、term/entity recall、
+visible-but-unspoken hallucination、wrong-evidence adoption、copy rate、AL/LAAL。
 
-**通过门槛：** `A3 > max(A2, A6)` 的 paired 95% CI 下界大于 0，并且该增益
-集中在预先定义的 beyond-OCR 样本；同时 `A3 > A4` 和 `A3 > A5`，分别证明
-segment-specific evidence 和排除任意 image/domain priming。如果 raw slide 只与
-OCR/oracle text 打平，就把 semantic channel 定义为 text/context channel，不再
-声称 raw vision necessity。
+**通过门槛分三层：**
 
-### B. Lip necessity test
+1. `correct > stale/wrong` 的 paired 95% CI 下界大于 0，证明内容和时间对齐真的
+   被使用，而不是 image presence 或 domain priming；
+2. `A3 > A2` 在预注册的 beyond-OCR slice 上成立，才能声称 layout、formula、
+   chart relation 或 emphasis 带来 OCR 之外的 semantic vision value；
+3. 只有 `A4 > max(A3, A5)` 时才声称 direct raw-pixel representation 不可替代。
+   否则 method 应选择最便宜、最可审计且效果相当的结构化 evidence。
 
-使用严格 causal video prefix，至少比较：
+若只通过第 1 层而不通过第 2 层，结果是 slide-derived contextual SST，而不是
+raw-vision paper；此时必须证明 temporal state、异步成本或 evidence-selection protocol
+相对 EGTA 构成实质增量，否则停止正向方法 claim。
 
-- `B0`: audio only；
-- `B1`: 强 noise-robust audio-only / speech enhancement baseline；
-- `B2`: lip only；
-- `B3`: audio + aligned lips；
-- `B4`: audio + temporally shuffled lips；
-- `B5`: audio + speaker-matched wrong lips。
+### B. 时间与持久性
 
-按 clean 和多个真实/合成 SNR 分层，并报告与 A 相同的翻译质量和
-computation-aware latency，同时加入 ASR/WER 诊断以定位收益来自 recognition
-还是 translation。
+在保持 evidence 内容相同的前提下比较：
 
-**通过门槛：** `B3 > max(B1, B4, B5)` 的 paired 95% CI 下界大于 0，在至少
-一个预注册的现实噪声区间形成更优 quality-latency Pareto point，且 clean 条件
-没有不可接受退化。只有极端 `-20 dB` 才有效不能支撑一般 online AVST claim。
+- `B0`: live causal current-slide cache；
+- `B1`: 同一 slide 每个 audio chunk 同步重编码；
+- `B2`: evidence 在真实 encode 完成时间后才可见；
+- `B3`: stale previous slide；
+- `B4`: 打乱 slide change timestamps；
+- `B5`: oracle alignment，仅作 upper bound。
 
-### C. Hybrid interaction test
+系统必须证明增益不是未来泄漏，也不是把整套 deck 当作预知文本。核心 temporal
+结果是：一次生成的 evidence 能在多个后续 chunks 中稳定复用，并且 current、stale、
+wrong 三类状态产生可解释的差异。
 
-仅当 A、B 均通过后，做 `audio / +slide / +lip / +slide+lip` 的 2x2 factorial
-实验。Hybrid 需要满足下列至少一项：
+### C. 计算与时延
 
-- interaction term 的 paired 95% CI 下界大于 0；
-- 在相同计算预算下形成单路方法都达不到的 Pareto point；
-- 一个预注册 router 在不同 failure slice 上可靠选择 semantic 或 phonetic
-  evidence，并优于 always-on 两路编码。
+不能把 “vision 先算” 直接写成 zero latency。每个系统至少报告：
 
-否则首篇论文只保留通过门槛的单路证据。
+- slide-change detection latency $L_{detect}$；
+- once-per-slide encoding latency $L_{encode}$；
+- evidence-ready time 与首次相关 speech 的 lead/lag；
+- cache lookup、retrieval 和 injection 的 on-path latency $L_{onpath}$；
+- dwell-normalized amortized cost
+  $(L_{detect}+L_{encode})/D_k$；
+- end-to-end wall clock、GPU seconds、RTF，以及 computation-aware AL/LAAL。
 
-## 数据与许可结论
+**通过门槛：** async cached condition 在质量不降的前提下显著降低 synchronous
+per-chunk vision 的计算成本，并且相对 audio-only 不产生可测的 audio-path latency
+回退；若 evidence 未及时 ready，系统应跳过而不是阻塞。
 
-### AVMuST-TED
-
-- 仓库声称 706 小时、English→Spanish/French/Italian/Portuguese，face-centered
-  `224x224`、25 fps，并提供 clean 与 `{-20,-10,0,10,20} dB` 噪声结果。
-- 这是 sentence/clip-level offline AVST 资源，不是现成的 SimulST benchmark；
-  online 评估需要重新构造 causal stream、commit policy 和 computation-aware
-  latency。
-- 仓库 README 写 `CC-BY-NC 4.0`，根目录 `LICENSE` 却是 MIT，二者已经不一致；
-  更关键的是媒体和字幕来自 TED/TEDx。
-- TED 于 2024-05-07 更新的当前 Terms of Use 明确将 research dataset、ML/AI
-  training、evaluation 和 automated extraction 排除在普通 educational use 外，
-  除非另有书面许可。因此不能仅凭 AVMuST-TED 仓库声明就把它视为低风险、
-  可重新下载和可复现的数据源。
-
-**执行规则：** 在拿到 TED/数据作者书面许可或机构法律确认前，AVMuST-TED
-只能用于文献和数据设计参考，不能成为本项目不可替代的训练/主测试集。
+## 数据角色
 
 ### Chinese-LiPS
 
-它目前是最接近 hybrid 的内部候选：连续 session timeline、face、独立 slide
-feed 和 speech 同时存在。但 derived artifacts 必须继续保存在 private HF repo；
-paper-grade 结论还缺独立/人工翻译 reference、许可范围确认和严格 long-form
-SimulST protocol。当前 206-segment probe 不能替代这些要求。
+当前最重要的 clean/strong-slide 内部候选：连续 session timeline、独立 1080p slide
+feed、speech 和 transcript 同时存在。它用于测 slide dwell distribution、构建真实
+change events，并验证 semantic evidence 的上界。Derived artifacts 继续只放 private
+HF；paper-grade 排名仍需独立/人工翻译 reference 和许可范围确认。
+
+现有 206-segment Qwen3-Omni probe 不能代表目标架构：它按 segment 重新送入 image，
+没有跨 chunk/segment cache；wrong image 又来自同一 lecture。它只说明在该 clean
+setting 下 `correct - same-talk wrong = +0.34 chrF (p=0.22)`，没有证明局部 slide
+内容被利用。
+
+### 其他 strata
+
+- ACL 60/60：term-credible control，前提是媒体和翻译使用范围确认；
+- mTEDx-V：历史上用于 sparse/noisy negative stratum，但当前 TED 条款风险不允许
+  把重新下载或自动抽取视为默认可行；
+- AVMuST-TED：退出执行计划，仅保留历史许可审计和 related-work 记录。
 
 ## Novelty audit
 
-当前主问题的判断修正为 **Level 3 — Medium Overlap / partial overlap**。任务邻近
-不等于强 prior；详细复核见
-[`OMNIFUSION_REASSESSMENT_20260731.md`](OMNIFUSION_REASSESSMENT_20260731.md)：
+当前主问题为 **Level 3 — Medium Overlap / partial overlap**：
 
-- OmniFusion 是 scientific-talk speech+image SimulST 的任务先例，但其
-  computation-aware AL 约为 `5.5–10s`，所谓“快约 1 秒”来自 E2E 相对自建
-  cascade，不是 image 相对 audio-only；offline 加 image 令 OmniFusion inference
-  time 从 `1.98s` 增至 `3.15s`。它没有 OCR/text-equivalent、wrong-image 或
-  noisy-speech controls，因此没有覆盖 raw-vision necessity 这一核心问题。
-- 如果退化成一般 contextual SimulST，EGTA 仍构成 **Level 2 / material
-  collision**：document terminology memory、stream-conditioned selection、
-  shuffled-memory control 和 terminology 指标均已存在。
-- Lip-only online AVST 的重合度较低，但 MixSpeech/XLAVS-R 已覆盖 noisy AVST，
-  SimulLR 已覆盖 online lip processing；delta 必须同时包含 translation、causal
-  streaming 与计算时延，缺一项都会退回已有工作。
+- OmniFusion 是任务先例，但没有 once-per-slide persistent cache、异步成本分解、
+  OCR/text-equivalent/wrong-image controls，也未证明 vision content 的必要性；详见
+  [`OMNIFUSION_REASSESSMENT_20260731.md`](OMNIFUSION_REASSESSMENT_20260731.md)。
+- EGTA 对“文本 memory + streaming selection”构成 **Level 2 / material collision**。
+  因而本项目不能把 VLM 输出简单压成术语表后宣称 multimodal novelty；必须保留
+  live visual state、非文本关系、temporal alignment 和 async cost protocol。
+- “image-vs-none 涨分”“视觉在音频前提供”“首次 vision SimulST”都不是可守住的
+  novelty claim。
 
-因此目前不能写“首次把 vision 用于 SimulST”，但 OmniFusion 也不封死低时延、
-可归因的 raw-vision 研究空间。可辩护的 delta 是：
+当前可守住、但仍待实验验证的 delta 是：
 
-> 不再把 image-vs-none 当作视觉有效性的证据，而是在统一 causal SimulST
-> protocol 中，用 text-equivalent、matched wrong-vision、noise-robust audio 和
-> computation-aware controls，判定 semantic 与 phonetic raw vision 各自在何种
-> failure slice 上不可替代。
-
-这句话仍是目标，不是已证实贡献。
+> 把 slide 建模为低频更新、长时间驻留的 semantic evidence state，而不是与每个
+> speech chunk 同步融合的第二条流；在真实 causal timing 下分离 evidence content、
+> temporal alignment、representation sufficiency 和 amortized computation。
 
 ## Paper go/no-go
 
-1. **Semantic paper：** A 通过，且至少一个可公开或可审稿复核的数据集具备
-   人工 reference 和 beyond-OCR 样本量。
-2. **Lip paper：** B 通过，且主数据的许可允许训练、评估和必要的可复现发布。
-3. **Hybrid paper：** A、B、C 全部通过。
-4. **Diagnostic/negative-result paper：** A/B 至少完成两个模型、两个数据来源、
-   人工 reference 和完备 controls；即使 raw vision 不通过，也能形成可信的
-   benchmark/methodology 结论。
-5. **停止条件：** 只有 image-presence gain、只有 machine-reference gain、只有
-   极端噪声 gain，或无法给出合法可复现的数据协议时，不写正向方法论文。
+1. **完整 semantic paper：** A1/A2、B、C 通过；至少一个可审稿复核的数据来源
+   具有人工 reference 和足够 beyond-OCR 样本。
+2. **Raw-vision claim：** 还需要 A3 通过；否则只能声称 slide-derived structured
+   evidence，不得声称 pixels 本身不可替代。
+3. **Diagnostic/negative-result paper：** 两个模型、两个数据来源、人工 reference、
+   完整 matched controls 和 latency accounting 后，即使 OCR 足够，也可报告可信边界。
+4. **停止条件：** 只有 image-presence gain、只有 machine-reference gain、只有
+   极端合成噪声 gain、correct 不优于 wrong/stale，或最终方法等价于已有静态 textual
+   context routing 时，停止正向方法论文。
 
 ## 接下来三步
 
-1. 先补 semantic test 的 `cross-talk wrong image + strong OCR + oracle
-   text-equivalent`，复用现有 206 条 speech run，验证 domain priming 与 raw
-   vision necessity；同时人工核查一个小型 reference subset。
-2. 对合法可用的 20–50 条 face+speech 样本做 causal lip pipeline smoke，测
-   encoder wall-clock cost，并检查 aligned-vs-shuffled lips 在 `0/-10 dB` 是否
-   有方向正确的差异；此阶段不训练大模型。
-3. 根据 A/B 的 paired effect 和许可结果选择 semantic 或 lip 主线。两路都不
-   通过时，转为严谨的 visual-necessity benchmark/negative-result paper；两路
-   都通过时才设计 hybrid routing。
+1. 从已有 long-form timeline 重建真实 slide change event，报告 dwell time 的
+   median、P25/P75/P90 和 slide-to-first-related-speech lead/lag；验证 30--60 秒假设。
+2. 把现有 206-item speech probe 改成 persistent evidence protocol：补 strong OCR、
+   structured VLM、oracle text-equivalent、same-talk stale 和 cross-talk wrong controls，
+   并人工核查小型 reference/beyond-OCR subset。
+3. 实现 async cache simulator/runner，分开测 cold encode、amortized cost、ready-time
+   miss 和 on-path retrieval；只在这三步通过后扩大数据或训练模型。
 
 ## 主要相关工作
 
@@ -181,12 +193,9 @@ SimulST protocol。当前 206-segment probe 不能替代这些要求。
   <https://arxiv.org/abs/2607.17766>
 - Koneru et al., 2025, *OmniFusion: Simultaneous Multilingual Multimodal
   Translations via Modular Fusion*: <https://arxiv.org/abs/2512.00234>
-- Cheng et al., ICCV 2023, *MixSpeech* / AVMuST-TED:
-  <https://openaccess.thecvf.com/content/ICCV2023/html/Cheng_MixSpeech_Cross-Modality_Self-Learning_with_Audio-Visual_Stream_Mixup_for_Visual_Speech_ICCV_2023_paper.html>
-- Lin et al., 2021, *SimulLR*: <https://arxiv.org/abs/2108.13630>
 - Caglayan et al., EMNLP 2020, *Simultaneous Machine Translation with Visual
   Context*: <https://aclanthology.org/2020.emnlp-main.184/>
 - Sinhamahapatra and Niehues, EMNLP 2025, *Do Slides Help?*:
   <https://aclanthology.org/2025.emnlp-main.814/>
-- TED Terms of Use（2024-05-07 更新）:
-  <https://www.ted.com/about/our-organization/our-policies-terms/ted-com-terms-of-use>
+- Cheng et al., ICCV 2023, *MixSpeech* / AVMuST-TED（excluded lip route）:
+  <https://openaccess.thecvf.com/content/ICCV2023/html/Cheng_MixSpeech_Cross-Modality_Self-Learning_with_Audio-Visual_Stream_Mixup_for_Visual_Speech_ICCV_2023_paper.html>

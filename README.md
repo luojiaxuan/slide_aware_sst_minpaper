@@ -11,18 +11,21 @@
 > per-claim confidence levels, raw-evidence pointers, and what would overturn
 > each conclusion.
 >
-> **Current research goal:** do not choose slide, lip, or hybrid vision by
-> intuition. Test when raw visual evidence adds information beyond strong text
-> and audio proxies, then let pre-registered decision gates select the paper
-> route. See [docs/RESEARCH_GOAL_20260731.md](docs/RESEARCH_GOAL_20260731.md).
+> **Current research goal:** treat the current slide as an asynchronously
+> updated, persistent semantic-evidence state. Encode it once on a slide-change
+> event, reuse it across its full dwell window, and let causal speech state
+> retrieve only relevant evidence. Lip video and slide+lip hybrid experiments
+> are out of scope. See
+> [docs/RESEARCH_GOAL_20260731.md](docs/RESEARCH_GOAL_20260731.md).
 
 ## Original hypothesis (for the record)
 
-Slides in talks temporally precede the speech that discusses them, so the visual
-channel could be a zero-latency lookahead: an asynchronously harvested slide
-context might improve terminology, resolve word senses, and let the model commit
-earlier. Three mechanisms were posited — M1 anticipation, M2 recognition support,
-M3 target-form supply — with slide language as a stratification variable.
+Slides in talks often precede the speech that discusses them and persist for
+tens of seconds. The visual worker can therefore run off the audio critical path:
+it pays a nonzero cost once per slide, then exposes a cached evidence state to
+many speech chunks. Three mechanisms were posited — M1 anticipation, M2
+recognition support, M3 target-form supply — with slide language as a
+stratification variable.
 
 What survived testing: vision does make the model commit earlier, and injected
 context does shift quality — but neither effect depends on what is on the slide.
@@ -70,12 +73,13 @@ latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
 
 ## Next decision (see docs/RESEARCH_GOAL_20260731.md)
 
-1. Complete the semantic necessity control: strong OCR, oracle text-equivalent,
-   same-talk wrong slide, and cross-talk/cross-domain wrong slide.
-2. Run a small causal lip feasibility probe with aligned, shuffled, and wrong
-   lip video under realistic noise, including computation-aware latency.
-3. Select one primary route only after its matched-control confidence interval
-   clears the pre-registered gate. Hybrid is deferred until both routes pass.
+1. Measure the real slide dwell-time and slide-to-related-speech lead/lag
+   distributions instead of assuming a 30–60 s window.
+2. Rebuild the 206-item probe around once-per-slide cached evidence, with strong
+   OCR, structured VLM, oracle text-equivalent, stale, and cross-talk controls.
+3. Measure cold visual encoding, dwell-normalized amortized cost, evidence-ready
+   misses, and on-path retrieval separately. Scale only if content specificity
+   and beyond-OCR gates pass.
 
 ## Rules
 

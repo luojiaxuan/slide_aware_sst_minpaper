@@ -125,24 +125,32 @@ inference, not direct measurement. **Evidence:** `runs_bias{2,4,8}.jsonl`,
    most of the injected image is irrelevant. RASST-style chunkwise retrieval over
    the visual channel is a different mechanism and remains untested.
 
-### Route decision after related-work audit (2026-07-31)
+### Scope decision after related-work audit (2026-07-31)
 
-The project will not commit to slide-only, lip-only, or hybrid vision before
-matched controls establish that raw pixels are necessary. The decision contract
-is in [`RESEARCH_GOAL_20260731.md`](RESEARCH_GOAL_20260731.md).
+The project is now scoped to **asynchronous, persistent slide-semantic
+evidence**. A slide is encoded once after a change event and reused across its
+dwell window; it is not re-encoded beside every audio chunk. The decision
+contract is in [`RESEARCH_GOAL_20260731.md`](RESEARCH_GOAL_20260731.md).
 
 - Generic contextual SST is no longer a safe fallback contribution: EGTA
   (arXiv:2607.17766) already performs streaming-evidence-conditioned terminology
   selection with shuffled-memory and activation controls.
-- Semantic vision must beat strong OCR and an oracle text-equivalent, not just
-  audio-only. The current probe does not test this.
-- Lip vision must beat a strong noise-robust audio baseline and aligned lips must
-  beat shuffled/speaker-matched wrong lips under causal video prefixes.
-- Hybrid is tested only if both single channels pass independently.
+- Semantic evidence must beat audio-only and matched stale/wrong controls.
+  Beyond-OCR claims additionally require structured visual evidence to beat a
+  strong OCR baseline on predeclared layout/formula/chart/emphasis slices.
+- Direct raw-image representations are optional, not the premise: if structured
+  evidence matches them, the cheaper auditable representation wins.
+- Lip vision, AVMuST-TED execution, and slide+lip hybrid experiments are out of
+  scope. Lip work remains only as a related-work contrast between continuous
+  phonetic vision and slowly changing semantic vision.
+- Latency is split into once-per-slide cold encoding, dwell-normalized
+  amortized cost, evidence-ready lead/lag, and on-path retrieval. “Async” alone
+  is not evidence of zero cost.
 
 The current defensible paper space is therefore a causal, computation-aware
-study of **when raw visual evidence is necessary beyond text/audio proxies**.
-This is a research target, not an established finding.
+study of **when persistent slide-derived semantic evidence helps SimulST and
+when information beyond OCR is necessary**. This is a research target, not an
+established finding.
 
 ### OmniFusion reassessment (2026-07-31)
 

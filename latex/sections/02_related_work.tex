@@ -50,17 +50,19 @@ evaluated only against a self-constructed cascade of the same components, assume
 an English source, and provides no OCR-equivalent, wrong-image, or noisy-speech
 control. It therefore does not establish that raw vision is necessary. It neither
 models the temporal lead of slides nor measures faithfulness of visual-evidence
-use. We differ on each axis: X$\rightarrow$En,
-an \emph{asynchronous} slide channel off the audio critical path (zero added
-per-token latency), an explicit evidence-gating policy, and metrics that separate
-vision-induced latency gains from architectural ones.
+use. We differ on each axis: X$\rightarrow$En, a change-triggered slide channel
+that encodes once and persists across speech chunks, a non-blocking
+evidence-gating policy, and metrics that separate cold encoding, amortized
+computation, on-path retrieval, and vision-induced latency gains.
 
 \paragraph{Audio-visual (lip-based) speech translation.}
 MuAViC \citep{anwar2023muavic} and AV-TranSpeech \citep{huang2023avtranspeech} use
 lip movements as \emph{phonetic} visual evidence for robust offline ST. Slides
 provide \emph{semantic} evidence instead --- readable terms and structure --- which
-survives low video quality, requires no face visibility, and is interpretable for
-faithfulness auditing; the two channels are complementary.
+requires no face visibility and changes much more slowly than speech. We do not
+combine these channels: causal lip video requires continuous frame-level
+processing and a different set of controls, whereas our object of study is a
+once-per-slide persistent semantic state.
 
 \paragraph{Retrieval-augmented SST and terminology.}
 RASST \citep{luo2026rasst} shows that injecting retrieved glossary terms into SST
@@ -73,8 +75,9 @@ we focus on context that is external to the speech stream and arrives with
 temporal lead.
 
 \paragraph{Positioning.}
-No prior work (i) treats vision as a zero-latency \emph{lookahead} channel for
-\emph{speech} translation, (ii) evaluates visual evidence under a quality--latency
-Pareto rather than offline quality alone, or (iii) measures faithfulness of visual
-grounding (visible-but-unspoken hallucination, wrong-slide adoption) in a
-streaming regime. These three gaps define our contribution.
+Our target is the intersection not isolated by these lines of work: a
+change-triggered semantic state encoded once and reused across speech chunks;
+strong OCR, stale-slide, and cross-talk controls that establish which content
+matters; and computation-aware accounting that separates cold encoding,
+amortized cost, on-path retrieval, and end-to-end lagging. We additionally
+measure visible-but-unspoken hallucination and wrong-evidence adoption.

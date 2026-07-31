@@ -114,33 +114,36 @@ confirmed.
 
 ## Current Durable Decisions (2026-07-31)
 
-1. The primary question is when raw visual evidence is necessary beyond strong
-   text/audio proxies in causal, computation-aware SimulST.
-2. Evaluate semantic slide evidence and lip phonetic evidence independently;
-   do not make hybrid the MVP.
-3. Treat strong OCR and oracle text-equivalent context as mandatory semantic
-   baselines, not weak strawmen.
-4. Treat noise-robust audio, shuffled lips, and speaker-matched wrong lips as
-   mandatory lip baselines.
+1. The sole experimental route is asynchronous, persistent semantic evidence
+   from slides/screens for causal, computation-aware SimulST.
+2. Encode each stable slide once after a change event and reuse its evidence
+   across the dwell window. Do not re-run the visual encoder per audio chunk.
+3. Lip video and slide+lip hybrid experiments are out of scope. AVMuST-TED is
+   retained only as a related-work and historical licensing note.
+4. Treat strong OCR, structured VLM evidence, and oracle text-equivalent context
+   as mandatory semantic baselines, not weak strawmen. Direct raw-image
+   embeddings are optional and earn a claim only if they beat these proxies.
 5. The current speech+image result does not establish correct-slide content
    use: its wrong slide comes from the same lecture.
-6. Do not use AVMuST-TED as an indispensable training or primary test source
-   without written permission or institutional legal confirmation. Its repo
-   license statements do not resolve the current TED Terms of Use.
-7. Chinese-LiPS remains a private diagnostic candidate, not a settled main
+6. Measure slide dwell time and slide-to-speech lead/lag from timelines; do not
+   promote the estimated 30–60 s persistence window to a fact before that audit.
+7. Report cold visual encoding, evidence-ready timing, dwell-normalized
+   amortized cost, on-path retrieval, GPU seconds/RTF, and computation-aware
+   AL/LAAL separately. Async execution is not zero compute.
+8. Chinese-LiPS remains a private diagnostic candidate, not a settled main
    benchmark. Paper-grade claims require independent/human references and a
    confirmed usage scope.
-8. Use Qwen pseudo references for development only; use human or independently
+9. Use Qwen pseudo references for development only; use human or independently
    produced references for paper ranking.
-9. Use Git docs for progress and Hugging Face for reusable data/model artifacts.
+10. Use Git docs for progress and Hugging Face for reusable data/model artifacts.
 
 ## Current Next Actions (2026-07-31)
 
-1. Add cross-talk/cross-domain wrong images, strong OCR, and oracle
-   text-equivalent conditions to the existing 206-item speech probe.
-2. Human-check a small reference subset before interpreting metric differences
-   as translation improvements.
-3. Run a 20–50 item causal lip feasibility probe with aligned, shuffled, and
-   wrong lips at clean, 0 dB, and −10 dB; record wall-clock encoder cost.
-4. Select semantic or lip as the primary route using the decision gates in
-   `docs/RESEARCH_GOAL_20260731.md`; only test hybrid if both pass.
+1. Reconstruct slide-change events and report dwell-time plus
+   slide-to-first-related-speech lead/lag distributions.
+2. Add cross-talk/cross-domain wrong images, same-talk stale images, strong OCR,
+   structured VLM, and oracle text-equivalent conditions to the 206-item probe.
+3. Human-check a small reference and beyond-OCR subset before interpreting
+   metric differences as translation improvements.
+4. Implement an async evidence cache runner and separately measure cold encode,
+   ready-time misses, amortized cost, and on-path retrieval before scaling.

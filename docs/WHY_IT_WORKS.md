@@ -2,7 +2,9 @@
 > conditioned on the then-pending Qwen3-Omni speech+vision experiment. That
 > experiment ran: a wrong slide produced the same quality and latency gains as
 > the correct slide, so the content-based claims here are not supported. See
-> [FINDINGS.md](FINDINGS.md). The related-work survey below remains valid.
+> [RESEARCH_GOAL_20260731.md](RESEARCH_GOAL_20260731.md) for the replacement
+> once-per-slide semantic-evidence scope. The text below is retained only as a
+> historical decision record and must not be cited as the current plan.
 
 # Why this paper works + related work (2026-07-24)
 

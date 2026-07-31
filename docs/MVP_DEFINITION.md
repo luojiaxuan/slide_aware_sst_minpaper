@@ -2,7 +2,9 @@
 > (slide > wrong under deterministic decoding) has been executed on both the
 > X→En text probe and the zh→En speech+vision probe. Both were negative:
 > slide vs wrong is not significant. See [FINDINGS.md](FINDINGS.md) for the
-> current state and the remaining untested paths.
+> result and [RESEARCH_GOAL_20260731.md](RESEARCH_GOAL_20260731.md) for the
+> replacement once-per-slide semantic-evidence scope. Everything below is a
+> historical contract, not the current execution plan.
 
 # MVP Definition — the minimal workable, publishable paper
 

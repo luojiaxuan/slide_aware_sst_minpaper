@@ -1,3 +1,12 @@
 \section{Conclusion}
 
-We introduced \taskname, a slide-aware contextual SST setting motivated by real lectures and scientific talks.  Rather than treating context as always helpful, we formulated slides, glossary entries, and background documents as heterogeneous evidence that must be selected and trusted under streaming constraints.  The proposed \datasetname{} benchmark and \policyname{} context manager provide a minimal testbed for studying when slides help, when they hurt, and how SST systems can use deployment context without over-committing to wrong evidence.
+We formulate slides as low-frequency, persistent semantic evidence for
+simultaneous speech translation: each stable slide is encoded once, cached
+across its dwell window, and retrieved without blocking the audio policy. This
+framing makes content specificity, temporal alignment, representation
+sufficiency, and computation separately testable. Our current speech-input
+probe does not yet establish local slide-content use, because a same-talk wrong
+slide performs indistinguishably from the current slide. The next evidence must
+therefore come from strong OCR and text-equivalent baselines, stale and
+cross-talk controls, measured slide-to-speech timing, and cold/amortized/on-path
+cost accounting rather than from another image-versus-none comparison.

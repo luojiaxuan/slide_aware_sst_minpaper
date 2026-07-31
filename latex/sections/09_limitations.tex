@@ -1,5 +1,16 @@
 \section{Limitations}
 
-This MVP has several limitations.  First, if references are produced by a teacher model and only partially human-verified, evaluation may understate or overstate translation quality.  We therefore emphasize manually verified hard-case term labels.  Second, a cascaded ASR+translation pipeline is easier to build than a fully end-to-end speech LLM, but it may not capture all SST behavior.  Third, slide OCR and VLM summaries may leak information unavailable at real time if slide timing is not handled carefully.  Finally, Chinese lecture datasets may not cover all professional domains, and the homophone-heavy benchmark may not generalize to all language pairs.
+This study has several current limitations. First, machine-produced or partially
+verified references cannot support fine-grained method ranking; headline claims
+require independent or human references. Second, the 206-item speech-input
+probe comes from one clean lecture and uses same-talk wrong slides, so it cannot
+separate local evidence from domain priming or generic image presence. Third,
+slide dwell time and slide-to-related-speech lead/lag have not yet been measured
+on the complete long-form timeline; future pages must never leak into a live
+causal condition. Fourth, structured VLM evidence may merely be better OCR;
+beyond-OCR claims require preregistered layout, formula, chart, and emphasis
+slices plus an oracle text-equivalent control. Finally, asynchronous processing
+still consumes compute: change detection, cold encoding, readiness misses,
+retrieval, and end-to-end computation-aware latency must all be reported.
 
 \todo{Add dataset license, privacy, and annotation-labor details.}

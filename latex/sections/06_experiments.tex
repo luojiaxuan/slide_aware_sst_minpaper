@@ -53,8 +53,8 @@ per-segment decisions into the gated condition on the probe.
 
 \subsection{Full-system evaluation (planned)}
 
-The complete pipeline (streaming audio front end, asynchronous slide worker,
-gated/soft injection) is evaluated on the three benchmark strata of
+The complete pipeline (streaming audio front end, change-triggered slide worker,
+persistent evidence cache, and gated injection) is evaluated on the benchmark strata of
 \S\ref{sec:benchmark}: S1 mTEDx-V (X$\rightarrow$En long-form, stratified by
 VLM-derived visual-signal class and slide language), S2 Chinese-LiPS-Long
 (original-timeline sessions, dedicated 1080p slide stream), S3 ACL 60/60
@@ -63,4 +63,13 @@ VLM-derived visual-signal class and slide language), S2 Chinese-LiPS-Long
 terminology follows the Wikidata cross-lingual protocol with per-stratum
 coverage; faithfulness metrics are wrong-slide adoption rate and
 visible-but-unspoken rate.
-\todo{Finalize full-system decoding parameters and hardware/cost details.}
+Content controls are audio-only, topic metadata, strong OCR, structured VLM
+evidence, direct cached visual representations when supported, oracle
+text-equivalent evidence, same-talk stale slides, and cross-talk slides. Timing
+controls compare the live causal cache with timestamp shuffling and synchronous
+per-chunk image encoding. We report slide dwell and evidence-to-speech lead/lag
+distributions, cold change-detection/encoding latency, evidence-ready misses,
+dwell-normalized amortized cost, on-path retrieval latency, GPU seconds, RTF,
+and computation-aware AL/LAAL.
+\todo{Finalize full-system decoding parameters and hardware/cost details after
+the persistent-evidence kill tests pass.}

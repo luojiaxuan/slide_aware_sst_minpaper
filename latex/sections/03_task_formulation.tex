@@ -1,28 +1,44 @@
 \section{Task Formulation}
+\label{sec:task}
 
-At time step $t$, a streaming SST system has observed source speech chunks $\audio_{\leq t}$ and previously emitted target tokens $y_{<t}$.  In \taskname, the system also has access to deployment context:
-\begin{itemize}[leftmargin=*]
-    \item slide deck or slide video $\slides = \{s_i\}_{i=1}^{N}$, optionally with timestamps or page-change events;
-    \item glossary $\glosscxt = \{(g_j^{src}, g_j^{tgt}, d_j)\}$, where $d_j$ is an optional definition;
-    \item background documents $\docs$, e.g., talk abstract, speaker bio, paper abstract, course page, prior lecture notes;
-    \item history $\history_t$, including previous source hypotheses, previous translations, and recent evidence decisions.
-\end{itemize}
+At time step $t$, a streaming SST system has observed source speech chunks
+$\audio_{\leq t}$ and previously emitted target tokens $y_{<t}$. It also
+observes a live slide stream
+$\slides=\{\langle s_k,a_k\rangle\}_{k=1}^{N}$, where $a_k$ is
+the causal time at which slide $s_k$ becomes stable. The slide remains current
+until $a_{k+1}$, with dwell time $D_k=a_{k+1}-a_k$. Future pages are unavailable
+unless an experiment is explicitly labeled \emph{deck-known-in-advance}.
 
 The system outputs a sequence of committed target tokens $y_t$ or a \textsc{wait} action.  Each committed token receives a timestamp so latency can be computed.  The objective is to maximize translation quality and context-sensitive accuracy while satisfying a latency budget.
 
-\paragraph{Evidence candidates.}
-A context builder converts each source into evidence candidates:
+\paragraph{Persistent evidence state.}
+After each change event, a visual worker encodes $s_k$ exactly once and
+atomically publishes an evidence state $E_k$. The state may contain OCR text,
+terms, entities, formulae, layout and emphasis cues, chart relations, source
+coordinates, and confidence. Its candidates have the schema
 \begin{equation}
-    e = (\mathrm{source}, \mathrm{text}, \mathrm{translation}, \mathrm{description}, \mathrm{time}, \mathrm{confidence}).
+    e = (\mathrm{type}, \mathrm{content}, \mathrm{relation},
+    \mathrm{region}, a_k, \mathrm{confidence}).
 \end{equation}
-Sources include slide OCR terms, slide VLM summaries, glossary entries, background snippets, and previous discourse terms.  At step $t$, a retriever returns candidates $\evidence_t$ conditioned on $\audio_{\leq t}$, the partial ASR hypothesis $\hat{x}_{\leq t}$, and history.
+The same $E_k$ is reused whenever $a_k\leq t<a_{k+1}$; a term
+glossary is one projection of this state, not its complete representation. At
+step $t$, a retriever returns candidates $\evidence_t$ conditioned on
+$\audio_{\leq t}$, partial source hypothesis $\hat{x}_{\leq t}$, decoder
+history, and evidence staleness.
 
 \paragraph{Context policy.}
 The policy maps each candidate to one of four decisions:
 \begin{equation}
     \pi(e, t) \in \{\textsc{use}, \textsc{ignore}, \textsc{delay}, \textsc{downweight}\}.
 \end{equation}
-The selected evidence packet $\packet_t$ is deliberately small, containing at most $K$ items.  This design prevents raw slides or long documents from dominating the translation prompt and allows us to measure context overuse.
+The selected evidence packet $\packet_t$ is deliberately small, containing at
+most $K$ items. The audio policy never blocks for vision: if $E_k$ is not ready,
+it emits from audio alone. This design prevents a whole slide from dominating
+the prompt and makes evidence-ready misses and context overuse measurable.
 
 \paragraph{Evaluation setting.}
-We evaluate systems under fixed chunk sizes or wait-$k$-style policies.  A system may use current, previous, and next-slide metadata only if that information would be available at deployment.  We report separate results for matched context and mismatched/adversarial context.
+We evaluate systems under fixed chunk sizes or wait-$k$-style policies and
+report current, stale, timestamp-shuffled, and cross-talk slide conditions.
+Latency accounting separates change detection, once-per-slide encoding,
+dwell-normalized amortized cost, on-path retrieval, and end-to-end
+computation-aware lagging.

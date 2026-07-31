@@ -1,15 +1,20 @@
 \section{Results}
 \label{sec:results}
 
-\subsection{Probe: the anticipation-value chain}
+\subsection{Historical transcript-input probe}
 \label{sec:probe-results}
 
-Table~\ref{tab:probe} reports the controlled probe (\S\ref{sec:experiments}) on
+Table~\ref{tab:probe} reports an earlier controlled probe
+(\S\ref{sec:experiments}) on
 Greek$\rightarrow$English TEDx segments with English slides (M3 regime, human
 references, $n{=}40$; Qwen3-32B, Local Agreement policy). The \emph{hard
 stratum} contains segments where the audio-only baseline misses most reference
 terminology (term recall $\leq 0.4$; $n{=}22$; the hard rate, $\sim$24\%, is
 stable across 32B and 14B models --- a data property).
+This experiment incrementally reveals a clean transcript rather than speech and
+injects extracted terms as text. It measures whether advance textual hints can
+help translation, but cannot establish acoustic disambiguation, raw visual
+necessity, or the target persistent-evidence architecture.
 
 \begin{table}[t]
 \centering
@@ -22,17 +27,17 @@ A\; audio-only                & 38.8 & ---    & ---   & ---     \\
 B\; slide terms (OCR)         & 35.2 & $-2.9$ & n.s.  & $+2.3$  \\
 B\; slide terms (VLM)         & 39.9 & $-0.6$ & n.s.  & $+14.1$ \\
 B\; VLM + need-gate (oracle)  & \textbf{45.3} & $\mathbf{+7.3}$ & $<.001$ & $+13.3$ \\
-C\; oracle future terms       & 46.6 & $+7.0$ & .059  & $+16.3$ \\
+C\; oracle future terms       & 46.6 & $+7.0$ & 0.059 & $+16.3$ \\
 D\; wrong-slide terms         & 38.6 & $-0.2$ & n.s.  & ---     \\
 \bottomrule
 \end{tabular}
-\caption{Anticipation-value probe (el$\rightarrow$en, $n{=}40$; paired
-bootstrap vs.\ A; vLLM serving). Slide evidence read by a VLM and injected
-selectively matches the oracle-terms upper bound.}
+\caption{Historical text-input diagnostic (el$\rightarrow$en, $n{=}40$;
+paired bootstrap vs.\ A; vLLM serving). It compares textual hints and is not a
+raw-vision result.}
 \label{tab:probe}
 \end{table}
 
-\paragraph{The premise holds, and gains sit exactly where predicted.}
+\paragraph{Advance textual context has value on selected failures.}
 Injecting the reference's own rare terms (C) --- a perfect-anticipation oracle
 --- yields $+7.0$ chrF pooled and $+18.8$ on the hard stratum ($p{<}10^{-4}$),
 with hard-stratum term recall rising $0.12\!\rightarrow\!0.41$ ($3.4\times$).
@@ -40,10 +45,11 @@ Gains concentrate on segments where the baseline fails on terminology and are
 neutral elsewhere. The effect replicates across model scales (7B, 14B, 32B)
 and across all three benchmark regimes (below).
 
-\paragraph{Extraction quality is load-bearing.} OCR slide terms are
-neutral-to-harmful (480p fragments); VLM-read terms recover $+14.1$ chrF on
-hard segments --- 75\% of the oracle's hard-stratum gain from the \emph{real}
-visual channel.
+\paragraph{Extraction quality matters within this text-hint protocol.} OCR
+slide terms are neutral-to-harmful (480p fragments); VLM-read terms recover
+$+14.1$ chrF on the selected hard segments. This establishes that a VLM can
+produce better textual hints than the tested OCR pipeline, not that information
+beyond strong OCR or structured text is necessary.
 
 \subsection{Injection form: a three-step reversal}
 \label{sec:injection-form}
@@ -72,7 +78,7 @@ reversal that reshapes the method:
   $0.27\!\rightarrow\!0.46$, easy-$\Delta$ $\approx 0$.
 \end{enumerate}
 
-\noindent\textbf{Full-system verdict.} Deterministic (or drift-tolerant)
+\noindent\textbf{Streaming-infrastructure verdict.} Deterministic (or drift-tolerant)
 commit + prompt-level hint injection; need-gating demotes from a necessity to
 a token-budget optimization; trie biasing is recorded as an informative
 negative result. Practically: simultaneous pipelines built on serving-grade
@@ -127,7 +133,41 @@ hard-stratum gain end-to-end with imperfect precision (0.16). Under the
 deterministic-decoding verdict this predictor is no longer required for
 safety, but remains useful to prioritize hint budget in long sessions.
 
+\subsection{Speech-input image control: content specificity is not established}
+
+The first speech-input probe uses Qwen3-Omni-30B-A3B-Instruct on 206
+Chinese-to-English lecture segments. It compares audio-only, the current slide
+image, and a different slide image from the same lecture. Each segment is run
+independently, so the visual encoder is repeated rather than cached.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+Condition ($n{=}206$) & chrF & AL (audio chunks) \\
+\midrule
+audio only & 78.3 & 2.63 \\
+current slide image & 80.7 & 2.42 \\
+same-talk wrong slide image & 80.6 & 2.43 \\
+\bottomrule
+\end{tabular}
+\caption{Speech-input diagnostic. Current versus same-talk wrong slide is
+$+0.34$ chrF ($p{=}0.22$) and $-0.002$ AL chunks ($p{=}0.47$); the observed
+gain does not establish use of local slide content.}
+\label{tab:speech-image-control}
+\end{table}
+
+Both image conditions improve over audio-only, but current versus wrong is not
+significant. The bounded conclusion is therefore negative: under this clean,
+single-talk, per-segment protocol, the model does not demonstrate
+segment-specific slide-content use. Same-talk domain priming, generic image
+presence, and machine-reference bias remain possible. The persistent-evidence
+study must add cross-talk, strong-OCR, text-equivalent, stale-time, and
+once-per-slide cache controls before interpreting an image gain.
+
 \subsection{Full-system results}
-\todo{Main table over S1/S2/S3 with the deterministic streaming pipeline:
-quality $\times$ computation-aware latency, Wikidata term protocol with
-coverage, copy-rate by slide-language regime, per-direction faithfulness.}
+\todo{Main table for the persistent-evidence protocol: correct/stale/cross-talk
+content controls; strong OCR/structured VLM/text-equivalent representations;
+quality $\times$ computation-aware latency; cold, amortized, and on-path cost;
+term/entity accuracy and visible-but-unspoken faithfulness.}

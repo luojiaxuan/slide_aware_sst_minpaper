@@ -3,14 +3,16 @@
 
 \subsection{Design principle: off the critical path}
 
-The central architectural commitment is that visual processing must never touch
+The central architectural commitment is that visual processing must never block
 the audio decision loop. The streaming translator runs its READ/WRITE policy at
-audio rate; slides change on a timescale of 30--90 seconds. We therefore run a
+audio rate; stable slides usually change on a much slower timescale, whose
+distribution we measure rather than assume. We therefore run a
 \emph{slide worker} as an asynchronous process: it watches the video stream,
-detects slide changes, reads the new slide with a VLM, filters the result into a
-compact evidence packet, and atomically updates a shared \emph{glossary store}.
-The translator consults the store at each WRITE --- a dictionary lookup, adding
-zero per-token latency. This contrasts with synchronous multimodal fusion
+detects slide changes, reads the new slide once, structures the result into a
+persistent evidence state, and atomically updates a shared \emph{evidence
+cache}. The translator performs a small retrieval from this cache at each WRITE;
+we measure this on-path cost rather than declaring it zero. This contrasts with
+synchronous multimodal fusion
 \citep{koneru2025omnifusion}, where image tokens ride the decoding path and
 demonstrably add latency. In the worst case (the speaker names a term in the
 seconds before the worker finishes a new slide), the system degrades exactly to
@@ -24,13 +26,14 @@ the audio path down.
 \vspace{1.2em}
 \textbf{audio path (ms-scale):} speech chunks $\rightarrow$ streaming
 translator (READ/WRITE) $\rightarrow$ committed target words \\[0.6em]
-\textbf{slide path (30--90\,s-scale, async):} video frames $\rightarrow$
-change detector $\rightarrow$ VLM slide reader $\rightarrow$ term filter
-$\rightarrow$ glossary store $\uparrow$ consulted at WRITE
+\textbf{slide path (dwell-scale, async):} video frames $\rightarrow$
+change detector $\rightarrow$ one-shot visual reader $\rightarrow$ semantic
+evidence state $\rightarrow$ persistent cache $\uparrow$ retrieved at WRITE
 \vspace{1.2em}
 }}
-\caption{Two-timescale architecture. The slide path updates a glossary store
-asynchronously; the audio path only reads it. Placeholder for final figure.}
+\caption{Two-timescale architecture. The slide path updates a persistent
+evidence cache once per change; the non-blocking audio path only retrieves from
+it. Placeholder for final figure.}
 \label{fig:overview}
 \end{figure}
 
@@ -41,20 +44,22 @@ asynchronously; the audio path only reads it. Placeholder for final figure.}
 cuts to the speaker do not trigger re-reads; the current slide persists in the
 store until replaced (lookback bounded at 90 s in our probe).
 
-\paragraph{VLM reading, not OCR.} The probe (\S\ref{sec:results}) shows this
-choice is load-bearing: 480p projected slides with glare and perspective reduce
-classical OCR to fragments (``\textit{independen}''), which \emph{hurt}
-translation ($-2.9$ chrF vs.\ no context), while a VLM reader returns full
-phrases (``\textit{On Imitation and Improvisation: New Competitive
-Businesses}'') and recovers $+14.1$ chrF on hard segments --- 75\% of the
-oracle-terms upper bound. The reader prompt requests distinct terms, named
-entities, and technical phrases in their original language, capped per slide.
+\paragraph{Structured visual reading with an OCR control.} The reader extracts
+visible text together with formulae, layout, chart relations, emphasis, and
+source regions. Strong OCR is a mandatory baseline, not a strawman. Earlier
+text-prompt probes found that a VLM repaired fragmented 480p OCR and helped a
+selected hard stratum, but they did not establish raw-pixel necessity. We claim
+beyond-OCR value only when structured evidence beats strong OCR on preregistered
+layout, formula, chart, or emphasis slices; direct image embeddings earn a
+separate claim only if they beat both structured and oracle text-equivalent
+evidence.
 
-\paragraph{Term filtering.} Domain-specificity filtering against a general
-frequency list (following \citealp{sinhamahapatra2025slides}), dedup across
-consecutive slides, and language tagging (source-language terms serve
-recognition support, M2; target-language terms serve target-form supply, M3
---- the copy channel that only X$\rightarrow$En enjoys at scale).
+\paragraph{Evidence structuring.} We deduplicate content across consecutive
+slides, language-tag terms, preserve region and relation provenance, and create
+compact views for recognition support (M2) and target-form supply (M3).
+Domain-specificity filtering against a general frequency list follows
+\citet{sinhamahapatra2025slides}. The complete cached state remains available
+for auditing even when the translator receives only a small packet.
 
 \subsection{Need-gated injection: when to use it}
 \label{sec:gating}

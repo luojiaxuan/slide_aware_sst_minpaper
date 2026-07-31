@@ -12,8 +12,9 @@ of scope here.
 Reasons, in order of weight:
 
 1. **Mechanism decomposition and where each is measurable.** Slide benefit
-   decomposes into three mechanisms: **M1 anticipation** (slides precede the
-   speech discussing them by 30-60 s; direction-agnostic), **M2 recognition
+   decomposes into three mechanisms: **M1 anticipation** (slides often precede
+   the speech discussing them and persist for tens of seconds; the dwell/lead
+   distribution must be measured per corpus), **M2 recognition
    support** (slide terms in the *source* language help the model hear/segment
    rare terms - the mechanism Do-Slides-Help measures for ASR; also helps
    translation, any direction), and **M3 target-form supply** (slide terms in
@@ -144,14 +145,16 @@ speech + 5.4 min gaps). This *is* the original long streaming speech minus
 discarded invalid spans; the PPT stream reconstructs on the same timeline
 (freeze-frame across gaps). No need to re-source original videos.
 
-## 5. Execution order
+## 5. Execution order (revised 2026-07-31)
 
-1. Kill test first (oracle anticipation probe on S2's 3 rebuilt videos:
-   wait-k ± current-slide terms ± oracle future terms → 3 Pareto curves).
-2. If premise survives: extend orig-timeline rebuild to all 21 videos; run
-   machine drafts; user post-edits 6-video verified core.
-3. VLM pass over mTEDx-V visual labels (when API key available) to upgrade
-   OCR-lower-bound stratification.
-4. ACL 60/60 integration: recover talk videos/frames, adapt term filter,
-   run En→Zh control condition.
-5. MCIF only if reviewers ask for long-form En→X.
+1. Reconstruct real slide-change events on Chinese-LiPS-Long and report dwell
+   time plus slide-to-related-speech lead/lag distributions.
+2. Re-run the speech-input probe with once-per-slide persistent evidence and
+   strong OCR, structured VLM, oracle text-equivalent, stale, and cross-talk
+   controls.
+3. Implement non-blocking cache timing and report cold encoding,
+   dwell-normalized amortized cost, evidence-ready misses, and on-path retrieval.
+4. Extend data or human post-editing only if correct content beats matched wrong
+   controls and the beyond-OCR slice shows headroom.
+5. Lip video, hybrid slide+lip experiments, and AVMuST-TED execution are outside
+   this plan.

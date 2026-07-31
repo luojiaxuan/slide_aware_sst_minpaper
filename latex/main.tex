@@ -11,8 +11,16 @@
 \else
   \usepackage{fontspec}
   \usepackage{xeCJK}
-  \setmainfont{DejaVu Serif}
-  \setCJKmainfont{Noto Sans CJK SC}
+  \IfFontExistsTF{DejaVu Serif}
+    {\setmainfont{DejaVu Serif}}
+    {\setmainfont[
+      BoldFont=texgyretermes-bold.otf,
+      ItalicFont=texgyretermes-italic.otf,
+      BoldItalicFont=texgyretermes-bolditalic.otf
+    ]{texgyretermes-regular.otf}}
+  \IfFontExistsTF{Noto Sans CJK SC}
+    {\setCJKmainfont{Noto Sans CJK SC}}
+    {\setCJKmainfont[BoldFont=FandolSong-Bold.otf]{FandolSong-Regular.otf}}
 \fi
 \usepackage{microtype}
 \usepackage{graphicx}
