@@ -1,13 +1,15 @@
 # Slide-Aware Simultaneous Speech Translation — investigation record
 
-> **Status (2026-07-31): the naive form of the core hypothesis was tested and
-> did not hold.** With audio input and the slide supplied through a vision
-> encoder (Qwen3-Omni-30B, 206 segments), a *correct* slide and a *wrong* slide
-> produce statistically indistinguishable gains in both quality
-> (+2.63 vs +2.29 chrF) and latency (AL −0.202 vs −0.199): the benefit comes
-> from image presence, not slide content. **Read
-> [docs/FINDINGS.md](docs/FINDINGS.md) first** — it is the single source of
-> truth and marks which older documents are superseded.
+> **Status (2026-07-31).** With audio input and the slide supplied through a
+> vision encoder (Qwen3-Omni-30B, 206 segments), a *correct* slide and a *wrong*
+> slide produce statistically indistinguishable gains in quality
+> (+2.63 vs +2.29 chrF) and latency (AL −0.202 vs −0.199) — so **segment-level
+> slide specificity is not being exploited**. Important caveat: the wrong slide
+> was drawn from the *same lecture*, so this does not yet rule out
+> domain-level visual priming; an unrelated-domain control is the missing
+> experiment. **Read [docs/FINDINGS.md](docs/FINDINGS.md) first** — it carries
+> per-claim confidence levels, raw-evidence pointers, and what would overturn
+> each conclusion.
 
 ## Original hypothesis (for the record)
 
