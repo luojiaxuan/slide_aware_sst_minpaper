@@ -1,0 +1,47 @@
+{
+  "artifact": "mcif_target_event_annotation_protocol_v1",
+  "status": "PROTOCOL_UI_AND_FREEZER_READY_HUMAN_LABELS_0_OF_355",
+  "scope": {
+    "source_evidence_tier": "R0_exact_lexical_first_occurrence",
+    "target_language": "zh",
+    "author_items": 355,
+    "candidate_options": 954,
+    "maximum_final_events_per_segment": 1,
+    "raw_pixels_beyond_ocr_claim_supported": false
+  },
+  "inputs": {
+    "author_items_sha256": "fff1aea0b0d34b8dc2627e4b16c2bdf6bfd09252d4cbe50f5ac85e2ceee3a4d8",
+    "scorer_mapping_sha256": "ea21e7d90fab4d7ffece012473ab67d504acce89bb1afdf8c285b878e1a8920e",
+    "workspace_hf_revision": "0785a37f6537363b5cd0a8db0ead730298b12a1b",
+    "workspace_hf_tag": "mcif-target-event-author-workspace-v1"
+  },
+  "protocol": {
+    "config": "code/configs/mcif_target_event_annotation_v1.json",
+    "config_sha256": "95b8dc69cca4736e31ce1f0fe4c2306cd8155d54d46bdfce0039db5d50660b9c",
+    "implementation_git_commit": "b6cd276ed21e6a32fd78c342593b6b6fd518b5b4",
+    "validator_freezer": "code/scripts/mcif_target_event_annotation.py",
+    "authoring_server": "code/scripts/serve_mcif_target_event_authoring.py",
+    "document": "docs/MCIF_TARGET_EVENT_ANNOTATION_V1.md"
+  },
+  "current_working_state": {
+    "local_path": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/annotation/working/target-author-01.jsonl",
+    "initial_sha256": "ff62879f651ac4335d3b70cb465f10b4efd30fd73530271abd8a8afd5c694bd6",
+    "file_mode": "0600",
+    "completed_items": 0,
+    "total_items": 355,
+    "canonical": false,
+    "status": "MUTABLE_LOCAL_WORKING_SHEET_NOT_SOURCE_OF_TRUTH"
+  },
+  "quality_audit": {
+    "targeted_protocol_tests": 21,
+    "targeted_server_tests": 11,
+    "project_tests": 322,
+    "project_test_warnings": 2,
+    "desktop_browser_verified": true,
+    "mobile_browser_verified": true,
+    "horizontal_overflow_pixels_mobile": 0,
+    "browser_console_errors_or_warnings": 0
+  },
+  "access_boundary": "Only author_view may be provided to the target-event author. Audio-only validators must not access the outcome repo, slides, OCR, references, candidates, scorer mapping, working/frozen author labels, or target-event options.",
+  "next_gate": "Complete and freeze human target-event authoring, then generate a physically separate audio-only sufficiency artifact. No SourceEventTiming or ST inference may consume the mutable working sheet."
+}

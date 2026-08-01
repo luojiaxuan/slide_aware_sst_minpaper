@@ -1301,3 +1301,26 @@ or a stronger Qwen3-VL variant if available.
   `author_view/`；未来 audio-only validators 必须使用独立 view/repo，不能看到 slides、OCR、
   references、candidate options、scorer mapping 或 author labels。下一步实现 authoring UI 与
   freeze validator，不自动填充 human labels。
+
+## 2026-08-01 MCIF Target-event Annotation Protocol / UI Completion
+
+- 冻结 machine-readable config
+  `code/configs/mcif_target_event_annotation_v1.json`，SHA256 `95b8dc69...60b9c`。它固定 R0
+  lexical scope、one-event-per-segment、五种 completed statuses、eligible/noneligible gates 与
+  audio-validator forbidden fields；启动时 code/config 不一致会 fail closed。
+- 新增 working-sheet initializer、row validator 和 create-once freeze compiler。Eligible row
+  必须选定一个 option、canonical English event、至少一个 Chinese acceptable realization、
+  explicit/paraphrased target alignment 与 supported slide evidence。Noneligible row 不能残留
+  scoring answers；pending row 不能保存 partial labels。
+- Freeze 同时验证 author input、mutable working sheet、scorer mapping 的 exact hashes 与
+  annotator identity，只输出 `TARGET_EVENT_AUTHORED_PENDING_AUDIO_SUFFICIENCY`；audio boundary、
+  `primary_eligible` 和 `SourceEventTiming` 保持为空。
+- Localhost UI 已在真实 355-item workspace 启动并初始化 `0600` working sheet。Desktop/mobile
+  浏览器检查均加载真实 1920×1080 slide，mobile horizontal overflow 为 0，console 0
+  error/warning；未保存测试标签，当前 progress 仍为 0/355。
+- Protocol/freezer targeted tests 21、server tests 11；全套 `322 passed`，两个既有 warnings。
+  实现 commit `b6cd276`。Author workflow 与 freeze 命令见
+  `docs/MCIF_TARGET_EVENT_ANNOTATION_V1.md`。
+- 下一 gate 是真实 human authoring；在 355/355 freeze 前不生成 audio task，不编译 event packets，
+  不启动 MCIF ST inference。R1/R2 visual-only event discovery 保持独立，不由这批 R0 events
+  替代。

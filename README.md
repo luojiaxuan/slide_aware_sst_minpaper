@@ -67,6 +67,9 @@
 > tag `mcif-target-event-author-workspace-v1`，180 files 已全量回下载验证。当前 355/355 human
 > fields 仍为空；target-event author 只能收到 `author_view/`，未来 audio-only validators 不得
 > 访问该 repo。
+> Annotation protocol、freeze validator 和 localhost UI 已冻结在 config
+> `95b8dc69...60b9c` / Git `b6cd276`，当前真实 working progress 为 `0/355`。见
+> [docs/MCIF_TARGET_EVENT_ANNOTATION_V1.md](docs/MCIF_TARGET_EVENT_ANNOTATION_V1.md)。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28
@@ -222,6 +225,10 @@ current benchmark contract.
    paper-grade fresh generation remains blocked on the read-only `network=none`
    narrow-mount container rebuild and unfinished human outcome artifacts. No ACL
    system result exists yet.
+
+当前 MCIF R0 event authoring 只冻结 target realizations，不运行 ST。355-item workspace、角色
+隔离、状态定义、localhost UI 与后续 freeze 命令见
+[docs/MCIF_TARGET_EVENT_ANNOTATION_V1.md](docs/MCIF_TARGET_EVENT_ANNOTATION_V1.md)。
 
 ## Rules
 
