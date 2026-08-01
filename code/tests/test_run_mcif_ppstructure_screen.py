@@ -90,7 +90,11 @@ def config() -> dict:
     models["text_recognition"] = "PP-OCRv6_medium_rec"
     return {
         "schema_version": 1,
-        "packages": {"paddleocr": "3.7.0", "paddlepaddle_gpu": "3.3.0"},
+        "packages": {
+            "paddleocr": "3.7.0",
+            "paddlex": "3.7.2",
+            "paddlepaddle_gpu": "3.3.0",
+        },
         "upstream": {"paddleocr_git_tag": "v3.7.0", "paddleocr_git_commit": "commit"},
         "inference_engine": "paddle_static",
         "models": models,
@@ -126,7 +130,7 @@ def test_build_output_row_is_portable_and_source_only():
         config=config(),
         config_sha256="config-sha",
         input_manifest_sha256="input-sha",
-        package_versions={"paddleocr": "3.7.0", "paddlex": "3.7.0", "paddlepaddle": "3.3.0"},
+        package_versions={"paddleocr": "3.7.0", "paddlex": "3.7.2", "paddlepaddle": "3.3.0"},
         model_manifest_sha256="model-sha",
         shard_index=0,
     )

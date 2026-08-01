@@ -57,7 +57,7 @@ def output(row: dict, config_sha: str, input_sha: str, *, label: str = "chart") 
             "provider": "PaddleOCR.PPStructureV3",
             "package_versions": {
                 "paddleocr": "3.7.0",
-                "paddlex": "3.7.0",
+                "paddlex": "3.7.2",
                 "paddlepaddle": "3.3.0",
             },
             "config_sha256": config_sha,

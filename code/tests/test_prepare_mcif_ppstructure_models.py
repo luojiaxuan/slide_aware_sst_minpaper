@@ -54,7 +54,7 @@ def test_prepare_writes_atomic_model_and_resolved_manifests(tmp_path, monkeypatc
         assert device == "gpu:0"
         return pipeline, {
             "paddleocr": "3.7.0",
-            "paddlex": "3.7.0",
+            "paddlex": "3.7.2",
             "paddlepaddle": "3.3.0",
         }
 

@@ -67,6 +67,8 @@ def validate_config(config: dict[str, Any]) -> None:
     packages = config.get("packages") or {}
     if packages.get("paddleocr") != "3.7.0":
         raise ValueError("PaddleOCR must be pinned to 3.7.0")
+    if packages.get("paddlex") != "3.7.2":
+        raise ValueError("PaddleX must be pinned to 3.7.2")
     if packages.get("paddlepaddle_gpu") != "3.3.0":
         raise ValueError("PaddlePaddle GPU must be pinned to 3.3.0")
     models = config.get("models") or {}
@@ -411,6 +413,8 @@ def create_pipeline(config: dict[str, Any], device: str):
     }
     if versions["paddleocr"] != expected["paddleocr"]:
         raise ValueError(f"Unexpected PaddleOCR version: {versions['paddleocr']}")
+    if versions["paddlex"] != expected["paddlex"]:
+        raise ValueError(f"Unexpected PaddleX version: {versions['paddlex']}")
     if versions["paddlepaddle"] != expected["paddlepaddle_gpu"]:
         raise ValueError(f"Unexpected PaddlePaddle version: {versions['paddlepaddle']}")
     models = config["models"]

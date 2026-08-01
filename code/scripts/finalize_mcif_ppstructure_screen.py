@@ -115,6 +115,8 @@ def validate_row(
     versions = provenance.get("package_versions") or {}
     if versions.get("paddleocr") != "3.7.0":
         raise ValueError(f"Unexpected PaddleOCR version for {item_id}")
+    if versions.get("paddlex") != "3.7.2":
+        raise ValueError(f"Unexpected PaddleX version for {item_id}")
     if versions.get("paddlepaddle") != "3.3.0":
         raise ValueError(f"Unexpected PaddlePaddle version for {item_id}")
 

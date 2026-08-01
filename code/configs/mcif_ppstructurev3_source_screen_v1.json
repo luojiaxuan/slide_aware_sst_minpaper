@@ -3,6 +3,7 @@
   "artifact": "mcif_flat_ocr_and_structured_text_source_screen_v1",
   "packages": {
     "paddleocr": "3.7.0",
+    "paddlex": "3.7.2",
     "paddlepaddle_gpu": "3.3.0"
   },
   "upstream": {
