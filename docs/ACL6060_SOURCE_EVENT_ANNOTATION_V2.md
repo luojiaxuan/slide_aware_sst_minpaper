@@ -2,7 +2,7 @@
 
 日期：2026-08-01
 
-状态：**protocol、stage data packager、frame-only authoring UI 和 sequential prefix backend
+状态：**protocol、stage data packager、frame-only authoring/validation UI 和 sequential prefix backend
 已实现；100-frame blinded author view r4 已在本地生成，人工标签尚未开始。r3 因 plaintext quasi-identifiers 已 superseded，
 不得开始标注。正式 audio annotation 必须通过 backend，不能直接编辑或分发 server-private
 timing/WAV sheet。v1 seed/media 不变。**
@@ -166,6 +166,10 @@ packet 或 source exclusion 时返回 `UNRESOLVED_MISSING_OUTCOME`，不会输�
   [`../code/scripts/serve_acl6060_authoring.py`](../code/scripts/serve_acl6060_authoring.py)；
 - authoring service tests：
   [`../code/tests/test_serve_acl6060_authoring.py`](../code/tests/test_serve_acl6060_authoring.py)；
+- frame-validation service：
+  [`../code/scripts/serve_acl6060_frame_validation.py`](../code/scripts/serve_acl6060_frame_validation.py)；
+- frame-validation service tests：
+  [`../code/tests/test_serve_acl6060_frame_validation.py`](../code/tests/test_serve_acl6060_frame_validation.py)；
 - Git summary：
   [`../data/manifests/acl6060_dev_source_event_annotation_v2_20260801.json`](../data/manifests/acl6060_dev_source_event_annotation_v2_20260801.json)。
 
@@ -221,6 +225,25 @@ candidate rows。`freeze-audio` 会再次核对两份实际 WAV；`freeze-frame`
 `report` 会拒绝 lock mismatch。两份 audio task 分别运行
 `serve_acl6060_audio_annotation.py`，使用不同 event log/output/port；annotator 不能获得 audio
 root 的 shell/filesystem access。`freeze-audio` 要求两份 event logs 并再次核对完整 hash chain。
+
+`freeze-audio` 完成两份 audio freeze 并物化 validator-specific frame views 后，每位 frame
+validator 分别运行以下 localhost service；两人的 input/root/working sheet 和账号必须物理分离：
+
+```bash
+cd code
+PYTHONPATH=src:. .venv/bin/python scripts/serve_acl6060_frame_validation.py \
+  --input-sheet <frame-view>/frame_validation.jsonl \
+  --workspace-root <frame-view> \
+  --working-sheet <frame-view>/frame_validation_working.jsonl \
+  --config configs/acl6060_source_event_annotation_v2.json \
+  --host 127.0.0.1 \
+  --port <validator-specific-port>
+```
+
+该 UI 只返回 opaque packet ID、locked question、validator-specific opaque options 和 current
+frame；它不包含 canonical answer、audio、talk/timing、raw media SHA 或另一 validator 的结果。
+Working sheet 使用 `0600` atomic replace，task lock、immutable fields、path traversal 和 symlink
+media 均由 server 端拒绝。UI save 不产生 annotation lock；完成后仍必须运行 `freeze-frame`。
 
 当前 private HF r3 revision
 `2fb266d168e0abbf4ace17d3f5de9503a8c46cd6` 已 superseded，不得用于 authoring。Canonical r4：

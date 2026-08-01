@@ -20,6 +20,8 @@ links, or handoff state.
 - GitHub repo: <https://github.com/luojiaxuan/slide_aware_sst_minpaper>
 - Current exploration strategy, collision audit, development routes and held-out freeze:
   [`docs/PAPER_STORY_DECISION_20260731.md`](PAPER_STORY_DECISION_20260731.md)
+- Narrow pre-audio slide/early-target collision audit and executable claim boundary:
+  [`docs/PREAUDIO_SLIDE_COLLISION_AUDIT_20260801.md`](PREAUDIO_SLIDE_COLLISION_AUDIT_20260801.md)
 - Preserved `C0-C7` and Phase-A control contract:
   [`docs/DUAL_ROUTE_DECISION_20260731.md`](DUAL_ROUTE_DECISION_20260731.md)
 - Phase-A data/runner freeze, provenance and no-reference boundary:
@@ -323,6 +325,13 @@ confirmed.
     grouped as four SNR levels with three fixed seeds, not 12 independent
     samples; uncertainty is clustered by talk. This is scorer readiness, not
     a result.
+33. The narrow claim “pre-audio slides make SimulST targets appear earlier” is
+    Level 2 high overlap, chiefly with OmniFusion on problem, insight and
+    scientific-talk application. The paper cannot claim first visual/slide
+    anticipation. Its viable delta is event-level first-stable-correct timing
+    before audio sufficiency, correct-over-wrong/stale/empty attribution, OCR
+    separation and a controlled acoustic-noise interaction. This remains a
+    planned empirical delta, not a result.
 
 ## Current Next Actions (2026-08-01)
 
@@ -334,7 +343,8 @@ confirmed.
    use the localhost-only blinded authoring UI and its separate working sheet,
    then run `freeze-author`. Deploy the implemented prefix gate to two
    independent audio validators, then
-   use a disjoint two-person cohort for frame validation. Report all
+   use the implemented localhost-only frame-validation UI with a disjoint
+   two-person cohort. Report all
    negatives, right-censoring, agreement and adjudication without modifying raw
    sheets.
 3. Freeze source-only packets and target scoring independently, then map

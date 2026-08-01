@@ -49,6 +49,12 @@
 > before touching held-out evaluation. The authoritative strategy, audit, data
 > update, and experiment stages are in
 > [docs/PAPER_STORY_DECISION_20260731.md](docs/PAPER_STORY_DECISION_20260731.md).
+> A narrower 2026-08-01 collision audit rates the broad claim **Level 2 high
+> overlap** because OmniFusion already combines scientific-talk slides, SimulST
+> and earlier/stable commitments. The remaining paper space is the frozen causal
+> event study: correct-target commit lead before audio sufficiency, content
+> controls and acoustic-noise interaction. See
+> [docs/PREAUDIO_SLIDE_COLLISION_AUDIT_20260801.md](docs/PREAUDIO_SLIDE_COLLISION_AUDIT_20260801.md).
 > The previous dual-route document remains the detailed `C0-C7` contract, not
 > the current narrative. Lip video and slide+lip hybrid experiments remain out
 > of scope.
@@ -73,7 +79,10 @@ Lineage and neighbours (survey retained in
 [latex/sections/02_related_work.tex](latex/sections/02_related_work.tex)):
 RASST (retrieval-augmented terminology for SST), Do-Slides-Help (EMNLP'25,
 offline ASR), OmniFusion (En→X SimulST with synchronous vision), Caglayan'20
-line (simultaneous *text* MT with caption images), MCIF.
+line (simultaneous *text* MT with caption images), MCIF. These works occupy the
+broad slide/visual-anticipation claim; this project must contribute causal
+content attribution and stronger event-level evidence rather than another
+aggregate image gain.
 
 ## Directory layout
 
@@ -125,7 +134,8 @@ current benchmark contract.
 1. Complete v2 frame-only canonical item authoring, hash-lock the questions,
    using the implemented localhost-only blinded authoring UI, then use the
    sequential backend for two independent full-causal-prefix audio trajectories
-   and a disjoint two-person frame-only cohort. v1 media remains
+   and the implemented localhost-only validator UI for a disjoint two-person
+   frame-only cohort. v1 media remains
    reusable, but its A/B annotation sheets are superseded. No human label is
    complete yet.
 2. Freeze candidate inventory, source-only packets and target scoring; compare

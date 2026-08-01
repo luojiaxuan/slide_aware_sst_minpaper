@@ -1029,3 +1029,43 @@ or a stronger Qwen3-VL variant if available.
   slide loading and drag-box coordinates with no console warnings/errors. The
   complete project suite now passes `158 tests` with the same two upstream
   `pypinyin` deprecation warnings.
+
+## 2026-08-01 Narrow Collision Audit and Frame Validation UI
+
+- Locked the exact claim that pre-audio slides can make correct SimulST target
+  text appear earlier and that this value may grow under acoustic degradation.
+  The immutable source hash is
+  `4c176a7bd3c41dd5846356a74fb020db945e5eb19db00fb449c4220a13f7f66f`.
+- Re-audited the narrow claim against full primary texts and current official
+  records. Verdict is `Level 2 - High Overlap`: OmniFusion already matches
+  slide-aware scientific-talk SimulST and earlier/stable commitments; Caglayan
+  et al. 2020 already establishes visual anticipation in text SiMT; multimodal
+  RL SiMT already conditions READ/WRITE on images.
+- Froze the remaining executable paper boundary: first-stable-correct target
+  timing before audio sufficiency, correct-versus-wrong/stale/empty content
+  attribution, OCR/raw-image separation, matched final quality and a controlled
+  acoustic-noise difference-in-differences. Generic BLEU/COMET/AL gains are not
+  a sufficient contribution. See
+  `docs/PREAUDIO_SLIDE_COLLISION_AUDIT_20260801.md`.
+- Verified from *Do Slides Help?* that ACL60/60 evaluation uses real midpoint
+  video frames, while its large MuST-C training augmentation groups transcript
+  in eight-sentence chunks, asks Llama 3 for LaTeX slides and renders PDF/images.
+  It is an ASR/term precedent, not evidence for online target timing or real
+  slide semantic necessity.
+- Added a localhost-only Stage-4 frame-validator service. It exposes only the
+  current frame, locked question and validator-specific opaque options; saves
+  support/answer/subtype/confidence/note to an independent `0600` atomic working
+  sheet; and enforces task lock, immutable rows, one-validator ownership,
+  workspace confinement and symlink rejection. It never exposes canonical
+  answer, audio, talk/timing, raw media SHA or another validator's labels.
+- Unit regressions cover supported/unsupported saves, invalid answers, resume,
+  task drift, path escape and symlink media. A real-frame browser smoke verified
+  save/resume, desktop and 375 px mobile layouts, zero horizontal overflow and
+  no console warnings/errors. An independent Claude review found no P0 or
+  correctness/blinding P1; its HTTP-handler coverage P1 was closed with real
+  localhost GET/POST, routing, security-header, malformed-body, oversized-body
+  and bounds tests. The complete suite passes `163 tests` with two
+  upstream `pypinyin` deprecation warnings.
+- No human label was created by this work. Stage 4 remains causally blocked until
+  question authoring, author audio review and two disjoint audio trajectories
+  are frozen.
