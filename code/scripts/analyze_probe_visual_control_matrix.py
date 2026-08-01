@@ -100,6 +100,22 @@ def corpus_chrf(rows: list[dict]) -> float:
     )
 
 
+def chrf_statistics(rows: list[dict]) -> np.ndarray:
+    metric = sacrebleu.metrics.CHRF()
+    return np.asarray(
+        metric._extract_corpus_statistics(
+            [row["hypothesis"] for row in rows],
+            [[row["reference"] for row in rows]],
+        ),
+        dtype=np.int64,
+    )
+
+
+def corpus_chrf_from_statistics(statistics: np.ndarray) -> float:
+    metric = sacrebleu.metrics.CHRF()
+    return float(metric._compute_score_from_stats(statistics.sum(axis=0)).score)
+
+
 def summarize_condition(rows: list[dict]) -> dict:
     return {
         "n": len(rows),
@@ -127,7 +143,11 @@ def paired_bootstrap(
 ) -> dict:
     first_rows = [matrix[item_id][first] for item_id in item_ids]
     second_rows = [matrix[item_id][second] for item_id in item_ids]
-    observed_chrf = corpus_chrf(first_rows) - corpus_chrf(second_rows)
+    first_chrf_statistics = chrf_statistics(first_rows)
+    second_chrf_statistics = chrf_statistics(second_rows)
+    observed_chrf = corpus_chrf_from_statistics(
+        first_chrf_statistics
+    ) - corpus_chrf_from_statistics(second_chrf_statistics)
     first_al = np.asarray([average_lagging(row) for row in first_rows])
     second_al = np.asarray([average_lagging(row) for row in second_rows])
     observed_al = float(np.mean(first_al - second_al))
@@ -136,9 +156,9 @@ def paired_bootstrap(
     al_deltas = np.empty(samples)
     for sample_index in range(samples):
         indices = rng.integers(0, len(item_ids), len(item_ids))
-        chrf_deltas[sample_index] = corpus_chrf(
-            [first_rows[index] for index in indices]
-        ) - corpus_chrf([second_rows[index] for index in indices])
+        chrf_deltas[sample_index] = corpus_chrf_from_statistics(
+            first_chrf_statistics[indices]
+        ) - corpus_chrf_from_statistics(second_chrf_statistics[indices])
         al_deltas[sample_index] = float(np.mean((first_al - second_al)[indices]))
     return {
         "first": first,
