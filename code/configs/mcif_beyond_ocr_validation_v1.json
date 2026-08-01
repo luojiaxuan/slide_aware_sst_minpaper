@@ -1,0 +1,77 @@
+{
+  "schema_version": "mcif_beyond_ocr_validation_config_v1",
+  "target_language": "zh",
+  "candidate_scope": "r1_strict_and_r2_semantic_first_source_occurrence",
+  "roles": [
+    "visual_validator",
+    "target_author"
+  ],
+  "judgments": [
+    "yes",
+    "no",
+    "uncertain"
+  ],
+  "target_reference_alignments": [
+    "explicit",
+    "paraphrased",
+    "omitted",
+    "unsupported",
+    "uncertain"
+  ],
+  "visual_gate": {
+    "visual_evidence_correct": "yes",
+    "candidate_supported_by_visual_evidence": "yes",
+    "r0_insufficient": "yes",
+    "r1_insufficient_for_r2": "yes"
+  },
+  "target_gate": {
+    "candidate_eligibility": "yes",
+    "canonical_source_event_required": true,
+    "acceptable_target_realization_required": true,
+    "target_reference_alignment_allowed": [
+      "explicit",
+      "paraphrased"
+    ]
+  },
+  "access_boundary": {
+    "visual_validator_forbidden": [
+      "source_reference",
+      "target_reference",
+      "talk_id",
+      "segment_id",
+      "state_id",
+      "timing",
+      "lead",
+      "scorer_mapping",
+      "target_author_labels"
+    ],
+    "target_author_forbidden": [
+      "slide",
+      "r0_ocr",
+      "r1_structured_text",
+      "evidence_tier",
+      "vlm_description",
+      "talk_id",
+      "segment_id",
+      "state_id",
+      "timing",
+      "lead",
+      "scorer_mapping",
+      "visual_validator_labels"
+    ],
+    "audio_validator_forbidden": [
+      "slide",
+      "r0_ocr",
+      "r1_structured_text",
+      "source_reference",
+      "target_reference",
+      "candidate",
+      "evidence_tier",
+      "vlm_description",
+      "scorer_mapping",
+      "visual_validator_labels",
+      "target_author_labels"
+    ]
+  },
+  "interpretation": "Only candidates passing both frozen role gates may enter independent audio-only sufficiency validation. This config does not define SourceEventTiming, primary eligibility, translation effects, or pixels-beyond-OCR evidence."
+}
