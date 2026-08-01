@@ -1121,3 +1121,12 @@ or a stronger Qwen3-VL variant if available.
   10-second average was 78%. The bottleneck is Transformers autoregressive
   decode/preparation/variable-length tail behavior. Future larger VLM rollout
   must use a continuous-batching serving path.
+- Added a hash-bound lexical structural triage over the portable output. After
+  removing a `video feed` connectivity false positive, 192/304 rows across all
+  21 talks contain at least one model-described table/chart/connectivity/formula/
+  emphasis/mapping pattern; 111 relation rows are simple-layout-only. An
+  eight-frame deterministic agent spot check supported the broad categories but
+  found one hallucinated explicit arrow over a real left-to-right pipeline.
+  These diagnostics are not labels. They motivate a three-step development
+  baseline: unordered OCR, structure-preserving text, then raw image. The full
+  project suite now passes `184 tests` with the same two upstream warnings.

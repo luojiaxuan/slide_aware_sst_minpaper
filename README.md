@@ -147,9 +147,10 @@ current benchmark contract.
    reusable, but its A/B annotation sheets are superseded. No human label is
    complete yet.
 2. Freeze candidate inventory, source-only packets and target scoring; compare
-   audio/document-only, token-budget-matched OCR, current image/semantic
-   evidence, and matched stale/wrong evidence under native and controlled-noise
-   audio.
+   audio/document-only, token-budget-matched unordered OCR, layout/structure-
+   preserving text, current raw image, and matched stale/wrong evidence under
+   native and controlled-noise audio. This ladder separates “context helps”
+   from “raw pixels are necessary.”
 3. Require a content-specific advance in first stable correct target decisions,
    preserved final quality and a coherent noise interaction. A small aggregate
    BLEU change without these controls is not sufficient. The fail-closed event

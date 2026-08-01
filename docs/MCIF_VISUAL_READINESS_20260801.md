@@ -155,6 +155,19 @@ tag `mcif-source-only-qwen3-vl-32b-v1`；repo privacy 与远端 checksum manifes
 仍必须用 blind human event annotation 和 OCR/current-image/stale-wrong-image 对照判断
 哪些结构真正提供 source audio 之前的 target evidence。
 
+为避免把 303 个 relation rows 全部当成有效结构，新增 hash-bound lexical triage：
+[`../data/manifests/mcif_visual_structure_lexical_triage_v1_20260801.json`](../data/manifests/mcif_visual_structure_lexical_triage_v1_20260801.json)。
+收紧一次 `video feed` 假阳性后，192/304 rows、21/21 talks 至少命中一种 model-described
+structural pattern，111 rows 只有 simple layout。非互斥类别为 visual emphasis 88、chart
+quantitative 76、connectivity/process 71、table association 40、label mapping 33、formula
+grouping 7。它们是 VLM 文本关键词统计，不是图像 truth 或 event labels。
+
+对每类 hash-deterministic 样本及两个额外 connectivity 样本做了 8-frame agent spot
+check：结构类别总体可在图像中找到，但一个 MuDA pipeline 样本把真实的左右处理顺序写成
+了不存在的显式 arrow。这再次说明 VLM relation 不能直接充当 annotation。实验 baseline
+必须拆成 `unordered OCR -> layout/structure-preserving text -> raw image`；若 raw image 只
+胜 unordered OCR 而不胜结构化文本，结论只能是结构/context 有用，不能是 pixels 必要。
+
 本次 Transformers batched generation 尝试 batch 16/32/64，观测到的最高 10 秒平均
 GPU utilization 为 78%，未达到 90% 目标。原因是自回归解码、预处理和变长 tail 交替；
 未来更大规模 VLM generation 必须改用 continuous-batching serving，不得照搬该 runner。
@@ -201,6 +214,7 @@ correctness 不低于 -1 pp；它们是资源投入门槛，不是尚未注册�
 3. MCIF 304-state private source-only prescreen、QA 和 HF upload 已完成；只用 aggregate
    coverage 完善 annotation rubric，不得用逐行输出修改 inventory 或提示 annotator。
 4. 冻结 candidate/source-packet/target-scoring 三件套，先跑 oracle headroom：document、
-   OCR、correct semantic/relation、matched wrong，覆盖 native 与 noise。
+   unordered OCR、layout/structure-preserving text、raw image、matched wrong，覆盖 native
+   与 noise。
 5. 只有看到 content-specific early-commit 或稳定 robustness signal 后，才投入 automatic
    VLM compiler、selection/gating 与 GPU inference。

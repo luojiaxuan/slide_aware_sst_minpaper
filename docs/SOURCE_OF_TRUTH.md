@@ -338,6 +338,11 @@ confirmed.
     trivial layout statements. The screen establishes annotation material, not
     `vision > OCR`; only blinded event labels and controlled system comparisons
     can answer that question.
+35. A lexical diagnostic narrows those 303 rows to 192 model-described
+    structural candidates across all 21 talks, while 111 are simple-layout-only.
+    An agent spot check also found one hallucinated arrow. The required baseline
+    ladder is therefore unordered OCR, layout/structure-preserving text, and raw
+    image; beating only unordered OCR does not establish that pixels are needed.
 
 ## Current Next Actions (2026-08-01)
 
@@ -356,9 +361,9 @@ confirmed.
 3. Use only aggregate MCIF prescreen coverage to refine the source-only rubric;
    never expose row-level model suggestions to annotators or alter the frozen
    304-state inventory. Freeze source-only packets and target scoring
-   independently, then map
-   document-only, OCR, correct semantic/relation oracle, matched wrong
-   evidence, and native/noisy audio headroom. A stable signal in any route can
+   independently, then map document-only, unordered OCR, layout/structure-
+   preserving text, raw image, matched wrong evidence, and native/noisy audio
+   headroom. A stable signal in any route can
    justify focused automatic implementation; stop only if every gold route lacks
    practical headroom. Use the frozen event scorer in
    [`ACL6060_EVENT_TRAJECTORY_SCORING_V1.md`](ACL6060_EVENT_TRAJECTORY_SCORING_V1.md);
