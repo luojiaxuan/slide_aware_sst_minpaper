@@ -86,6 +86,13 @@
 > [`861401f2`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/861401f295ab122e69c4f22820b8d501e891e6db/beyond_ocr_validation_workspace_v1)，
 > tag `mcif-beyond-ocr-validation-workspace-v1`；102 files 全量回下载逐字节验证通过。只有两个
 > 角色的 frozen labels 成功 join 后，候选才可进入 audio sufficiency/event packets。
+> 对应 role-specific validator、localhost UIs、create-once freezes 与 scorer-side join 已完成，
+> protocol config SHA256 为 `d25f558c...d69b6`，实现位于 Git `d3a710e` / `ffd960c`。两个
+> `0600` working sheets 仍分别为 0/152；desktop/mobile role-isolation 审计、真实 image load、
+> 0 horizontal overflow 与 0 console error/warning 均通过，且没有保存测试标签。当前 visual 与
+> target 服务分别为 <http://127.0.0.1:43872/>、<http://127.0.0.1:43873/>。完整 gate、启动、
+> freeze 与 join 命令见
+> [docs/MCIF_BEYOND_OCR_VALIDATION_V1.md](docs/MCIF_BEYOND_OCR_VALIDATION_V1.md)。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28
@@ -245,6 +252,9 @@ current benchmark contract.
 当前 MCIF R0 event authoring 只冻结 target realizations，不运行 ST。355-item workspace、角色
 隔离、状态定义、localhost UI 与后续 freeze 命令见
 [docs/MCIF_TARGET_EVENT_ANNOTATION_V1.md](docs/MCIF_TARGET_EVENT_ANNOTATION_V1.md)。
+R1/R2 beyond-OCR proposals 使用另一套双角色 gate；两个独立 annotators 完成并分别 freeze
+152 rows 前不能 join，joint pass 前不能生成 audio task。见
+[docs/MCIF_BEYOND_OCR_VALIDATION_V1.md](docs/MCIF_BEYOND_OCR_VALIDATION_V1.md)。
 
 ## Rules
 

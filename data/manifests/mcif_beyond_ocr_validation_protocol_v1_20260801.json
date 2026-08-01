@@ -1,0 +1,64 @@
+{
+  "artifact": "mcif_beyond_ocr_validation_protocol_v1",
+  "status": "PROTOCOL_UI_AND_JOIN_READY_HUMAN_LABELS_VISUAL_0_OF_152_TARGET_0_OF_152",
+  "scope": {
+    "candidate_tiers": [
+      "R1_STRICT",
+      "R2_SEMANTIC"
+    ],
+    "candidates": 152,
+    "target_language": "zh",
+    "raw_pixels_beyond_ocr_claim_supported": false
+  },
+  "inputs": {
+    "visual_items_sha256": "bcc84ab17ae797a5c185d545aa2c0fefa7a6c146c56607325f967b0bf834efad",
+    "target_items_sha256": "c55e3a5a0d883fa2ab679ff4d440c12e3b2ede65b52541980e09f3163494f133",
+    "scorer_mapping_sha256": "d81a6ed026a1bfd300bfae82e37e232c4b7943f082751b52463ab76c8381cb3d",
+    "workspace_hf_revision": "861401f295ab122e69c4f22820b8d501e891e6db",
+    "workspace_hf_tag": "mcif-beyond-ocr-validation-workspace-v1"
+  },
+  "protocol": {
+    "config": "code/configs/mcif_beyond_ocr_validation_v1.json",
+    "config_sha256": "d25f558c2010331d1219c65d7b6192edd3972151b49809435efb08821f6d69b6",
+    "validator_freezer_join_git_commit": "d3a710e2a40bb71be5c0fa4b766982676d3c1883",
+    "role_ui_git_commit": "ffd960c04aacd06b86a276b97ce27b4c28b42af3",
+    "validator_freezer_join": "code/scripts/mcif_beyond_ocr_validation.py",
+    "role_server": "code/scripts/serve_mcif_beyond_ocr_validation.py",
+    "document": "docs/MCIF_BEYOND_OCR_VALIDATION_V1.md"
+  },
+  "current_working_state": {
+    "visual": {
+      "local_path": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/annotation/working/beyond-ocr-visual-01.jsonl",
+      "initial_sha256": "b74cc5d15d66a4a647a1961ea6e1dd13d2f0e7e8c5706e939a39a5e2d9e439be",
+      "file_mode": "0600",
+      "completed_items": 0,
+      "total_items": 152,
+      "canonical": false
+    },
+    "target": {
+      "local_path": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/annotation/working/beyond-ocr-target-01.jsonl",
+      "initial_sha256": "81afa11dc846303bd703d73508cfe176bb89217fd327b10cfbb07c3576c9644a",
+      "file_mode": "0600",
+      "completed_items": 0,
+      "total_items": 152,
+      "canonical": false
+    },
+    "status": "MUTABLE_LOCAL_ROLE_SHEETS_NOT_SOURCE_OF_TRUTH"
+  },
+  "quality_audit": {
+    "targeted_protocol_and_server_tests": 17,
+    "project_tests": 357,
+    "project_test_warnings": 2,
+    "desktop_viewport": "1280x720",
+    "mobile_viewport": "390x844",
+    "desktop_browser_verified": true,
+    "mobile_browser_verified": true,
+    "visual_media_natural_dimensions": "1920x1080",
+    "horizontal_overflow_pixels_mobile": 0,
+    "maximum_mobile_control_right_edge_pixels": 361,
+    "browser_console_errors_or_warnings": 0,
+    "test_labels_saved": 0
+  },
+  "access_boundary": "Visual validator receives only visual_validator_view. Target author receives only target_author_view. Neither receives scorer_private or the other role's view/working/frozen labels. Audio validators receive none of these outcome-side artifacts.",
+  "next_gate": "Two independent human annotators complete and separately freeze 152 visual and 152 target rows. The scorer then joins the two create-once freezes. No audio task, event packet, MCIF ST inference, pixels-beyond-OCR statistic, or paper effect may precede the joint gate."
+}

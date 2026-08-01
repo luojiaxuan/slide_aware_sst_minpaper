@@ -1376,3 +1376,30 @@ or a stronger Qwen3-VL variant if available.
 - 当前 visual 与 target 两侧都为 0/152。下一步实现 role-specific working-sheet validator、
   localhost UI 与 create-once freeze/join；join 前不得生成 audio task、event packets 或
   `pixels > OCR` 统计。
+
+## 2026-08-01 MCIF Beyond-OCR Validation Protocol / UI Completion
+
+- 冻结 machine-readable config `code/configs/mcif_beyond_ocr_validation_v1.json`，SHA256
+  `d25f558c...d69b6`。Visual gate 要求 evidence correctness、candidate support、R0
+  insufficiency 全为 yes，R2 还要求 R1 insufficiency=yes；target gate 要求 eligibility=yes、
+  non-empty canonical English event、至少一个 acceptable Zh realization 及 explicit/paraphrased
+  alignment。
+- 新增 role working-sheet validator、create-once freeze 与 scorer-side join。Freeze 要求 152/152
+  completed、exact input/config/working hashes、annotator identity 与 UTC lock；join 重新验证两个
+  frozen artifacts 和 private mapping，并重新计算 gates，不能信任缓存的 pass flag。
+- Joint pass 只输出 `BEYOND_OCR_VISUAL_TARGET_VALIDATED_PENDING_AUDIO_SUFFICIENCY`；audio
+  boundaries、`primary_eligible` 与 `SourceEventTiming` 保持为空。任一 role rejection/uncertain
+  在 join 后止于 `BEYOND_OCR_CANDIDATE_REJECTED_BEFORE_AUDIO`。
+- 两个 localhost UIs 使用同一 fail-closed validator，但只接收各自 role payload。Visual UI
+  只显示 slide/R0/R1/candidate/proposed evidence；target UI 只显示 candidate/source/reference。
+  Cross-role payload、input/media/config drift、partial pending rows 与无 reason rejection 均拒绝。
+- 真实 `0600` working sheets 初始化并复核为 visual 0/152、target 0/152；初始 SHA256 分别为
+  `b74cc5d1...e439be` 与 `81afa11d...64a`。Browser desktop 1280×720 / mobile 390×844
+  审计通过：1920×1080 slide 正常加载、role 字段隔离正确、mobile horizontal overflow=0、
+  controls 右边界≤361 px、console 0 error/warning。没有保存测试标签。
+- Protocol/freezer 实现 commit `d3a710e`，role UI commit `ffd960c`；targeted tests 17、全套
+  `357 passed`，两个既有 `pypinyin` warnings。完整 contract 与操作命令见
+  `docs/MCIF_BEYOND_OCR_VALIDATION_V1.md`。
+- 下一 gate 只能由两位真实 human annotators 分别完成并 freeze 152 rows。两个 freezes join 前
+  不生成 audio task；joint pass 与独立 audio sufficiency freeze 前不编译 event packets、不启动
+  MCIF ST inference、不报告 `pixels > OCR` 或 paper effect。
