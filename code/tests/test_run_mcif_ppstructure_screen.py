@@ -274,6 +274,7 @@ def test_batch_failure_isolated_and_zero_cluster_fallback_recorded(tmp_path):
     assert outcomes[1]["fallback"]["predict_overrides"] == {
         "use_ocr_results_with_table_cells": False
     }
+    assert outcomes[1]["fallback"]["prior_attempts"] == []
     assert pipeline.calls[0] == (paths, {})
     assert pipeline.calls[-1][1] == {"use_ocr_results_with_table_cells": False}
 
@@ -290,3 +291,30 @@ def test_unrelated_single_item_error_is_not_masked(tmp_path):
     outcomes = module.predict_paths_with_fallback(Pipeline(), [path], policy)
     assert type(outcomes[0]["error"]).__name__ == "RuntimeError"
     assert "fallback" not in outcomes[0]
+
+
+def test_second_fallback_records_failed_first_attempt(tmp_path):
+    module = load_module()
+    zero_cluster_error = type("InvalidParameterError", (Exception,), {})
+    policy = config()["fallbacks"]["zero_cluster_table_reconciliation"]
+
+    class Result:
+        def __init__(self, path):
+            self.json = {"res": {"input_path": path}}
+
+    class Pipeline:
+        def predict(self, paths, **kwargs):
+            if kwargs.get("use_table_recognition") is False:
+                return [Result(path) for path in paths]
+            raise zero_cluster_error(policy["trigger_message"])
+
+    path = str(tmp_path / "bad.png")
+    outcome = module.predict_paths_with_fallback(Pipeline(), [path], policy)[0]
+    assert outcome["fallback"]["strategy"] == "disable_table_recognition"
+    assert outcome["fallback"]["prior_attempts"] == [
+        {
+            "strategy": "disable_ocr_table_cell_reconciliation",
+            "error_type": "InvalidParameterError",
+            "error": policy["trigger_message"],
+        }
+    ]

@@ -554,6 +554,7 @@ def predict_paths_with_fallback(
                                 "trigger_error": str(exc),
                                 "strategy": fallback["name"],
                                 "predict_overrides": fallback["predict_overrides"],
+                                "prior_attempts": attempts,
                             },
                         }
                     ]
