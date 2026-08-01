@@ -70,6 +70,14 @@
 > Annotation protocol、freeze validator 和 localhost UI 已冻结在 config
 > `95b8dc69...60b9c` / Git `b6cd276`，当前真实 working progress 为 `0/355`。见
 > [docs/MCIF_TARGET_EVENT_ANNOTATION_V1.md](docs/MCIF_TARGET_EVENT_ANNOTATION_V1.md)。
+> 独立的 beyond-OCR discovery 也已完成 automatic candidate freeze：严格 R1 在排除
+> serialized JSON/markup 与当前 R0 后只剩 2 candidates / 2 talks；R2 在完全排除
+> `ocr_text` 及当前 R0/R1 lexical candidates 后有 150 candidates / 21 talks / 118
+> segments，其中 122 个 lead≥5 秒、86 个≥10 秒。artifact 位于 private HF revision
+> [`01defe41`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/01defe410b4fde07c647d8ed241dfbe501b5d691/beyond_ocr_candidate_inventory_v1)，
+> tag `mcif-beyond-ocr-candidate-inventory-v1`，远端 6 files 已全量回下载逐字节验证。R2 来自
+> source-only Qwen3-VL 描述，包含明显泛化噪声；它只是待独立人工验证的 proposal pool，
+> 仍不支持 `pixels > OCR`，也不能进入 inference 或替代 R0 authoring。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28

@@ -1,0 +1,64 @@
+{
+  "artifact": "mcif_beyond_ocr_candidate_inventory_v1",
+  "status": "UPLOADED_PRIVATE_PENDING_INDEPENDENT_HUMAN_VALIDATION",
+  "local_staging": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/outcomes/mcif_beyond_ocr_candidate_inventory_v1",
+  "hugging_face": {
+    "repo": "gavinlaw/slide-aware-sst-mcif-outcomes",
+    "repo_type": "dataset",
+    "private_verified": true,
+    "path": "beyond_ocr_candidate_inventory_v1",
+    "revision": "01defe410b4fde07c647d8ed241dfbe501b5d691",
+    "tag": "mcif-beyond-ocr-candidate-inventory-v1",
+    "full_remote_redownload_byte_verified": true
+  },
+  "provenance": {
+    "builder_git_commit": "eb601f64efd23c03725e9d28245ad4628c4a3919",
+    "reference_segments_sha256": "e7840e1b0cd0589e1a643b5d450c86372c4e6c6f67de594959926f9152ae172a",
+    "source_evidence_ladder_sha256": "8f77312b93562afd8a92ea0b3139fe5f91b21b08e9740d311a1fd0a83b594f7f",
+    "source_only_vlm_output_sha256": "55a6dafe5ebd1fc5f37226de7ce48e601d61e1fb914287a81bdb8f92b0479682",
+    "vlm_model": "Qwen/Qwen3-VL-32B-Instruct",
+    "vlm_model_revision": "0cfaf48183f594c314753d30a4c4974bc75f3ccb"
+  },
+  "inventory": {
+    "reference_segments": 919,
+    "reference_talks": 21,
+    "candidate_segments": 120,
+    "r1_strict_candidates": 2,
+    "r1_strict_talks": 2,
+    "r2_semantic_candidates": 150,
+    "r2_semantic_talks": 21,
+    "r2_semantic_segments": 118,
+    "r2_lead_ge_5_sec": 122,
+    "r2_lead_ge_10_sec": 86,
+    "r2_max_lead_sec": 173.677
+  },
+  "artifact_integrity": {
+    "files": 6,
+    "bytes": 473097,
+    "checksum_entries": 5,
+    "checksum_manifest_sha256": "1a6c172cfef948110e232560dd22e623e7b35d9fa97df1e060d07611e73fff15",
+    "r1_strict_candidates_sha256": "ca6ba588e8e1e48a2bf686535dbc835c606e6c1c5dd454d4864fdd1796ef2a55",
+    "r2_semantic_candidates_sha256": "07e5cd1cfe77415392dfd1ce292e0784ce0078ccbe7d511eb5dce5f46422c273",
+    "candidate_segments_sha256": "24d4b12029be6c81c7b73762326bb02f8900e101b8f03986aa6e46e95928d307",
+    "independent_rebuild_byte_identical": true
+  },
+  "quality_audit": {
+    "targeted_tests": 11,
+    "project_tests": 333,
+    "project_test_warnings": 2,
+    "r1_serialized_json_wrapper_excluded": true,
+    "r1_html_and_latex_markup_stripped": true,
+    "r2_ocr_text_excluded": true,
+    "r2_current_r0_and_r1_candidates_excluded": true,
+    "vlm_nominal_timing_ignored": true,
+    "corrected_ladder_timing_used": true
+  },
+  "human_labels": {
+    "event_eligibility_complete": false,
+    "visual_correctness_complete": false,
+    "ocr_insufficiency_complete": false,
+    "target_realizations_complete": false,
+    "audio_sufficiency_complete": false
+  },
+  "use_boundary": "Outcome-side high-recall proposal pool only. Do not mount into inference, expose to the R0 author, filter R2 conditions, or report as gold events, translation effects, or evidence that pixels outperform OCR."
+}

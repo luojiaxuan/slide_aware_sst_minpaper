@@ -1324,3 +1324,30 @@ or a stronger Qwen3-VL variant if available.
 - 下一 gate 是真实 human authoring；在 355/355 freeze 前不生成 audio task，不编译 event packets，
   不启动 MCIF ST inference。R1/R2 visual-only event discovery 保持独立，不由这批 R0 events
   替代。
+
+## 2026-08-01 MCIF Beyond-OCR Candidate Inventory Completion
+
+- 新增独立 outcome-side builder，绑定 919-row official references、304-state corrected
+  R0/R1/R2 ladder、304-row source-only Qwen3-VL output 及 clean Git `eb601f6`。VLM 自带的旧
+  nominal timing 被明确忽略，所有 causal current/earliest-contiguous 判断只使用 ladder 的
+  `t+0.5s` intervals。
+- R1 strict 只解析 `chart_markdown`、`table_html`、`formula_latex` 的实际可见内容；不读取
+  serialized `model_input_text`，HTML/LaTeX markup 不算 evidence，并排除当前 R0 candidates。
+  先前 naive 23 个 R1-only 候选收敛为 2 个真实候选 / 2 talks：`graduate school` 与 `metric`。
+- R2 只读 `scene_summary`、`objects`、`actions`、`spatial_relations`，完全排除 `ocr_text`，并
+  排除当前 R0 与所有实际 R1 block lexical candidates。最终得到 150 个 proposals / 21 talks /
+  118 segments；122 个 lead≥5 秒，86 个≥10 秒，最大 173.677 秒。
+- R2 抽样同时包含 `sql lambda`、流程/关系等可能有效项和 `content`、`presentation` 等明显
+  泛化噪声。每行因此保持 `visual_evidence_correct`、`ocr_insufficient`、event eligibility、
+  target realizations 与 audio sufficiency 为空；这批数据不能被解释为 `pixels > OCR`。
+- 构建器对 references/ladder row hash、VLM source-only boundary、exact model/prompt provenance、
+  raw-to-canonical 去重/空列表补全、first source occurrence、causal interval、连续 evidence、
+  create-once 与 checksum fail closed。目标测试 11、全套 `333 passed`，仅有两个既有
+  `pypinyin` warnings。
+- 正式 6-file bundle / 473,097 bytes 与独立 rebuild byte-identical，5-entry `SHA256SUMS`
+  全通过。上传 private HF revision
+  [`01defe41/beyond_ocr_candidate_inventory_v1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/01defe410b4fde07c647d8ed241dfbe501b5d691/beyond_ocr_candidate_inventory_v1)，
+  tag `mcif-beyond-ocr-candidate-inventory-v1`；远端 6 files 全量回下载并逐字节验证。
+- 下一步构造与 R0 authoring 物理隔离的 R1/R2 validation workspace。人工先判断 VLM 描述是否
+  符合 pixels、候选是否真的无法由 R0 OCR 得到、是否构成可计分 En→Zh event；通过后才进入
+  独立 audio-sufficiency 与 event-packet gate。
