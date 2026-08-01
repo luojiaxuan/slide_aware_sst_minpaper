@@ -30,12 +30,16 @@ from __future__ import annotations
 import argparse
 import json
 import time
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from dataclasses import dataclass, field
+from multiprocessing import get_context
 from pathlib import Path
 from typing import Iterator
 
 import numpy as np
+
+
+_PROCESS_PROCESSOR = None
 
 
 def main() -> None:
@@ -56,6 +60,8 @@ def main() -> None:
                     help="number of active streaming items generated together")
     ap.add_argument("--prefetch-next-batch", action="store_true",
                     help="overlap next-prefix CPU processing with current generation")
+    ap.add_argument("--prefetch-mode", choices=("none", "thread", "process"),
+                    default="none")
     ap.add_argument("--device-map", default="auto")
     ap.add_argument("--attn", default="sdpa")
     ap.add_argument("--limit", type=int, default=0)
@@ -63,6 +69,8 @@ def main() -> None:
     ap.add_argument("--shard-index", type=int, default=0)
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
+    if args.prefetch_next_batch and args.prefetch_mode == "none":
+        args.prefetch_mode = "thread"
     if args.batch_items < 1:
         raise ValueError("batch-items must be positive")
 
@@ -201,7 +209,7 @@ def stream_many(
 ) -> Iterator[tuple[int, dict, float]]:
     if batch_size < 1:
         raise ValueError("batch_size must be positive")
-    if getattr(args, "prefetch_next_batch", False):
+    if getattr(args, "prefetch_mode", "none") != "none":
         yield from stream_many_prefetched(
             indexed_items,
             cond,
@@ -298,8 +306,30 @@ def stream_many_prefetched(
     if not plans:
         return
 
-    prepared = prepare_prefix_plans(plans, processor)
-    with ThreadPoolExecutor(max_workers=1, thread_name_prefix="prefix-preprocessor") as executor:
+    prefetch_mode = getattr(args, "prefetch_mode", "thread")
+    if prefetch_mode == "thread":
+        executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="prefix-preprocessor")
+
+        def submit(next_plans):
+            return executor.submit(prepare_prefix_plans, next_plans, processor)
+    elif prefetch_mode == "process":
+        executor = ProcessPoolExecutor(
+            max_workers=1,
+            mp_context=get_context("spawn"),
+            initializer=initialize_process_processor,
+            initargs=(args.model, args.model_revision),
+        )
+
+        def submit(next_plans):
+            return executor.submit(
+                prepare_prefix_payload_in_process,
+                prefix_plan_payload(next_plans),
+            )
+    else:
+        raise ValueError(f"Unknown prefetch mode: {prefetch_mode}")
+
+    with executor:
+        prepared = submit(plans).result()
         while plans:
             next_plans = [
                 (state, step + 1)
@@ -314,7 +344,7 @@ def stream_many_prefetched(
                 state = prepare_stream_state(source_index, item, cond, args)
                 next_plans.append((state, 1))
             prefetched = (
-                executor.submit(prepare_prefix_plans, next_plans, processor)
+                submit(next_plans)
                 if next_plans else None
             )
             texts = generate_prepared_prefix_batch(
@@ -371,7 +401,7 @@ def advance_stream_state(state: StreamState, text: str, args) -> dict | None:
         "attention": args.attn,
         "max_new_tokens": args.max_new_tokens,
         "batch_items": args.batch_items,
-        "prefetch_next_batch": getattr(args, "prefetch_next_batch", False),
+        "prefetch_mode": getattr(args, "prefetch_mode", "none"),
         "seed": args.seed,
         "shard_index": args.shard_index,
         "shard_count": args.shard_count,
@@ -430,7 +460,11 @@ def translate_prefix_batch(audio_prefixes, sample_rates, image_paths, items, tar
 
 
 def prepare_prefix_plans(plans, processor):
-    return prepare_model_inputs(
+    return prepare_model_inputs(*prefix_plan_payload(plans), processor)
+
+
+def prefix_plan_payload(plans):
+    return (
         [
             state.audio[: step * state.chunk_samples]
             for state, step in plans
@@ -439,8 +473,28 @@ def prepare_prefix_plans(plans, processor):
         [state.image for state, _ in plans],
         [state.item for state, _ in plans],
         [state.item.get("tgt_lang", "English") for state, _ in plans],
-        processor,
     )
+
+
+def initialize_process_processor(model_id, model_revision) -> None:
+    global _PROCESS_PROCESSOR
+    from transformers import Qwen3OmniMoeProcessor
+
+    _PROCESS_PROCESSOR = Qwen3OmniMoeProcessor.from_pretrained(
+        model_id,
+        revision=model_revision,
+        trust_remote_code=True,
+    )
+    tokenizer = _PROCESS_PROCESSOR.tokenizer
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.padding_side = "left"
+
+
+def prepare_prefix_payload_in_process(payload):
+    if _PROCESS_PROCESSOR is None:
+        raise RuntimeError("process preprocessor is not initialized")
+    return prepare_model_inputs(*payload, _PROCESS_PROCESSOR)
 
 
 def prepare_model_inputs(audio_prefixes, sample_rates, image_paths, items, targets,

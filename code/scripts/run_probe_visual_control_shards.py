@@ -50,6 +50,8 @@ def main() -> None:
     parser.add_argument("--workers-per-gpu", type=int, default=1)
     parser.add_argument("--batch-items", type=int, default=1)
     parser.add_argument("--prefetch-next-batch", action="store_true")
+    parser.add_argument("--prefetch-mode", choices=("none", "thread", "process"),
+                        default="none")
     parser.add_argument("--chunk-s", type=float, default=1.0)
     parser.add_argument("--max-new-tokens", type=int, default=96)
     parser.add_argument("--seed", type=int, default=0)
@@ -103,6 +105,8 @@ def main() -> None:
             str(args.max_new_tokens),
             "--batch-items",
             str(args.batch_items),
+            "--prefetch-mode",
+            args.prefetch_mode,
             "--device-map",
             "cuda:0",
             "--shard-count",
@@ -207,6 +211,7 @@ def main() -> None:
         "workers_per_gpu": args.workers_per_gpu,
         "batch_items": args.batch_items,
         "prefetch_next_batch": args.prefetch_next_batch,
+        "prefetch_mode": args.prefetch_mode,
         "worker_gpu_ids": worker_gpu_ids,
         "model": args.model,
         "model_revision": args.model_revision,

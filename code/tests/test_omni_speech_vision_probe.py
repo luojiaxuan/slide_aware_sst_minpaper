@@ -16,6 +16,7 @@ def args(**overrides):
         "max_new_tokens": 8,
         "batch_items": 2,
         "prefetch_next_batch": False,
+        "prefetch_mode": "none",
         "seed": 0,
         "shard_index": 0,
         "shard_count": 1,
@@ -113,14 +114,31 @@ def test_prefetched_stream_overlaps_next_processor_batch_with_generation(monkeyp
             None,
             None,
             None,
-            args(prefetch_next_batch=True),
+            args(prefetch_mode="thread"),
             batch_size=2,
         )
     )
 
     assert generation_calls == 3
     assert {record["id"] for _, record, _ in results} == {"a", "b", "c"}
-    assert all(record["prefetch_next_batch"] for _, record, _ in results)
+    assert all(record["prefetch_mode"] == "thread" for _, record, _ in results)
+
+
+def test_process_prefetch_payload_contains_only_picklable_inputs(monkeypatch):
+    monkeypatch.setattr(
+        probe,
+        "read_audio",
+        lambda path: (np.ones(3, dtype=np.float32), 1),
+    )
+    state = probe.prepare_stream_state(
+        0,
+        {"id": "a", "audio": "a.wav", "tgt_lang": "English"},
+        "none",
+        args(),
+    )
+    payload = probe.prefix_plan_payload([(state, 2)])
+    assert payload[0][0].tolist() == [1.0, 1.0]
+    assert payload[1:] == ([1], [None], [state.item], ["English"])
 
 
 def test_translate_prefix_batch_rejects_mixed_sample_rates():
