@@ -813,3 +813,22 @@ or a stronger Qwen3-VL variant if available.
   author-audio sheet contains none of the five linkable fields, strict merge
   rejects task/schema drift, and wrong release boundaries, early completion,
   non-monotonic timestamps and an isolated final positive are all rejected.
+
+## 2026-08-01 Visual Control Launch Preparation
+
+- Materialized the frozen 206-item five-condition input matrix on Hyper00 at
+  run root
+  `/data/projects/slide_aware_sst_minpaper/runs/chinese_lips_visual_controls_v1_qwen3_omni_2gpu_20260801_132051`.
+- The exact 70.5 GB Qwen3-Omni revision was absent from Hyper00 and `/data` had
+  only 35 GB free. Reused the byte-identical historical Hyper01 snapshot,
+  transferred its full HF cache directly host-to-host into Hyper00 personal
+  `/data01/jaxan`, and verified a zero-difference 25-file SHA256 manifest.
+- Copied that verified persistent cache to the canonical container's 1 TB
+  `/dev/shm` runtime cache and again obtained a zero-difference SHA256 manifest.
+  No existing artifact was deleted and no second compute container was created.
+- The last formal preflight found zero free GPUs because active OSWorld and
+  diffusion work occupied all eight cards. No non-idle task was stopped.
+- Activated heartbeat `vision-sst-control-launch`: it retries preflight every
+  10 minutes, launches on exactly two GPUs when available, then monitors the
+  four resumable workers, analyzes 1,030 complete rows, uploads the private
+  result artifact and freezes all final Git/HF pointers.

@@ -73,5 +73,31 @@ revision。v1 因此在同一锁定模型版本上完整重跑五个条件，不
 
 ## 状态
 
-`FROZEN_PENDING_EXECUTION`。完成后在本文件记录 run root、GPU snapshot、Git
-commit、HF artifact revision、完整性检查和数值结论。
+`READY_WAITING_HYPER00_GPU_CAPACITY`。尚未启动模型 worker，也没有生成任何 condition
+output；不能误报为 running 或 complete。
+
+已完成的 launch preparation：
+
+- Git launch state：`main@2fb0410`；Hyper00 detached worktree：
+  `/data/projects/slide_aware_sst_minpaper/worktrees/visual-controls-v1`；
+- run root：
+  `/data/projects/slide_aware_sst_minpaper/runs/chinese_lips_visual_controls_v1_qwen3_omni_2gpu_20260801_132051`；
+- 206-row control input SHA256：
+  `66783dcda6d34e81bd8f1197cea29b6d7de815d422574379d3189b7bd1e24105`；
+- control manifest SHA256：
+  `1feccff001d937496a8d53ea7e7d9bf259278dc20e5ace48a9d160bc295c9df4`；
+- frozen config SHA256：
+  `2332893d6588221ee7eac8e39cbba775b03722164e8d7de88aec073954d094d6`；
+- exact model snapshot 从 Hyper01 historical cache 直接传到 Hyper00 host
+  `/data01/jaxan/hf_cache/hub`。25-file snapshot SHA256 清单在 source/target 间为零差异；
+  同一 cache 已复制到 canonical container
+  `/dev/shm/qwen3_omni_hf_cache_26291f/hub`，persistent-host 与 runtime snapshot
+  SHA256 清单同样为零差异；
+- Hyper00 canonical container 仍是 `sglang-omni-jaxan`，未创建第二个 compute
+  container，也未修改或停止活跃 OSWorld/diffusion 任务；
+- heartbeat automation `vision-sst-control-launch` 每 10 分钟执行正式 preflight。出现两张
+  `<1 GB` 空卡后，使用恰好两张 GPU、每卡两个 worker 启动；若 run 已启动则转为
+  utilization/progress/error monitor，完成后自动 analysis、private HF upload 和 Git freeze。
+
+最近一次 preflight 返回 0 free GPUs；无 eligible idle container 可清理。完成后在本文件继续
+记录 launch-time GPU snapshot、selected GPU ids、HF result revision、完整性检查和数值结论。
