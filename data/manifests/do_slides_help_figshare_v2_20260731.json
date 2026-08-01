@@ -42,6 +42,14 @@
     "metadata_contains_source_transcript": true,
     "required_action": "Build a frame-only inference view containing talk id, frame path, and conservative availability timestamp. Never mount the sentence field in inference."
   },
+  "dev_import": {
+    "policy": "every_observed_frame_no_backdating",
+    "frame_count": 468,
+    "frame_manifest": "data/manifests/acl6060_dev_frame_observations_v1_20260801.jsonl",
+    "frame_manifest_sha256": "dba4fa3055aef0053f37d1795215110b4ad07b732e3b82325252e80d2e1f2fa5",
+    "transition_qa": "data/manifests/acl6060_dev_visual_transition_qa_v1_20260801.json",
+    "transition_detector_status": "FAILED_FALSE_NEGATIVE_AUDIT_NOT_USED_FOR_CAUSAL_STATES"
+  },
   "local_staging": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/do-slides-help/figshare-v2",
-  "status": "DOWNLOADED_HASH_VERIFIED_NOT_YET_IMPORTED"
+  "status": "DEV_IMPORTED_FRAME_ONLY_EVAL_UNTOUCHED"
 }

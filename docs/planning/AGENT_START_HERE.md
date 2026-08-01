@@ -62,10 +62,11 @@ budget 和 selection path。
    [`../PHASE_A_DATA_RUNNER_FREEZE_20260731.md`](../PHASE_A_DATA_RUNNER_FREEZE_20260731.md)；
 3. Controlled acoustic v1 已完成；读
    [`../CONTROLLED_ACOUSTIC_PIPELINE_20260801.md`](../CONTROLLED_ACOUSTIC_PIPELINE_20260801.md)；
-4. 导入 Figshare frames，生成不含 `sentence` 的 frame-only inference manifest，并用
-   保守 timestamp 构建 current/stale/wrong state；
-5. blind 标注 80-120 个候选 opportunity events，估计 term、semantic、relation、noise
-   interaction 与 early-commit evidence density；
+4. ACL dev 468-state frame-only timeline 已完成；读
+   [`../ACL6060_VISUAL_TIMELINE_20260801.md`](../ACL6060_VISUAL_TIMELINE_20260801.md)；
+5. 100-row source event seed 已冻结；按
+   [`../ACL6060_SOURCE_EVENT_ANNOTATION_V1.md`](../ACL6060_SOURCE_EVENT_ANNOTATION_V1.md)
+   完成双标注，估计 term、semantic、relation、noise interaction 的 density；
 6. 独立冻结 candidates、source-only packets、target scoring，运行 document-only、OCR、
    correct semantic/relation oracle、matched wrong oracle，以及 native/noisy audio；
 7. 为有 practical headroom 的 route 构建小规模 automatic conditions，比较 naive prompt、

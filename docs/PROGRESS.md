@@ -648,3 +648,33 @@ or a stronger Qwen3-VL variant if available.
   recordings. No ST inference or target/reference access occurred.
 - Detailed record:
   [`docs/CONTROLLED_ACOUSTIC_PIPELINE_20260801.md`](CONTROLLED_ACOUSTIC_PIPELINE_20260801.md).
+
+## 2026-08-01 ACL60/60 Visual Timeline v1
+
+- Imported all 468 real ACL dev talk-video frames without opening the upstream
+  metadata JSON containing `sentence`; counts match the five frozen talks.
+- Froze an every-observed-frame causal policy: each midpoint frame unlocks only
+  at its filename timestamp, ends at the next observation, and no visual state
+  exists before the first frame.
+- Audited 97 pixel-threshold transition candidates and 60 stratified negatives.
+  Positives were high precision, but negatives exposed clear full-slide and
+  incremental-reveal misses on white text-heavy slides.
+- Rejected transition-based state compression for v1. The 468 observation
+  states are inference-ready; the transition inventory remains diagnostic only.
+- Detailed record:
+  [`docs/ACL6060_VISUAL_TIMELINE_20260801.md`](ACL6060_VISUAL_TIMELINE_20260801.md).
+
+## 2026-08-01 ACL60/60 Source Event Seed v1
+
+- Froze 100 transcript/target/model-output-free annotation packets: 20 per talk,
+  balanced between high-precision transition states and deterministic random
+  observations.
+- Each packet records causal frame timing/hash, full-talk audio identity/hash,
+  and a bounded listening window; all 100 observation IDs are unique.
+- Froze the 0.96 s prefix boundary protocol, forced-choice schema, evidence
+  subtypes, negative retention, target firewall and two-annotator requirement.
+- No event labels exist yet. The seed status is
+  `PENDING_DOUBLE_SOURCE_SIDE_ANNOTATION`; it must not be reported as event
+  density or oracle headroom.
+- Annotation guide:
+  [`docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md`](ACL6060_SOURCE_EVENT_ANNOTATION_V1.md).

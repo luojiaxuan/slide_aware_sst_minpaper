@@ -1,0 +1,64 @@
+{
+  "schema_version": "acl6060_source_event_annotation_v1",
+  "scope": "development_story_discovery_only",
+  "selection": {
+    "transition_candidate_states_per_talk": 10,
+    "hash_random_states_per_talk": 10,
+    "audio_window_before_evidence_sec": 5.0,
+    "audio_window_after_evidence_sec": 60.0,
+    "salt": "acl6060-source-event-seed-v1"
+  },
+  "annotation": {
+    "minimum_annotators": 2,
+    "audio_prefix_step_sec": 0.96,
+    "maximum_primary_boundary_disagreement_steps": 2,
+    "forced_choice_min_options": 2,
+    "forced_choice_max_options": 4,
+    "primary_requires_unique_source_answer": true,
+    "primary_requires_evidence_no_later_than_last_insufficient": true,
+    "model_outputs_visible_to_annotators": false,
+    "target_translation_visible_during_source_annotation": false
+  },
+  "evidence_subtypes": [
+    "ocr_sufficient",
+    "layout_required",
+    "chart_relation",
+    "formula_structure",
+    "visual_emphasis",
+    "speaker_or_object_visual",
+    "no_visual_support",
+    "stale_mismatch_risk"
+  ],
+  "negative_labels": [
+    "no_external_evidence",
+    "no_expected_benefit"
+  ],
+  "event_schema": {
+    "event_status": [
+      "pending",
+      "eligible",
+      "negative",
+      "exclude_boundary_disagreement",
+      "exclude_nonunique_answer",
+      "exclude_timing_ambiguity",
+      "exclude_other"
+    ],
+    "required_eligible_fields": [
+      "source_question",
+      "source_options",
+      "source_answer_index",
+      "t_last_insufficient_sec",
+      "t_first_sufficient_sec",
+      "evidence_subtypes",
+      "evidence_region",
+      "term_or_entity",
+      "negative_labels",
+      "annotator_id"
+    ],
+    "required_negative_fields": [
+      "negative_labels",
+      "annotator_id",
+      "annotation_note"
+    ]
+  }
+}

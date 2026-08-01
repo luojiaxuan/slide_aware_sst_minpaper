@@ -141,11 +141,12 @@ Canonical Git manifests：
 1. MUSAN SLR17 与 RIR/Noise SLR28 freeze、source split 和 ACL dev 75 个 full-talk
    variants 已完成，见
    [`CONTROLLED_ACOUSTIC_PIPELINE_20260801.md`](CONTROLLED_ACOUSTIC_PIPELINE_20260801.md)。
-2. 导入已校验的 *Do Slides Help?* ACL60/60 frames，生成只含 talk/frame/causal
-   availability 的 inference view；原 JSON 的 `sentence` 字段不得进入 inference。
-3. Blind 标注 80-120 个 source-side forced-choice candidates，独立冻结 source-only
-   packets 与 target scoring，并运行 document-only、correct oracle、matched wrong
-   oracle 的 headroom screen。
+2. *Do Slides Help?* ACL dev frames 已导入为 468 个 no-backdating observations，原 JSON
+   的 `sentence` 未进入 importer；见
+   [`ACL6060_VISUAL_TIMELINE_20260801.md`](ACL6060_VISUAL_TIMELINE_20260801.md)。
+3. 100-row source-side seed 已冻结；完成独立双标注后，分别冻结 source-only packets
+   与 target scoring，并运行 document-only、correct oracle、matched wrong oracle 的
+   headroom screen。
 4. Oracle 通过后，从五篇 ACL dev PDF 自动生成 `C1-C2` packets，再实现 `C3` causal
    ASR-prefix retriever；当前 launcher 会拒绝 C3。
 5. 在 GPU host materialize exact model snapshots；先做一个 talk 的 C0/C1 dry run，

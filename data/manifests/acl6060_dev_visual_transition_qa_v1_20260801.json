@@ -1,0 +1,66 @@
+{
+  "dataset": "acl6060",
+  "split": "dev",
+  "review_date": "2026-08-01",
+  "review_scope": {
+    "positive_candidate_sheets": 97,
+    "negative_audit_rows": 60,
+    "negative_sampling": "per talk: six threshold-nearest non-candidates plus six deterministic hash-random non-candidates"
+  },
+  "positive_review": {
+    "apparent_content_or_reveal_changes": 97,
+    "apparent_speaker_motion_only_false_positives": 0,
+    "interpretation": "The positive set is useful as a high-precision change inventory, including incremental slide reveals."
+  },
+  "negative_review": {
+    "result": "FAILED_FALSE_NEGATIVE_AUDIT",
+    "interpretation": "The stratified sample is not an unbiased error-rate estimate, but it contains unambiguous missed changes. Pixel thresholds are therefore invalid for causal state compression.",
+    "unambiguous_missed_examples": [
+      {
+        "audit_id": "2022.acl-long.110:N001",
+        "observation_interval_sec": [392.59, 398.33],
+        "reason": "graph content reveal"
+      },
+      {
+        "audit_id": "2022.acl-long.110:N003",
+        "observation_interval_sec": [30.93, 35.93],
+        "reason": "diagram reveal"
+      },
+      {
+        "audit_id": "2022.acl-long.110:N005",
+        "observation_interval_sec": [99.06, 106.07],
+        "reason": "callout text reveal"
+      },
+      {
+        "audit_id": "2022.acl-long.117:N004",
+        "observation_interval_sec": [264.21, 275.27],
+        "reason": "full slide change from Retrieval to Generation"
+      },
+      {
+        "audit_id": "2022.acl-long.268:N001",
+        "observation_interval_sec": [538.08, 547.27],
+        "reason": "new result bullets"
+      },
+      {
+        "audit_id": "2022.acl-long.367:N002",
+        "observation_interval_sec": [138.32, 146.0],
+        "reason": "full slide change to model architecture input"
+      },
+      {
+        "audit_id": "2022.acl-long.367:N004",
+        "observation_interval_sec": [264.94, 271.86],
+        "reason": "full slide change from composition to sentence encoding"
+      }
+    ]
+  },
+  "frozen_v1_decision": {
+    "causal_state_policy": "EVERY_OBSERVED_FRAME",
+    "state_count": 468,
+    "availability": "Each frame is unavailable before its filename timestamp and remains current only until the next observed frame.",
+    "pre_first_frame_policy": "NO_VISUAL_STATE",
+    "transition_candidates_role": "diagnostic high-precision inventory only; never used to backdate or compress v1 inference states",
+    "dwell_claim": "NOT_ESTABLISHED_FROM_ACL60_60_V1"
+  },
+  "target_or_reference_accessed": false,
+  "source_transcript_accessed": false
+}

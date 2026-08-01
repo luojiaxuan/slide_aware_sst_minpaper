@@ -140,7 +140,9 @@ correctness 不低于 -1 pp；它们是资源投入门槛，不是尚未注册�
 
 1. SLR17/SLR28 freeze 与 full-talk noise/RIR materialization 已完成，见
    [`CONTROLLED_ACOUSTIC_PIPELINE_20260801.md`](CONTROLLED_ACOUSTIC_PIPELINE_20260801.md)。
-2. 构建 stripped ACL dev frame timeline，blind 标注 80-120 source-side events。
+2. ACL dev 468-state frame timeline 已完成，见
+   [`ACL6060_VISUAL_TIMELINE_20260801.md`](ACL6060_VISUAL_TIMELINE_20260801.md)；100-row
+   balanced seed 也已冻结，下一步完成独立双标注。
 3. 冻结 candidate/source-packet/target-scoring 三件套，先跑 oracle headroom：document、
    OCR、correct semantic/relation、matched wrong，覆盖 native 与 noise。
 4. 只有看到 content-specific early-commit 或稳定 robustness signal 后，才投入 automatic

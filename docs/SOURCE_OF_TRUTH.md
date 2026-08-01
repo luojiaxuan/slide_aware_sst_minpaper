@@ -28,6 +28,10 @@ links, or handoff state.
   [`docs/MCIF_VISUAL_READINESS_20260801.md`](MCIF_VISUAL_READINESS_20260801.md)
 - Controlled-acoustic sources, mixer contract and ACL dev QA:
   [`docs/CONTROLLED_ACOUSTIC_PIPELINE_20260801.md`](CONTROLLED_ACOUSTIC_PIPELINE_20260801.md)
+- ACL dev transcript-free visual timeline and transition false-negative audit:
+  [`docs/ACL6060_VISUAL_TIMELINE_20260801.md`](ACL6060_VISUAL_TIMELINE_20260801.md)
+- ACL dev source-side event seed and double-annotation contract:
+  [`docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md`](ACL6060_SOURCE_EVENT_ANNOTATION_V1.md)
 - Route A ACL paper and confirmatory experiment contract:
   [`docs/ACL_PAPER_BLUEPRINT_20260731.md`](ACL_PAPER_BLUEPRINT_20260731.md)
 - Independent ACL-style review and resolved/residual risks:
@@ -63,7 +67,7 @@ links, or handoff state.
 | --- | --- | --- |
 | Primary long-form held-out benchmark | MCIF paper/project: <https://arxiv.org/abs/2507.19634>, <https://mt.fbk.eu/mcif/>; HF `FBK-MT/MCIF` | 21-talk subset materialized at revision `e24065b919758263cfe5d157057278affe76ea7b`; video hashes verified; 283 reviewed visual transitions and 304 causal states; reference files remain unextracted and unread |
 | Development and tagged-term replication | [ACL60/60 official release](https://aclanthology.org/2023.iwslt-1.2/) | dev/eval 5+5 complete talks, 468+416 gold segments and term annotations frozen at archive SHA256 `5f2a3855...cfce7cc`; inference and scoring views physically separated |
-| ACL60/60 real frame supplement | [Do Slides Help? Figshare v2](https://figshare.com/articles/software/Code_and_data/30158932) | CC BY 4.0 outer archive SHA256 `f771d3f6...3d4cc`; 884 frames cover all 10 talks; downloaded and verified, frame-only inference import pending |
+| ACL60/60 real frame supplement | [Do Slides Help? Figshare v2](https://figshare.com/articles/software/Code_and_data/30158932) | CC BY 4.0 outer archive SHA256 `f771d3f6...3d4cc`; dev 468 frames imported as no-backdating causal observations; eval untouched; pixel transition compression rejected after false-negative audit |
 | Private timing/diagnostic benchmark | Chinese-LiPS derived private HF repo below | Available; not a paper-grade ST ranking set |
 | Controlled acoustic corruptions | MUSAN/SLR17 <https://www.openslr.org/17/> (CC BY 4.0) and Room Impulse Response and Noise Database/SLR28 <https://www.openslr.org/28/> (Apache 2.0) | Archives/hashes/licenses frozen; 65 development and 65 confirmatory sources are disjoint; ACL dev has 75 QA-passed full-talk variants. SLR119 is AliMeeting and is not the RIR source |
 
@@ -209,23 +213,29 @@ confirmed.
     exact source hashes/offsets/seeds, 5-speaker babble at +10/+5/0/-5 dB, and
     a disjoint real-RIR split. Its 75 ACL dev files are input readiness, not an
     ST result or evidence that synthetic noise represents real conferences.
+23. ACL dev visual v1 uses every observed midpoint frame as a causal state from
+    its filename timestamp. The 97 high-precision pixel transition candidates
+    cannot compress the stream because a 60-row negative audit found clear
+    white-slide text/reveal misses. Before the first frame there is no visual
+    state, and no frame is backdated to a source-segment boundary.
+24. The first event-density screen is frozen at 100 ACL dev packets: 10
+    high-precision change states and 10 hash-random states per talk. Source
+    questions, forced-choice options and 0.96 s insufficiency/sufficiency
+    boundaries require two independent annotations; target realization is a
+    later, physically separate stage.
 
 ## Current Next Actions (2026-08-01)
 
-1. Import the verified Figshare frames into a frame-only ACL60/60 manifest;
-   strip `sentence`, match the 468 dev rows to audio offsets, cluster slide
-   states, represent transitions as intervals, and use conservative first-frame
-   availability.
-2. Blind-label 80-120 source-side forced-choice candidates on ACL dev, including
-   random-span coverage and negative cases. Freeze candidate, source-only
-   packet, and target-scoring artifacts independently.
-3. Map document-only, OCR, correct semantic/relation oracle, matched wrong
+1. Complete double source-side annotation of the frozen 100-row ACL dev seed;
+   report all eligible, negative and excluded rows plus agreement.
+2. Freeze source-only packets and target scoring independently, then map
+   document-only, OCR, correct semantic/relation oracle, matched wrong
    evidence, and native/noisy audio headroom. A stable signal in any route can
    justify focused automatic implementation; stop only if every gold route lacks
    practical headroom.
-4. Run small automatic comparisons for viable routes, including naive prompts,
+3. Run small automatic comparisons for viable routes, including naive prompts,
    selection/gating, and direct-image input. Preserve the complete declared
    development matrix.
-5. Select the final paper story from development evidence, then freeze and push
+4. Select the final paper story from development evidence, then freeze and push
    its main claim, metric, model/config, slices, and decision rule before ACL
    eval or MCIF is read.

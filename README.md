@@ -106,9 +106,9 @@ current benchmark contract.
 
 ## Next execution milestone
 
-1. Import the verified *Do Slides Help?* supplement into a stripped ACL60/60
-   frame-only development view and blind-label 80-120 source-side evidence
-   opportunities.
+1. Complete independent double source-side annotation of the frozen 100-row ACL
+   dev seed; report event density, negatives, boundary agreement, and subtype
+   distribution.
 2. Freeze candidate inventory, source-only packets and target scoring; compare
    audio/document-only, token-budget-matched OCR, current image/semantic
    evidence, and matched stale/wrong evidence under native and controlled-noise

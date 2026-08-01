@@ -1,0 +1,69 @@
+{
+  "dataset": "acl6060",
+  "split": "dev",
+  "source": "do_slides_help_figshare_v2_real_acl_talk_frames",
+  "audit_type": "reference_free_irregular_frame_transition_candidates",
+  "status": "CAUSAL_OBSERVATIONS_READY_TRANSITION_CANDIDATES_REQUIRE_SEPARATE_QA",
+  "transcript_metadata_consumed": false,
+  "availability_rule": "Every observed frame is a causal state from its filename timestamp until the next observation. Transition clustering is diagnostic and requires manual review.",
+  "parameters": {
+    "signature_size": [
+      96,
+      54
+    ],
+    "patch_grid": [
+      6,
+      8
+    ],
+    "p75_threshold": 0.03,
+    "changed_patch_fraction_threshold": 0.12
+  },
+  "talk_count": 5,
+  "frame_count": 468,
+  "pair_count": 463,
+  "candidate_count": 97,
+  "negative_audit_count": 60,
+  "portable_frame_staging": "ResearchStudio/data/vision-aware-sst/do-slides-help/figshare-v2/frames_v2/images",
+  "talks": [
+    {
+      "talk_id": "2022.acl-long.110",
+      "duration_sec": 703.007375,
+      "frame_count": 108,
+      "candidate_count": 25,
+      "first_observation_sec": 1.48,
+      "last_observation_sec": 638.81
+    },
+    {
+      "talk_id": "2022.acl-long.117",
+      "duration_sec": 729.013687,
+      "frame_count": 105,
+      "candidate_count": 22,
+      "first_observation_sec": 0.22,
+      "last_observation_sec": 651.04
+    },
+    {
+      "talk_id": "2022.acl-long.268",
+      "duration_sec": 737.44,
+      "frame_count": 107,
+      "candidate_count": 24,
+      "first_observation_sec": 4.58,
+      "last_observation_sec": 686.66
+    },
+    {
+      "talk_id": "2022.acl-long.367",
+      "duration_sec": 695.019688,
+      "frame_count": 82,
+      "candidate_count": 13,
+      "first_observation_sec": 0.84,
+      "last_observation_sec": 608.77
+    },
+    {
+      "talk_id": "2022.acl-long.590",
+      "duration_sec": 577.237313,
+      "frame_count": 66,
+      "candidate_count": 13,
+      "first_observation_sec": 4.94,
+      "last_observation_sec": 516.19
+    }
+  ]
+}

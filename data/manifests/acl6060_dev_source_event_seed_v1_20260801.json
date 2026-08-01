@@ -1,0 +1,14 @@
+{
+  "schema_version": "acl6060_source_event_annotation_v1",
+  "status": "PENDING_DOUBLE_SOURCE_SIDE_ANNOTATION",
+  "talk_count": 5,
+  "packet_count": 100,
+  "selection_counts": {
+    "transition_candidate": 50,
+    "hash_random_observation": 50
+  },
+  "source_transcript_consumed": false,
+  "target_or_reference_consumed": false,
+  "model_output_consumed": false,
+  "contract": "configs/acl6060_source_event_annotation_v1.json"
+}
