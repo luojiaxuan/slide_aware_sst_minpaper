@@ -1278,3 +1278,26 @@ or a stronger Qwen3-VL variant if available.
   annotation sheet，先冻结 event eligibility 与 target realizations，再独立标注 audio
   sufficiency。只有通过这两个 gate 的事件才能进入 state-to-event packets 和 native/noisy
   oracle headroom。
+
+## 2026-08-01 MCIF En-to-Zh Target-event Author Workspace Completion
+
+- 没有按 lead 或模型判断挑选“好看”候选，而是把 954 candidates 按 candidate-bearing
+  segment 穷举合并为 355 items；保留每个 segment 的全部 1--18 个局部 options，但最终最多
+  允许冻结一个 event，避免同一语音片段形成重复统计单位。21 talks 全覆盖，每 talk 2--37
+  items；该不均衡是候选密度，不是 prevalence。
+- Author view 使用 deterministic shuffled opaque item/option IDs，只包含 current slide、R0/R1、
+  English source segment、Chinese reference 和空 annotation fields；talk/segment/state/candidate
+  真 ID 与 causal binding 位于物理分离的 scorer mapping。De/It 不进入当前 author view。
+- Builder 重放 first-source-occurrence、current R0 exact visibility、causal state interval、earliest
+  evidence lead、reference content、row hashes 与 173 张 native image bytes/dimensions；任何 premature
+  human label 或 model output flag 均 fail closed。12 个定向测试和全套 `290 passed` 通过，仅有
+  两个既有 `pypinyin` warnings。
+- 正式 workspace 含 180 files / 60,140,669 bytes。独立 rebuild 逐字节一致；author/scorer/root
+  checksum entries 分别为 175/1/177 且全部通过。
+- 上传 private HF revision
+  [`0785a37f/target_event_author_workspace_v1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/0785a37f6537363b5cd0a8db0ead730298b12a1b/target_event_author_workspace_v1)，
+  tag `mcif-target-event-author-workspace-v1`；180-file workspace 全量回下载并逐字节验证。
+- 当前状态仍是 `AUTHOR_VIEW_READY_NO_HUMAN_LABELS`。Target-event author 可访问
+  `author_view/`；未来 audio-only validators 必须使用独立 view/repo，不能看到 slides、OCR、
+  references、candidate options、scorer mapping 或 author labels。下一步实现 authoring UI 与
+  freeze validator，不自动填充 human labels。

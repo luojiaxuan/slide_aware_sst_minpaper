@@ -23,6 +23,9 @@ reference and causally available slide OCR.
   the frozen official MCIF archive;
 - `reference_segments.jsonl`: 919 segment-aligned multilingual reference rows;
 - `candidate_events.jsonl`: 954 automatic candidates over 21 talks;
+- `target_event_author_workspace_v1/`: 355 deterministically shuffled En-to-Zh
+  author items, 173 hash-bound slide images, and a physically separate scorer
+  mapping; all human fields remain blank;
 - `report.json`, `README.md`, and `SHA256SUMS`: provenance, interpretation, and
   byte-integrity records.
 
@@ -66,3 +69,8 @@ reveals them are outcome-side material. They must never be mounted into model
 inference, prompt construction, training-data generation, source-side visual
 screening, or control construction. Use them only after model outputs are
 frozen, for annotation design and evaluation.
+
+The target-event author may receive only the frozen `author_view/` subtree.
+Future audio-sufficiency validators must not receive this repository or any view
+containing slides, OCR, references, canonical candidates, scorer mappings, or
+target-event author labels.

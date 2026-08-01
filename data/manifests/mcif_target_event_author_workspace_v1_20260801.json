@@ -1,0 +1,76 @@
+{
+  "artifact": "mcif_target_event_author_workspace_v1",
+  "status": "UPLOADED_PRIVATE_AUTHOR_VIEW_READY_NO_HUMAN_LABELS",
+  "upstream": {
+    "candidate_inventory_hf_revision": "64dee5225e609fc0e900c7d6cd239ae6c702dc5c",
+    "candidate_inventory_sha256": "3b1f85137c4443bd65cb82beb4217301b2f4e67ae9a7cd45ded3cbc3e5dde5a2",
+    "reference_segments_sha256": "e7840e1b0cd0589e1a643b5d450c86372c4e6c6f67de594959926f9152ae172a",
+    "source_ladder_hf_revision": "b13bd2045644f90a6de6be19f77a4af3acaa924f",
+    "source_ladder_sha256": "8f77312b93562afd8a92ea0b3139fe5f91b21b08e9740d311a1fd0a83b594f7f"
+  },
+  "generation": {
+    "git_commit": "b4213036744ca406f71f722aad2206bad0c7775d",
+    "script": "code/scripts/build_mcif_target_event_author_workspace.py",
+    "command": "cd code && .venv/bin/python -m scripts.build_mcif_target_event_author_workspace --candidates $OUTCOME/candidate_events.jsonl --expected-candidates-sha256 3b1f85137c4443bd65cb82beb4217301b2f4e67ae9a7cd45ded3cbc3e5dde5a2 --references $OUTCOME/reference_segments.jsonl --expected-references-sha256 e7840e1b0cd0589e1a643b5d450c86372c4e6c6f67de594959926f9152ae172a --ladder $LADDER/ladder.jsonl --expected-ladder-sha256 8f77312b93562afd8a92ea0b3139fe5f91b21b08e9740d311a1fd0a83b594f7f --source-root $MCIF_EVIDENCE --candidate-inventory-hf-revision 64dee5225e609fc0e900c7d6cd239ae6c702dc5c --source-ladder-hf-revision b13bd2045644f90a6de6be19f77a4af3acaa924f --code-repo .. --output-root $NEW_OUTPUT --max-ngram 4 --expected-candidates 954 --expected-segments 919 --expected-items 355 --expected-talks 21",
+    "host": "local_mac",
+    "gpu_used": false
+  },
+  "inventory": {
+    "target_language": "zh",
+    "selection": "exhaustive_one_author_item_per_candidate_bearing_segment",
+    "items": 355,
+    "talks": 21,
+    "candidate_options": 954,
+    "current_states": 173,
+    "unique_slide_images": 173,
+    "talk_item_count_min": 2,
+    "talk_item_count_max": 37,
+    "options_per_item_min": 1,
+    "options_per_item_max": 18,
+    "maximum_final_events_per_segment": 1,
+    "author_labels_complete": false,
+    "audio_sufficiency_labels_complete": false,
+    "official_reference_consumed": true,
+    "model_output_consumed": false
+  },
+  "lead_bin_distribution_over_options": {
+    "lt5": 265,
+    "5_to_lt10": 231,
+    "10_to_lt30": 339,
+    "ge30": 119
+  },
+  "checksums": {
+    "author_items_sha256": "fff1aea0b0d34b8dc2627e4b16c2bdf6bfd09252d4cbe50f5ac85e2ceee3a4d8",
+    "scorer_mapping_sha256": "ea21e7d90fab4d7ffece012473ab67d504acce89bb1afdf8c285b878e1a8920e",
+    "author_checksum_manifest_sha256": "9ad7bbdf046abdb6d47a360095e32a533bc8a56b383fd7c41c193f90b29ffdd9",
+    "scorer_checksum_manifest_sha256": "c9733b00759d85aba524ba24ea2fd6aec5dfac1a52a96da193e7fb04f3150ca1",
+    "root_checksum_manifest_sha256": "dfcd423493edccee77ee41a24990cf562d0371be61656eedd26783acedadffaa",
+    "dataset_card_sha256": "3d33fcd2f0f7bf434fd572122b889758cbe55692d3f62bc88545a5df9a744cc2",
+    "author_checksum_entries": 175,
+    "scorer_checksum_entries": 1,
+    "root_checksum_entries": 177,
+    "bundle_files": 180,
+    "bundle_bytes": 60140669
+  },
+  "hugging_face": {
+    "repo": "gavinlaw/slide-aware-sst-mcif-outcomes",
+    "repo_type": "dataset",
+    "path": "target_event_author_workspace_v1",
+    "private_verified": true,
+    "revision": "0785a37f6537363b5cd0a8db0ead730298b12a1b",
+    "tag": "mcif-target-event-author-workspace-v1",
+    "remote_workspace_path_count": 180,
+    "full_remote_redownload_byte_verified": true,
+    "remote_author_checksum_entries_verified": 175,
+    "remote_scorer_checksum_entries_verified": 1,
+    "remote_root_checksum_entries_verified": 177
+  },
+  "local_staging": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/annotation/mcif_target_event_author_workspace_v1",
+  "quality_audit": {
+    "independent_rebuild_byte_identical": true,
+    "project_tests": 290,
+    "project_test_warnings": 2
+  },
+  "access_boundary": "The target-event author may receive only author_view. Future audio-only validators must not receive this repository or any slide, OCR, reference, candidate, mapping, or author-label artifact.",
+  "interpretation": "This is an exhaustive En-to-Zh authoring workspace over automatic R0 lexical candidates. It is not a gold event set, audio-sufficiency boundary, model result, event prevalence estimate, or evidence that raw pixels outperform OCR."
+}

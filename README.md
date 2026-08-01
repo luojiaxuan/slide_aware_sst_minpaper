@@ -60,6 +60,13 @@
 > tag `mcif-outcome-candidate-inventory-v1`，全量回下载逐字节验证通过。这些仍是 reference-aware
 > 自动候选，不是 gold events；human eligibility、target realization 与 audio sufficiency 均未
 > 标注，且该 repo 永远不能挂载到 inference。
+> 954 candidates 已进一步按 candidate-bearing segment 穷举合并为 355 个 En→Zh author
+> items，每个 segment 最多允许冻结一个 event；173 张 current-state slides 均按 native bytes
+> hash-bound。workspace 冻结在同一 private outcome repo revision
+> [`0785a37f`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/0785a37f6537363b5cd0a8db0ead730298b12a1b/target_event_author_workspace_v1)，
+> tag `mcif-target-event-author-workspace-v1`，180 files 已全量回下载验证。当前 355/355 human
+> fields 仍为空；target-event author 只能收到 `author_view/`，未来 audio-only validators 不得
+> 访问该 repo。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28
