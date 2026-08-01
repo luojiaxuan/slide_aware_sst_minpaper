@@ -82,6 +82,11 @@ Delta_attribution = E_talk[ mean_i(Y_i(current_correct) - Y_i(matched_control)) 
   冒充已经预注册的最终 paper threshold；
 - target-event final correctness 同时记录，开发期参考 non-inferiority margin 为 **-1 pp**。
 
+同时记录只在 SimulST 中成立的 target commit advance：对最终都正确的 event，比较
+`t_first_stable_correct(matched_control) - t_first_stable_correct(current_correct)`。
+它必须与上面的 early-decision risk difference 一起报告，不能用更早但错误或随后撤回的
+token 充当 latency gain。
+
 开发期同时记录以下 outcome family，不要求其中某一个在看数据前排他地成为论文主线：
 
 - final translation quality：BLEU、chrF、COMET 或数据允许的独立 human score；
@@ -196,6 +201,12 @@ frames；来源与 hashes 见
 - **MCIF 21 talks：** 唯一 planned confirmatory source，但必须先完成 21 videos 的 hash、
   slide-state coverage、transition QA、frame-only manifests 与 eligible-event counts。
 
+截至 2026-08-01，MCIF 的 input-side visual readiness 已完成：21/21 videos 的冻结
+SHA256 通过；7,110 s 视频生成 7,111 个 1 s 样本、283 个稳定 transition candidates 和
+304 个 causal states（含初始 state）；21/21 contact sheets 与 transition sheets 已逐项
+检查，未观察到 speaker-only false trigger。该检查没有提取或读取 reference。候选状态仍
+不是人工 ground-truth boundary，小范围局部动画可能漏检。
+
 MCIF hard readiness gate：
 
 - 至少 **15 个 independent talks** 含 eligible primary events；
@@ -254,12 +265,12 @@ Pixels 是候选 Route C，而不是预设必成或预设 secondary。`C6-auto v
 
 ## 12. 当前下一步
 
-当前先不需要 GPU。实现 Figshare -> stripped ACL60/60 slide-state manifest，并定义
-candidate-event / source-only packet / target-scoring 三阶段 schema。随后做 80-120 event
-density + multi-route oracle capability map，再以小规模 automatic runs 比较 OCR、semantic
-packet、visual relation、selection/gating 与 native/noisy audio。开发结果出来后才写最终
-paper contract；MCIF video readiness 与 confirmatory power 仍是 held-out general claim 的
-hard blocker。
+当前先不需要 GPU。MCIF video/causal-state readiness 已通过，剩余 hard blockers 是
+eligible-event density、MDE、最终 route/config freeze 与 outcome-side no-reference ledger。
+下一步先冻结 MUSAN SLR17 与 RIR/Noise SLR28，再实现 Figshare -> stripped ACL60/60
+slide-state manifest 和 candidate-event / source-only packet / target-scoring 三阶段 schema。
+随后做 80-120 event density + multi-route oracle capability map，以小规模 automatic runs
+比较 OCR、semantic packet、visual relation、selection/gating 与 native/noisy audio。
 
 ## Primary sources added by the audit
 

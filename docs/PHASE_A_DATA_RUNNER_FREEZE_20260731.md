@@ -13,7 +13,8 @@ audit 后的 oracle-first 执行优先级以
 2. MCIF 必须区分两个范围：当前 HF revision 是 100-talk long-media pool；官方
    IWSLT/translation subset 只有 21 talks。后者 talk IDs 已从 IWSLT ZIP 的 `audio/`
    与 `pdf/` 文件名交叉冻结。
-3. MCIF ZIP 只检查了目录、hash 和 talk IDs；`ref/*.txt` 内容没有读取。ACL60/60
+3. MCIF ZIP 的 `ref/*.txt` 内容没有读取；2026-08-01 已选择性解压 audio/PDF/timing，
+   未解压 reference，并下载校验 21 个对应 MP4。ACL60/60
    推理视图不含 transcript、reference 或 tagged terminology 路径，评分视图独立。
 4. 官方 IWSLT baseline 可复现 `C0` 和 entity-to-ASR 型 context 起点，但其当前代码
    把 MT context 硬编码为空，不能直接代表本项目的 `C1-C3`。本仓库因此只依赖其
@@ -66,6 +67,11 @@ scoring bundle：
 `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/iwslt2026/mcif-long-trans.zip`。
 它是官方上游缓存，不重新上传 HF。21-talk ID 列表见
 [`../data/manifests/phase_a_sources_20260731.json`](../data/manifests/phase_a_sources_20260731.json)。
+
+2026-08-01 readiness update：21 talks 共 919 segments、7,105.53 s audio、7,110.39 s
+video；1 s visual pass 产生 283 个 stable transition candidates 与 304 个 causal states。
+21/21 transition sheets 已检查，reference 文件仍未解压或读取。完整记录见
+[`MCIF_VISUAL_READINESS_20260801.md`](MCIF_VISUAL_READINESS_20260801.md)。
 
 ## Runner freeze
 
@@ -132,14 +138,16 @@ Canonical Git manifests：
 
 ## 下一步
 
-1. 先导入已校验的 *Do Slides Help?* ACL60/60 frames，生成只含 talk/frame/causal
+1. 冻结并下载 MUSAN SLR17 与 RIR/Noise SLR28，记录 archive hashes、source ids、
+   seeds 和 full-talk achieved SNR；旧的 SLR119 指针是 AliMeeting，不得用于 RIR。
+2. 导入已校验的 *Do Slides Help?* ACL60/60 frames，生成只含 talk/frame/causal
    availability 的 inference view；原 JSON 的 `sentence` 字段不得进入 inference。
-2. Blind 标注 80-120 个 source-side forced-choice candidates，独立冻结 source-only
+3. Blind 标注 80-120 个 source-side forced-choice candidates，独立冻结 source-only
    packets 与 target scoring，并运行 document-only、correct oracle、matched wrong
    oracle 的 headroom screen。
-3. Oracle 通过后，从五篇 ACL dev PDF 自动生成 `C1-C2` packets，再实现 `C3` causal
+4. Oracle 通过后，从五篇 ACL dev PDF 自动生成 `C1-C2` packets，再实现 `C3` causal
    ASR-prefix retriever；当前 launcher 会拒绝 C3。
-4. 在 GPU host materialize exact model snapshots；先做一个 talk 的 C0/C1 dry run，
+5. 在 GPU host materialize exact model snapshots；先做一个 talk 的 C0/C1 dry run，
    检查 talk order、增量 commits、log completeness、RTF 和 context token logs。
-5. dry run 通过后跑五个 dev talks 的 `C0-C3`，再实现 primary C5 intervention 与
+6. dry run 通过后跑五个 dev talks 的 `C0-C3`，再实现 primary C5 intervention 与
    gated C4/C6 secondary conditions。

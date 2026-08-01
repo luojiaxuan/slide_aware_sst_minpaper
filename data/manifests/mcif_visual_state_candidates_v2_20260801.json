@@ -1,0 +1,237 @@
+{
+  "dataset": "mcif",
+  "subset": "iwslt2026_translation_21",
+  "audit_type": "reference_free_visual_state_candidates",
+  "qa_staging": "ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9/qa/state_candidates_v2",
+  "parameters": {
+    "interval_sec": 1.0,
+    "frame_width": 320,
+    "p75_threshold": 0.03,
+    "changed_patch_fraction_threshold": 0.12,
+    "debounce_samples": 2,
+    "stable_pairs": 2,
+    "stability_p75_threshold": 0.02,
+    "max_confirmation_samples": 6
+  },
+  "talk_count": 21,
+  "video_duration_sec": 7110.385329,
+  "frame_count": 7111,
+  "candidate_state_count": 283,
+  "confirmed_state_count": 283,
+  "unconfirmed_state_count": 0,
+  "causal_state_count_including_initial": 304,
+  "candidate_states_per_min": 2.388056,
+  "interpretation": "Candidates and unlock times require transition-sheet QA; they are not ground-truth slide boundaries.",
+  "talks": [
+    {
+      "talk_id": "DyXpuURBMP",
+      "duration_sec": 402.006667,
+      "frame_count": 402,
+      "candidate_state_count": 35,
+      "confirmed_state_count": 35,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 36,
+      "candidate_states_per_min": 5.223794
+    },
+    {
+      "talk_id": "ERmKpJPPDc",
+      "duration_sec": 340.36,
+      "frame_count": 340,
+      "candidate_state_count": 15,
+      "confirmed_state_count": 15,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 16,
+      "candidate_states_per_min": 2.644259
+    },
+    {
+      "talk_id": "EqmWoxNDIr",
+      "duration_sec": 301.0,
+      "frame_count": 301,
+      "candidate_state_count": 12,
+      "confirmed_state_count": 12,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 13,
+      "candidate_states_per_min": 2.392027
+    },
+    {
+      "talk_id": "ICWfTnUMio",
+      "duration_sec": 347.808,
+      "frame_count": 348,
+      "candidate_state_count": 13,
+      "confirmed_state_count": 13,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 14,
+      "candidate_states_per_min": 2.242617
+    },
+    {
+      "talk_id": "JRrbTnEZbF",
+      "duration_sec": 300.24,
+      "frame_count": 300,
+      "candidate_state_count": 13,
+      "confirmed_state_count": 13,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 14,
+      "candidate_states_per_min": 2.597922
+    },
+    {
+      "talk_id": "JhbtCwcsWY",
+      "duration_sec": 357.533333,
+      "frame_count": 358,
+      "candidate_state_count": 10,
+      "confirmed_state_count": 10,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 11,
+      "candidate_states_per_min": 1.678165
+    },
+    {
+      "talk_id": "MjDvRpkOFq",
+      "duration_sec": 349.664,
+      "frame_count": 350,
+      "candidate_state_count": 6,
+      "confirmed_state_count": 6,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 7,
+      "candidate_states_per_min": 1.02956
+    },
+    {
+      "talk_id": "OiqEWDVtWk",
+      "duration_sec": 299.0,
+      "frame_count": 299,
+      "candidate_state_count": 10,
+      "confirmed_state_count": 10,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 11,
+      "candidate_states_per_min": 2.006689
+    },
+    {
+      "talk_id": "QTlIuodOsA",
+      "duration_sec": 291.72,
+      "frame_count": 292,
+      "candidate_state_count": 10,
+      "confirmed_state_count": 10,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 11,
+      "candidate_states_per_min": 2.056767
+    },
+    {
+      "talk_id": "UOlPKyCVgg",
+      "duration_sec": 299.178333,
+      "frame_count": 299,
+      "candidate_state_count": 7,
+      "confirmed_state_count": 7,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 8,
+      "candidate_states_per_min": 1.403845
+    },
+    {
+      "talk_id": "ccpXHNfaoy",
+      "duration_sec": 360.0,
+      "frame_count": 360,
+      "candidate_state_count": 16,
+      "confirmed_state_count": 16,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 17,
+      "candidate_states_per_min": 2.666667
+    },
+    {
+      "talk_id": "csJIsDTYMW",
+      "duration_sec": 354.869751,
+      "frame_count": 355,
+      "candidate_state_count": 25,
+      "confirmed_state_count": 25,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 26,
+      "candidate_states_per_min": 4.226903
+    },
+    {
+      "talk_id": "krJSAnVcGR",
+      "duration_sec": 304.12,
+      "frame_count": 304,
+      "candidate_state_count": 10,
+      "confirmed_state_count": 10,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 11,
+      "candidate_states_per_min": 1.972905
+    },
+    {
+      "talk_id": "miPjvjWOvI",
+      "duration_sec": 361.08,
+      "frame_count": 361,
+      "candidate_state_count": 11,
+      "confirmed_state_count": 11,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 12,
+      "candidate_states_per_min": 1.82785
+    },
+    {
+      "talk_id": "myfXyntFYL",
+      "duration_sec": 277.034,
+      "frame_count": 277,
+      "candidate_state_count": 8,
+      "confirmed_state_count": 8,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 9,
+      "candidate_states_per_min": 1.732639
+    },
+    {
+      "talk_id": "rOwZgUjcwB",
+      "duration_sec": 349.280703,
+      "frame_count": 349,
+      "candidate_state_count": 8,
+      "confirmed_state_count": 8,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 9,
+      "candidate_states_per_min": 1.374253
+    },
+    {
+      "talk_id": "rxrToXvRyM",
+      "duration_sec": 425.789375,
+      "frame_count": 426,
+      "candidate_state_count": 13,
+      "confirmed_state_count": 13,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 14,
+      "candidate_states_per_min": 1.831892
+    },
+    {
+      "talk_id": "vrydRuOXbT",
+      "duration_sec": 358.281667,
+      "frame_count": 358,
+      "candidate_state_count": 9,
+      "confirmed_state_count": 9,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 10,
+      "candidate_states_per_min": 1.507194
+    },
+    {
+      "talk_id": "wJAPXMIoIG",
+      "duration_sec": 333.141,
+      "frame_count": 333,
+      "candidate_state_count": 11,
+      "confirmed_state_count": 11,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 12,
+      "candidate_states_per_min": 1.981143
+    },
+    {
+      "talk_id": "xhjBHGVOyQ",
+      "duration_sec": 347.655,
+      "frame_count": 348,
+      "candidate_state_count": 19,
+      "confirmed_state_count": 19,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 20,
+      "candidate_states_per_min": 3.279113
+    },
+    {
+      "talk_id": "xiSxNRoOzm",
+      "duration_sec": 350.6235,
+      "frame_count": 351,
+      "candidate_state_count": 22,
+      "confirmed_state_count": 22,
+      "unconfirmed_state_count": 0,
+      "causal_state_count_including_initial": 23,
+      "candidate_states_per_min": 3.764722
+    }
+  ]
+}

@@ -1,0 +1,352 @@
+{
+  "dataset": "mcif",
+  "subset": "iwslt2026_translation_21",
+  "audit_type": "reference_free_fixed_interval_visual_sampling",
+  "source_inference_manifest": "inference.jsonl",
+  "qa_staging": "ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9/qa/visual_10s",
+  "talk_count": 21,
+  "video_duration_sec": 7110.385329,
+  "sample_count": 711,
+  "adjacent_pairs": 690,
+  "large_change_candidates_ge_0_08": 87,
+  "candidate_changes_per_min": 0.734137,
+  "interpretation": "Pixel-difference counts are diagnostics only. They do not establish slide boundaries or semantic coverage.",
+  "talks": [
+    {
+      "talk_id": "DyXpuURBMP",
+      "duration_sec": 402.006667,
+      "sample_count": 40,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 39,
+        "mean_abs_diff_mean": 0.043826,
+        "mean_abs_diff_p50": 0.028212,
+        "mean_abs_diff_p90": 0.091859,
+        "mean_abs_diff_max": 0.124556,
+        "near_duplicate_pairs_lt_0_005": 11,
+        "large_change_candidates_ge_0_08": 10,
+        "candidate_changes_per_min": 1.538462
+      }
+    },
+    {
+      "talk_id": "ERmKpJPPDc",
+      "duration_sec": 340.36,
+      "sample_count": 34,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 33,
+        "mean_abs_diff_mean": 0.019448,
+        "mean_abs_diff_p50": 0.003355,
+        "mean_abs_diff_p90": 0.053297,
+        "mean_abs_diff_max": 0.084443,
+        "near_duplicate_pairs_lt_0_005": 17,
+        "large_change_candidates_ge_0_08": 1,
+        "candidate_changes_per_min": 0.181818
+      }
+    },
+    {
+      "talk_id": "EqmWoxNDIr",
+      "duration_sec": 301.0,
+      "sample_count": 30,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 29,
+        "mean_abs_diff_mean": 0.019479,
+        "mean_abs_diff_p50": 0.000516,
+        "mean_abs_diff_p90": 0.052852,
+        "mean_abs_diff_max": 0.060937,
+        "near_duplicate_pairs_lt_0_005": 17,
+        "large_change_candidates_ge_0_08": 0,
+        "candidate_changes_per_min": 0.0
+      }
+    },
+    {
+      "talk_id": "ICWfTnUMio",
+      "duration_sec": 347.808,
+      "sample_count": 35,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 34,
+        "mean_abs_diff_mean": 0.036705,
+        "mean_abs_diff_p50": 0.001192,
+        "mean_abs_diff_p90": 0.129016,
+        "mean_abs_diff_max": 0.134571,
+        "near_duplicate_pairs_lt_0_005": 21,
+        "large_change_candidates_ge_0_08": 8,
+        "candidate_changes_per_min": 1.411765
+      }
+    },
+    {
+      "talk_id": "JRrbTnEZbF",
+      "duration_sec": 300.24,
+      "sample_count": 30,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 29,
+        "mean_abs_diff_mean": 0.032887,
+        "mean_abs_diff_p50": 0.012512,
+        "mean_abs_diff_p90": 0.048891,
+        "mean_abs_diff_max": 0.382729,
+        "near_duplicate_pairs_lt_0_005": 12,
+        "large_change_candidates_ge_0_08": 1,
+        "candidate_changes_per_min": 0.206897
+      }
+    },
+    {
+      "talk_id": "JhbtCwcsWY",
+      "duration_sec": 357.533333,
+      "sample_count": 36,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 35,
+        "mean_abs_diff_mean": 0.024659,
+        "mean_abs_diff_p50": 0.000475,
+        "mean_abs_diff_p90": 0.110966,
+        "mean_abs_diff_max": 0.129194,
+        "near_duplicate_pairs_lt_0_005": 27,
+        "large_change_candidates_ge_0_08": 7,
+        "candidate_changes_per_min": 1.2
+      }
+    },
+    {
+      "talk_id": "MjDvRpkOFq",
+      "duration_sec": 349.664,
+      "sample_count": 35,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 34,
+        "mean_abs_diff_mean": 0.018428,
+        "mean_abs_diff_p50": 0.000926,
+        "mean_abs_diff_p90": 0.055382,
+        "mean_abs_diff_max": 0.236806,
+        "near_duplicate_pairs_lt_0_005": 25,
+        "large_change_candidates_ge_0_08": 3,
+        "candidate_changes_per_min": 0.529412
+      }
+    },
+    {
+      "talk_id": "OiqEWDVtWk",
+      "duration_sec": 299.0,
+      "sample_count": 30,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 29,
+        "mean_abs_diff_mean": 0.043042,
+        "mean_abs_diff_p50": 0.008224,
+        "mean_abs_diff_p90": 0.177395,
+        "mean_abs_diff_max": 0.256262,
+        "near_duplicate_pairs_lt_0_005": 11,
+        "large_change_candidates_ge_0_08": 4,
+        "candidate_changes_per_min": 0.827586
+      }
+    },
+    {
+      "talk_id": "QTlIuodOsA",
+      "duration_sec": 291.72,
+      "sample_count": 29,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 28,
+        "mean_abs_diff_mean": 0.016033,
+        "mean_abs_diff_p50": 0.007929,
+        "mean_abs_diff_p90": 0.036017,
+        "mean_abs_diff_max": 0.108195,
+        "near_duplicate_pairs_lt_0_005": 11,
+        "large_change_candidates_ge_0_08": 1,
+        "candidate_changes_per_min": 0.214286
+      }
+    },
+    {
+      "talk_id": "UOlPKyCVgg",
+      "duration_sec": 299.178333,
+      "sample_count": 30,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 29,
+        "mean_abs_diff_mean": 0.015756,
+        "mean_abs_diff_p50": 0.000517,
+        "mean_abs_diff_p90": 0.049115,
+        "mean_abs_diff_max": 0.158201,
+        "near_duplicate_pairs_lt_0_005": 22,
+        "large_change_candidates_ge_0_08": 1,
+        "candidate_changes_per_min": 0.206897
+      }
+    },
+    {
+      "talk_id": "ccpXHNfaoy",
+      "duration_sec": 360.0,
+      "sample_count": 36,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 35,
+        "mean_abs_diff_mean": 0.037485,
+        "mean_abs_diff_p50": 0.001367,
+        "mean_abs_diff_p90": 0.111344,
+        "mean_abs_diff_max": 0.162408,
+        "near_duplicate_pairs_lt_0_005": 20,
+        "large_change_candidates_ge_0_08": 6,
+        "candidate_changes_per_min": 1.028571
+      }
+    },
+    {
+      "talk_id": "csJIsDTYMW",
+      "duration_sec": 354.869751,
+      "sample_count": 35,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 34,
+        "mean_abs_diff_mean": 0.036572,
+        "mean_abs_diff_p50": 0.036321,
+        "mean_abs_diff_p90": 0.070894,
+        "mean_abs_diff_max": 0.095665,
+        "near_duplicate_pairs_lt_0_005": 6,
+        "large_change_candidates_ge_0_08": 1,
+        "candidate_changes_per_min": 0.176471
+      }
+    },
+    {
+      "talk_id": "krJSAnVcGR",
+      "duration_sec": 304.12,
+      "sample_count": 30,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 29,
+        "mean_abs_diff_mean": 0.029787,
+        "mean_abs_diff_p50": 0.002107,
+        "mean_abs_diff_p90": 0.09086,
+        "mean_abs_diff_max": 0.18599,
+        "near_duplicate_pairs_lt_0_005": 16,
+        "large_change_candidates_ge_0_08": 5,
+        "candidate_changes_per_min": 1.034483
+      }
+    },
+    {
+      "talk_id": "miPjvjWOvI",
+      "duration_sec": 361.08,
+      "sample_count": 36,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 35,
+        "mean_abs_diff_mean": 0.021859,
+        "mean_abs_diff_p50": 0.002345,
+        "mean_abs_diff_p90": 0.081336,
+        "mean_abs_diff_max": 0.103195,
+        "near_duplicate_pairs_lt_0_005": 25,
+        "large_change_candidates_ge_0_08": 5,
+        "candidate_changes_per_min": 0.857143
+      }
+    },
+    {
+      "talk_id": "myfXyntFYL",
+      "duration_sec": 277.034,
+      "sample_count": 28,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 27,
+        "mean_abs_diff_mean": 0.012332,
+        "mean_abs_diff_p50": 0.001025,
+        "mean_abs_diff_p90": 0.027991,
+        "mean_abs_diff_max": 0.113295,
+        "near_duplicate_pairs_lt_0_005": 20,
+        "large_change_candidates_ge_0_08": 2,
+        "candidate_changes_per_min": 0.444444
+      }
+    },
+    {
+      "talk_id": "rOwZgUjcwB",
+      "duration_sec": 349.280703,
+      "sample_count": 35,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 34,
+        "mean_abs_diff_mean": 0.01512,
+        "mean_abs_diff_p50": 0.00042,
+        "mean_abs_diff_p90": 0.0562,
+        "mean_abs_diff_max": 0.101547,
+        "near_duplicate_pairs_lt_0_005": 22,
+        "large_change_candidates_ge_0_08": 1,
+        "candidate_changes_per_min": 0.176471
+      }
+    },
+    {
+      "talk_id": "rxrToXvRyM",
+      "duration_sec": 425.789375,
+      "sample_count": 43,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 42,
+        "mean_abs_diff_mean": 0.018549,
+        "mean_abs_diff_p50": 0.000472,
+        "mean_abs_diff_p90": 0.080621,
+        "mean_abs_diff_max": 0.108946,
+        "near_duplicate_pairs_lt_0_005": 28,
+        "large_change_candidates_ge_0_08": 5,
+        "candidate_changes_per_min": 0.714286
+      }
+    },
+    {
+      "talk_id": "vrydRuOXbT",
+      "duration_sec": 358.281667,
+      "sample_count": 36,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 35,
+        "mean_abs_diff_mean": 0.030831,
+        "mean_abs_diff_p50": 0.000868,
+        "mean_abs_diff_p90": 0.046635,
+        "mean_abs_diff_max": 0.72855,
+        "near_duplicate_pairs_lt_0_005": 24,
+        "large_change_candidates_ge_0_08": 1,
+        "candidate_changes_per_min": 0.171429
+      }
+    },
+    {
+      "talk_id": "wJAPXMIoIG",
+      "duration_sec": 333.141,
+      "sample_count": 33,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 32,
+        "mean_abs_diff_mean": 0.021418,
+        "mean_abs_diff_p50": 0.00391,
+        "mean_abs_diff_p90": 0.072187,
+        "mean_abs_diff_max": 0.110223,
+        "near_duplicate_pairs_lt_0_005": 17,
+        "large_change_candidates_ge_0_08": 2,
+        "candidate_changes_per_min": 0.375
+      }
+    },
+    {
+      "talk_id": "xhjBHGVOyQ",
+      "duration_sec": 347.655,
+      "sample_count": 35,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 34,
+        "mean_abs_diff_mean": 0.109674,
+        "mean_abs_diff_p50": 0.026294,
+        "mean_abs_diff_p90": 0.339846,
+        "mean_abs_diff_max": 0.44198,
+        "near_duplicate_pairs_lt_0_005": 14,
+        "large_change_candidates_ge_0_08": 14,
+        "candidate_changes_per_min": 2.470588
+      }
+    },
+    {
+      "talk_id": "xiSxNRoOzm",
+      "duration_sec": 350.6235,
+      "sample_count": 35,
+      "sample_interval_sec": 10.0,
+      "difference_proxy": {
+        "adjacent_pairs": 34,
+        "mean_abs_diff_mean": 0.040015,
+        "mean_abs_diff_p50": 0.038667,
+        "mean_abs_diff_p90": 0.089679,
+        "mean_abs_diff_max": 0.108538,
+        "near_duplicate_pairs_lt_0_005": 13,
+        "large_change_candidates_ge_0_08": 9,
+        "candidate_changes_per_min": 1.588235
+      }
+    }
+  ]
+}

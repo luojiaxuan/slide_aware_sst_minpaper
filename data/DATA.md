@@ -17,7 +17,8 @@ only documents locations and local staging conventions. No media is committed to
 | ACL60/60 | ACL Anthology attachment, SHA256 `5f2a3855b5f442c83e6461c32e8a8deb6c2b053518b02b957eb4686bacfce7cc` | dev/eval 5+5 complete talks, 468+416 gold segments, CC BY 4.0 | [`manifests/phase_a_sources_20260731.json`](manifests/phase_a_sources_20260731.json), [`manifests/acl6060_talks_20260731.jsonl`](manifests/acl6060_talks_20260731.jsonl) |
 | *Do Slides Help?* ACL60/60 frame supplement | Figshare v2 `Visual_ASR.zip`, SHA256 `f771d3f6f03026ad1510cf6840b47df3406b06b804926ab3ae18af99f663d4cc` | 884 real talk-video frames over all 10 ACL60/60 talks, CC BY 4.0; frame-only import pending | [`manifests/do_slides_help_figshare_v2_20260731.json`](manifests/do_slides_help_figshare_v2_20260731.json) |
 | MCIF media pool | `FBK-MT/MCIF` revision `e24065b919758263cfe5d157057278affe76ea7b` | 100 long audio/video talks, CC BY 4.0 | [`manifests/phase_a_sources_20260731.json`](manifests/phase_a_sources_20260731.json), [`manifests/mcif_files_e24065b9.jsonl`](manifests/mcif_files_e24065b9.jsonl) |
-| MCIF IWSLT translation subset | official `mcif-long-trans.zip`, SHA256 `445a4b92d0083b5416515a9639fcef126b72a5e80ef59d962dc30f82688cedb7` | 21 talk IDs and filenames frozen; reference contents unopened | [`manifests/phase_a_sources_20260731.json`](manifests/phase_a_sources_20260731.json) |
+| MCIF IWSLT translation subset | official `mcif-long-trans.zip`, SHA256 `445a4b92d0083b5416515a9639fcef126b72a5e80ef59d962dc30f82688cedb7` | 21 audio/video/PDF talks materialized; 919 segments; reference files unextracted and contents unopened | [`manifests/mcif_translation_subset_materialized_20260801.json`](manifests/mcif_translation_subset_materialized_20260801.json) |
+| MCIF visual states v2 | derived from the frozen 21 MP4s at 1 s intervals | 7,111 frames; 283 reviewed transition candidates; 304 causal states; 0 unconfirmed candidates | [`manifests/mcif_visual_state_candidates_v2_20260801.json`](manifests/mcif_visual_state_candidates_v2_20260801.json), [`manifests/mcif_visual_qa_20260801.json`](manifests/mcif_visual_qa_20260801.json) |
 
 ACL60/60 dev 的 inference/scoring bundle 只在本地 staging；Git 仅保存
 [`manifests/acl6060_dev_simulstream_20260731.json`](manifests/acl6060_dev_simulstream_20260731.json)
@@ -38,6 +39,8 @@ ACL60/60 dev 的 inference/scoring bundle 只在本地 staging；Git 仅保存
 
 - Current Phase-A staging:
   `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/`.
+- MCIF inference-safe materialization and QA:
+  `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9`.
 - *Do Slides Help?* Figshare v2 staging:
   `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/do-slides-help/figshare-v2`.
 - Historical staging: `~/research_idea/data_prep/` (`mtedx_videos/` 3.0G probe

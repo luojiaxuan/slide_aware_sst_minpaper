@@ -154,22 +154,25 @@ main route before held-out evaluation.
 - Lip vision, AVMuST-TED execution, and slide+lip hybrid experiments remain out
   of scope.
 
-The next scientific action is not an unstructured full `C0-C7` GPU run. First import the
-verified ACL60/60 real-frame supplement, blind-label evidence-opportunity
-density, and map semantic, relation, correct/wrong, native/noisy oracle headroom.
+The next scientific action is not an unstructured full `C0-C7` GPU run. MCIF
+input-side visual readiness now passes, but no translation outcome exists. First
+import the verified ACL60/60 real-frame supplement, blind-label
+evidence-opportunity density, and map semantic, relation, correct/wrong, and
+native/noisy oracle headroom.
 Any stable route can justify a focused automatic method; stop only if all gold
 evidence routes lack practical headroom.
 
 ### 2026 literature/data audit update (2026-07-31)
 
 - **[high] MCIF's 21-talk translation subset is the primary project-held-out
-  long-form source, but its visual tier is not ready yet.** The current HF
+  long-form source, and its input-side visual tier is now ready.** The current HF
   revision has a broader 100-talk media pool; the translation subset has 21 ACL 2023
   talks, original MP4/WAV, human English transcripts, professional De/It/Zh
   translations, CC BY 4.0, and an official IWSLT 2026 long-form SimulST path.
   This is stronger for talk-level inference than the five ACL60/60 eval talks,
-  but it becomes a visual confirmatory set only after the 21 videos and causal
-  slide timelines pass QA.
+  The 21 videos now pass frozen hashes and reference-free visual QA: 283 reviewed
+  transitions compile into 304 conservatively unlocked causal states. This does
+  not establish eligible-event density, statistical power or translation gain.
 - **[high] ACL60/60 should be development/replication, not the only main test.**
   Its professional translations and external term tags are valuable, and the
   verified *Do Slides Help?* Figshare v2 supplement now adds 884 real frames
@@ -192,8 +195,8 @@ evidence routes lack practical headroom.
   This supports a selective/evidence-state study but is not proof that the
   proposed method will work.
 
-These conclusions come from primary paper/release inspection; they have not yet
-been validated by a local MCIF run. The immediate experiment is therefore a
+The dataset facts now also have local media/hash/visual validation, but there is
+still no local MCIF translation run. The immediate experiment is therefore a
 small causal kill test on ACL60/60 dev, not model training. MCIF's HF configs
 share the same 21 underlying talks rather than providing disjoint development
 and test talks, so all 21 are reserved as project-held-out until the system is

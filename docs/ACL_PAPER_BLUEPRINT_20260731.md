@@ -205,9 +205,10 @@ LRS3-T 数据跑 lip model，不是同一样本上的 evidence comparison。
 | Native | 原始音频 | 不依赖合成噪声的 anchor |
 | Babble dose-response | MUSAN babble，+10/+5/0/-5 dB，3 个固定 seeds | 模拟 overlapping speech；主因果曲线 |
 | Noise-type generalization | MUSAN music、generic noise，0 dB；训练/调参不见该类型 | 检查是否只适配 babble |
-| Reverberation | AcousticRooms 一个预注册 moderate RIR | 检查 room degradation |
+| Reverberation | OpenSLR 28 Room Impulse Response and Noise Database 的一个预注册 moderate RIR | 检查 room degradation |
 
-MUSAN 和 AcousticRooms 均采用 CC BY 4.0 资源。Babble/noise source ids 在 dev/test
+MUSAN/SLR17 采用 CC BY 4.0；RIR/Noise SLR28 采用 Apache 2.0。旧版误写的
+SLR119 实际是 AliMeeting，不是 RIR source。Babble/noise source ids 在 dev/test
 间隔离；固定 VAD 版本后，只在 speech-active frames 上计算 speech/noise RMS 与 SNR。
 所有 source ids、seed、混合脚本、VAD revision、RMS/SNR 定义和 manifest 必须进
 Git/HF。Noise seeds 是同一 talk 的 repeated measures，不能当作额外独立样本。
@@ -599,4 +600,4 @@ model。训练目标必须对应已证明的 headroom，否则只会把 benchmar
 - *XLAVS-R: Cross-Lingual Audio-Visual Speech Representation Learning for
   Noise-Robust Speech Translation*: <https://aclanthology.org/2024.acl-long.697/>
 - MUSAN: <https://www.openslr.org/17/>
-- AcousticRooms: <https://www.openslr.org/119/>
+- Room Impulse Response and Noise Database (SLR28): <https://www.openslr.org/28/>

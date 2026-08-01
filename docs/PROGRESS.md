@@ -592,3 +592,31 @@ or a stronger Qwen3-VL variant if available.
   declared development matrix, choose the most defensible route from dev
   evidence, then commit/push a frozen primary claim and analysis before reading
   ACL eval or MCIF results.
+
+## 2026-08-01 MCIF Visual Readiness
+
+- Added an inference-safe MCIF subset materializer that selectively extracts
+  21 audio/PDF files and timing metadata, downloads only the matching 21 MP4s
+  at frozen HF revision `e24065b9...`, and verifies bytes/SHA256.
+- Materialized 21 talks / 919 segments / 7,105.53 s audio / 7,110.39 s video.
+  Reference files were not extracted or read, and the inference tree contains
+  no reference/transcript/translation directory.
+- Added a 10 s visual coverage audit: 711 frames and 21 contact sheets. Visual
+  inspection confirmed slide-dominant real conference recordings in all talks,
+  with persistent text, charts, formulas, layouts and progressive builds.
+- Added a 1 s patch-grid visual-state detector that suppresses small speaker
+  overlay motion. Calibrated v2 recovered same-template text changes without
+  materially increasing high-motion talk counts.
+- Full v2 result: 7,111 frames, 283 transition candidates, 283 stable
+  confirmations, 304 causal states including initial states, and 2.388
+  candidates/minute.
+- Inspected all 21 transition sheets. No speaker-only false trigger was
+  observed. The timeline remains a candidate artifact because sub-threshold
+  local updates may be missed; it is not independent human ground truth.
+- Each causal state now has a conservative half-open availability interval,
+  stable evidence-frame path/SHA256 and transition window. No future state is
+  exposed before stable confirmation.
+- Corrected the noise source: SLR119 is AliMeeting. The selected RIR source is
+  OpenSLR 28 (Apache 2.0); MUSAN remains OpenSLR 17 (CC BY 4.0).
+- Detailed record:
+  [`docs/MCIF_VISUAL_READINESS_20260801.md`](MCIF_VISUAL_READINESS_20260801.md).

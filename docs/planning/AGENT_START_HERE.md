@@ -1,6 +1,6 @@
 # Agent Start Here
 
-更新日期：2026-07-31
+更新日期：2026-08-01
 
 本项目当前研究 **persistent, pre-available slide semantics for SimulST**。最终 paper
 identity 尚未冻结；当前权威的探索策略与 held-out freeze 边界是
@@ -30,9 +30,9 @@ identity 尚未冻结；当前权威的探索策略与 held-out freeze 边界是
 - *Do Slides Help?* Figshare v2 supplement 已验证覆盖 ACL60/60 全部 10 talks、884
   个真实 video frames；原 metadata 含 transcript，必须先构建 frame-only inference view。
 - MCIF 当前 HF revision 有 100 个 long-media talks；其中官方 IWSLT translation
-  subset 的 21 talks 是 project-held-out long-form source。其 visual tier 只有在 21
-  个 videos 与 causal slide timelines 通过 QA 后才是 confirmatory benchmark；系统
-  冻结前禁止读取 references 或运行 outputs。
+  subset 的 21 talks 是 project-held-out long-form source。21 videos 与 causal-state
+  input QA 已通过：283 transitions、304 states；eligible-event/MDE/output gates 尚未
+  通过。系统冻结前禁止读取 references 或运行 outputs。
 - Chinese-LiPS：private timing/ASR diagnostic only，不是 paper ranking 主数据。
 
 ## 当前实验矩阵
@@ -56,17 +56,20 @@ budget 和 selection path。
 
 ## 下一步
 
-1. 数据与 runner revisions 已冻结；先读
+1. MCIF input-side visual readiness 已完成；先读
+   [`../MCIF_VISUAL_READINESS_20260801.md`](../MCIF_VISUAL_READINESS_20260801.md)；
+2. 数据与 runner revisions 已冻结；再读
    [`../PHASE_A_DATA_RUNNER_FREEZE_20260731.md`](../PHASE_A_DATA_RUNNER_FREEZE_20260731.md)；
-2. 导入 Figshare frames，生成不含 `sentence` 的 frame-only inference manifest，并用
+3. 下载/冻结 MUSAN SLR17 与 RIR/Noise SLR28；不要使用 SLR119 作为 RIR；
+4. 导入 Figshare frames，生成不含 `sentence` 的 frame-only inference manifest，并用
    保守 timestamp 构建 current/stale/wrong state；
-3. blind 标注 80-120 个候选 opportunity events，估计 term、semantic、relation、noise
+5. blind 标注 80-120 个候选 opportunity events，估计 term、semantic、relation、noise
    interaction 与 early-commit evidence density；
-4. 独立冻结 candidates、source-only packets、target scoring，运行 document-only、OCR、
+6. 独立冻结 candidates、source-only packets、target scoring，运行 document-only、OCR、
    correct semantic/relation oracle、matched wrong oracle，以及 native/noisy audio；
-5. 为有 practical headroom 的 route 构建小规模 automatic conditions，比较 naive prompt、
+7. 为有 practical headroom 的 route 构建小规模 automatic conditions，比较 naive prompt、
    selection/gating 和 direct image；所有 gold route 都无 headroom 才停止；
-6. 从开发证据选择最终 story，冻结 primary claim/metric/config 后再运行 ACL eval 与
+8. 从开发证据选择最终 story，冻结 primary claim/metric/config 后再运行 ACL eval 与
    21-talk MCIF。
 
 ## 禁止捷径

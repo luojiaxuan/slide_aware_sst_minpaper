@@ -1,0 +1,27 @@
+{
+  "dataset": "mcif",
+  "subset": "iwslt2026_translation_21",
+  "date": "2026-08-01",
+  "upstream_revision": "e24065b919758263cfe5d157057278affe76ea7b",
+  "reference_files_extracted": false,
+  "reference_content_inspected": false,
+  "review": {
+    "procedure": "Codex visual inspection; not independent human annotation",
+    "contact_sheets_reviewed": 21,
+    "transition_sheets_reviewed": 21,
+    "candidate_states_reviewed": 283,
+    "speaker_only_false_triggers_observed": 0,
+    "unconfirmed_candidates": 0
+  },
+  "result": {
+    "status": "READY_FOR_SOURCE_SIDE_EVENT_SCREEN",
+    "causal_states_including_initial": 304,
+    "visual_talks": 21,
+    "camera_only_talks": 0
+  },
+  "limitations": [
+    "Candidate boundaries are not independent human ground truth.",
+    "Sub-threshold local animations or small text updates may be missed.",
+    "Visual readiness does not establish translation benefit, event density, or statistical power."
+  ]
+}

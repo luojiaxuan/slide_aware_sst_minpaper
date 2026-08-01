@@ -1,6 +1,16 @@
 # Slide-Aware Simultaneous Speech Translation — investigation record
 
-> **Status (2026-07-31).** With audio input and the slide supplied through a
+> **Status (2026-08-01).** The 21-talk MCIF translation subset is now
+> materialized without extracting or reading references. All 21 videos passed
+> frozen hash checks and visual inspection. A 1 s reference-free pass produced
+> 283 visually reviewed transition candidates and 304 conservative causal
+> states including initial states; each state unlocks only after two stable
+> frames. This establishes **visual/timing readiness, not translation benefit**.
+> See
+> [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
+>
+> The earlier Chinese-LiPS diagnostic remains a warning: with audio input and
+> the slide supplied through a
 > vision encoder (Qwen3-Omni-30B, 206 segments), a *correct* slide and a *wrong*
 > slide produce statistically indistinguishable gains in quality
 > (+2.63 vs +2.29 chrF) and latency (AL −0.202 vs −0.199) — so **segment-level
@@ -69,8 +79,9 @@ latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
   freeze the main claim, metric, slices, and decision rule before held-out data.
 - **Project-held-out long-form source:** the 21-talk MCIF translation subset
   used by the official IWSLT 2026 SimulST development corpus, En→Zh primary and
-  En→De replication. It becomes a visual-tier confirmatory set only after all
-  21 corresponding videos and causal slide timelines pass QA.
+  En→De replication. Its input-side visual readiness now passes: 21 videos,
+  7,110 s, 283 reviewed transitions and 304 causal states. Eligible-event
+  density, power and outcome-side freeze gates remain open.
 - **Replication benchmark:** ACL60/60 dev/eval En→Zh, using its external term
   annotations and direct lineage to *Do Slides Help?*. The verified Figshare v2
   supplement adds 884 real talk-video frames covering all 10 talks.
@@ -91,20 +102,19 @@ current benchmark contract.
 
 ## Next execution milestone
 
-Build the inference-safe data view, then run a broad but bounded development
-screen before selecting the paper story:
-
-1. Import the verified *Do Slides Help?* supplement into a frame-only ACL60/60
-   inference view; strip the bundled source transcript and use conservative
-   frame availability.
-2. Blind-label 80-120 candidate evidence-opportunity events on the five ACL dev
-   talks and estimate non-term/current-slide/image-specific density.
-3. Freeze candidate inventory, source-only packets, and target scoring for the
-   development screen; compare document-only, OCR, correct semantic/relation
-   oracle, and matched wrong evidence under native and controlled-noise audio.
-4. Use the observed mechanism to choose one main paper route, then commit its
-   primary estimand, thresholds, model/config, and analysis before ACL eval or
-   MCIF. Keep those data held out during story selection.
+1. Freeze and download MUSAN (`SLR17`) plus the Room Impulse Response and Noise
+   Database (`SLR28`), then implement full-talk, seed-recorded corruption. The
+   previous `SLR119` pointer was wrong: that resource is AliMeeting.
+2. Import the verified *Do Slides Help?* supplement into a stripped ACL60/60
+   frame-only development view and blind-label 80-120 source-side evidence
+   opportunities.
+3. Freeze candidate inventory, source-only packets and target scoring; compare
+   audio/document-only, token-budget-matched OCR, current image/semantic
+   evidence, and matched stale/wrong evidence under native and controlled-noise
+   audio.
+4. Require a content-specific advance in first stable correct target decisions,
+   preserved final quality and a coherent noise interaction. A small aggregate
+   BLEU change without these controls is not sufficient.
 
 ## Rules
 

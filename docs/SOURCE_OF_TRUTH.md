@@ -24,6 +24,8 @@ links, or handoff state.
   [`docs/DUAL_ROUTE_DECISION_20260731.md`](DUAL_ROUTE_DECISION_20260731.md)
 - Phase-A data/runner freeze, provenance and no-reference boundary:
   [`docs/PHASE_A_DATA_RUNNER_FREEZE_20260731.md`](PHASE_A_DATA_RUNNER_FREEZE_20260731.md)
+- MCIF materialization, visual QA and causal-state readiness:
+  [`docs/MCIF_VISUAL_READINESS_20260801.md`](MCIF_VISUAL_READINESS_20260801.md)
 - Route A ACL paper and confirmatory experiment contract:
   [`docs/ACL_PAPER_BLUEPRINT_20260731.md`](ACL_PAPER_BLUEPRINT_20260731.md)
 - Independent ACL-style review and resolved/residual risks:
@@ -57,11 +59,11 @@ links, or handoff state.
 
 | Role | Canonical source | Status |
 | --- | --- | --- |
-| Primary long-form held-out benchmark | MCIF paper/project: <https://arxiv.org/abs/2507.19634>, <https://mt.fbk.eu/mcif/>; HF `FBK-MT/MCIF` | Media pool frozen at revision `e24065b919758263cfe5d157057278affe76ea7b` (100 talks); official IWSLT ZIP freezes the 21-talk translation subset at SHA256 `445a4b92...88cedb7`; reference contents unopened |
+| Primary long-form held-out benchmark | MCIF paper/project: <https://arxiv.org/abs/2507.19634>, <https://mt.fbk.eu/mcif/>; HF `FBK-MT/MCIF` | 21-talk subset materialized at revision `e24065b919758263cfe5d157057278affe76ea7b`; video hashes verified; 283 reviewed visual transitions and 304 causal states; reference files remain unextracted and unread |
 | Development and tagged-term replication | [ACL60/60 official release](https://aclanthology.org/2023.iwslt-1.2/) | dev/eval 5+5 complete talks, 468+416 gold segments and term annotations frozen at archive SHA256 `5f2a3855...cfce7cc`; inference and scoring views physically separated |
 | ACL60/60 real frame supplement | [Do Slides Help? Figshare v2](https://figshare.com/articles/software/Code_and_data/30158932) | CC BY 4.0 outer archive SHA256 `f771d3f6...3d4cc`; 884 frames cover all 10 talks; downloaded and verified, frame-only inference import pending |
 | Private timing/diagnostic benchmark | Chinese-LiPS derived private HF repo below | Available; not a paper-grade ST ranking set |
-| Controlled acoustic corruptions | MUSAN <https://www.openslr.org/17/> and AcousticRooms <https://www.openslr.org/119/> | Selected; revisions/seeds/mixing manifests not yet frozen |
+| Controlled acoustic corruptions | MUSAN/SLR17 <https://www.openslr.org/17/> (CC BY 4.0) and Room Impulse Response and Noise Database/SLR28 <https://www.openslr.org/28/> (Apache 2.0) | Selected; archives, hashes, seeds and mixing manifests not yet frozen. SLR119 is AliMeeting and is not the RIR source |
 
 No paper experiment may rely on an unfrozen local-only copy. The first Phase-A
 data task must record source URLs, accepted terms/licenses, immutable revisions
@@ -137,7 +139,7 @@ confirmed.
 | `qwen3_32b_diagnostic500_review_sheet_20260707` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | n/a | repaired diagnostic 500 plus parent experiment outputs | review CSV at `outputs/chinese_lips_train/annotation/diagnostic_review_sheet_500_qwen3_context_experiments_20260707.csv` and HF path `annotation/qwen3_32b_diagnostic500_review_sheet_20260707/` | Completed; uploaded to private HF commit `3d681ebe85babdacffe5e984bf59af6cade9c2f1`; tag `qwen3_32b_diagnostic500_review_sheet_20260707` |
 | `qwen3_vl_train_20260706_164650` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | partial shards under `outputs/chinese_lips_train/enrichment/qwen3_vl_train_20260706_164650/` | Paused/superseded; do not resume with old one-sample-per-process settings |
 
-## Current Durable Decisions (2026-07-31)
+## Current Durable Decisions (updated 2026-08-01)
 
 1. The final paper identity is intentionally not frozen before development
    evidence. The research space is persistent, pre-available slide semantics
@@ -192,23 +194,34 @@ confirmed.
     only after the append-only 21-talk completion ledger closes.
 19. Git stores code/contracts/results; Hugging Face stores reusable data/model
     artifacts. Chinese-LiPS remains private diagnostic data, not the main paper.
+20. MCIF input-side visual readiness passes at the frozen v2 detector settings:
+    1 s sampling, 283 transition candidates, 304 causal states and 21/21
+    transition-sheet review. This is not an ST result and does not pass the
+    eligible-event, MDE or output-side confirmatory gates.
+21. The SimulST-specific target is not merely final BLEU. The main evidence must
+    include earlier first-stable correct target decisions while the source audio
+    remains insufficient, correct-over-stale/wrong content specificity, final
+    quality preservation and controlled-noise interaction.
 
-## Current Next Actions (2026-07-31)
+## Current Next Actions (2026-08-01)
 
-1. Import the verified Figshare frames into a frame-only ACL60/60 manifest;
+1. Freeze/download MUSAN SLR17 and RIR/Noise SLR28 with archive hashes; implement
+   continuous full-talk corruption with source ids, fixed seeds and achieved-SNR
+   records. Do not use SLR119 as an RIR source.
+2. Import the verified Figshare frames into a frame-only ACL60/60 manifest;
    strip `sentence`, match the 468 dev rows to audio offsets, cluster slide
    states, represent transitions as intervals, and use conservative first-frame
    availability.
-2. Blind-label 80-120 source-side forced-choice candidates on ACL dev, including
+3. Blind-label 80-120 source-side forced-choice candidates on ACL dev, including
    random-span coverage and negative cases. Freeze candidate, source-only
    packet, and target-scoring artifacts independently.
-3. Map document-only, OCR, correct semantic/relation oracle, matched wrong
+4. Map document-only, OCR, correct semantic/relation oracle, matched wrong
    evidence, and native/noisy audio headroom. A stable signal in any route can
    justify focused automatic implementation; stop only if every gold route lacks
    practical headroom.
-4. Run small automatic comparisons for viable routes, including naive prompts,
+5. Run small automatic comparisons for viable routes, including naive prompts,
    selection/gating, and direct-image input. Preserve the complete declared
    development matrix.
-5. Select the final paper story from development evidence, then freeze and push
+6. Select the final paper story from development evidence, then freeze and push
    its main claim, metric, model/config, slices, and decision rule before ACL
    eval or MCIF is read.
