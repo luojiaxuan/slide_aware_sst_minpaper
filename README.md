@@ -93,6 +93,12 @@
 > target 服务分别为 <http://127.0.0.1:43872/>、<http://127.0.0.1:43873/>。完整 gate、启动、
 > freeze 与 join 命令见
 > [docs/MCIF_BEYOND_OCR_VALIDATION_V1.md](docs/MCIF_BEYOND_OCR_VALIDATION_V1.md)。
+> **2026-08-01 reliability audit 已在 0 labels 时 supersede 上述 v1 instrument。** Dual-role
+> separation 不等于 role 内重复标注；visual 页面还在 OCR sufficiency 判断前暴露 pixels/VLM。
+> 因此 43872/43873 已停止，两个 working sheets 保持 0/152；v1 只能用于 provenance、firewall
+> 与 calibration，不能产生 paper gold。Replacement 是 visual A/B sequential locks、target
+> author + bilingual validator、append-only adjudication 和 talk-cluster reliability gate。见
+> [docs/MCIF_BEYOND_OCR_RELIABILITY_AUDIT_20260801.md](docs/MCIF_BEYOND_OCR_RELIABILITY_AUDIT_20260801.md)。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28
@@ -252,9 +258,9 @@ current benchmark contract.
 当前 MCIF R0 event authoring 只冻结 target realizations，不运行 ST。355-item workspace、角色
 隔离、状态定义、localhost UI 与后续 freeze 命令见
 [docs/MCIF_TARGET_EVENT_ANNOTATION_V1.md](docs/MCIF_TARGET_EVENT_ANNOTATION_V1.md)。
-R1/R2 beyond-OCR proposals 使用另一套双角色 gate；两个独立 annotators 完成并分别 freeze
-152 rows 前不能 join，joint pass 前不能生成 audio task。见
-[docs/MCIF_BEYOND_OCR_VALIDATION_V1.md](docs/MCIF_BEYOND_OCR_VALIDATION_V1.md)。
+R1/R2 beyond-OCR v1 双角色 gate 已在 0 labels 时 superseded，不得开标。V2 必须先完成 role 内
+replication、顺序 modality lock、independent target verification 与 adjudication。见
+[docs/MCIF_BEYOND_OCR_RELIABILITY_AUDIT_20260801.md](docs/MCIF_BEYOND_OCR_RELIABILITY_AUDIT_20260801.md)。
 
 ## Rules
 

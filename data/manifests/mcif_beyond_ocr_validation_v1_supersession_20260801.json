@@ -1,0 +1,43 @@
+{
+  "artifact": "mcif_beyond_ocr_validation_v1_supersession",
+  "status": "SUPERSEDED_BEFORE_HUMAN_LABELS_NO_PAPER_GOLD_ALLOWED",
+  "superseded_protocol_manifest": "data/manifests/mcif_beyond_ocr_validation_protocol_v1_20260801.json",
+  "superseded_git_commit": "50185d2a286bde38a59b338e3cb8b0aede5bb486",
+  "workspace_hf_revision_retained": "861401f295ab122e69c4f22820b8d501e891e6db",
+  "workspace_hf_tag_retained": "mcif-beyond-ocr-validation-workspace-v1",
+  "human_labels_at_supersession": {
+    "visual_completed": 0,
+    "visual_total": 152,
+    "target_completed": 0,
+    "target_total": 152
+  },
+  "runtime_state": {
+    "visual_ui_port_43872_stopped": true,
+    "target_ui_port_43873_stopped": true,
+    "r0_ui_port_43871_affected": false
+  },
+  "no_go_reasons": [
+    "dual_role_is_not_within_role_replication",
+    "visual_judgment_exposes_pixels_and_vlm_before_text_sufficiency",
+    "no_disagreement_or_append_only_adjudication_state",
+    "single_target_author_defines_and_approves_scoring_text",
+    "no_chance_corrected_cluster_aware_reliability_gate"
+  ],
+  "allowed_uses": [
+    "workspace_provenance",
+    "role_firewall_tests",
+    "hash_and_freeze_tests",
+    "ui_calibration",
+    "v2_builder_input"
+  ],
+  "forbidden_uses": [
+    "production_human_annotation",
+    "paper_gold_event",
+    "pixels_beyond_ocr_claim",
+    "audio_sufficiency_task_generation",
+    "event_packet_generation",
+    "mcif_inference_or_scoring"
+  ],
+  "replacement_contract": "Full-overlap visual A/B sequential locks, target author plus independent bilingual validator, role-specific append-only adjudication, disjoint identities, and chance-corrected talk-cluster reliability gates.",
+  "audit_document": "docs/MCIF_BEYOND_OCR_RELIABILITY_AUDIT_20260801.md"
+}

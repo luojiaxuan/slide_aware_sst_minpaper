@@ -2,10 +2,11 @@
 
 日期：2026-08-01
 
-状态：**152 个 R1/R2 proposals 已编译为两个物理隔离的 role views；role-specific working
-sheet validator、localhost UI、create-once freeze 与 scorer-side join 均已实现并审计。当前
-visual-validator progress 为 0/152，target-author progress 为 0/152。没有 gold beyond-OCR
-event、audio-sufficiency boundary、`SourceEventTiming`、ST output 或 `pixels > OCR` result。**
+状态：**SUPERSEDED BEFORE LABELS。152 个 R1/R2 proposals、两个物理隔离 role views、
+validator/UI/freeze/join 均保留为 provenance 与 calibration artifact，但 v1 不能开始 production
+annotation，不能产生 paper gold，也不能进入 audio/inference。Visual/target working sheets 在
+supersession 时均为 0/152，43872/43873 已停止。原因与 v2 replacement contract 见
+[`MCIF_BEYOND_OCR_RELIABILITY_AUDIT_20260801.md`](MCIF_BEYOND_OCR_RELIABILITY_AUDIT_20260801.md)。**
 
 ## 这一步回答什么
 
@@ -112,7 +113,8 @@ cd code
   --expected-items 152 --host 127.0.0.1 --port 43873
 ```
 
-当前服务地址为 <http://127.0.0.1:43872/> 与 <http://127.0.0.1:43873/>。Desktop
+历史服务地址为 <http://127.0.0.1:43872/> 与 <http://127.0.0.1:43873/>，已在 v1
+supersession 时停止，不得重启用于 production labels。此前 Desktop
 1280×720 与 mobile 390×844 浏览器审计通过：真实 1920×1080 slide 加载；role 字段隔离正确；
 0 horizontal overflow；所有 mobile controls 保持在 361 px 内；console 0 error/warning。审计未
 保存标签，两个 progress 仍为 0/152。
@@ -179,6 +181,6 @@ Join 会重新计算两个 gates 并拒绝重哈希后的语义篡改。Joint pa
 - Protocol/server targeted tests：`17 passed`；
 - Project suite：`357 passed`，两个既有 `pypinyin` deprecation warnings。
 
-下一 gate 是两位真实 human annotators 分别完成 152 rows，并分别 freeze。Join 之前不生成
-audio task；joint pass 与独立 audio sufficiency freeze 之前不编译 event packets，不启动 MCIF
-ST inference，也不报告 `vision > OCR` 或 paper effect。
+本协议不再有 production next gate。后续只能执行 reliability audit 中定义的 v2：visual A/B
+顺序锁定、target author + bilingual validator、role-specific adjudication 与 instrument go/no-go。
+V2 freeze 前不生成 audio task，不编译 event packets，不启动 MCIF ST inference。

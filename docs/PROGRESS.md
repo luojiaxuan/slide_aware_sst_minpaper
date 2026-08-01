@@ -1403,3 +1403,24 @@ or a stronger Qwen3-VL variant if available.
 - 下一 gate 只能由两位真实 human annotators 分别完成并 freeze 152 rows。两个 freezes join 前
   不生成 audio task；joint pass 与独立 audio sufficiency freeze 前不编译 event packets、不启动
   MCIF ST inference、不报告 `pixels > OCR` 或 paper effect。
+
+## 2026-08-01 MCIF Beyond-OCR V1 Reliability No-Go
+
+- 在任何人工标签产生前，对 v1 dual-role protocol 做了独立方法审计。结论是
+  `NO_GO_FOR_PAPER_GOLD`：visual validator 与 target author 回答不同问题，joint pass 不提供
+  role 内 agreement；visual UI 又在 text-sufficiency 判断前同时暴露 pixels 与 VLM proposal，
+  无法识别 `pixels > OCR` counterfactual。
+- V1 还缺 A/B disagreement、append-only adjudication、target bilingual verification、代码级
+  role disjointness 与 chance-corrected cluster-aware reliability。`uncertain` 被直接折叠成
+  rejection，single-annotator errors 不可观察。
+- 43872/43873 服务已停止；visual/target working sheets 复核均保持 0/152。R0 43871 不受影响。
+  V1 workspace/HF revision 保留作为 provenance、firewall/hash/UI calibration 与 v2 builder
+  input，但不得用于 production annotation、paper gold、audio task、event packet 或 inference。
+- V2 replacement 冻结为：两名 visual validators 完整覆盖 152 items，并按 R0→R1→pixels→
+  descriptor 顺序 lock；一名 target author + disjoint bilingual validator；所有 disagreement、
+  uncertain 与 target edit/reject 进入 role-specific append-only adjudication；identity 必须 disjoint。
+- Instrument go gate 在 labels 前定义为 load-bearing field exact agreement≥0.80、Gwet AC1≥0.67、
+  adjudication rate≤0.25，并报告 Cohen's kappa 与 talk-cluster bootstrap 95% CI。未通过时修 guideline
+  并全部重标，不能用 adjudication 清洗。
+- 完整审计见 `docs/MCIF_BEYOND_OCR_RELIABILITY_AUDIT_20260801.md`；机器 supersession 见
+  `data/manifests/mcif_beyond_ocr_validation_v1_supersession_20260801.json`。
