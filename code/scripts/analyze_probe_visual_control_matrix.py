@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ProcessPoolExecutor
 import hashlib
 import json
+import os
 from pathlib import Path
 
 import numpy as np
@@ -150,12 +152,41 @@ def paired_bootstrap(
     }
 
 
+def _paired_bootstrap_job(args: tuple) -> dict:
+    return paired_bootstrap(*args)
+
+
+def analyze_contrasts(
+    item_ids: list[str],
+    matrix: dict[str, dict[str, dict]],
+    samples: int,
+    seed: int,
+    workers: int,
+) -> list[dict]:
+    jobs = [
+        (item_ids, matrix, first, second, samples, seed + index)
+        for index, (first, second) in enumerate(CONTRASTS)
+    ]
+    if workers == 1:
+        return [_paired_bootstrap_job(job) for job in jobs]
+    with ProcessPoolExecutor(max_workers=workers) as executor:
+        return list(executor.map(_paired_bootstrap_job, jobs))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-root", type=Path, required=True)
     parser.add_argument("--bootstrap-samples", type=int, default=10000)
     parser.add_argument("--seed", type=int, default=20260801)
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=min(len(CONTRASTS), os.cpu_count() or 1),
+        help="Parallel contrast workers; use 1 for serial execution.",
+    )
     args = parser.parse_args()
+    if args.workers < 1:
+        parser.error("--workers must be at least 1")
     completion_path = args.run_root / "completion.json"
     if not completion_path.is_file():
         raise ValueError("Run is not complete: completion.json is absent")
@@ -169,17 +200,13 @@ def main() -> None:
         )
         for condition in CONDITIONS
     }
-    contrasts = [
-        paired_bootstrap(
-            item_ids,
-            matrix,
-            first,
-            second,
-            args.bootstrap_samples,
-            args.seed + index,
-        )
-        for index, (first, second) in enumerate(CONTRASTS)
-    ]
+    contrasts = analyze_contrasts(
+        item_ids,
+        matrix,
+        args.bootstrap_samples,
+        args.seed,
+        min(args.workers, len(CONTRASTS)),
+    )
     summary = {
         "schema_version": "speech_vision_probe_visual_control_analysis_v1",
         "scope": "private_story_diagnostic_not_paper_gold",
