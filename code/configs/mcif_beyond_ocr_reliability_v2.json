@@ -1,0 +1,166 @@
+{
+  "schema_version": "mcif_beyond_ocr_reliability_config_v2",
+  "target_language": "zh",
+  "candidate_scope": "frozen_mcif_beyond_ocr_r1_r2_inventory_v1",
+  "visual": {
+    "cohorts": [
+      "visual_a",
+      "visual_b"
+    ],
+    "stages": [
+      {
+        "name": "r0",
+        "judgment_field": "r0_support",
+        "visible_evidence": [
+          "candidate",
+          "r0_flat_ocr"
+        ]
+      },
+      {
+        "name": "r1",
+        "judgment_field": "r1_support",
+        "visible_evidence": [
+          "candidate",
+          "r0_flat_ocr",
+          "r1_structured_text"
+        ]
+      },
+      {
+        "name": "pixels",
+        "judgment_field": "pixel_support",
+        "visible_evidence": [
+          "candidate",
+          "r0_flat_ocr",
+          "r1_structured_text",
+          "raw_slide_pixels"
+        ]
+      },
+      {
+        "name": "descriptor",
+        "judgment_field": "descriptor_fidelity",
+        "visible_evidence": [
+          "candidate",
+          "r0_flat_ocr",
+          "r1_structured_text",
+          "raw_slide_pixels",
+          "source_only_vlm_descriptor"
+        ]
+      }
+    ],
+    "judgments": [
+      "yes",
+      "no",
+      "uncertain"
+    ],
+    "operational_definitions": {
+      "support_yes": "The released evidence alone makes the candidate meaning recoverable without guessing from outside knowledge.",
+      "support_no": "The released evidence does not make the candidate meaning recoverable, or supports a materially different meaning.",
+      "support_uncertain": "The annotator cannot decide after applying the written rule; uncertainty is routed to adjudication and is never converted to no.",
+      "descriptor_fidelity_yes": "Every load-bearing part of the proposed descriptor is visibly grounded in the released pixels.",
+      "descriptor_fidelity_no": "At least one load-bearing part of the proposed descriptor is contradicted by or absent from the released pixels."
+    },
+    "reason_codes": [
+      "candidate_already_explicit",
+      "recoverable_only_by_guessing",
+      "structure_required",
+      "spatial_relation_required",
+      "diagram_or_chart_required",
+      "pixel_text_required",
+      "descriptor_hallucination",
+      "descriptor_omission",
+      "ambiguous_visual",
+      "other"
+    ]
+  },
+  "target": {
+    "author_fields": [
+      "candidate_eligibility",
+      "canonical_source_event_en",
+      "acceptable_target_realizations_zh",
+      "forbidden_target_realizations_zh",
+      "target_reference_alignment"
+    ],
+    "validator_stage1_fields": [
+      "candidate_eligibility",
+      "target_reference_alignment"
+    ],
+    "validator_stage2_decisions": [
+      "accept",
+      "edit",
+      "reject"
+    ],
+    "eligibility_judgments": [
+      "yes",
+      "no",
+      "uncertain"
+    ],
+    "reference_alignments": [
+      "explicit",
+      "paraphrased",
+      "omitted",
+      "unsupported",
+      "uncertain"
+    ],
+    "reason_codes": [
+      "candidate_not_meaningful",
+      "source_event_not_supported",
+      "target_reference_mismatch",
+      "canonical_event_incorrect",
+      "acceptable_realization_incomplete",
+      "forbidden_realization_incorrect",
+      "ambiguous_alignment",
+      "other"
+    ]
+  },
+  "adjudication": {
+    "visual_decisions": [
+      "yes",
+      "no",
+      "unresolvable"
+    ],
+    "target_decisions": [
+      "accept",
+      "edit",
+      "reject",
+      "unresolvable"
+    ],
+    "trigger": "any_primitive_disagreement_or_uncertain_or_target_edit_or_reject",
+    "raw_labels_are_immutable": true
+  },
+  "identity": {
+    "required_disjoint_roles": [
+      "visual_a",
+      "visual_b",
+      "target_author",
+      "target_validator",
+      "visual_adjudicator",
+      "target_adjudicator"
+    ]
+  },
+  "reliability": {
+    "load_bearing_fields": [
+      "r0_support",
+      "r1_support",
+      "pixel_support",
+      "candidate_eligibility",
+      "target_reference_alignment"
+    ],
+    "diagnostic_fields": [
+      "descriptor_fidelity"
+    ],
+    "minimum_exact_agreement": 0.8,
+    "minimum_gwet_ac1": 0.67,
+    "maximum_adjudication_rate": 0.25,
+    "cluster_unit": "talk_id",
+    "bootstrap_samples": 10000,
+    "bootstrap_seed": 20260801,
+    "failure_action": "revise_guideline_and_relabel_all_without_adjudication_cleaning"
+  },
+  "firewall": {
+    "initial_visual_release": "r0_only_no_r1_no_pixels_no_descriptor_no_reference_no_timing",
+    "initial_target_validator_release": "candidate_and_references_only_no_author_labels_no_visual_no_timing",
+    "audio_release_allowed": false,
+    "inference_release_allowed": false
+  },
+  "interpretation": "Passing this instrument gate only establishes reliable candidate annotation. It does not establish a pixels-beyond-OCR system effect or authorize audio/inference artifacts."
+}
