@@ -114,6 +114,8 @@ def test_visual_inventory_and_both_control_families_are_exact_token_matched(tmp_
         cross = control["cross_talk_wrong"]
         assert cross["lecture_id"] != source["lecture_id"]
         assert cross["visual_token_count"] == source["visual_token_count"]
+        assert control["cross_talk_match_level"] == "same_dimensions"
+        assert control["cross_talk_same_grid"] is True
         assert control["cross_talk_same_dimensions"] is True
     report = summarize(inventory, controls, audio_audit)
     assert report["same_talk_stale_coverage"] == 2
@@ -134,6 +136,30 @@ def test_cross_talk_control_is_deterministic(tmp_path):
     assert first == second
 
 
+def test_cross_talk_control_falls_back_to_same_token_with_different_grid(tmp_path):
+    rows = [
+        ladder_row(tmp_path, "talk-1", 0, size=(16, 8)),
+        ladder_row(tmp_path, "talk-2", 0, size=(8, 16)),
+    ]
+    inventory = build_visual_token_inventory(
+        rows,
+        source_root=tmp_path,
+        processor=FakeProcessor(),
+        processor_binding_sha256="1" * 64,
+        batch_size=2,
+    )
+    controls = build_wrong_image_candidates(inventory, seed=PAIRING_SEED)
+    assert all(
+        row["cross_talk_match_level"] == "same_visual_token_count"
+        for row in controls
+    )
+    assert all(row["cross_talk_same_grid"] is False for row in controls)
+    assert all(
+        row["cross_talk_wrong"]["visual_token_count"] == row["visual_token_count"]
+        for row in controls
+    )
+
+
 def test_control_builder_rejects_visual_token_group_with_only_one_talk(tmp_path):
     rows = [ladder_row(tmp_path, "talk-1", state_id) for state_id in range(2)]
     inventory = build_visual_token_inventory(
@@ -143,7 +169,7 @@ def test_control_builder_rejects_visual_token_group_with_only_one_talk(tmp_path)
         processor_binding_sha256="1" * 64,
         batch_size=2,
     )
-    with pytest.raises(ValueError, match="No cross-talk exact-token/grid control"):
+    with pytest.raises(ValueError, match="No cross-talk exact-token control"):
         build_wrong_image_candidates(inventory, seed=PAIRING_SEED)
 
 

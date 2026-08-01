@@ -355,21 +355,14 @@ def build_wrong_image_candidates(
     *,
     seed: str,
 ) -> list[dict[str, Any]]:
-    by_processor_shape: dict[tuple[int, tuple[int, ...]], list[dict[str, Any]]] = (
-        defaultdict(list)
-    )
+    by_visual_tokens: dict[int, list[dict[str, Any]]] = defaultdict(list)
     for row in inventory:
-        key = (row["visual_token_count"], tuple(row["image_grid_thw"]))
-        by_processor_shape[key].append(row)
+        by_visual_tokens[row["visual_token_count"]].append(row)
     results = []
     for row in inventory:
-        processor_shape = (
-            row["visual_token_count"],
-            tuple(row["image_grid_thw"]),
-        )
         candidates = [
             candidate
-            for candidate in by_processor_shape[processor_shape]
+            for candidate in by_visual_tokens[row["visual_token_count"]]
             if candidate["id"] != row["id"]
             and candidate["source_media_sha256"] != row["source_media_sha256"]
         ]
@@ -380,11 +373,22 @@ def build_wrong_image_candidates(
             and candidate["state_id"] < row["state_id"]
             and candidate["availability_start_sec"] <= row["availability_start_sec"]
         ]
-        stale.sort(key=lambda candidate: (-candidate["state_id"], candidate["id"]))
+        stale_same_grid = [
+            candidate
+            for candidate in stale
+            if candidate["image_grid_thw"] == row["image_grid_thw"]
+        ]
+        stale_pool = stale_same_grid or stale
+        stale_pool.sort(key=lambda candidate: (-candidate["state_id"], candidate["id"]))
         cross_talk = [
             candidate
             for candidate in candidates
             if candidate["lecture_id"] != row["lecture_id"]
+        ]
+        same_grid = [
+            candidate
+            for candidate in cross_talk
+            if candidate["image_grid_thw"] == row["image_grid_thw"]
         ]
         same_dimensions = [
             candidate
@@ -392,15 +396,19 @@ def build_wrong_image_candidates(
             if (candidate["width"], candidate["height"])
             == (row["width"], row["height"])
         ]
-        cross_pool = same_dimensions or cross_talk
+        cross_pool = same_dimensions or same_grid or cross_talk
         if not cross_pool:
-            raise ValueError(
-                f"No cross-talk exact-token/grid control for {row['id']}"
-            )
+            raise ValueError(f"No cross-talk exact-token control for {row['id']}")
         cross = min(
             cross_pool,
             key=lambda candidate: seeded_rank(seed, row["id"], candidate["id"]),
         )
+        if same_dimensions:
+            cross_match_level = "same_dimensions"
+        elif same_grid:
+            cross_match_level = "same_grid"
+        else:
+            cross_match_level = "same_visual_token_count"
         result = {
             "schema_version": "mcif_qwen3_omni_wrong_image_candidates_v1",
             "id": row["id"],
@@ -408,8 +416,13 @@ def build_wrong_image_candidates(
             "state_id": row["state_id"],
             "visual_token_count": row["visual_token_count"],
             "inventory_row_sha256": row["row_sha256"],
-            "same_talk_stale": None if not stale else candidate_record(stale[0]),
+            "same_talk_stale": (
+                None if not stale_pool else candidate_record(stale_pool[0])
+            ),
+            "same_talk_stale_same_grid": bool(stale_same_grid),
             "cross_talk_wrong": candidate_record(cross),
+            "cross_talk_match_level": cross_match_level,
+            "cross_talk_same_grid": bool(same_grid),
             "cross_talk_same_dimensions": bool(same_dimensions),
             "pairing_seed": seed,
             "source_transcript_consumed": False,
@@ -458,11 +471,20 @@ def summarize(
         "same_talk_stale_coverage": sum(
             row["same_talk_stale"] is not None for row in controls
         ),
+        "same_talk_stale_same_grid_coverage": sum(
+            row["same_talk_stale_same_grid"] for row in controls
+        ),
         "cross_talk_wrong_coverage": sum(
             row["cross_talk_wrong"] is not None for row in controls
         ),
+        "cross_talk_same_grid_coverage": sum(
+            row["cross_talk_same_grid"] for row in controls
+        ),
         "cross_talk_same_dimensions_coverage": sum(
             row["cross_talk_same_dimensions"] for row in controls
+        ),
+        "cross_talk_match_level_distribution": dict(
+            sorted(Counter(row["cross_talk_match_level"] for row in controls).items())
         ),
         "audio_invariance_representatives": len(audio_audit),
     }
@@ -521,8 +543,9 @@ def write_bundle(
             "Private source-only processor inventory for the 304-state MCIF evidence "
             "ladder. Every raw image is bound to its Qwen3-Omni image grid and visual "
             "token count. Candidate controls contain both the nearest causally prior "
-            "same-talk state when available and a deterministic cross-talk exact-token "
-            "image. No target, reference, transcript, audio content, annotation, or ST "
+            "same-talk state when available and a deterministic cross-talk visual-token-"
+            "matched image, preferring equal dimensions and then equal processor grid. "
+            "No target, reference, transcript, audio content, annotation, or ST "
             "output is included.\n\n"
             f"- model: `{final_report['model_id']}@{final_report['model_revision']}`\n"
             f"- rows / talks: {final_report['rows']} / {final_report['talks']}\n"
