@@ -826,9 +826,130 @@ or a stronger Qwen3-VL variant if available.
 - Copied that verified persistent cache to the canonical container's 1 TB
   `/dev/shm` runtime cache and again obtained a zero-difference SHA256 manifest.
   No existing artifact was deleted and no second compute container was created.
-- The last formal preflight found zero free GPUs because active OSWorld and
-  diffusion work occupied all eight cards. No non-idle task was stopped.
-- Activated heartbeat `vision-sst-control-launch`: it retries preflight every
-  10 minutes, launches on exactly two GPUs when available, then monitors the
-  four resumable workers, analyzes 1,030 complete rows, uploads the private
-  result artifact and freezes all final Git/HF pointers.
+- After the GPU fleet became free, preflight reported all eight cards below
+  1 GB. Launched only GPU `0/1` in the existing canonical container from
+  `main@f76f922`, one model worker and one spawned process-prefetch child per GPU,
+  at run root
+  `/data/projects/slide_aware_sst_minpaper/runs/chinese_lips_visual_controls_v1_qwen3_omni_process16_2gpu_20260801_153400`.
+- The first formal 10-second `nvidia-smi dmon` window was GPU0 `89.2%`, GPU1
+  `94.0%`, two-GPU mean `91.6%`; this passes the frozen `90%+` continuation gate.
+  A second window was `88.1%/96.6%`, two-GPU mean `92.35%`. At the documentation
+  checkpoint the two shards had `249/241 = 490/1,030` rows. The run later
+  completed at exactly `515/515 = 1,030/1,030`; completion binds both shard
+  hashes, exact model revision and input hash, all workers exited, and logs had
+  no traceback/OOM/IPC/resource-sharer error. The 10,000-bootstrap analysis is
+  running in the persistent ACL evaluation environment.
+- Heartbeat `vision-sst-control-launch` now monitors exactly this two-shard run;
+  on completion it runs the 10,000-bootstrap analysis, validates, uploads the
+  private result artifact and freezes final Git/HF pointers.
+
+## 2026-08-01 Event-Level Timing Scorer
+
+- Implemented the paper-specific development estimand rather than relying on
+  aggregate BLEU/AL: talk-equal risk difference in first stable correct target
+  decisions by the conservative audio-insufficient boundary.
+- Kept source timing/expected media identities, source artifact tree, actual
+  source-only evidence packets, control pairs, scientific config, no-target
+  pre-run inference contract, post-run result attestation, start/end live
+  environment audits, raw outcome commitment/tree, causal-audio schedule, broker
+  audit, release log, tokenizer artifact tree, target realizations, system
+  trajectories, frozen model artifact tree and scoring config as nineteen hash-bound inputs. The scorer rejects missing/duplicate
+  matrix rows, unknown conditions, time reversal, early trajectory termination,
+  endpoint overflow and model/acoustic-condition-specific audio-time grids.
+- Stable correctness requires a final all-correct tail of at least two
+  observations. An isolated final positive is right-censored; retractions,
+  overcommit and forbidden realization adoption remain explicit outputs.
+- Matched-wrong controls are type-specific for OCR, semantic and relation
+  evidence. Noise effects are difference-in-differences over the same content
+  contrast, not correct-vs-audio-only BLEU gaps.
+- Aligned the scoring config with the frozen acoustic manifest: native, 12
+  babble variants (`+10/+5/0/-5 dB × 3 seeds`), generic noise, music and RIR.
+  Seed replicates are averaged within event/talk and do not inflate talk count.
+- Independent adversarial review found four P1 gaps in the first scorer draft:
+  acoustic-specific time grids, technical-token false matches, unaudited
+  matched-control/provenance claims and permissive config parsing. All four
+  are fixed: one grid is required across every condition/acoustic variant;
+  technical symbols/acronyms have regression cases; source-only control pairs
+  bind recomputed payload/token hashes and availability; a no-target inference
+  manifest plus mount/open-file audit bind run/config/Git/isolation evidence;
+  all schemas reject extra, mistyped or non-finite fields.
+- The second adversarial pass found decimal/sign matching, self-declared packet
+  metadata, mutable v1 parameters and unpaired noise uncertainty. The final
+  implementation preserves leading decimals, Unicode signs, technical dotted
+  names, percent and version tokens; freezes the exact 16×9 matrix and all
+  analysis constants; jointly bootstraps DiD/curves by talk; and explicitly
+  reports undefined severity-correlation draws.
+- Replaced arbitrary packet dictionaries with a strict source-context schema
+  and deterministic renderer. Each context item binds by text/index/hash to a
+  source-derived artifact that in turn binds upstream slide/document bytes and
+  extractor revision. Gold text injected only into the packet now fails.
+- The scorer pins a tokenizer-only artifact tree by file bytes as well as model
+  identity/revision and replays exact token IDs. Mutable symlinks and local
+  tokenizer edits fail even though libraries ignore `revision=` for local dirs.
+- The live environment capture CLI token-matches the exact run marker, enumerates
+  marker workers plus descendants, records PID/PPID/process-start ticks/cwd/
+  entrypoint/executable/environment, mounts and `/proc/<pid>/fd`, and binds every Python child
+  entrypoint to the clean audited worktree. Formal runs require read-only rootfs
+  and matching start/end process-identity trees. Container destination roots,
+  host mount-source roots and scoring-host protected roots are separate path
+  namespaces; actual target/outcome roots must map to the forbidden host set.
+- Added a pre-run contract builder that validates all source/target/outcome/audio/
+  tokenizer/config inputs, derives the actual image and complete worker identity
+  tree from `workers_start`, then exclusively writes the contract and atomic
+  ready marker. This replaces impossible single-environment hashes for multi-GPU
+  workers and makes generation wait on a byte-addressed contract. The builder and
+  scorer both require the live worker command to bind the same contract/ready
+  paths; the worker-side wait helper rehashes and parses the contract before use.
+- A third independent review found that self-declared source media, substring
+  process matching and `future_audio_access=false` could still pass ordinary
+  reindex/launch bugs. Source events now freeze media/extractor identity per
+  condition. Every trajectory observation binds a monotonic external-broker
+  prefix schedule and release record. Full-audio roots must be absent from the
+  inference mounts/open files.
+- A fourth independent read-only audit found seven P1 provenance risks and no
+  P0. The four generation-critical issues are closed in code: canonical source
+  PCM/full/prefix/provenance hashes and exact time/sample boundaries; executable
+  Unix-socket broker with server-enforced interaction ordering and hash-chained records;
+  pre-run contract plus post-run trajectory attestation; and start/end read-only
+  runtime audits. Target/outcome bytes are precommitted and linked to excluded
+  host roots. The current broad writable `/data` diagnostic container still
+  cannot satisfy the formal isolation contract, so fresh paper-grade ACL
+  generation remains blocked on rebuilding the same canonical container after
+  active workloads finish and completing human outcome artifacts.
+- A fifth independent two-agent audit found the release-only protocol still
+  allowed a worker to prefetch full audio and backfill nominally early outputs.
+  Replaced it with a release/observation-commit state machine: every exact
+  hypothesis hash is committed before the next prefix, the final observation is
+  also committed, and scorer verifies the complete ordinal/hash chain. The same
+  pass made broker/contract readiness atomic, filtered schedules to eligible
+  events, requires read-only `network=none`, snapshots file bytes once for both
+  parsing and attestation, and binds a strict in-process model config plus full
+  model artifact tree. It also confirmed one explicit remaining blocker: no
+  production inference worker currently calls the barrier/broker APIs.
+- A final independent audit found four further P1 proof gaps: future audio could
+  cross condition/event/acoustic streams, host model bytes were not mapped to the
+  worker load path, scientific config was not runtime-bound, and ready hash was
+  recomputed from the published path. The fix uses one synchronized audio-time
+  frontier across every stream of a talk; exact read-only model/config mounts;
+  worker-side config rehash/parse; start/end container and mount-topology
+  identity; and a ready hash derived from the builder-validated bytes. Focused
+  tests now include a cross-condition future-audio rejection.
+- Follow-up review found same-time clean/noisy prefixes could still coexist in
+  one worker. Sessions are now single-stream, each talk permits only one
+  in-flight release even at the same frontier time, scorer replays that serial
+  order, and a multi-acoustic test covers the rejection. Internal model/audio
+  state isolation remains an explicit production-worker requirement and formal
+  generation blocker rather than a broker-only claim.
+- Added executable `+5 pp/-1 pp/3-of-5` exploratory point-estimate gate
+  components and talk-cluster intervals for early/final/forbidden/overcommit.
+  The gates are not labeled as statistical non-inferiority tests.
+- Added 34 focused scorer/broker tests including CLI artifact/hash round trip,
+  real Unix-socket prefix delivery and adversarial future-slide/extractor/
+  prefix/source/root cases. The project environment passes the complete suite:
+  `145 passed` in both the project environment and a CPU-only no-`torch` test
+  environment; two Qwen-VL unit tests now mock their dtype-only torch dependency.
+- This is scoring readiness only. Human source-event labels, target
+  realizations and system trajectories do not yet exist, so there is no ACL
+  dev effect estimate.
+- Contract:
+  [`docs/ACL6060_EVENT_TRAJECTORY_SCORING_V1.md`](ACL6060_EVENT_TRAJECTORY_SCORING_V1.md).

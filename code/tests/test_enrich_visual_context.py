@@ -313,7 +313,13 @@ def test_qwen_batch_sets_left_padding_and_preserves_row_outputs(monkeypatch, tmp
         AutoModelForImageTextToText=FakeModel,
         AutoProcessor=FakeProcessor,
     )
+    fake_torch = types.SimpleNamespace(
+        float16="float16",
+        bfloat16="bfloat16",
+        float32="float32",
+    )
     monkeypatch.setitem(sys.modules, "transformers", fake_transformers)
+    monkeypatch.setitem(sys.modules, "torch", fake_torch)
 
     extractor = module.QwenVLSlideContextExtractor(
         model_id="fake/qwen",
@@ -438,7 +444,13 @@ def test_qwen_prefetch_path_preserves_outputs_and_serializes_processor(monkeypat
         AutoModelForImageTextToText=FakeModel,
         AutoProcessor=FakeProcessor,
     )
+    fake_torch = types.SimpleNamespace(
+        float16="float16",
+        bfloat16="bfloat16",
+        float32="float32",
+    )
     monkeypatch.setitem(sys.modules, "transformers", fake_transformers)
+    monkeypatch.setitem(sys.modules, "torch", fake_torch)
 
     extractor = module.QwenVLSlideContextExtractor(
         model_id="fake/qwen",

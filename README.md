@@ -131,7 +131,18 @@ current benchmark contract.
    audio.
 3. Require a content-specific advance in first stable correct target decisions,
    preserved final quality and a coherent noise interaction. A small aggregate
-   BLEU change without these controls is not sufficient.
+   BLEU change without these controls is not sufficient. The fail-closed event
+   scorer and exact 16-condition acoustic grouping are implemented in
+   [docs/ACL6060_EVENT_TRAJECTORY_SCORING_V1.md](docs/ACL6060_EVENT_TRAJECTORY_SCORING_V1.md);
+   it now replays immutable tokenizer IDs, binds source media/extractor identity,
+   separates pre-run contract from post-run result attestation, commits raw
+   annotation/adjudication artifacts before output, captures start/end process-tree
+   isolation, and includes an executable external audio broker. Its synchronized
+   talk-level frontier prevents every condition/event/noise stream from seeing a
+   later audio time until all current-time hypotheses commit. Paper-grade fresh
+   generation remains blocked on a production inference worker, the read-only
+   `network=none` narrow-mount container rebuild and unfinished human outcome
+   artifacts; no ACL system result exists yet.
 
 ## Rules
 

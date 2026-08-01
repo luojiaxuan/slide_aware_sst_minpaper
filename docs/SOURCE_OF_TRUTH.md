@@ -34,6 +34,8 @@ links, or handoff state.
   [`docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md`](ACL6060_SOURCE_EVENT_ANNOTATION_V1.md)
 - ACL dev authoritative blinded annotation v2 protocol and tooling:
   [`docs/ACL6060_SOURCE_EVENT_ANNOTATION_V2.md`](ACL6060_SOURCE_EVENT_ANNOTATION_V2.md)
+- ACL dev event-timing estimand, causal broker and provenance contract:
+  [`docs/ACL6060_EVENT_TRAJECTORY_SCORING_V1.md`](ACL6060_EVENT_TRAJECTORY_SCORING_V1.md)
 - Route A ACL paper and confirmatory experiment contract:
   [`docs/ACL_PAPER_BLUEPRINT_20260731.md`](ACL_PAPER_BLUEPRINT_20260731.md)
 - Independent ACL-style review and resolved/residual risks:
@@ -100,6 +102,7 @@ permission is obtained.
 | ACL60/60 dev controlled acoustic v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/noise/corruptions/acl6060_dev_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-controlled-acoustic-dev>, commit `d28c499c8845c4991b5ccea27bc9a2ad520f51fa`, tag `acl6060-controlled-acoustic-v1-20260801` | Uploaded; 75 source-only WAV files plus five metadata/card files; `private=True`; remote metadata and sampled WAV byte-verified |
 | ACL60/60 dev source-event annotation workspace v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/workspace_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-events>, revision `3199207c66b159ab39f662a32e0f6d633c9c2b79`, tag `acl6060-source-event-workspace-v1-20260801` | Uploaded; `private=True`; 100 frames, 100 source-only clips, isolated blank A/B sheets; no transcript/target/reference/model output; remote inventory and three downloaded files byte-verified; labels remain pending |
 | ACL60/60 source-event author view v2 r4 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/author_view_v2_blinded_r4` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-event-author-v2>, revision `bbbbdbf5a2b19c4613791ccffbcf9bc587454e4a`, tag `acl6060-source-event-author-v2-r4-20260801` | Uploaded; `private=True`; 100 secret-HMAC-ID frames, 0 audio; author rows omit talk/timing/raw-media identifiers; scorer mapping/secret excluded; remote inventory and three files byte-verified. r3 revision `2fb266...` is superseded and must not receive labels |
+| Chinese-LiPS Qwen3-Omni five-condition visual-control diagnostic | `/data/projects/slide_aware_sst_minpaper/runs/chinese_lips_visual_controls_v1_qwen3_omni_process16_2gpu_20260801_153400` | Intended private path in <https://huggingface.co/datasets/gavinlaw/slide-context-sst-chinese-lips> after analysis validation | `COMPLETE_LOCAL_ANALYSIS_RUNNING`; exact code `f76f9224b9e7017a127499323949b0c2294a27a1`, input SHA256 `66783dc...e24105`; `1,030/1,030`, shard SHA256 `fe2e2b...11272` / `377d51...1081`; two formal utilization windows average `91.6%` and `92.35%`; upload forbidden until analysis pass |
 | Chinese-LiPS frame-backed train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified.jsonl` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-context-sst-chinese-lips>, revision `a83770446ded4599bf9d95d2b77cdcc7fe359ef7`, tag `qwen3_vl_context_v1` | Not uploaded as a separate raw artifact |
 | Qwen2.5-VL pilot enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
 | Qwen2.5-VL pilot enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
@@ -143,7 +146,7 @@ confirmed.
 
 | Run | Host/container | Model | Input | Output | Status |
 | --- | --- | --- | --- | --- | --- |
-| `chinese_lips_visual_controls_v1_qwen3_omni_2gpu_20260801_132051` | Hyper00 / `sglang-omni-jaxan` | `Qwen/Qwen3-Omni-30B-A3B-Instruct@26291f793822fb6be9555850f06dfe95f2d7e695` | 206-item, five-condition matrix under the run root; input SHA256 `66783d...24105` | Intended 1,030 records plus completion/analysis under `/data/projects/slide_aware_sst_minpaper/runs/chinese_lips_visual_controls_v1_qwen3_omni_2gpu_20260801_132051` | `READY_WAITING_HYPER00_GPU_CAPACITY`; exact model/input caches verified, no worker launched and no output rows yet; heartbeat `vision-sst-control-launch` active |
+| `chinese_lips_visual_controls_v1_qwen3_omni_2gpu_20260801_132051` | Hyper00 / `sglang-omni-jaxan` | `Qwen/Qwen3-Omni-30B-A3B-Instruct@26291f793822fb6be9555850f06dfe95f2d7e695` | 206-item, five-condition matrix under the run root; input SHA256 `66783d...24105` | Partial throughput diagnostics only under `/data/projects/slide_aware_sst_minpaper/runs/chinese_lips_visual_controls_v1_qwen3_omni_2gpu_20260801_132051` | `SUPERSEDED_DO_NOT_RESUME`; initial missing-`accelerate` failure and later low-utilization partial outputs retained; current heartbeat monitors only the process-prefetch run above |
 | `qwen3_vl_train_bs56x2_2gpu_20260706_214711` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | `outputs/chinese_lips_train/data/challenge_verified.jsonl` | final repaired artifacts under `outputs/chinese_lips_train/{data,index,annotation,qa}/` plus shard outputs under `outputs/chinese_lips_train/enrichment/qwen3_vl_train_bs56x2_2gpu_20260706_214711/` | Completed and repaired locally; final QA has 29,322 challenge rows, 526,597 evidence rows, 500 diagnostic rows, 0 missing raw model outputs, 0 raw parse failures; uploaded to private HF revision `a83770446ded4599bf9d95d2b77cdcc7fe359ef7` |
 | `qwen3_parse_failure_repair512_20260706_231750` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-VL-8B-Instruct` | 3,387 failed Qwen3-VL rows from the initial combined artifact | repair outputs under `outputs/chinese_lips_train/repair/qwen3_parse_failure_repair512_20260706_231750/` | Completed locally; 512/768/compact/strict passes repaired all initial parse failures |
 | `qwen3_32b_reference_pilot_20260706` | Hyper00 / `sglang-omni-jaxan-vision-sst-0701` | `Qwen/Qwen3-32B` | 100 rows from private HF revision `a83770446ded4599bf9d95d2b77cdcc7fe359ef7` diagnostic sample | `outputs/chinese_lips_train/reference_generation/qwen3_32b_hf_revision_a837704/pilot_100_refs_repaired.jsonl` and HF path `reference_pilots/qwen3_32b_reference_pilot_20260706/` | Completed; uploaded to private HF commit `ee785604ba51a5c65335de12bfcfd99d3c4febff`; tag `qwen3_32b_reference_pilot_20260706` |
@@ -260,10 +263,62 @@ confirmed.
     timing tasks and logs remain scorer/server-side, and the HTTP UI exposes
     only prefix indices. This is operational blinding, not a claim of anonymity
     against an adversary who corpus-matches the media bytes.
+32. ACL dev event scoring uses nineteen frozen inputs. A pre-run contract binds
+    source timing/media/extractor identities, source artifact tree, source-only
+    evidence packets, matched controls, scientific/scoring config, target/outcome
+    commitments, condition matrix, tokenizer, full model artifact tree, broker
+    and worker identities. A
+    post-run attestation separately binds exact trajectories, release log and
+    start/end runtime audits; trajectories point only to the pre-run contract,
+    so no circular hash or post-hoc hypothesis rewrite is accepted. Raw source/
+    target annotation reports and adjudication artifacts are frozen in a
+    scorer-private tree before output.
+    Canonical audio sources bind talk/acoustic identity, complete `float32le`
+    bytes, upstream WAV/corruption provenance, materializer revision and every
+    prefix hash. The implemented external Unix-socket broker enforces alternating
+    prefix release and exact-hypothesis observation commit per session and writes
+    server-ordinal, timestamped, hash-chained interactions; scorer rehashes
+    source/provenance/prefix/hypothesis bytes and
+    checks `sample_count / sample_rate == audio_time_sec`. One talk-level frontier
+    spans all event/model/acoustic streams, so no stream advances past a time
+    until every scheduled observation at that time commits. Sessions are bound
+    to one stream and each talk allows only one in-flight release, including
+    among clean/noisy streams at the same time.
+    Docker/container/worker evidence is captured twice from live
+    `docker inspect`, `/proc` and Git state after exact-token marker discovery
+    plus descendant enumeration. The pre-run contract builder binds the complete
+    start-audit hash before atomically releasing a ready-file barrier; worker
+    commands must bind both paths and the worker-side helper rehashes the contract
+    before generation. Scientific config and model tree require exact read-only
+    host→worker mounts, and start/end audits require the same container and mount
+    topology. Formal runs require read-only rootfs plus `network=none`;
+    every Python child entrypoint stays inside the clean
+    worktree; start/end process identity trees include PID/PPID/process-start ticks
+    and must match, so per-GPU environments may differ but worker restarts cannot
+    pass unnoticed. Container destinations, host mount sources and scoring
+    protected roots are separate namespaces, and actual target/outcome/audio
+    roots are linked to the forbidden host set. A production inference worker
+    that actually invokes the barrier and causal broker APIs is not implemented
+    yet; it must also prove session-local inference state and no cross-acoustic
+    cache reuse. The current broad writable
+    `/data` diagnostic container cannot satisfy this isolation; fresh paper-grade
+    generation remains blocked on rebuilding the same canonical container after
+    active work and completing human outcome artifacts. The primary
+    development estimand is talk-equal early stable-correct risk difference;
+    an isolated final correct point, an early-terminated trajectory or a
+    model/acoustic-condition-specific audio grid cannot count as gain. OCR,
+    semantic and relation conditions use separate controls whose type, time,
+    token count and packet hashes are machine-checked. Strict schemas reject
+    target/reference/future-audio leakage fields. Development thresholds are
+    explicitly exploratory point-estimate screens, not formal non-inferiority
+    tests. The 12 babble files are
+    grouped as four SNR levels with three fixed seeds, not 12 independent
+    samples; uncertainty is clustered by talk. This is scorer readiness, not
+    a result.
 
 ## Current Next Actions (2026-08-01)
 
-1. Run the frozen Chinese-LiPS five-condition Qwen3-Omni visual-control matrix
+1. Finish the active frozen Chinese-LiPS five-condition Qwen3-Omni visual-control matrix
    as a private single-talk mechanism diagnostic. Do not promote it to paper
    evidence; use it to distinguish page specificity, talk/domain priming,
    structured-slide priors and vision-slot perturbation.
@@ -276,7 +331,9 @@ confirmed.
    document-only, OCR, correct semantic/relation oracle, matched wrong
    evidence, and native/noisy audio headroom. A stable signal in any route can
    justify focused automatic implementation; stop only if every gold route lacks
-   practical headroom.
+   practical headroom. Use the frozen event scorer in
+   [`ACL6060_EVENT_TRAJECTORY_SCORING_V1.md`](ACL6060_EVENT_TRAJECTORY_SCORING_V1.md);
+   do not substitute aggregate BLEU/AL for its content-specific timing outcome.
 4. Run small automatic comparisons for viable routes, including naive prompts,
    selection/gating, and direct-image input. Preserve the complete declared
    development matrix.

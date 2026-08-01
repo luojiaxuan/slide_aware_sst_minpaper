@@ -75,15 +75,15 @@ revision。v1 因此在同一锁定模型版本上完整重跑五个条件，不
 
 ## 状态
 
-`PROCESS_PREFETCH_RUNNER_READY_FOR_RELAUNCH`。前五次尝试均已停止且没有 worker 残留；已有
-部分输出只作吞吐诊断，不能误报为正式结果或与新两 shard run 混合。
+`PROCESS_PREFETCH_RUN_COMPLETE_ANALYSIS_RUNNING`。前五次尝试均已停止且没有 worker
+残留；其部分输出只作吞吐诊断，不能与当前两 shard run 混合。
 
 已完成的 launch preparation：
 
 - initial launch state：`main@2fb0410`；batched runner state：`main@6b73121`；
   Hyper00 detached worktree：
   `/data/projects/slide_aware_sst_minpaper/worktrees/visual-controls-v1`；
-- run root：
+- 首次 materialization/失败尝试的 run root：
   `/data/projects/slide_aware_sst_minpaper/runs/chinese_lips_visual_controls_v1_qwen3_omni_2gpu_20260801_132051`；
 - 206-row control input SHA256：
   `66783dcda6d34e81bd8f1197cea29b6d7de815d422574379d3189b7bd1e24105`；
@@ -98,9 +98,22 @@ revision。v1 因此在同一锁定模型版本上完整重跑五个条件，不
   SHA256 清单同样为零差异；
 - Hyper00 canonical container 仍是 `sglang-omni-jaxan`，未创建第二个 compute
   container，也未修改或停止活跃 OSWorld/diffusion 任务；
-- heartbeat automation `vision-sst-control-launch` 已暂停旧四 worker launch，待新 run
-  root 启动后改写为两张 GPU、每卡一个 batched worker 的
-  utilization/progress/error monitor；完成后自动 analysis、private HF upload 和 Git freeze。
+- heartbeat automation `vision-sst-control-launch` 只监控当前两张 GPU、每卡一个
+  batched worker 的 run；完成后自动 analysis、private HF upload 和 Git freeze。
+
+当前正式 diagnostic run 在 Hyper00 preflight 确认全部八张卡均低于 `1 GB` 后，只选择
+GPU `0/1`，从 clean detached `main@f76f922` 启动：
+
+```text
+/data/projects/slide_aware_sst_minpaper/runs/
+chinese_lips_visual_controls_v1_qwen3_omni_process16_2gpu_20260801_153400
+```
+
+首个正式 10 秒窗口为 GPU0 `89.2%`、GPU1 `94.0%`、双卡均值 `91.6%`；第二个窗口为
+`88.1%/96.6%`、双卡均值 `92.35%`，均通过 `90%+` continuation gate。最终两 shard
+`515/515 = 1,030/1,030`，completion 绑定 input、两份 output 和 immutable model revision
+SHA256；所有 worker 已退出，日志无 traceback、OOM、IPC、broken pipe 或
+resource-sharer error。10,000 次 paired bootstrap analysis 正在运行。
 
 2026-08-01 14:39 UTC preflight 曾返回 GPU `3/5/6/7` 空闲，按合同只选择 `3/5` 启动。
 四个 worker 在加载模型前因 image 缺少 `accelerate` 退出，0 output rows；原始失败保留在
@@ -128,9 +141,9 @@ revision。v1 因此在同一锁定模型版本上完整重跑五个条件，不
 processor Python/GIL 调度没有被掩盖。该 run 最终保留 `37/35` partial rows：
 `/data/projects/slide_aware_sst_minpaper/runs/chinese_lips_visual_controls_v1_qwen3_omni_prefetch16_2gpu_20260801_151900`。
 
-当前代码保持 `workers_per_gpu=1`、`batch_items=16`、`shard_count=2`，改为
+当前运行保持 `workers_per_gpu=1`、`batch_items=16`、`shard_count=2`，使用
 `prefetch_mode=process`：spawned CPU process 单独加载 processor，通过 multiprocessing
 shared-memory tensor transport 返回 CPU `BatchFeature`，主 worker 只做 H2D 和 generate；
 它不会继承已有 CUDA context。launcher 继续用独立进程组并在 `SIGTERM`/`SIGINT` 后统一
-清理。本地 probe/control focused tests 为 `8 passed`。下一次使用全新 run root，重新做
-10 秒采样；只有双卡平均利用率达到 `90%+` 才持续运行到 1030 rows。
+清理。本地 probe/control focused tests 为 `8 passed`。当前只允许在 analysis 与 bundle
+validation 都通过后上传 private HF artifact。

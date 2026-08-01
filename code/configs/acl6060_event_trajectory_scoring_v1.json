@@ -1,0 +1,94 @@
+{
+  "schema_version": "acl6060_event_trajectory_scoring_v1",
+  "scope": "exploratory_acl_dev_not_confirmatory",
+  "primary_development_estimand": "talk_equal_risk_difference_of_first_stable_correct_target_decision_by_conservative_audio_insufficient_boundary",
+  "min_stability_observations": 2,
+  "native_acoustic_group": "native",
+  "expected_acoustic_conditions": [
+    "native",
+    "babble_p10_s0",
+    "babble_p10_s1",
+    "babble_p10_s2",
+    "babble_p5_s0",
+    "babble_p5_s1",
+    "babble_p5_s2",
+    "babble_0_s0",
+    "babble_0_s1",
+    "babble_0_s2",
+    "babble_m5_s0",
+    "babble_m5_s1",
+    "babble_m5_s2",
+    "generic_noise_0_s0",
+    "music_0_s0",
+    "rir_medium_near"
+  ],
+  "acoustic_groups": [
+    {"id": "native", "members": ["native"]},
+    {"id": "babble_10db", "members": ["babble_p10_s0", "babble_p10_s1", "babble_p10_s2"]},
+    {"id": "babble_5db", "members": ["babble_p5_s0", "babble_p5_s1", "babble_p5_s2"]},
+    {"id": "babble_0db", "members": ["babble_0_s0", "babble_0_s1", "babble_0_s2"]},
+    {"id": "babble_minus5db", "members": ["babble_m5_s0", "babble_m5_s1", "babble_m5_s2"]},
+    {"id": "generic_noise_0db", "members": ["generic_noise_0_s0"]},
+    {"id": "music_0db", "members": ["music_0_s0"]},
+    {"id": "rir_medium_near", "members": ["rir_medium_near"]}
+  ],
+  "expected_conditions": [
+    "audio_only",
+    "document_only",
+    "empty",
+    "ocr",
+    "matched_wrong_ocr",
+    "correct_semantic",
+    "matched_wrong_semantic",
+    "correct_relation",
+    "matched_wrong_relation"
+  ],
+  "contrasts": [
+    {
+      "id": "semantic_content_specificity",
+      "first": "correct_semantic",
+      "second": "matched_wrong_semantic",
+      "requires_matched_control": true,
+      "evidence_type": "semantic"
+    },
+    {
+      "id": "relation_content_specificity",
+      "first": "correct_relation",
+      "second": "matched_wrong_relation",
+      "requires_matched_control": true,
+      "evidence_type": "relation"
+    },
+    {
+      "id": "ocr_content_specificity",
+      "first": "ocr",
+      "second": "matched_wrong_ocr",
+      "requires_matched_control": true,
+      "evidence_type": "ocr"
+    },
+    {
+      "id": "ocr_over_audio_only",
+      "first": "ocr",
+      "second": "audio_only",
+      "requires_matched_control": false,
+      "evidence_type": null
+    }
+  ],
+  "development_signal": {
+    "early_risk_difference_percentage_points": 5.0,
+    "final_correctness_point_estimate_floor_percentage_points": -1.0,
+    "directionally_consistent_talks": 3,
+    "minimum_talks": 5,
+    "forbidden_adoption_point_estimate_ceiling_percentage_points": 1.0,
+    "overcommit_point_estimate_ceiling_percentage_points": 1.0
+  },
+  "bootstrap_samples": 10000,
+  "bootstrap_seed": 20260801,
+  "babble_severity_order": [
+    "native",
+    "babble_10db",
+    "babble_5db",
+    "babble_0db",
+    "babble_minus5db"
+  ],
+  "interpretation": "All ACL dev outcomes are exploratory. Freeze a new confirmatory contract before reading ACL eval or MCIF outputs."
+}
