@@ -1,4 +1,4 @@
-# Findings — state, evidence, and confidence (2026-07-31)
+# Findings — state, evidence, and confidence (2026-08-01)
 
 Single entry point for the project's state. **Every claim below carries a
 confidence level and a pointer to raw evidence.** Conclusions here are one
@@ -13,66 +13,74 @@ suggestive, one data point or confounded.
 
 ---
 
-## 1. The decisive experiment
+## 1. The current mechanism diagnostic
 
-**Setup.** Qwen3-Omni-30B-A3B-Instruct on hyper01 GPU6; audio revealed in 1.0 s
-chunks; Local Agreement commit; Chinese-LiPS lecture `102_24_M_KJ` (zh→En, AI /
-traffic-management topic), 206 segments × 3 conditions = 618 runs.
-Slide enters as an **image** through the omni vision encoder.
+**Setup.** Frozen `Qwen/Qwen3-Omni-30B-A3B-Instruct` revision
+`26291f793822fb6be9555850f06dfe95f2d7e695` on Hyper00 GPU0/1; audio revealed
+in 1.0 s chunks; two-observation Local Agreement; Chinese-LiPS lecture
+`102_24_M_KJ`, 206 segments × 5 conditions = 1,030 runs. Conditions are
+audio-only, correct current slide, same-talk wrong slide, unrelated-talk
+scientific slide, and blank image.
 
-**Raw evidence:** `docs/killtest/speech_vision/runs_omni_speech_vision.jsonl`
-(618 records: hypothesis, reference, commit events, image used).
-**Data:** [gavinlaw/chinese-lips-speech-slide-probe](https://huggingface.co/datasets/gavinlaw/chinese-lips-speech-slide-probe).
-**Code:** `code/scripts/omni_speech_vision_probe.py`.
-**Reproduce:** `HF_HUB_CACHE=/data/audrey/hf_cache/hub python omni_speech_vision_probe.py --items items_abs.json --out runs.jsonl --conditions none,slide,wrong --device-map cuda:0`
+**Canonical evidence:** private HF
+[`gavinlaw/slide-context-sst-chinese-lips@4923b25`](https://huggingface.co/datasets/gavinlaw/slide-context-sst-chinese-lips/tree/4923b253e87bd94487dace77576ad66e4ea9d8b9/experiments/chinese_lips_visual_controls_v1_qwen3_omni_process16_2gpu_20260801),
+tag `chinese_lips_visual_controls_v1_qwen3_omni_20260801_canonical`.
+**Run code:** `f76f9224b9e7017a127499323949b0c2294a27a1`.
+**Analysis/package code:** `9944654` / `9a564b5`.
+The earlier three-condition file
+`docs/killtest/speech_vision/runs_omni_speech_vision.jsonl` is retained as the
+historical predecessor, not the final control matrix.
 
-| condition | chrF | mean AL (chunks) |
-|---|---|---|
-| none (audio only) | 78.3 | 2.63 |
-| slide (correct slide image) | 80.7 | 2.42 |
-| wrong (a different slide image) | 80.6 | 2.43 |
+| condition | corpus chrF | mean AL (s) |
+|---|---:|---:|
+| none | 79.080 | 2.637 |
+| slide | 80.852 | 2.516 |
+| wrong | 80.740 | 2.465 |
+| cross-talk | 80.506 | 2.592 |
+| blank | 80.625 | 2.519 |
 
-| contrast | ΔchrF | p | ΔAL | p |
-|---|---|---|---|---|
-| slide vs none | +2.63 | <0.0001 | −0.202 | 0.0003 |
-| wrong vs none | +2.29 | <0.0001 | −0.199 | 0.0001 |
-| **slide vs wrong** | **+0.34** | **0.22** | **−0.002** | **0.47** |
+| contrast | ΔchrF [descriptive 95% CI] | ΔAL seconds [descriptive 95% CI] |
+|---|---:|---:|
+| slide vs none | +1.772 [0.752, 2.782] | -0.121 [-0.237, -0.001] |
+| wrong vs none | +1.659 [0.546, 2.726] | -0.172 [-0.274, -0.068] |
+| **slide vs wrong** | **+0.113 [-0.693, 0.894]** | **+0.051 [-0.045, 0.152]** |
+| wrong vs cross-talk | +0.234 [-0.792, 1.444] | -0.127 [-0.244, -0.010] |
+| cross-talk vs blank | -0.119 [-1.205, 0.824] | +0.073 [-0.042, 0.189] |
+| blank vs none | +1.545 [0.644, 2.482] | -0.118 [-0.216, -0.021] |
 
-slide-vs-wrong effect size: **+0.34 chrF, 95% CI [−0.47, +1.16], sd 6.1,
-n=206**. Minimum detectable effect at ~80% power ≈ **1.2 chrF**.
+### Claim 1a — Supplying any image slot changes output quality and lagging. **[medium]**
+Correct, wrong, unrelated and blank images all move chrF/AL by a similar scale
+relative to audio-only. The blank control shows that this cannot be attributed
+to slide semantics. Confidence is not high because every item comes from one
+talk and references are machine drafts.
 
-### Claim 1a — Adding an image improves quality and reduces lagging. **[high]**
-Both slide and wrong beat none on quality (+2.6 / +2.3 chrF) and commit earlier
-(−0.20 chunks), all p<0.001, consistent across two independent conditions.
+### Claim 1b — Current-page semantic use is not established. **[medium]**
+Correct slide does not distinguish itself from same-talk wrong slide. This is a
+bounded single-talk null, not proof that useful slide semantics never exist.
 
-### Claim 1b — The benefit does not depend on *which* slide is shown. **[medium]**
-slide vs wrong is null on both axes. **But this is bounded, not zero:** the CI
-only rules out content effects larger than ~1.2 chrF. A real effect of ~1 chrF
-would be invisible at this n.
+### Claim 1c — Domain and structured-slide priors are also not isolated. **[medium]**
+Same-talk wrong slide does not clearly beat cross-talk, and cross-talk does not
+beat blank. The simplest explanation for the aggregate gain is a generic vision
+encoder / prompt-slot / decoding perturbation, not page-specific information,
+talk/domain priming, or a structured scientific-slide prior.
 
-**What would overturn this:**
-- **The wrong-slide confound (most important).** Verified from the raw runs: the
-  "wrong" image is always drawn from **the same lecture** (median 61 segments
-  away, but same speaker, same deck, same domain). So this experiment shows
-  *"which slide within a talk"* does not matter — it does **not** show that
-  *"slide vs. an unrelated-domain image"* does not matter. A wrong slide from a
-  different lecture (or a non-slide photo) is the missing control, and would
-  separate **domain priming** from **segment-specific content**. Until that runs,
-  "vision content is useless" is **overstated**; the defensible claim is
-  "segment-level slide specificity is not exploited."
-- Larger n or a higher-ambiguity dataset could reveal a sub-1.2-chrF effect.
-- A different model or injection format could exploit content this one ignores.
+**What would overturn these claims:**
+- A multi-talk, human-reference run where correct current evidence consistently
+  beats time/type/token-budget-matched wrong evidence.
+- A context-critical event analysis showing earlier stable correct target
+  decisions while audio is still insufficient, without extra final error,
+  forbidden-context adoption, or overcommit.
+- A different integration method that passes the same blank, cross-talk and
+  matched-wrong controls, particularly under controlled acoustic degradation.
 
-### Claim 1c — Reference caveat. **[medium confidence in the metric itself]**
-References are **machine drafts** (Qwen3-32B generated *with* slide-term
-context), not human translations. Direction of bias, if any, favours the slide
-condition — which makes the null more, not less, credible — but absolute chrF
-values are not comparable to human-referenced numbers.
+### Claim 1d — Reference caveat. **[high confidence in the limitation]**
+References are **machine drafts** generated with slide-term context, not human
+translations. The 10,000 segment-bootstrap intervals describe this talk only;
+they are not talk-level inference and absolute chrF is not paper-grade.
 
-### Other limitations of this experiment (all unaddressed)
-Single talk, single speaker, single domain, single model, single chunk size
-(1.0 s), single random seed for wrong-image assignment, AL measured in chunks
-(not computation-aware), no human inspection of outputs.
+### Other limitations
+Single talk, single speaker/domain/model/chunk size, one deterministic image
+assignment, AL excluding computation, and no independent human output review.
 
 ---
 
@@ -117,13 +125,15 @@ inference, not direct measurement. **Evidence:** `runs_bias{2,4,8}.jsonl`,
 
 ## 3. What is genuinely open
 
-1. **Unrelated-domain control** — the missing experiment that would firm up
-   Claim 1b (see above). Cheapest and highest-value next run.
-2. **Headroom** — baseline chrF 78.3 on clean, scripted lecture audio; acoustic
-   ambiguity is scarce. Noisy / accented / jargon-dense speech is untested.
-3. **Relevance selection** — a slide covers 30–90 s while a segment is ~5 s, so
-   most of the injected image is irrelevant. RASST-style chunkwise retrieval over
-   the visual channel is a different mechanism and remains untested.
+1. **Content-specific causal headroom** — the completed unrelated and blank
+   controls close the old prompt-level question, but not whether selected
+   current evidence can resolve a locked target decision before speech does.
+2. **Acoustic interaction** — the Chinese-LiPS baseline is clean and high
+   quality. Frozen full-talk native/babble/noise/music/RIR inputs exist, but no
+   content-specific ST interaction result exists yet.
+3. **Relevance selection** — a persistent slide contains much irrelevant
+   information. Typed evidence selection with matched wrong packets remains
+   untested and is scientifically different from naive image prompting.
 
 ### Paper-story exploration after locked collision audit (2026-07-31)
 

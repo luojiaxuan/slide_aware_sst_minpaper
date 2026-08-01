@@ -102,7 +102,7 @@ permission is obtained.
 | ACL60/60 dev controlled acoustic v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/noise/corruptions/acl6060_dev_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-controlled-acoustic-dev>, commit `d28c499c8845c4991b5ccea27bc9a2ad520f51fa`, tag `acl6060-controlled-acoustic-v1-20260801` | Uploaded; 75 source-only WAV files plus five metadata/card files; `private=True`; remote metadata and sampled WAV byte-verified |
 | ACL60/60 dev source-event annotation workspace v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/workspace_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-events>, revision `3199207c66b159ab39f662a32e0f6d633c9c2b79`, tag `acl6060-source-event-workspace-v1-20260801` | Uploaded; `private=True`; 100 frames, 100 source-only clips, isolated blank A/B sheets; no transcript/target/reference/model output; remote inventory and three downloaded files byte-verified; labels remain pending |
 | ACL60/60 source-event author view v2 r4 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/author_view_v2_blinded_r4` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-event-author-v2>, revision `bbbbdbf5a2b19c4613791ccffbcf9bc587454e4a`, tag `acl6060-source-event-author-v2-r4-20260801` | Uploaded; `private=True`; 100 secret-HMAC-ID frames, 0 audio; author rows omit talk/timing/raw-media identifiers; scorer mapping/secret excluded; remote inventory and three files byte-verified. r3 revision `2fb266...` is superseded and must not receive labels |
-| Chinese-LiPS Qwen3-Omni five-condition visual-control diagnostic | `/data/projects/slide_aware_sst_minpaper/runs/chinese_lips_visual_controls_v1_qwen3_omni_process16_2gpu_20260801_153400` | Intended private path in <https://huggingface.co/datasets/gavinlaw/slide-context-sst-chinese-lips> after analysis validation | `COMPLETE_LOCAL_ANALYSIS_RUNNING`; exact code `f76f9224b9e7017a127499323949b0c2294a27a1`, input SHA256 `66783dc...e24105`; `1,030/1,030`, shard SHA256 `fe2e2b...11272` / `377d51...1081`; two formal utilization windows average `91.6%` and `92.35%`; upload forbidden until analysis pass |
+| Chinese-LiPS Qwen3-Omni five-condition visual-control diagnostic | Run: `/data/projects/slide_aware_sst_minpaper/runs/chinese_lips_visual_controls_v1_qwen3_omni_process16_2gpu_20260801_153400`; bundle: `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/hf_upload/chinese_lips_visual_controls_v1_qwen3_omni_process16_2gpu_20260801_canonical` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-context-sst-chinese-lips>, revision `4923b253e87bd94487dace77576ad66e4ea9d8b9`, tag `chinese_lips_visual_controls_v1_qwen3_omni_20260801_canonical`, path `experiments/chinese_lips_visual_controls_v1_qwen3_omni_process16_2gpu_20260801/` | Uploaded and byte-verified; `private=True`; 206 items × 5 conditions, exact run code `f76f9224b9e7017a127499323949b0c2294a27a1`, packaging code `9a564b538cb054b0a15504917916680e2720d07d`; no raw media. Negative mechanism result: `slide-wrong +0.113 chrF [-0.693, 0.894]`, `cross_talk-blank -0.119 [-1.205, 0.824]`, `blank-none +1.545 [0.644, 2.482]`; current-page semantic use not established |
 | Chinese-LiPS frame-backed train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified.jsonl` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-context-sst-chinese-lips>, revision `a83770446ded4599bf9d95d2b77cdcc7fe359ef7`, tag `qwen3_vl_context_v1` | Not uploaded as a separate raw artifact |
 | Qwen2.5-VL pilot enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
 | Qwen2.5-VL pilot enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
@@ -192,8 +192,11 @@ confirmed.
     evidence, visual relations, matched wrong evidence, and native/noisy audio.
 11. Lip video and slide+lip hybrid experiments remain out of scope. AVMuST-TED
    is retained only as related-work and historical licensing context.
-12. The current speech+image result does not establish correct-slide content
-    use: its wrong slide comes from the same lecture.
+12. The frozen five-condition Chinese-LiPS result does not establish
+    correct-slide content use even after adding unrelated-talk and blank-image
+    controls: `slide-wrong` and `cross_talk-blank` are unresolved while
+    `blank-none` is positive. Treat it as generic vision-slot/decoding
+    perturbation and a closed private diagnostic, not paper evidence.
 13. The verified *Do Slides Help?* supplement contains 884 real ACL60/60 video
     frames. Its metadata includes source transcripts, so only a stripped
     frame-only manifest may enter inference.
@@ -318,10 +321,10 @@ confirmed.
 
 ## Current Next Actions (2026-08-01)
 
-1. Finish the active frozen Chinese-LiPS five-condition Qwen3-Omni visual-control matrix
-   as a private single-talk mechanism diagnostic. Do not promote it to paper
-   evidence; use it to distinguish page specificity, talk/domain priming,
-   structured-slide priors and vision-slot perturbation.
+1. Treat the completed Chinese-LiPS five-condition run as a closed negative
+   mechanism diagnostic. It isolates a generic vision-slot/decoding effect, not
+   current-page content use; do not spend further GPU on naive Chinese-LiPS
+   raw-image prompting or promote this single-talk result to paper evidence.
 2. Complete v2 frame-only canonical item authoring and freeze question hashes;
    deploy the implemented prefix gate to two independent audio validators, then
    use a disjoint two-person cohort for frame validation. Report all

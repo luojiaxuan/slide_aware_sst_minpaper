@@ -27,17 +27,17 @@
 > [`bbbbdbf5`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-event-author-v2/tree/bbbbdbf5a2b19c4613791ccffbcf9bc587454e4a)；
 > r3 在任何人工标签产生前已 superseded。
 >
-> The earlier Chinese-LiPS diagnostic remains a warning: with audio input and
-> the slide supplied through a
-> vision encoder (Qwen3-Omni-30B, 206 segments), a *correct* slide and a *wrong*
-> slide produce statistically indistinguishable gains in quality
-> (+2.63 vs +2.29 chrF) and latency (AL −0.202 vs −0.199) — so **segment-level
-> slide specificity is not being exploited**. Important caveat: the wrong slide
-> was drawn from the *same lecture*, so this does not yet rule out
-> domain-level visual priming; an unrelated-domain control is the missing
-> experiment. **Read [docs/FINDINGS.md](docs/FINDINGS.md) first** — it carries
-> per-claim confidence levels, raw-evidence pointers, and what would overturn
-> each conclusion.
+> The frozen Chinese-LiPS five-condition diagnostic is now complete. With
+> Qwen3-Omni-30B over 206 segments, current slide, same-talk wrong slide,
+> unrelated-talk scientific slide, and blank image all produce similar gains
+> over audio-only. `slide - wrong` is only `+0.113 chrF` with descriptive 95% CI
+> `[-0.693, +0.894]`, while `blank - none` is `+1.545 [0.644, 2.482]`.
+> Therefore **current-page semantic use is not established**; the simplest
+> explanation is a generic vision-slot/decoding perturbation. This remains a
+> single-talk, machine-reference mechanism diagnostic, not paper evidence. See
+> [docs/CHINESE_LIPS_VISUAL_CONTROL_MATRIX_V1.md](docs/CHINESE_LIPS_VISUAL_CONTROL_MATRIX_V1.md)
+> and **read [docs/FINDINGS.md](docs/FINDINGS.md) first** for claim confidence
+> and falsification criteria.
 >
 > **Current exploration strategy:** study whether causally available,
 > persistent slide semantics can improve SimulST without putting vision on the
@@ -62,10 +62,12 @@ many speech chunks. Three mechanisms were posited — M1 anticipation, M2
 recognition support, M3 target-form supply — with slide language as a
 stratification variable.
 
-What survived testing: vision does make the model commit earlier, and injected
-context does shift quality — but neither effect depends on what is on the slide.
-What remains untested: high-ambiguity speech (where headroom exists) and
-relevance-selected injection (RASST-style retrieval over the visual channel).
+What survived testing is narrower: supplying any image slot changes quality and
+latency, but current-page content does not outperform wrong or blank controls in
+the Chinese-LiPS probe. What remains untested is the paper-specific question:
+whether causally earlier, content-matched slide evidence produces stable target
+decisions before the audio becomes sufficient, especially under controlled
+noise and across multiple talks.
 
 Lineage and neighbours (survey retained in
 [latex/sections/02_related_work.tex](latex/sections/02_related_work.tex)):

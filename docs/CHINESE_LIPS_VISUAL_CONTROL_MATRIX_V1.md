@@ -75,8 +75,57 @@ revision。v1 因此在同一锁定模型版本上完整重跑五个条件，不
 
 ## 状态
 
-`PROCESS_PREFETCH_RUN_COMPLETE_ANALYSIS_RUNNING`。前五次尝试均已停止且没有 worker
-残留；其部分输出只作吞吐诊断，不能与当前两 shard run 混合。
+`COMPLETE_PRIVATE_DIAGNOSTIC_NO_PAGE_SPECIFIC_SIGNAL`。前五次尝试均已停止且没有活跃
+worker；其部分输出只作吞吐诊断，不能与当前两 shard run 混合。
+
+## 结果与结论
+
+最终五条件点估计为：
+
+| Condition | corpus chrF | mean AL (s) |
+| --- | ---: | ---: |
+| `none` | 79.080 | 2.637 |
+| `slide` | 80.852 | 2.516 |
+| `wrong` | 80.740 | 2.465 |
+| `cross_talk` | 80.506 | 2.592 |
+| `blank` | 80.625 | 2.519 |
+
+10,000 次 paired segment bootstrap 的关键对比是：
+
+| Contrast | Δ corpus chrF [95% CI] | Δ AL seconds [95% CI] |
+| --- | ---: | ---: |
+| `slide - none` | +1.772 [ +0.752, +2.782 ] | -0.121 [ -0.237, -0.001 ] |
+| `wrong - none` | +1.659 [ +0.546, +2.726 ] | -0.172 [ -0.274, -0.068 ] |
+| `slide - wrong` | +0.113 [ -0.693, +0.894 ] | +0.051 [ -0.045, +0.152 ] |
+| `wrong - cross_talk` | +0.234 [ -0.792, +1.444 ] | -0.127 [ -0.244, -0.010 ] |
+| `cross_talk - blank` | -0.119 [ -1.205, +0.824 ] | +0.073 [ -0.042, +0.189 ] |
+| `blank - none` | +1.545 [ +0.644, +2.482 ] | -0.118 [ -0.216, -0.021 ] |
+
+这个结果否定了“当前正确页内容驱动已有增益”的解释：`slide` 不优于 same-talk
+`wrong`，structured `cross_talk` 也不优于 `blank`，而空白图相对 audio-only 已产生几乎
+同量级的 chrF/AL 变化。当前最简解释是 vision encoder / prompt-slot / decoding
+perturbation；page-specific semantics、talk/domain priming 和 structured-slide prior 均没有在
+本探针中得到可分辨支持。这里的区间仍只是单 talk、machine-reference 描述，不能写成总体
+无效性结论。
+
+因此停止把 Chinese-LiPS naive raw-image prompting 当作 fresh paper-grade generation 的
+依据。下一步转到 ACL60/60 多 talk 的 source-event 设计，用 correct current evidence 相对
+time/type/token-budget-matched wrong evidence 测 earlier stable target decision，并在完整 talk
+controlled noise 下估计 content-specific interaction。
+
+Canonical private artifact：
+
+- HF repo：`gavinlaw/slide-context-sst-chinese-lips`；
+- revision：`4923b253e87bd94487dace77576ad66e4ea9d8b9`；
+- tag：`chinese_lips_visual_controls_v1_qwen3_omni_20260801_canonical`；
+- path：`experiments/chinese_lips_visual_controls_v1_qwen3_omni_process16_2gpu_20260801/`；
+- analysis SHA256：`c7be55fe293ae9f96b1a0efb269c12dcee9b03da9c9b2fa9de2621b8c58f0bf6`；
+- packaging commit：`9a564b538cb054b0a15504917916680e2720d07d`。
+
+首次 HF commit `d0c44533745f3f9be23d4b51c1df3d32059d441f` 及无 `canonical` 后缀的
+tag 仅因 card metadata 与 README-hash coverage 被取代；不要作为 canonical pointer。最终
+revision 已验证 `private=True`、tag 指向一致、10 个远端文件逐字节匹配本地 bundle，且不含
+JPG/PNG/WAV/MP4 原始媒体。
 
 已完成的 launch preparation：
 
@@ -98,8 +147,8 @@ revision。v1 因此在同一锁定模型版本上完整重跑五个条件，不
   SHA256 清单同样为零差异；
 - Hyper00 canonical container 仍是 `sglang-omni-jaxan`，未创建第二个 compute
   container，也未修改或停止活跃 OSWorld/diffusion 任务；
-- heartbeat automation `vision-sst-control-launch` 只监控当前两张 GPU、每卡一个
-  batched worker 的 run；完成后自动 analysis、private HF upload 和 Git freeze。
+- heartbeat automation `vision-sst-control-launch` 曾监控当前两张 GPU、每卡一个
+  batched worker 的 run；运行、analysis、private HF upload 和 Git freeze 均已完成。
 
 当前正式 diagnostic run 在 Hyper00 preflight 确认全部八张卡均低于 `1 GB` 后，只选择
 GPU `0/1`，从 clean detached `main@f76f922` 启动：
@@ -113,7 +162,9 @@ chinese_lips_visual_controls_v1_qwen3_omni_process16_2gpu_20260801_153400
 `88.1%/96.6%`、双卡均值 `92.35%`，均通过 `90%+` continuation gate。最终两 shard
 `515/515 = 1,030/1,030`，completion 绑定 input、两份 output 和 immutable model revision
 SHA256；所有 worker 已退出，日志无 traceback、OOM、IPC、broken pipe 或
-resource-sharer error。10,000 次 paired bootstrap analysis 正在运行。
+resource-sharer error。10,000 次 paired bootstrap analysis 已完成；analyzer 先增加
+contrast-level process parallelism，再缓存 SacreBLEU segment sufficient statistics，完整
+`206 × 7 × 10,000` 串行基准约 2.8 秒，且与朴素重采样逐项一致。
 
 2026-08-01 14:39 UTC preflight 曾返回 GPU `3/5/6/7` 空闲，按合同只选择 `3/5` 启动。
 四个 worker 在加载模型前因 image 缺少 `accelerate` 退出，0 output rows；原始失败保留在
@@ -145,5 +196,5 @@ processor Python/GIL 调度没有被掩盖。该 run 最终保留 `37/35` partia
 `prefetch_mode=process`：spawned CPU process 单独加载 processor，通过 multiprocessing
 shared-memory tensor transport 返回 CPU `BatchFeature`，主 worker 只做 H2D 和 generate；
 它不会继承已有 CUDA context。launcher 继续用独立进程组并在 `SIGTERM`/`SIGINT` 后统一
-清理。本地 probe/control focused tests 为 `8 passed`。当前只允许在 analysis 与 bundle
-validation 都通过后上传 private HF artifact。
+清理。本地最终完整测试为 `148 passed`；analysis、bundle validation、private HF upload
+和 immutable-revision byte verification 均已通过。

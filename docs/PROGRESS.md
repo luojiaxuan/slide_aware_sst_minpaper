@@ -837,11 +837,37 @@ or a stronger Qwen3-VL variant if available.
   checkpoint the two shards had `249/241 = 490/1,030` rows. The run later
   completed at exactly `515/515 = 1,030/1,030`; completion binds both shard
   hashes, exact model revision and input hash, all workers exited, and logs had
-  no traceback/OOM/IPC/resource-sharer error. The 10,000-bootstrap analysis is
-  running in the persistent ACL evaluation environment.
-- Heartbeat `vision-sst-control-launch` now monitors exactly this two-shard run;
-  on completion it runs the 10,000-bootstrap analysis, validates, uploads the
-  private result artifact and freezes final Git/HF pointers.
+  no traceback/OOM/IPC/resource-sharer error.
+
+## 2026-08-01 Visual Control Analysis and Private Freeze
+
+- Completed the frozen 10,000-sample paired bootstrap over all 206 items. The
+  analyzer now parallelizes independent contrasts and caches SacreBLEU segment
+  statistics; the optimized full-size serial benchmark takes about 2.8 seconds
+  and matches naive resampling exactly. The complete project suite passes
+  `148 tests`.
+- `slide - none` is `+1.772 chrF [0.752, 2.782]`, but `wrong - none` is
+  `+1.659 [0.546, 2.726]` and `blank - none` is `+1.545 [0.644, 2.482]`.
+  Page specificity is absent: `slide - wrong = +0.113 [-0.693, 0.894]`.
+  Structured-slide specificity is also absent: `cross_talk - blank = -0.119
+  [-1.205, 0.824]`.
+- The latency pattern agrees with the same diagnosis. Correct slide is not
+  faster than same-talk wrong slide (`slide - wrong` AL `+0.051 s
+  [-0.045, 0.152]`), while a blank image alone is faster than no image by
+  `0.118 s [0.021, 0.216]`.
+- Conclusion: this single-talk machine-reference probe measures a generic
+  vision-slot/decoding perturbation, not demonstrated use of current-page
+  semantics. It is a negative mechanism diagnostic and not paper evidence.
+- Packaged 1,030 outputs, completion/analysis, runtime logs and GPU provenance
+  without raw media. Uploaded to private HF
+  `gavinlaw/slide-context-sst-chinese-lips` at immutable revision
+  `4923b253e87bd94487dace77576ad66e4ea9d8b9`, tag
+  `chinese_lips_visual_controls_v1_qwen3_omni_20260801_canonical`, path
+  `experiments/chinese_lips_visual_controls_v1_qwen3_omni_process16_2gpu_20260801/`.
+  Privacy, tag target, inventory and all 10 downloaded files were byte-verified.
+- The first metadata-only HF revision `d0c4453...` and its tag without the
+  `canonical` suffix are superseded. The canonical revision fixes the Hub task
+  category and includes the README hash in the manifest.
 
 ## 2026-08-01 Event-Level Timing Scorer
 
