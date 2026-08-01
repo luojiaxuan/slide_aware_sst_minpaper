@@ -28,6 +28,7 @@ from scripts.acl6060_source_event_annotation_v2 import (
     materialize_author_audio_review_view,
     materialize_audio_validator_view,
     materialize_frame_validator_view,
+    merge_author_audio_review_rows,
     prepare_author_rows,
     prepare_adjudication_rows,
     question_only_lock_payload,
@@ -444,11 +445,24 @@ def test_materialized_validator_views_are_physically_modality_separated(tmp_path
     author_audio_root = tmp_path / "author_audio_view"
     unlocked_review = dict(review)
     unlocked_review["author_review_lock_sha256"] = None
-    materialized_review = materialize_author_audio_review_view(
-        [unlocked_review], [local_packet], acl_root, author_audio_root
+    private_author_manifest = tmp_path / "scorer" / "author_audio_private.jsonl"
+    public_review = materialize_author_audio_review_view(
+        [unlocked_review],
+        [local_packet],
+        acl_root,
+        author_audio_root,
+        private_author_manifest,
     )
     assert list(author_audio_root.rglob("*.wav"))
     assert not list(author_audio_root.rglob("*.jpg"))
+    assert not (
+        {"talk_id", "t_evidence_sec", "frame_sha256", "audio_sha256"}
+        & set(public_review[0])
+    )
+    private_review = [
+        json.loads(line) for line in private_author_manifest.read_text().splitlines()
+    ]
+    materialized_review = merge_author_audio_review_rows(public_review, private_review)
     assert materialized_review[0]["audio_sha256"]
 
     materialized_review = freeze_author_audio_reviews(

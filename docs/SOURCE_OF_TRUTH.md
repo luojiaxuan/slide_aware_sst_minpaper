@@ -99,7 +99,7 @@ permission is obtained.
 | --- | --- | --- | --- |
 | ACL60/60 dev controlled acoustic v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/noise/corruptions/acl6060_dev_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-controlled-acoustic-dev>, commit `d28c499c8845c4991b5ccea27bc9a2ad520f51fa`, tag `acl6060-controlled-acoustic-v1-20260801` | Uploaded; 75 source-only WAV files plus five metadata/card files; `private=True`; remote metadata and sampled WAV byte-verified |
 | ACL60/60 dev source-event annotation workspace v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/workspace_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-events>, revision `3199207c66b159ab39f662a32e0f6d633c9c2b79`, tag `acl6060-source-event-workspace-v1-20260801` | Uploaded; `private=True`; 100 frames, 100 source-only clips, isolated blank A/B sheets; no transcript/target/reference/model output; remote inventory and three downloaded files byte-verified; labels remain pending |
-| ACL60/60 source-event author view v2 r4 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/author_view_v2_blinded_r4` | Intended private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-event-author-v2>, tag `acl6060-source-event-author-v2-r4-20260801` | `PENDING_HF_UPLOAD`; 100 secret-HMAC-ID frames, 0 audio; author rows omit talk/timing/raw-media identifiers; scorer mapping/secret excluded. r3 revision `2fb266...` is superseded and must not receive labels |
+| ACL60/60 source-event author view v2 r4 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/author_view_v2_blinded_r4` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-event-author-v2>, revision `bbbbdbf5a2b19c4613791ccffbcf9bc587454e4a`, tag `acl6060-source-event-author-v2-r4-20260801` | Uploaded; `private=True`; 100 secret-HMAC-ID frames, 0 audio; author rows omit talk/timing/raw-media identifiers; scorer mapping/secret excluded; remote inventory and three files byte-verified. r3 revision `2fb266...` is superseded and must not receive labels |
 | Chinese-LiPS frame-backed train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified.jsonl` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-context-sst-chinese-lips>, revision `a83770446ded4599bf9d95d2b77cdcc7fe359ef7`, tag `qwen3_vl_context_v1` | Not uploaded as a separate raw artifact |
 | Qwen2.5-VL pilot enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
 | Qwen2.5-VL pilot enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
@@ -253,11 +253,12 @@ confirmed.
     The secret and true mapping remain outside Git and author-facing HF; only
     their SHA256 provenance is recorded.
 31. Opaque IDs are not sufficient when distributed rows include linkable
-    quasi-identifiers. Author/frame sheets now omit talk ids, absolute timing
-    and raw media hashes and use scorer-secret frame bindings. Audio timing
-    tasks/logs remain server-private, and the HTTP UI exposes only prefix
-    indices. This is operational blinding, not a claim of anonymity against an
-    adversary who corpus-matches the media bytes.
+    quasi-identifiers. Stage-1 author, post-lock author-audio and frame-validator
+    sheets omit talk ids, absolute timing and raw media hashes; frame stages use
+    scorer-secret bindings. Private author media manifests, audio-validator
+    timing tasks and logs remain scorer/server-side, and the HTTP UI exposes
+    only prefix indices. This is operational blinding, not a claim of anonymity
+    against an adversary who corpus-matches the media bytes.
 
 ## Current Next Actions (2026-08-01)
 

@@ -798,3 +798,13 @@ or a stronger Qwen3-VL variant if available.
   scorer-secret media binding; audio timing sheets are server-private and the
   HTTP UI exposes prefix indices only. r3 is superseded before any labels were
   collected.
+- Uploaded r4 to the same private HF repo at immutable revision
+  `bbbbdbf5a2b19c4613791ccffbcf9bc587454e4a`, tag
+  `acl6060-source-event-author-v2-r4-20260801`. Verified private visibility,
+  103-file inventory, 100 JPG / 0 WAV, absence of mapping/secret filenames and
+  byte identity for README, authoring sheet and one frame.
+- The follow-up audit found one remaining Stage-2 leak: the post-lock author
+  audio-review JSON reintroduced talk/timing/raw-frame identifiers. Split it
+  into an editable public sheet and a scorer-private media manifest; freeze now
+  rejects schema/task-field drift before merging author outcomes. The author-
+  facing Stage-2 bundle now omits the same linkable identifiers as Stage 1.

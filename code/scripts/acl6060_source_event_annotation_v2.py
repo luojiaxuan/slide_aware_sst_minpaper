@@ -548,14 +548,76 @@ def validate_frozen_author_review(row: dict, config: dict) -> None:
         raise ValueError(f'Author review lock mismatch: {row["packet_id"]}')
 
 
+AUTHOR_REVIEW_PRIVATE_FIELDS = {
+    "talk_id",
+    "t_evidence_sec",
+    "frame_path",
+    "frame_binding_hmac",
+    "frame_sha256",
+    "audio_sha256",
+    "causal_audio_end_sec",
+    "audio_duration_sec",
+    "audio_bytes",
+}
+AUTHOR_REVIEW_MUTABLE_FIELDS = {
+    "speech_relevance_status",
+    "full_audio_answer_index",
+    "frame_current_for_question",
+    "speech_reviewed_at_utc",
+    "speech_relevance_note",
+    "speech_exclusion_labels",
+    "author_review_lock_sha256",
+}
+
+
+def public_author_audio_review_row(row: dict) -> dict:
+    return {
+        key: value
+        for key, value in row.items()
+        if key not in AUTHOR_REVIEW_PRIVATE_FIELDS
+    }
+
+
+def merge_author_audio_review_rows(
+    public_rows: list[dict], private_rows: list[dict]
+) -> list[dict]:
+    public = index_unique(public_rows)
+    private = index_unique(private_rows)
+    if set(public) != set(private):
+        raise ValueError("Public and private author-review packet ids differ")
+    output = []
+    for packet_id in [row["packet_id"] for row in private_rows]:
+        public_row = public[packet_id]
+        private_row = private[packet_id]
+        expected_public = public_author_audio_review_row(private_row)
+        if set(public_row) != set(expected_public):
+            raise ValueError(f'Author-review public schema changed: {packet_id}')
+        for key, expected in expected_public.items():
+            if key not in AUTHOR_REVIEW_MUTABLE_FIELDS and public_row[key] != expected:
+                raise ValueError(f'Author-review task field changed ({key}): {packet_id}')
+        merged = dict(private_row)
+        for key in AUTHOR_REVIEW_MUTABLE_FIELDS:
+            merged[key] = public_row[key]
+        output.append(merged)
+    return output
+
+
 def materialize_author_audio_review_view(
     rows: list[dict],
     packet_rows: list[dict],
     acl_root: Path,
     output_root: Path,
+    private_manifest_out: Path,
 ) -> list[dict]:
     if output_root.exists() and any(output_root.iterdir()):
         raise FileExistsError(f"Output root is not empty: {output_root}")
+    resolved_output_root = output_root.resolve()
+    resolved_private_manifest = private_manifest_out.resolve()
+    if (
+        resolved_private_manifest == resolved_output_root
+        or resolved_output_root in resolved_private_manifest.parents
+    ):
+        raise ValueError("Private author-review manifest must be outside author output root")
     packets = index_packets_for_v2(packet_rows)
     output = []
     for row in rows:
@@ -583,8 +645,10 @@ def materialize_author_audio_review_view(
                 "audio_bytes": destination.stat().st_size,
             }
         )
-    write_jsonl(output_root / "author_audio_review.jsonl", output)
-    return output
+    public_output = [public_author_audio_review_row(row) for row in output]
+    write_jsonl(output_root / "author_audio_review.jsonl", public_output)
+    write_jsonl(private_manifest_out, output)
+    return public_output
 
 
 def option_order(row: dict, validator_id: str) -> list[int]:
@@ -1686,6 +1750,7 @@ def command_prepare_author_audio(args: argparse.Namespace) -> None:
         load_jsonl(args.packet_manifest),
         args.acl_root,
         args.output_root,
+        args.private_manifest_out,
     )
     print(
         json.dumps(
@@ -1700,7 +1765,9 @@ def command_prepare_author_audio(args: argparse.Namespace) -> None:
 
 
 def command_freeze_author_audio(args: argparse.Namespace) -> None:
-    rows = load_jsonl(args.author_review)
+    rows = merge_author_audio_review_rows(
+        load_jsonl(args.author_review), load_jsonl(args.private_manifest)
+    )
     candidate_rows = [row for row in rows if row["authoring_status"] == "candidate"]
     verify_stage_media(candidate_rows, args.author_audio_root, "audio_path", "audio_sha256")
     frozen = freeze_author_audio_reviews(
@@ -1839,10 +1906,12 @@ def main() -> None:
     prepare_author_audio.add_argument("--packet-manifest", type=Path, required=True)
     prepare_author_audio.add_argument("--acl-root", type=Path, required=True)
     prepare_author_audio.add_argument("--output-root", type=Path, required=True)
+    prepare_author_audio.add_argument("--private-manifest-out", type=Path, required=True)
     prepare_author_audio.set_defaults(handler=command_prepare_author_audio)
 
     freeze_author_audio = subparsers.add_parser("freeze-author-audio")
     freeze_author_audio.add_argument("--author-review", type=Path, required=True)
+    freeze_author_audio.add_argument("--private-manifest", type=Path, required=True)
     freeze_author_audio.add_argument("--author-audio-root", type=Path, required=True)
     freeze_author_audio.add_argument("--packet-manifest", type=Path, required=True)
     freeze_author_audio.add_argument("--config", type=Path, required=True)

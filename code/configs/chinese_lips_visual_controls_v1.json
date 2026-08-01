@@ -9,7 +9,7 @@
   },
   "cross_talk_control": {
     "repo": "gavinlaw/slide-aware-sst-acl6060-source-event-author-v2",
-    "revision": "2fb266d168e0abbf4ace17d3f5de9503a8c46cd6",
+    "revision": "bbbbdbf5a2b19c4613791ccffbcf9bc587454e4a",
     "frame_count": 100,
     "mapping_or_labels_consumed": false,
     "assignment_salt": "cross-talk-control-v1"

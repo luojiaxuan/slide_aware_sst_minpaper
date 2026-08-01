@@ -40,7 +40,9 @@ target/reference 或模型输出。对可检验 packet：
 
 只有 hash lock 完成后，author 才能听 source audio，判断 locked question 是否确实被后续
 speech address。该阶段只能把 packet 标为 candidate、not-addressed negative 或 exclusion，
-不能修改 locked fields；修改必须产生新 hash 和显式 revision record。
+不能修改 locked fields；修改必须产生新 hash 和显式 revision record。Author-facing audio-review
+sheet 仍不含 `talk_id`、absolute timing、raw media SHA 或 selection stratum；完整 media/timing
+manifest 位于 scorer-private path，`freeze-author-audio` 只在逐字段校验公开 sheet 后合并。
 
 ### Stage 3: blinded audio-only validation
 
@@ -108,8 +110,10 @@ exclusions 是 missing outcomes，不是 negative，也会阻止
 - target/reference、ST/ASR output 在所有 v2 stages 均不可见；
 - audio-only 和 frame-only views 必须由脚本物理分离，不依赖 annotator 自觉忽略文件；
 - `selection_stratum` 只进入 scorer，不进入任何 author/validator view；
-- author/frame sheets 不含 `talk_id`、absolute timing 或 raw media SHA，只含 secret-HMAC media
-  binding；audio timing task sheet 和 event log 不分发给 validator，HTTP API 也不返回 absolute time；
+- author frame sheet、post-lock author audio-review sheet 和 frame-validator sheet 均不含
+  `talk_id`、absolute timing 或 raw media SHA；frame stages 只含 secret-HMAC media binding。
+  Audio timing task sheet、private author media manifest 和 event log 不分发给 annotator，HTTP API
+  也不返回 absolute time；
 - upstream media 本身可能被有意进行 corpus matching，因此这是 operational blinding，不宣称对
   拥有全部 upstream bytes 的 adversarial annotator 实现 cryptographic anonymity；
 - target-language acceptable realizations 只在 source inventory 和 adjudication hash 冻结后
@@ -179,7 +183,9 @@ PYTHONPATH=. .venv/bin/python scripts/acl6060_source_event_annotation_v2.py prep
 ```
 
 Author labels 尚未产生，所以 audio/frame validator views 不可提前生成。`freeze-author` 后先用
-`prepare-author-audio` 生成不含 frame 的 causal audio-review bundle；`prepare-audio` 只接受
+`prepare-author-audio --private-manifest-out <scorer-path>` 生成不含 frame/identifier 的公开
+causal audio-review bundle 和物理分离的 scorer-private manifest；`freeze-author-audio` 必须同时
+提供 `--private-manifest`，逐字段合并后才锁定。`prepare-audio` 只接受
 通过 question hash、timestamp、full-audio-gold、stale-frame 和实际 media hash checks 的
 candidate rows。`freeze-audio` 会再次核对两份实际 WAV；`freeze-frame` 会锁定 frame labels，
 `report` 会拒绝 lock mismatch。两份 audio task 分别运行
@@ -187,7 +193,8 @@ candidate rows。`freeze-audio` 会再次核对两份实际 WAV；`freeze-frame`
 root 的 shell/filesystem access。`freeze-audio` 要求两份 event logs 并再次核对完整 hash chain。
 
 当前 private HF r3 revision
-`2fb266d168e0abbf4ace17d3f5de9503a8c46cd6` 已 superseded，不得用于 authoring。r4 将上传到同一
-private repo 并记录 immutable revision 后才成为 canonical author view：
+`2fb266d168e0abbf4ace17d3f5de9503a8c46cd6` 已 superseded，不得用于 authoring。Canonical r4：
 [`gavinlaw/slide-aware-sst-acl6060-source-event-author-v2`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-event-author-v2)，
-intended tag `acl6060-source-event-author-v2-r4-20260801`。
+revision `bbbbdbf5a2b19c4613791ccffbcf9bc587454e4a`，tag
+`acl6060-source-event-author-v2-r4-20260801`。远端已验证 `private=True`、103 files、100 JPG、
+0 WAV，且不含 mapping/secret；README、sheet 和一张 frame 已强制下载并 byte-verified。

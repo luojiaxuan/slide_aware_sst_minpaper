@@ -23,8 +23,9 @@
 > [docs/ACL6060_SOURCE_EVENT_ANNOTATION_V2.md](docs/ACL6060_SOURCE_EVENT_ANNOTATION_V2.md)。
 > Media workspace 已冻结在 private HF revision
 > [`3199207c`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-events/tree/3199207c66b159ab39f662a32e0f6d633c9c2b79)。
-> Author-only r3 view 已冻结在 private HF revision
-> [`2fb266d1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-event-author-v2/tree/2fb266d168e0abbf4ace17d3f5de9503a8c46cd6)。
+> Identifier-hardened author-only r4 view 已冻结在 private HF revision
+> [`bbbbdbf5`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-event-author-v2/tree/bbbbdbf5a2b19c4613791ccffbcf9bc587454e4a)；
+> r3 在任何人工标签产生前已 superseded。
 >
 > The earlier Chinese-LiPS diagnostic remains a warning: with audio input and
 > the slide supplied through a

@@ -38,6 +38,21 @@
       "reference",
       "model_output"
     ],
+    "author_audio_review_visible_after_question_lock": [
+      "opaque_packet_id",
+      "locked_question_and_canonical_answer",
+      "causal_source_audio_via_opaque_path"
+    ],
+    "author_audio_review_forbidden": [
+      "talk_id",
+      "absolute_packet_timing",
+      "raw_media_hash",
+      "selection_stratum",
+      "source_transcript",
+      "target_translation",
+      "reference",
+      "model_output"
+    ],
     "audio_validator_visible": [
       "causal_source_audio_from_talk_start",
       "locked_source_question",

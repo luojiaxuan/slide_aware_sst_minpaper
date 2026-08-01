@@ -33,7 +33,7 @@ revision。v1 因此在同一锁定模型版本上完整重跑五个条件，不
   `6eb395afb46e8dbe05e79b590243979186aa3f1f`，206 items；
 - cross-talk frames：private HF
   `gavinlaw/slide-aware-sst-acl6060-source-event-author-v2`，revision
-  `2fb266d168e0abbf4ace17d3f5de9503a8c46cd6`，只读取 100 张 frame，绝不读取
+  `bbbbdbf5a2b19c4613791ccffbcf9bc587454e4a`，只读取 100 张 frame，绝不读取
   scorer mapping、问题、答案或标签；
 - model：`Qwen/Qwen3-Omni-30B-A3B-Instruct`，revision
   `26291f793822fb6be9555850f06dfe95f2d7e695`；
