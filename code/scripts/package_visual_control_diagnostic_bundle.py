@@ -107,7 +107,7 @@ language:
 - zh
 - en
 task_categories:
-- speech-recognition
+- automatic-speech-recognition
 - translation
 tags:
 - simultaneous-translation
@@ -192,12 +192,14 @@ def package_bundle(
         "bootstrap_samples": analysis["contrasts"][0]["bootstrap_samples"],
         "files": files,
     }
+    readme_path = output_dir / "README.md"
+    readme_path.write_text(render_readme(manifest), encoding="utf-8")
+    files.append(file_record(readme_path, output_dir))
     manifest_path = output_dir / "manifest.json"
     manifest_path.write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    (output_dir / "README.md").write_text(render_readme(manifest), encoding="utf-8")
     return manifest
 
 

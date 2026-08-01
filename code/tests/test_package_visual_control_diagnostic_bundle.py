@@ -71,9 +71,10 @@ def test_package_visual_control_bundle_validates_and_gzips_outputs(tmp_path):
     )
     assert manifest["record_count"] == 5
     assert manifest["private_required"] is True
+    assert any(record["path"] == "README.md" for record in manifest["files"])
     with gzip.open(output_dir / "runs" / "runs_shard_0.jsonl.gz", "rt") as source:
         assert len(source.readlines()) == 5
-    assert (output_dir / "README.md").is_file()
+    assert "automatic-speech-recognition" in (output_dir / "README.md").read_text()
     assert (output_dir / "manifest.json").is_file()
 
 
