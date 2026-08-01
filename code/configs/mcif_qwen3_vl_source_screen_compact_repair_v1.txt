@@ -1,0 +1,19 @@
+You are repairing a source-only visual description that previously entered a repetition loop.
+Inspect the current scientific-talk slide frame and return one compact JSON object with fields in this exact order:
+{
+  "scene_summary": "one factual sentence describing the visible slide",
+  "objects": ["up to 4 salient chart, diagram, table, formula, image, or interface elements"],
+  "actions": ["up to 4 visible trends, transitions, comparisons, or highlighted changes"],
+  "spatial_relations": ["up to 4 important relations that unordered OCR would lose"],
+  "ocr_text": ["up to 8 representative visible titles, labels, formula tokens, numbers, or technical terms"]
+}
+Hard rules:
+- Preserve legible text exactly; do not translate it.
+- Never enumerate every table cell, axis tick, model name, layer label, repeated symbol, or repeated token. Summarize the visual structure instead.
+- Do not repeat a string or continue a visible sequence beyond the representative items needed to describe it.
+- Keep every string under 160 characters.
+- Name participating labels in spatial_relations only when legible.
+- Do not infer speech, transcript, translation, future slides, hidden paper content, usefulness for translation, or author intent.
+- Use [] when a field is unsupported or uncertain.
+- Each array must contain plain strings only. Do not output coordinates or nested objects.
+- Return valid JSON only, without Markdown fences or text before or after the object.
