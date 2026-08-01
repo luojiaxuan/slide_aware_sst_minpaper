@@ -1130,3 +1130,12 @@ or a stronger Qwen3-VL variant if available.
   These diagnostics are not labels. They motivate a three-step development
   baseline: unordered OCR, structure-preserving text, then raw image. The full
   project suite now passes `184 tests` with the same two upstream warnings.
+- Audited the actual source timing and resolution behind the 304 detector
+  thumbnails before implementing the strong OCR baseline. The thumbnails are
+  only 320 px and correspond to the centers of the detector's one-second
+  `fps=1` buckets. At nominal bucket-start timestamps, 4 initial states had
+  source-frame MAE above 100/255 (maximum 231.66). At `t+0.5s`, all 304 align
+  below 12/255 (mean 1.83, maximum 9.74). Added a source-only native-resolution
+  materializer that moves visual availability to the actual capture time and
+  leaves `[0.0, 0.5)` context-free. The old Qwen3-VL screen is now explicitly a
+  morphology prescreen, not a causal raw-image baseline.

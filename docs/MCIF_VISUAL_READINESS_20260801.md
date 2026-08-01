@@ -104,6 +104,27 @@ difference。候选条件是 `patch p75 >= 0.03` 或至少 12% patches 的 MAE `
 动画。它仍可能漏掉很小的局部更新，因此产物叫 candidate timeline，不叫 ground-truth
 slide boundary。需要精确 timing 的 event 若落在 transition window 内，必须排除 primary。
 
+### Native-resolution timing correction
+
+后续强 OCR 审计发现，detector 的 `fps=1` thumbnail 只有 320 px，而且 `frame_00001`
+代表第一个 1 秒 bucket 中心附近的 source frame，却被 nominally 标成 0.0 s。若直接把该
+thumbnail 从 0.0 s 起提供给系统，会产生约 0.5 s 的视觉 future leakage。
+
+全量 304-state source-only 对齐诊断给出：按 nominal `t` 从原视频抽原生帧时，4 个
+initial states 严重错位，MAE 最大 231.66；按 `t+0.5s` 抽帧时，304/304 都通过 12/255
+阈值，mean 1.83、max 9.74。因此后续实验契约改为：
+
+- 原生分辨率 PNG 在 detector bucket center `t+0.5s` 抽取；
+- 每个 visual state 只能从该实际 capture time 起可用，不能沿用 nominal bucket start；
+- 每个 talk 的 `[0.0, 0.5)` 没有 visual context；
+- 旧 320 px Qwen3-VL 结果只保留为 morphology prescreen，不能充当 causal raw-image
+  baseline 或强 OCR 输入。
+
+实现与 fail-closed checks 位于
+[`../code/scripts/materialize_mcif_native_evidence_frames.py`](../code/scripts/materialize_mcif_native_evidence_frames.py)。
+它重新验证 21 个 source video SHA、detector frame SHA、native dimensions、304 个 ID 与
+state timeline，并拒绝 alignment MAE 超阈值的帧。
+
 ## Reference-free Qwen3-VL source screen
 
 已冻结覆盖全部 304 个 causal states 的 private VLM screen input，而不是根据像素或 OCR
@@ -132,7 +153,8 @@ Prompt 是
 明确分开 visible text 与 flat OCR 会丢失的 chart/table/formula/layout/emphasis relation。
 该 pass 只做 source-side feasibility triage：不读取 transcript/reference/translation，不得删
 state，不得给 human author 看 suggested answer，也不得作为 `image_needed` 标签或 paper
-结果。它不是 blueprint 中受 oracle gate 约束的 automatic integration/compiler。
+结果。它不是 blueprint 中受 oracle gate 约束的 automatic integration/compiler。由于上述
+0.5 s timing correction，该低分辨率 screen 也不得直接用作 causal raw-image baseline。
 
 该 screen 已使用
 `Qwen/Qwen3-VL-32B-Instruct@0cfaf48183f594c314753d30a4c4974bc75f3ccb`
@@ -211,9 +233,11 @@ correctness 不低于 -1 pp；它们是资源投入门槛，不是尚未注册�
 2. ACL dev 468-state frame timeline 已完成，见
    [`ACL6060_VISUAL_TIMELINE_20260801.md`](ACL6060_VISUAL_TIMELINE_20260801.md)；100-row
    balanced seed 也已冻结，下一步完成独立双标注。
-3. MCIF 304-state private source-only prescreen、QA 和 HF upload 已完成；只用 aggregate
-   coverage 完善 annotation rubric，不得用逐行输出修改 inventory 或提示 annotator。
-4. 冻结 candidate/source-packet/target-scoring 三件套，先跑 oracle headroom：document、
+3. MCIF 304-state private source-only morphology prescreen、QA 和 HF upload 已完成；只用
+   aggregate coverage 完善 annotation rubric，不得用逐行输出修改 inventory 或提示
+   annotator。原生分辨率 `t+0.5s` causal evidence 正在物化。
+4. 在修正后的 native evidence 上冻结 `flat PP-OCRv6 -> PP-StructureV3 -> raw image`
+   三层 evidence，再跑 oracle headroom：document、
    unordered OCR、layout/structure-preserving text、raw image、matched wrong，覆盖 native
    与 noise。
 5. 只有看到 content-specific early-commit 或稳定 robustness signal 后，才投入 automatic

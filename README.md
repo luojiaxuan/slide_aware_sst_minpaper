@@ -14,6 +14,13 @@
 > material exists, but not that descriptions are correct or pixels beat OCR.
 > The output cannot become a human label, eligibility decision, sample filter,
 > suggested annotation answer, or paper result.
+> A subsequent timing audit found that the detector's `fps=1` thumbnails
+> represent the centers of one-second sampling buckets but were recorded at the
+> bucket starts. The old low-resolution Qwen3-VL screen therefore remains only
+> a morphology prescreen and cannot serve as a causal raw-image baseline.
+> Native-resolution evidence now uses the same source frames at `t+0.5s` and
+> exposes each state only from that actual capture time; the first 0.5 seconds
+> of every talk has no visual context.
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28
