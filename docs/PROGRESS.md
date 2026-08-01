@@ -1095,3 +1095,29 @@ or a stronger Qwen3-VL variant if available.
   rejection, frame-hash drift, path escape, timeline gaps and symlink media. The
   complete project suite passes `170 tests` with the same two upstream
   `pypinyin` deprecation warnings.
+
+## 2026-08-01 MCIF Qwen3-VL-32B Source Screen Completion
+
+- Ran all 304 frozen MCIF causal states on Hyper00 with
+  `Qwen/Qwen3-VL-32B-Instruct@0cfaf48183f594c314753d30a4c4974bc75f3ccb`,
+  two H200 GPUs and no transcript/reference/translation input. The pre-output
+  contract was already pushed at `ab37bfaa4c924a0df68764ce5f3a87f55eecc6a5`.
+- Added a fail-closed finalizer and compact repetition-repair prompt. The first
+  384-token pass had 98 truncated raw JSON rows; a same-prompt 1024-token repair
+  left six repetition loops; the compact repair resolved all six. The final
+  artifact has 304 unique rows, 21 talks, zero parse failures, zero empty
+  contexts and no local absolute paths. Full tests pass `177 tests` with the two
+  existing upstream `pypinyin` warnings.
+- Descriptive coverage is high: 303 OCR rows, 302 object rows, 169 action rows
+  and 303 spatial-relation rows. This is not an `image_needed` label or a
+  pixels-beyond-OCR result; many relations are trivial layout statements and all
+  descriptions remain unverified model output.
+- Uploaded the portable bundle to private HF dataset
+  [`gavinlaw/slide-aware-sst-mcif-source-prescreen@5da477ff`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/5da477ff7d199dbded0ffe44d6b41b9cd8c8e75d),
+  tag `mcif-source-only-qwen3-vl-32b-v1`. Repo privacy and remote
+  `SHA256SUMS` bytes were verified. Output SHA256 is
+  `55a6dafe5ebd1fc5f37226de7ce48e601d61e1fb914287a81bdb8f92b0479682`.
+- Batch 16/32/64 did not meet the 90% utilization policy; the best observed
+  10-second average was 78%. The bottleneck is Transformers autoregressive
+  decode/preparation/variable-length tail behavior. Future larger VLM rollout
+  must use a continuous-batching serving path.

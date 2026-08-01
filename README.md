@@ -6,10 +6,14 @@
 > 283 visually reviewed transition candidates and 304 conservative causal
 > states including initial states; each state unlocks only after two stable
 > frames. This establishes **visual/timing readiness, not translation benefit**.
-> A hash-bound, reference-free 304-state input is now frozen for a private
-> Qwen3-VL source-only prescreen. Its output may describe OCR and visual
-> relations but cannot become a human label, eligibility decision, sample
-> filter, or paper result.
+> The hash-bound 304-state private Qwen3-VL-32B source-only prescreen is now
+> complete and frozen at private HF revision
+> [`5da477ff`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/5da477ff7d199dbded0ffe44d6b41b9cd8c8e75d).
+> Final QA has 304/304 unique rows, 0 parse failures and 0 empty contexts;
+> 303 rows contain a spatial-relation candidate. This confirms descriptive
+> material exists, but not that descriptions are correct or pixels beat OCR.
+> The output cannot become a human label, eligibility decision, sample filter,
+> suggested annotation answer, or paper result.
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28

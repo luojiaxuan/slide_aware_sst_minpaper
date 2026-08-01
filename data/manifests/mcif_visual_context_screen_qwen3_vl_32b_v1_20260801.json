@@ -1,0 +1,73 @@
+{
+  "artifact": "mcif_source_only_visual_context_screen_v1",
+  "status": "UPLOADED_PRIVATE_SOURCE_ONLY_PRESCREEN_NOT_ANNOTATION",
+  "upstream_mcif_revision": "e24065b919758263cfe5d157057278affe76ea7b",
+  "pre_output_git_commit": "ab37bfaa4c924a0df68764ce5f3a87f55eecc6a5",
+  "finalizer_git_commit": "3bc1f32f7700f0bf63af4a084ce1ba908dea28fa",
+  "input_sha256": "62fa1fb540ae279ddafcb2b8449a8cde355ea6fe828dd7ec6534d04c6d605073",
+  "output_sha256": "55a6dafe5ebd1fc5f37226de7ce48e601d61e1fb914287a81bdb8f92b0479682",
+  "model": {
+    "id": "Qwen/Qwen3-VL-32B-Instruct",
+    "revision": "0cfaf48183f594c314753d30a4c4974bc75f3ccb"
+  },
+  "prompts": {
+    "mcif_qwen3_vl_source_screen_v1": {
+      "rows": 298,
+      "sha256": "af0807c17315d6e832034f642f68e58ab3b324037e34feefa4556cf4c24cc6fb"
+    },
+    "mcif_qwen3_vl_source_screen_compact_repair_v1": {
+      "rows": 6,
+      "sha256": "b8aab82ab1626bf8fb6176c15974398b8998da401185ea1134ac5c5e09c0c3ec"
+    }
+  },
+  "inventory": {
+    "talks": 21,
+    "rows": 304,
+    "unique_ids": 304
+  },
+  "quality_audit": {
+    "duplicate_ids": 0,
+    "raw_json_parse_failures": 0,
+    "empty_contexts": 0,
+    "duplicate_raw_output_groups": 0,
+    "nonempty_rows": {
+      "scene_summary": 304,
+      "ocr_text": 303,
+      "objects": 302,
+      "actions": 169,
+      "spatial_relations": 303
+    }
+  },
+  "repair_lineage": {
+    "initial_384_token_parse_failures": 98,
+    "remaining_after_same_prompt_1024_token_repair": 6,
+    "remaining_after_compact_prompt_repair": 0,
+    "overlay_group_row_counts": [
+      49,
+      49,
+      6
+    ]
+  },
+  "runtime": {
+    "host": "hyper00",
+    "container": "sglang-omni-jaxan",
+    "run_id": "mcif_qwen3_vl_32b_source_screen_2gpu_20260801_184313",
+    "primary_gpu_ids": [
+      0,
+      1
+    ],
+    "maximum_10_second_average_gpu_utilization_percent_observed": 78,
+    "gpu_utilization_target_percent": 90,
+    "utilization_target_met": false,
+    "diagnosis": "Batched Transformers autoregressive decoding alternated high-compute generation with lower-utilization preparation and variable-length tail periods. Batch 16, 32 and 64 were tested; future large generation should use a continuous-batching VLM serving path."
+  },
+  "hugging_face": {
+    "repo": "gavinlaw/slide-aware-sst-mcif-source-prescreen",
+    "repo_type": "dataset",
+    "private_verified": true,
+    "revision": "5da477ff7d199dbded0ffe44d6b41b9cd8c8e75d",
+    "tag": "mcif-source-only-qwen3-vl-32b-v1",
+    "checksum_manifest_byte_verified": true
+  },
+  "interpretation": "This complete-inventory, reference-free VLM screen shows that MCIF frames admit rich OCR and visual-structure descriptions. It does not establish human event eligibility, description correctness, translation benefit, or that pixels outperform OCR. No state may be removed and no annotator may receive suggested answers from this output."
+}

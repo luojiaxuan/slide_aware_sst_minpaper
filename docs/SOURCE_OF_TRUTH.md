@@ -11,7 +11,7 @@ links, or handoff state.
 | Code, configs, scripts, tests | GitHub: `luojiaxuan/slide_aware_sst_minpaper` | Active on `main` |
 | Paper notes and implementation plans | This Git repo under `latex/`, `docs/planning/`, and `docs/` | Active |
 | Lightweight progress and artifact index | This Git repo under `docs/` | Active |
-| Reusable datasets and generated data artifacts | Hugging Face Hub | Chinese-LiPS Qwen3-VL, ACL controlled-acoustic, and ACL source-event workspace bundles uploaded to private dataset repos |
+| Reusable datasets and generated data artifacts | Hugging Face Hub | MCIF source-only prescreen, Chinese-LiPS Qwen3-VL, ACL controlled-acoustic, and ACL source-event bundles uploaded to private dataset repos |
 | Reusable checkpoints/adapters | Hugging Face Hub | None yet |
 | Local staging and active runs | Local `ResearchStudio/data/vision-aware-sst/` and verified GPU-host `/data` paths | Temporary, not canonical |
 
@@ -101,7 +101,7 @@ permission is obtained.
 
 | Artifact | Local path | Canonical or intended HF destination | Upload status |
 | --- | --- | --- | --- |
-| MCIF 304-state reference-free Qwen3-VL source screen | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9/prescreen/qwen3_vl_source_screen_v1` | Intended private repo: `gavinlaw/slide-aware-sst-mcif-source-prescreen`; Git input contract: `data/manifests/mcif_visual_context_screen_input_v1_20260801.json` | `PENDING_VLM_RUN_AND_HF_UPLOAD`; portable input SHA256 `62fa1fb5...5073`; 21/21 talks and all 304 causal states, no transcript/target/reference/model output; outputs cannot filter the human inventory or count as labels/results |
+| MCIF 304-state reference-free Qwen3-VL-32B source screen | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9/prescreen/qwen3_vl_source_screen_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen>, revision `5da477ff7d199dbded0ffe44d6b41b9cd8c8e75d`, tag `mcif-source-only-qwen3-vl-32b-v1`; Git manifests: `data/manifests/mcif_visual_context_screen_{input_v1,qwen3_vl_32b_v1}_20260801.json` | Uploaded and checksum-byte-verified; `private=True`; 304/304 rows, 21 talks, 0 duplicate/parse failure/empty context; output SHA256 `55a6dafe...79682`; 98 same-prompt repairs then 6 compact repairs. Source-only prescreen, not annotation, sample filter, ST result or pixels-beyond-OCR evidence |
 | ACL60/60 dev controlled acoustic v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/noise/corruptions/acl6060_dev_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-controlled-acoustic-dev>, commit `d28c499c8845c4991b5ccea27bc9a2ad520f51fa`, tag `acl6060-controlled-acoustic-v1-20260801` | Uploaded; 75 source-only WAV files plus five metadata/card files; `private=True`; remote metadata and sampled WAV byte-verified |
 | ACL60/60 dev source-event annotation workspace v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/workspace_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-events>, revision `3199207c66b159ab39f662a32e0f6d633c9c2b79`, tag `acl6060-source-event-workspace-v1-20260801` | Uploaded; `private=True`; 100 frames, 100 source-only clips, isolated blank A/B sheets; no transcript/target/reference/model output; remote inventory and three downloaded files byte-verified; labels remain pending |
 | ACL60/60 source-event author view v2 r4 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/author_view_v2_blinded_r4` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-event-author-v2>, revision `bbbbdbf5a2b19c4613791ccffbcf9bc587454e4a`, tag `acl6060-source-event-author-v2-r4-20260801` | Uploaded; `private=True`; 100 secret-HMAC-ID frames, 0 audio; author rows omit talk/timing/raw-media identifiers; scorer mapping/secret excluded; remote inventory and three files byte-verified. r3 revision `2fb266...` is superseded and must not receive labels |
@@ -333,6 +333,11 @@ confirmed.
     before audio sufficiency, correct-over-wrong/stale/empty attribution, OCR
     separation and a controlled acoustic-noise interaction. This remains a
     planned empirical delta, not a result.
+34. The complete MCIF Qwen3-VL-32B source-only screen has 303/304 spatial-
+    relation descriptions, but these are unverified model outputs and often
+    trivial layout statements. The screen establishes annotation material, not
+    `vision > OCR`; only blinded event labels and controlled system comparisons
+    can answer that question.
 
 ## Current Next Actions (2026-08-01)
 
@@ -348,7 +353,10 @@ confirmed.
    two-person cohort. Report all
    negatives, right-censoring, agreement and adjudication without modifying raw
    sheets.
-3. Freeze source-only packets and target scoring independently, then map
+3. Use only aggregate MCIF prescreen coverage to refine the source-only rubric;
+   never expose row-level model suggestions to annotators or alter the frozen
+   304-state inventory. Freeze source-only packets and target scoring
+   independently, then map
    document-only, OCR, correct semantic/relation oracle, matched wrong
    evidence, and native/noisy audio headroom. A stable signal in any route can
    justify focused automatic implementation; stop only if every gold route lacks

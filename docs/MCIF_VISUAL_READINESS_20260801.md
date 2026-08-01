@@ -134,6 +134,31 @@ Prompt 是
 state，不得给 human author 看 suggested answer，也不得作为 `image_needed` 标签或 paper
 结果。它不是 blueprint 中受 oracle gate 约束的 automatic integration/compiler。
 
+该 screen 已使用
+`Qwen/Qwen3-VL-32B-Instruct@0cfaf48183f594c314753d30a4c4974bc75f3ccb`
+在 Hyper00 完成。最终 portable output 为 304/304 unique rows、21/21 talks、0 duplicate、
+0 raw JSON parse failure、0 empty context；303 rows 含 OCR，302 rows 含 object，169 rows
+含 action，303 rows 含 spatial-relation candidate。输出 SHA256 为
+`55a6dafe5ebd1fc5f37226de7ce48e601d61e1fb914287a81bdb8f92b0479682`。
+
+首轮 384-token 输出有 98 个截断 JSON；同 prompt 的 1024-token repair 后剩 6 个重复
+枚举循环，显式 compact repair prompt 修复后剩余 0 个。确定性 finalizer 按 input 顺序
+overlay replacement，拒绝 unknown/missing/duplicate ID、reference/transcript 泄漏、frame/
+model binding 改动和非法 raw JSON。Git output manifest：
+[`../data/manifests/mcif_visual_context_screen_qwen3_vl_32b_v1_20260801.json`](../data/manifests/mcif_visual_context_screen_qwen3_vl_32b_v1_20260801.json)。
+Private HF source of truth：
+[`gavinlaw/slide-aware-sst-mcif-source-prescreen@5da477ff`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/5da477ff7d199dbded0ffe44d6b41b9cd8c8e75d)，
+tag `mcif-source-only-qwen3-vl-32b-v1`；repo privacy 与远端 checksum manifest 已验证。
+
+字段覆盖率不能回答 `why not OCR`。大量 relation 只是 title/list 的简单上下关系，且全部
+来自同一个 VLM、未人工核验。该结果只支持“MCIF 有足够多可供审核的视觉结构”，下一步
+仍必须用 blind human event annotation 和 OCR/current-image/stale-wrong-image 对照判断
+哪些结构真正提供 source audio 之前的 target evidence。
+
+本次 Transformers batched generation 尝试 batch 16/32/64，观测到的最高 10 秒平均
+GPU utilization 为 78%，未达到 90% 目标。原因是自回归解码、预处理和变长 tail 交替；
+未来更大规模 VLM generation 必须改用 continuous-batching serving，不得照搬该 runner。
+
 ## 什么结果才足以支撑 paper
 
 仅有小幅 aggregate BLEU/COMET 提升不够。至少需要以下证据链：
@@ -173,8 +198,8 @@ correctness 不低于 -1 pp；它们是资源投入门槛，不是尚未注册�
 2. ACL dev 468-state frame timeline 已完成，见
    [`ACL6060_VISUAL_TIMELINE_20260801.md`](ACL6060_VISUAL_TIMELINE_20260801.md)；100-row
    balanced seed 也已冻结，下一步完成独立双标注。
-3. MCIF 304-state reference-free VLM screen input 已冻结；完成私有 source-only prescreen、
-   QA 和 private HF upload，但不得用其输出修改 human inventory。
+3. MCIF 304-state private source-only prescreen、QA 和 HF upload 已完成；只用 aggregate
+   coverage 完善 annotation rubric，不得用逐行输出修改 inventory 或提示 annotator。
 4. 冻结 candidate/source-packet/target-scoring 三件套，先跑 oracle headroom：document、
    OCR、correct semantic/relation、matched wrong，覆盖 native 与 noise。
 5. 只有看到 content-specific early-commit 或稳定 robustness signal 后，才投入 automatic
