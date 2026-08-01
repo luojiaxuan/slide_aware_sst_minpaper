@@ -20,9 +20,11 @@
 > no-target/reference/model-output 检查，但 v1 annotation order 已被方法审计否决，不能直接
 > 使用其 A/B sheets。v2 已生成 100-frame blinded author view，当前状态是
 > `AUTHORING_VIEW_READY_NO_LABELS`。见
-> [docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md](docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md)。
+> [docs/ACL6060_SOURCE_EVENT_ANNOTATION_V2.md](docs/ACL6060_SOURCE_EVENT_ANNOTATION_V2.md)。
 > Media workspace 已冻结在 private HF revision
 > [`3199207c`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-events/tree/3199207c66b159ab39f662a32e0f6d633c9c2b79)。
+> Author-only r3 view 已冻结在 private HF revision
+> [`2fb266d1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-event-author-v2/tree/2fb266d168e0abbf4ace17d3f5de9503a8c46cd6)。
 >
 > The earlier Chinese-LiPS diagnostic remains a warning: with audio input and
 > the slide supplied through a

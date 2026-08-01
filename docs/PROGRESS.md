@@ -753,8 +753,13 @@ or a stronger Qwen3-VL variant if available.
   refuses to estimate while any adjudication or source exclusion remains unresolved.
 - Replaced the public fixed-salt opaque IDs with scorer-secret HMAC IDs; public
   enumeration of `A001--A020` can no longer recover selection stratum.
-- Materialized author view r3: 100 frames, 0 WAV, 6,331,896 bytes. All frame
+- Materialized author view r3: 100 frames, 0 WAV, 6,333,781 bytes including card. All frame
   hashes and forbidden-field checks pass. No human labels exist.
+- Uploaded the r3 author-only view to private HF revision
+  `2fb266d168e0abbf4ace17d3f5de9503a8c46cd6`, tag
+  `acl6060-source-event-author-v2-r3-20260801`. Remote inventory is 100 JPG,
+  0 WAV plus card/sheet metadata; mapping and HMAC secret are absent. Three
+  forced downloads were byte-verified.
 - Froze the ten `talk × stratum` pool sizes and inclusion probabilities. Raw
   balanced-seed yield is not overall prevalence; the latter requires
   inverse-probability weighting over 468 observations.

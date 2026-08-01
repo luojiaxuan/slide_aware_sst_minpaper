@@ -148,7 +148,7 @@ packet 或 source exclusion 时返回 `UNRESOLVED_MISSING_OUTCOME`，不会输�
 
 Local author view：
 `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/author_view_v2_blinded_r3`。
-它含 100 opaque-ID frames + `authoring.jsonl`，共 6,331,896 bytes，明确为 0 WAV；
+它含 100 opaque-ID frames + `authoring.jsonl` + dataset card，共 6,333,781 bytes，明确为 0 WAV；
 `selection_stratum` 和真实 packet mapping 只在 sibling scorer directory。Author row order 由
 secret-key HMAC 全局打乱，不能从公开代码枚举原 `A001--A020` 恢复 selection prior。HMAC
 secret 和真实 mapping 只存在 scorer storage，不进入 Git 或 author HF repo。
@@ -173,3 +173,9 @@ candidate rows。`freeze-audio` 会再次核对两份实际 WAV；`freeze-frame`
 `report` 会拒绝 lock mismatch。两份 audio task 分别运行
 `serve_acl6060_audio_annotation.py`，使用不同 event log/output/port；annotator 不能获得 audio
 root 的 shell/filesystem access。`freeze-audio` 要求两份 event logs 并再次核对完整 hash chain。
+
+Author view canonical copy：private HF
+[`gavinlaw/slide-aware-sst-acl6060-source-event-author-v2`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-event-author-v2)，
+revision `2fb266d168e0abbf4ace17d3f5de9503a8c46cd6`，tag
+`acl6060-source-event-author-v2-r3-20260801`。远端已验证 `private=True`、100 JPG、0 WAV，
+且不含 mapping/secret；README、sheet 和一张 frame 已强制下载并 byte-verified。
