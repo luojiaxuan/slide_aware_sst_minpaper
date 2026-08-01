@@ -282,6 +282,10 @@ def test_excludes_serialized_labels_markup_r1_text_and_vlm_ocr_text():
             ),
             "prompt provenance",
         ),
+        (
+            lambda row: row["visual_context"]["objects"].append("invented object"),
+            "structured field differs",
+        ),
     ],
 )
 def test_vlm_validation_fails_closed_on_provenance_or_outcome_leak(mutation, match):

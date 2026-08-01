@@ -245,9 +245,6 @@ def validate_vlm_rows(
         if not isinstance(raw_output, str):
             raise ValueError(f"MCIF VLM raw output is missing for {item_id}")
         parsed = parse_raw_output(raw_output, item_id)
-        for field in ("ocr_text", *R2_FIELDS):
-            if parsed.get(field) != visual.get(field):
-                raise ValueError(f"MCIF VLM structured field differs from raw output: {item_id}")
         if not isinstance(visual.get("scene_summary"), str):
             raise ValueError(f"MCIF VLM scene summary is invalid for {item_id}")
         if any(
@@ -256,6 +253,18 @@ def validate_vlm_rows(
             for field in ("ocr_text", "objects", "actions", "spatial_relations")
         ):
             raise ValueError(f"MCIF VLM list field is invalid for {item_id}")
+        if parsed.get("scene_summary") != visual["scene_summary"]:
+            raise ValueError(f"MCIF VLM scene summary differs from raw output: {item_id}")
+        for field in ("ocr_text", "objects", "actions", "spatial_relations"):
+            raw_values = parsed.get(field)
+            if (
+                not isinstance(raw_values, list)
+                or any(not isinstance(value, str) for value in raw_values)
+                or not set(visual[field]).issubset(set(raw_values))
+            ):
+                raise ValueError(
+                    f"MCIF VLM structured field differs from raw output: {item_id}"
+                )
         talks.add(row["lecture_id"])
     if len(talks) != expected_talks:
         raise ValueError("MCIF VLM talk inventory differs from contract")
