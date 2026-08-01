@@ -24,10 +24,15 @@
   "blinding": {
     "question_author_before_lock": [
       "current_frame",
-      "packet_timing"
+      "opaque_packet_id",
+      "scorer_secret_frame_binding"
     ],
     "question_author_forbidden_before_lock": [
       "source_audio",
+      "talk_id",
+      "absolute_packet_timing",
+      "raw_media_hash",
+      "selection_stratum",
       "source_transcript",
       "target_translation",
       "reference",
@@ -37,11 +42,15 @@
       "causal_source_audio_from_talk_start",
       "locked_source_question",
       "locked_randomized_options",
-      "prefix_grid"
+      "opaque_prefix_sequence_without_absolute_timestamps"
     ],
     "audio_validator_forbidden": [
       "frame",
       "canonical_answer",
+      "talk_id",
+      "absolute_packet_timing",
+      "raw_media_hash",
+      "selection_stratum",
       "source_transcript",
       "target_translation",
       "reference",
@@ -51,11 +60,17 @@
     "frame_validator_visible": [
       "current_frame",
       "locked_source_question",
-      "locked_randomized_options"
+      "locked_randomized_options",
+      "opaque_packet_id",
+      "scorer_secret_frame_binding"
     ],
     "frame_validator_forbidden": [
       "source_audio",
       "canonical_answer",
+      "talk_id",
+      "absolute_packet_timing",
+      "raw_media_hash",
+      "selection_stratum",
       "source_transcript",
       "target_translation",
       "reference",

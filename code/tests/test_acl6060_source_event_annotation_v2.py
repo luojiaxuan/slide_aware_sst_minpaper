@@ -16,6 +16,7 @@ from scripts.acl6060_source_event_annotation_v2 import (
     canonical_validator_answer,
     estimate_stratified_prevalence,
     expected_prefix_grid,
+    frame_binding_hmac,
     first_stable_correct,
     freeze_audio_rows,
     freeze_adjudication_rows,
@@ -137,9 +138,13 @@ def complete_frame(row, answer_option_id):
 def test_stage_views_enforce_blinding_and_question_lock():
     author = prepare_author_rows([packet()], "author")[0]
     assert "audio_path" not in author
+    assert "talk_id" not in author
+    assert "t_evidence_sec" not in author
+    assert "frame_sha256" not in author
     review = completed_review()
     audio = make_audio_validator_rows([review], "validator_a", CONFIG)[0]
     assert "frame_path" not in audio
+    assert "talk_id" not in audio
     assert "canonical_answer_index" not in audio
     assert "question_lock_sha256" in audio
     with pytest.raises(ValueError, match="authors and audio validators"):
@@ -390,6 +395,20 @@ def test_adjudication_is_locked_and_resolves_without_overwriting_raw_report():
     with pytest.raises(ValueError, match="Hard failure"):
         freeze_adjudication_rows([blocked], [hard_failure], CONFIG)
 
+    isolated_tail = prepare_adjudication_rows([report], "adjudicator")[0]
+    isolated_tail.update(
+        {
+            "adjudication_status": "resolved",
+            "adjudicated_primary_eligible": True,
+            "adjudicated_boundary_sec": 20.0,
+            "reason_labels": ["boundary_disagreement"],
+            "note": "Only the final grid point was correct.",
+            "submitted_at_utc": "2026-08-01T15:00:00Z",
+        }
+    )
+    with pytest.raises(ValueError, match="lacks stable tail"):
+        freeze_adjudication_rows([isolated_tail], [report], CONFIG)
+
 
 def test_materialized_validator_views_are_physically_modality_separated(tmp_path):
     acl_root = tmp_path / "acl"
@@ -448,11 +467,12 @@ def test_materialized_validator_views_are_physically_modality_separated(tmp_path
     frame_source.parent.mkdir(parents=True)
     frame_source.write_bytes(b"frame")
     frame_hash = hashlib.sha256(frame_source.read_bytes()).hexdigest()
+    local_packet["workspace_frame_sha256"] = frame_hash
     frame_rows = [
         {
             "packet_id": review["packet_id"],
             "frame_path": f'packets/{review["packet_id"]}/frame.jpg',
-            "frame_sha256": frame_hash,
+            "frame_binding_hmac": frame_binding_hmac(review["packet_id"], frame_hash),
         }
     ]
     frame_root = tmp_path / "frame_view"

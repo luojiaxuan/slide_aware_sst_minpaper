@@ -62,6 +62,24 @@ def verify_stage_media(
             raise ValueError(f'Stage media hash mismatch: {row["packet_id"]}: {path_key}')
 
 
+def verify_frame_stage_media(
+    rows: list[dict], packet_rows: list[dict], root: Path
+) -> None:
+    packets = index_packets_for_v2(packet_rows)
+    for row in rows:
+        packet = packets[row["packet_id"]]
+        path = root / row["frame_path"]
+        if not path.is_file():
+            raise FileNotFoundError(f'Missing stage media: {row["packet_id"]}: {path}')
+        frame_sha256 = sha256_file(path)
+        if frame_sha256 != packet["workspace_frame_sha256"]:
+            raise ValueError(f'Frame media hash mismatch: {row["packet_id"]}')
+        if row["frame_binding_hmac"] != frame_binding_hmac(
+            row["packet_id"], frame_sha256
+        ):
+            raise ValueError(f'Frame media binding mismatch: {row["packet_id"]}')
+
+
 def verify_sequential_interaction_log(rows: list[dict], path: Path) -> None:
     events = load_jsonl(path)
     if not events or events[0].get("event_type") != "session_started":
@@ -93,7 +111,14 @@ def verify_sequential_interaction_log(rows: list[dict], path: Path) -> None:
     if any(row.get("interaction_log_sha256") != sha256_file(path) for row in rows):
         raise ValueError("Interaction log file hash mismatch")
     previous = None
+    previous_time = None
     completed = {}
+    task_ids = [row["packet_id"] for row in rows]
+    task_index = {row["packet_id"]: row for row in rows}
+    task_position = 0
+    state = "question"
+    step_index = 0
+    release_seen = False
     for index, event in enumerate(events):
         payload = {key: value for key, value in event.items() if key != "event_sha256"}
         if event.get("event_index") != index:
@@ -103,10 +128,60 @@ def verify_sequential_interaction_log(rows: list[dict], path: Path) -> None:
         if event.get("event_sha256") != canonical_hash(payload):
             raise ValueError(f"Interaction event hash mismatch: {index}")
         previous = event["event_sha256"]
-        if event.get("event_type") == "item_completed":
-            if event["packet_id"] in completed:
-                raise ValueError(f'Duplicate completed event: {event["packet_id"]}')
-            completed[event["packet_id"]] = event
+        event_time = parse_utc(event.get("server_time_utc"))
+        if previous_time is not None and event_time < previous_time:
+            raise ValueError(f"Interaction event timestamps are not monotonic: {index}")
+        previous_time = event_time
+        event_type = event.get("event_type")
+        if index == 0:
+            continue
+        if event_type == "session_started":
+            raise ValueError("Duplicate interaction session start")
+        if task_position >= len(task_ids):
+            raise ValueError(f"Interaction event follows final completion: {index}")
+        packet_id = event.get("packet_id")
+        expected_packet_id = task_ids[task_position]
+        if packet_id != expected_packet_id:
+            raise ValueError(
+                f"Interaction packet order mismatch: {packet_id} != {expected_packet_id}"
+            )
+        grid = expected_prefix_grid(task_index[packet_id])
+        if state == "question":
+            if event_type != "question_only_submitted":
+                raise ValueError(f"Question-only event missing before audio: {packet_id}")
+            state = "prefix"
+            step_index = 0
+            release_seen = False
+            continue
+        if state == "prefix":
+            if event_type == "item_completed":
+                raise ValueError(f"Item completion is out of order: {packet_id}")
+            if event_type == "prefix_released":
+                if event.get("step_index") != step_index:
+                    raise ValueError(f"Out-of-order prefix release: {packet_id}")
+                if abs(float(event.get("prefix_end_sec")) - grid[step_index]) > 1e-5:
+                    raise ValueError(f"Invalid prefix release boundary: {packet_id}")
+                release_seen = True
+                continue
+            if event_type != "prefix_submitted" or not release_seen:
+                raise ValueError(f"Prefix submission lacks its release: {packet_id}")
+            if event.get("step_index") != step_index:
+                raise ValueError(f"Out-of-order prefix submission: {packet_id}")
+            if abs(float(event.get("prefix_end_sec")) - grid[step_index]) > 1e-5:
+                raise ValueError(f"Invalid prefix submission boundary: {packet_id}")
+            step_index += 1
+            release_seen = False
+            state = "complete" if step_index == len(grid) else "prefix"
+            continue
+        if state != "complete" or event_type != "item_completed":
+            raise ValueError(f"Item completion is out of order: {packet_id}")
+        if packet_id in completed:
+            raise ValueError(f'Duplicate completed event: {packet_id}')
+        completed[packet_id] = event
+        task_position += 1
+        state = "question"
+    if task_position != len(task_ids) or state != "question":
+        raise ValueError("Interaction log ended before all ordered tasks completed")
     if set(completed) != {row["packet_id"] for row in rows}:
         raise ValueError("Interaction log and completed audio packet ids differ")
     for row in rows:
@@ -150,6 +225,10 @@ def verify_sequential_interaction_log(rows: list[dict], path: Path) -> None:
                 prefix["step_index"] != index
                 or abs(float(prefix["prefix_end_sec"]) - expected_time) > 1e-5
                 or not releases
+                or any(
+                    abs(float(release["prefix_end_sec"]) - expected_time) > 1e-5
+                    for release in releases
+                )
                 or row["prefix_judgments"][index]["status"] != prefix["status"]
                 or row["prefix_judgments"][index]["option_id"] != prefix["option_id"]
             ):
@@ -157,6 +236,7 @@ def verify_sequential_interaction_log(rows: list[dict], path: Path) -> None:
         if (
             row["audio_submitted_at_utc"] != event["server_time_utc"]
             or row["sequential_delivery_backend"] != "acl6060_audio_gate_v1"
+            or event["event_index"] <= prefixes[-1]["event_index"]
         ):
             raise ValueError(f'Completed row/log mismatch: {row["packet_id"]}')
 
@@ -215,6 +295,15 @@ def blinded_packet_id(source_packet_id: str) -> str:
     return f"ACLDEV-{digest[:16]}"
 
 
+def frame_binding_hmac(packet_id: str, frame_sha256: str) -> str:
+    digest = hmac.new(
+        blinding_secret().encode(),
+        f"acl6060-v2-frame-binding:{packet_id}:{frame_sha256}".encode(),
+        hashlib.sha256,
+    ).hexdigest()
+    return f"FRAME-{digest}"
+
+
 def index_packets_for_v2(packet_rows: list[dict]) -> dict[str, dict]:
     indexed = {}
     for packet in packet_rows:
@@ -232,10 +321,11 @@ def prepare_author_rows(packet_rows: list[dict], author_id: str) -> list[dict]:
             "schema_version": "acl6060_source_event_annotation_v2",
             "stage": "frame_only_question_authoring",
             "packet_id": blinded_packet_id(packet["packet_id"]),
-            "talk_id": packet["talk_id"],
-            "t_evidence_sec": packet["t_evidence_sec"],
             "frame_path": f'packets/{blinded_packet_id(packet["packet_id"])}/frame.jpg',
-            "frame_sha256": packet["workspace_frame_sha256"],
+            "frame_binding_hmac": frame_binding_hmac(
+                blinded_packet_id(packet["packet_id"]),
+                packet["workspace_frame_sha256"],
+            ),
             "author_id": author_id,
             "authoring_status": "pending",
             "source_question": None,
@@ -275,8 +365,13 @@ def materialize_author_view(
         destination = output_root / row["frame_path"]
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, destination)
-        if sha256_file(destination) != row["frame_sha256"]:
+        frame_sha256 = sha256_file(destination)
+        if frame_sha256 != packet["workspace_frame_sha256"]:
             raise ValueError(f'Copied frame hash mismatch: {row["packet_id"]}')
+        if row["frame_binding_hmac"] != frame_binding_hmac(
+            row["packet_id"], frame_sha256
+        ):
+            raise ValueError(f'Copied frame binding mismatch: {row["packet_id"]}')
     write_jsonl(output_root / "authoring.jsonl", rows)
     return rows
 
@@ -285,8 +380,7 @@ def question_lock_payload(row: dict) -> dict:
     return {
         "schema_version": row["schema_version"],
         "packet_id": row["packet_id"],
-        "frame_sha256": row["frame_sha256"],
-        "t_evidence_sec": row["t_evidence_sec"],
+        "frame_binding_hmac": row["frame_binding_hmac"],
         "source_question": row["source_question"],
         "source_options": row["source_options"],
         "canonical_answer_index": row["canonical_answer_index"],
@@ -300,10 +394,8 @@ def authoring_lock_payload(row: dict) -> dict:
     return {
         "schema_version": row["schema_version"],
         "packet_id": row["packet_id"],
-        "talk_id": row["talk_id"],
-        "t_evidence_sec": row["t_evidence_sec"],
         "frame_path": row["frame_path"],
-        "frame_sha256": row["frame_sha256"],
+        "frame_binding_hmac": row["frame_binding_hmac"],
         "author_id": row["author_id"],
         "authoring_status": row["authoring_status"],
         "source_question": row["source_question"],
@@ -376,10 +468,11 @@ def freeze_author_rows(
         packet = packets[packet_id]
         expected_frame_path = f"packets/{packet_id}/frame.jpg"
         for key, expected in (
-            ("talk_id", packet["talk_id"]),
-            ("t_evidence_sec", packet["t_evidence_sec"]),
             ("frame_path", expected_frame_path),
-            ("frame_sha256", packet["workspace_frame_sha256"]),
+            (
+                "frame_binding_hmac",
+                frame_binding_hmac(packet_id, packet["workspace_frame_sha256"]),
+            ),
         ):
             if row[key] != expected:
                 raise ValueError(f'Author task field changed ({key}): {packet_id}')
@@ -390,6 +483,9 @@ def freeze_author_rows(
             row["question_lock_sha256"] = canonical_hash(question_lock_payload(row))
             row.update(
                 {
+                    "talk_id": packet["talk_id"],
+                    "t_evidence_sec": packet["t_evidence_sec"],
+                    "frame_sha256": packet["workspace_frame_sha256"],
                     "stage": "author_source_audio_relevance_check",
                     "audio_path": f'packets/{packet_id}/causal_audio.wav',
                     "audio_sha256": None,
@@ -406,6 +502,9 @@ def freeze_author_rows(
         else:
             row.update(
                 {
+                    "talk_id": packet["talk_id"],
+                    "t_evidence_sec": packet["t_evidence_sec"],
+                    "frame_sha256": packet["workspace_frame_sha256"],
                     "stage": "author_source_audio_relevance_check",
                     "speech_relevance_status": "not_applicable",
                     "speech_reviewed_at_utc": None,
@@ -569,7 +668,6 @@ def make_audio_validator_rows(
             "schema_version": author["schema_version"],
             "stage": "validator_audio_only_boundary_pass",
             "packet_id": author["packet_id"],
-            "talk_id": author["talk_id"],
             "question_lock_sha256": author["question_lock_sha256"],
             "source_question": author["source_question"],
             "source_options": options,
@@ -633,7 +731,7 @@ def materialize_audio_validator_view(
             "audio_bytes": destination.stat().st_size,
         }
         output.append(materialized)
-    write_jsonl(output_root / "audio_validation.jsonl", output)
+    write_jsonl(output_root / "audio_delivery_private.jsonl", output)
     return output
 
 
@@ -750,7 +848,6 @@ def freeze_audio_rows(
             "schema_version",
             "stage",
             "packet_id",
-            "talk_id",
             "question_lock_sha256",
             "source_question",
             "source_options",
@@ -835,7 +932,6 @@ def make_frame_validator_rows(
             "schema_version": author["schema_version"],
             "stage": "validator_frame_only_answer_pass",
             "packet_id": author["packet_id"],
-            "talk_id": author["talk_id"],
             "question_lock_sha256": author["question_lock_sha256"],
             "source_question": author["source_question"],
             "source_options": options,
@@ -843,7 +939,9 @@ def make_frame_validator_rows(
                 {"packet_id": author["packet_id"], "order": order}
             ),
             "frame_path": f'packets/{packet_dir_name(author["packet_id"])}/frame.jpg',
-            "frame_sha256": packet["workspace_frame_sha256"],
+            "frame_binding_hmac": frame_binding_hmac(
+                author["packet_id"], packet["workspace_frame_sha256"]
+            ),
             "validator_id": validator_id,
             "frame_support_status": "pending",
             "frame_answer_option_id": None,
@@ -879,8 +977,14 @@ def materialize_frame_validator_view(
         destination = output_root / row["frame_path"]
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, destination)
-        if sha256_file(destination) != row["frame_sha256"]:
+        frame_sha256 = sha256_file(destination)
+        packet = packets[row["packet_id"]]
+        if frame_sha256 != packet["workspace_frame_sha256"]:
             raise ValueError(f'Frame media hash mismatch: {row["packet_id"]}')
+        if row["frame_binding_hmac"] != frame_binding_hmac(
+            row["packet_id"], frame_sha256
+        ):
+            raise ValueError(f'Frame media binding mismatch: {row["packet_id"]}')
     write_jsonl(output_root / "frame_validation.jsonl", rows)
     return rows
 
@@ -1053,11 +1157,16 @@ def freeze_adjudication_rows(
                 raise ValueError(f'Positive adjudication lacks boundary: {row["packet_id"]}')
             if not report["t_evidence_sec"] < float(boundary) <= report["causal_audio_end_sec"]:
                 raise ValueError(f'Adjudicated boundary is outside causal window: {row["packet_id"]}')
-            grid_index(
+            boundary_index = grid_index(
                 float(boundary),
                 float(report["t_evidence_sec"]),
                 float(report["prefix_step_sec"]),
             )
+            minimum_steps = config["audio_boundary"]["minimum_stable_correct_steps"]
+            if boundary_index > len(expected_prefix_grid(report)) - minimum_steps:
+                raise ValueError(
+                    f'Adjudicated boundary lacks stable tail: {row["packet_id"]}'
+                )
         elif boundary is not None:
             raise ValueError(f'Non-positive adjudication carries boundary: {row["packet_id"]}')
         frozen = {**row, "adjudication_lock_sha256": canonical_hash(row)}
@@ -1558,9 +1667,13 @@ def command_prepare_author(args: argparse.Namespace) -> None:
 
 
 def command_freeze_author(args: argparse.Namespace) -> None:
+    packets = load_jsonl(args.packet_manifest)
+    verify_frame_stage_media(
+        load_jsonl(args.author_sheet), packets, args.author_frame_root
+    )
     rows = freeze_author_rows(
         load_jsonl(args.author_sheet),
-        load_jsonl(args.packet_manifest),
+        packets,
         load_json(args.config),
     )
     write_jsonl(args.output, rows)
@@ -1654,7 +1767,7 @@ def command_freeze_audio(args: argparse.Namespace) -> None:
 def command_freeze_frame(args: argparse.Namespace) -> None:
     config = load_json(args.config)
     rows = load_jsonl(args.frame_sheet)
-    verify_stage_media(rows, args.frame_root, "frame_path", "frame_sha256")
+    verify_frame_stage_media(rows, load_jsonl(args.packet_manifest), args.frame_root)
     frozen = [freeze_frame_annotation(row, config) for row in rows]
     write_jsonl(args.output, frozen)
     print(json.dumps({"row_count": len(frozen)}))
@@ -1663,11 +1776,12 @@ def command_freeze_frame(args: argparse.Namespace) -> None:
 def command_report(args: argparse.Namespace) -> None:
     frame_a = load_jsonl(args.frame_a)
     frame_b = load_jsonl(args.frame_b)
-    verify_stage_media(frame_a, args.frame_root_a, "frame_path", "frame_sha256")
-    verify_stage_media(frame_b, args.frame_root_b, "frame_path", "frame_sha256")
+    packets = load_jsonl(args.packet_manifest)
+    verify_frame_stage_media(frame_a, packets, args.frame_root_a)
+    verify_frame_stage_media(frame_b, packets, args.frame_root_b)
     rows, summary = build_agreement_report(
         load_jsonl(args.author_review),
-        load_jsonl(args.packet_manifest),
+        packets,
         load_jsonl(args.audio_a),
         load_jsonl(args.audio_b),
         frame_a,
@@ -1714,6 +1828,7 @@ def main() -> None:
 
     freeze_author = subparsers.add_parser("freeze-author")
     freeze_author.add_argument("--author-sheet", type=Path, required=True)
+    freeze_author.add_argument("--author-frame-root", type=Path, required=True)
     freeze_author.add_argument("--packet-manifest", type=Path, required=True)
     freeze_author.add_argument("--config", type=Path, required=True)
     freeze_author.add_argument("--output", type=Path, required=True)
@@ -1768,6 +1883,7 @@ def main() -> None:
     freeze_frame = subparsers.add_parser("freeze-frame")
     freeze_frame.add_argument("--frame-sheet", type=Path, required=True)
     freeze_frame.add_argument("--frame-root", type=Path, required=True)
+    freeze_frame.add_argument("--packet-manifest", type=Path, required=True)
     freeze_frame.add_argument("--config", type=Path, required=True)
     freeze_frame.add_argument("--output", type=Path, required=True)
     freeze_frame.set_defaults(handler=command_freeze_frame)

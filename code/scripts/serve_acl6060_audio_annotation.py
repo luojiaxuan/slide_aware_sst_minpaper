@@ -187,7 +187,6 @@ class SequentialAudioSession:
             "source_options": task["source_options"],
             "stage": stage,
             "next_step_index": next_step,
-            "current_prefix_end_sec": grid[next_step] if next_step is not None else None,
             "prefix_step_count": len(grid),
         }
 
@@ -235,6 +234,8 @@ class SequentialAudioSession:
             ]
             if not releases:
                 raise ValueError("Current prefix has not been released")
+            task = self.task_index[state["packet_id"]]
+            prefix_end_sec = expected_prefix_grid(task)[state["next_step_index"]]
             status = payload.get("status")
             option_id = payload.get("option_id")
             option_ids = {option["option_id"] for option in state["source_options"]}
@@ -251,7 +252,7 @@ class SequentialAudioSession:
                     "event_type": "prefix_submitted",
                     "packet_id": state["packet_id"],
                     "step_index": state["next_step_index"],
-                    "prefix_end_sec": state["current_prefix_end_sec"],
+                    "prefix_end_sec": prefix_end_sec,
                     "status": status,
                     "option_id": option_id,
                 },
@@ -276,6 +277,7 @@ class SequentialAudioSession:
             if packet_id != state["packet_id"]:
                 raise ValueError("Wrong current packet")
             task = self.task_index[packet_id]
+            prefix_end_sec = expected_prefix_grid(task)[state["next_step_index"]]
             append_event(
                 self.log_path,
                 self.events,
@@ -283,12 +285,12 @@ class SequentialAudioSession:
                     "event_type": "prefix_released",
                     "packet_id": packet_id,
                     "step_index": state["next_step_index"],
-                    "prefix_end_sec": state["current_prefix_end_sec"],
+                    "prefix_end_sec": prefix_end_sec,
                 },
             )
             return clipped_wav_bytes(
                 self.audio_root / task["audio_path"],
-                float(state["current_prefix_end_sec"]),
+                float(prefix_end_sec),
             )
 
     def export_complete_annotations(self) -> list[dict]:
@@ -407,9 +409,7 @@ async function load() {
   if (state.stage === "question_only") {
     renderQuestion(content);
   } else {
-    prefix.textContent =
-      `Prefix ${state.next_step_index + 1}/${state.prefix_step_count} · ` +
-      `${state.current_prefix_end_sec.toFixed(2)}s`;
+    prefix.textContent = `Prefix ${state.next_step_index + 1}/${state.prefix_step_count}`;
     renderPrefix(content);
   }
 }

@@ -3,8 +3,9 @@
 日期：2026-08-01
 
 状态：**protocol、stage data packager 和 sequential prefix backend 已实现；100-frame blinded
-author view r3 已生成，人工标签尚未开始。正式 audio annotation 必须通过 backend，不能直接
-编辑静态 WAV sheet。v1 seed/media 不变。**
+author view r4 已在本地生成，人工标签尚未开始。r3 因 plaintext quasi-identifiers 已 superseded，
+不得开始标注。正式 audio annotation 必须通过 backend，不能直接编辑或分发 server-private
+timing/WAV sheet。v1 seed/media 不变。**
 
 ## 为什么需要 v2
 
@@ -24,12 +25,13 @@ v2 不改 100-row balanced seed、causal frame、audio window 或 target firewal
 
 ### Stage 1: frame-only question authoring
 
-Question author 只看 current frame 和 packet timing，不能听 audio，也不能看 transcript、
+Question author 只看 current frame、opaque packet ID 和 scorer-secret frame binding，不能看
+`talk_id`、absolute timing、raw frame SHA，也不能听 audio 或看 transcript、
 target/reference 或模型输出。对可检验 packet：
 
 1. 写一个 2--4 选项的 source-side question；
 2. 写唯一 canonical answer、evidence subtype/region 和 term/entity；
-3. 对 question、options、answer、frame hash 和 evidence fields 做 canonical JSON SHA256；
+3. 对 question、options、answer、secret-HMAC frame binding 和 evidence fields 做 canonical JSON SHA256；
 4. 写 `question_locked_at_utc`，锁定后不得静默改题。
 
 没有可靠视觉问题的 packet 保留为 negative，不能删除。
@@ -58,7 +60,9 @@ window 结束仍不存在稳定答案也记为 right-censored，而不是 eligib
 Sequential backend 先提交并锁定 question-only 判断，再只从服务端返回当前 `0..g_k` WAV；
 提交第 k 步后才能释放 `g_{k+1}`。每个 response、server timestamp 和 release state 写入
 SHA256-chained append-only log；`freeze-audio` 会核对 completed event 与 sheet tail hash。
-部署时 annotator 账号只能访问 HTTP service，不能直接读取 audio root。没有该 log 的 sheet
+validator-facing HTTP state 只显示 `Prefix k/K`，不暴露 `talk_id` 或 absolute prefix seconds；
+完整 timing task、WAV path/hash 和 event log 是 server/scorer-private artifacts。部署时 annotator
+账号只能访问 HTTP service，不能直接读取 audio root 或 private task sheet。没有该 log 的 sheet
 不会通过 validator，也不进入 paper evidence。
 
 先完成并 hash-lock 两份完整 audio trajectories，才能进入 frame pass。v1 的 65 秒 clips
@@ -93,8 +97,9 @@ audio/frame/report artifacts 均不被覆盖。Adjudicator 不能与 question au
 重叠。
 
 Adjudication 不能越过 hard gates：任一 audio validator 在 question-only 阶段已唯一答出时，
-该 item 不得裁成 positive；positive boundary 必须严格晚于 `t_evidence`、不超过 causal endpoint
-且落在 frozen grid。Author/media/timing exclusions 是 missing outcomes，不是 negative，也会阻止
+该 item 不得裁成 positive；positive boundary 必须严格晚于 `t_evidence`、不超过 causal endpoint、
+落在 frozen grid，并在 endpoint 前保留至少两个 stable-correct observations。Author/media/timing
+exclusions 是 missing outcomes，不是 negative，也会阻止
 主 prevalence estimate，直到按预注册 missing-data policy 解决。
 
 ## Leakage firewall
@@ -103,6 +108,10 @@ Adjudication 不能越过 hard gates：任一 audio validator 在 question-only 
 - target/reference、ST/ASR output 在所有 v2 stages 均不可见；
 - audio-only 和 frame-only views 必须由脚本物理分离，不依赖 annotator 自觉忽略文件；
 - `selection_stratum` 只进入 scorer，不进入任何 author/validator view；
+- author/frame sheets 不含 `talk_id`、absolute timing 或 raw media SHA，只含 secret-HMAC media
+  binding；audio timing task sheet 和 event log 不分发给 validator，HTTP API 也不返回 absolute time；
+- upstream media 本身可能被有意进行 corpus matching，因此这是 operational blinding，不宣称对
+  拥有全部 upstream bytes 的 adversarial annotator 实现 cryptographic anonymity；
 - target-language acceptable realizations 只在 source inventory 和 adjudication hash 冻结后
   由另一 artifact 生成。
 
@@ -115,7 +124,9 @@ v1 文档保留 seed/workspace provenance 和 automatic OCR headroom；v2 是人
 authoritative protocol。Stage packager 已实现 author/question hash、author audio-review bundle、
 四人 disjoint cohorts、validator-specific opaque option ids/item order、question-only lock、完整 prefix trajectory validation、
 audio/frame view materialization、media hash revalidation、annotation lock verification、agreement
-report、scorer-only ID mapping 和 sequential delivery backend。Backend 已实现 causal release；
+report、scorer-only ID mapping 和 sequential delivery backend。Log verifier 还验证完整 ordered
+event-state machine、release boundary、monotonic server timestamps 和 completion ordering；backend
+已实现 causal release；
 当前 blocking gate 是尚未完成的 human authoring 和四人独立 validation。
 
 ## Sampling estimand
@@ -147,10 +158,11 @@ packet 或 source exclusion 时返回 `UNRESOLVED_MISSING_OUTCOME`，不会输�
   [`../data/manifests/acl6060_dev_source_event_annotation_v2_20260801.json`](../data/manifests/acl6060_dev_source_event_annotation_v2_20260801.json)。
 
 Local author view：
-`/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/author_view_v2_blinded_r3`。
-它含 100 opaque-ID frames + `authoring.jsonl` + dataset card，共 6,333,781 bytes，明确为 0 WAV；
+`/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/author_view_v2_blinded_r4`。
+它含 100 opaque-ID frames + `authoring.jsonl`，明确为 0 WAV；100/100 rows 均不含
+`talk_id`、`t_evidence_sec`、raw `frame_sha256`、`selection_stratum` 或 source packet ID。
 `selection_stratum` 和真实 packet mapping 只在 sibling scorer directory。Author row order 由
-secret-key HMAC 全局打乱，不能从公开代码枚举原 `A001--A020` 恢复 selection prior。HMAC
+secret-key HMAC 全局打乱，不能从公开代码直接枚举原 `A001--A020`。HMAC
 secret 和真实 mapping 只存在 scorer storage，不进入 Git 或 author HF repo。
 
 Reproduction：
@@ -161,8 +173,8 @@ export ACL6060_V2_BLINDING_SECRET="$(tr -d '\n' < /Users/luojiaxuan/Documents/Re
 PYTHONPATH=. .venv/bin/python scripts/acl6060_source_event_annotation_v2.py prepare-author \
   --packet-manifest /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/workspace_v1/packet_manifest.jsonl \
   --workspace-root /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/workspace_v1 \
-  --output-root /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/author_view_v2_blinded_r3 \
-  --mapping-out /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/scorer/packet_mapping_v2_r3.jsonl \
+  --output-root /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/author_view_v2_blinded_r4 \
+  --mapping-out /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/scorer/packet_mapping_v2_r4.jsonl \
   --author-id author_pending
 ```
 
@@ -174,8 +186,8 @@ candidate rows。`freeze-audio` 会再次核对两份实际 WAV；`freeze-frame`
 `serve_acl6060_audio_annotation.py`，使用不同 event log/output/port；annotator 不能获得 audio
 root 的 shell/filesystem access。`freeze-audio` 要求两份 event logs 并再次核对完整 hash chain。
 
-Author view canonical copy：private HF
+当前 private HF r3 revision
+`2fb266d168e0abbf4ace17d3f5de9503a8c46cd6` 已 superseded，不得用于 authoring。r4 将上传到同一
+private repo 并记录 immutable revision 后才成为 canonical author view：
 [`gavinlaw/slide-aware-sst-acl6060-source-event-author-v2`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-event-author-v2)，
-revision `2fb266d168e0abbf4ace17d3f5de9503a8c46cd6`，tag
-`acl6060-source-event-author-v2-r3-20260801`。远端已验证 `private=True`、100 JPG、0 WAV，
-且不含 mapping/secret；README、sheet 和一张 frame 已强制下载并 byte-verified。
+intended tag `acl6060-source-event-author-v2-r4-20260801`。

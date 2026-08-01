@@ -780,3 +780,21 @@ or a stronger Qwen3-VL variant if available.
   it cannot be used as paper-grade model ranking or talk-level inference.
 - Frozen contract:
   [`docs/CHINESE_LIPS_VISUAL_CONTROL_MATRIX_V1.md`](CHINESE_LIPS_VISUAL_CONTROL_MATRIX_V1.md).
+
+## 2026-08-01 Annotation v2 Independent-Audit Fixes
+
+- A final independent audit found three P1 issues after the earlier v2 freeze:
+  the log verifier trusted a valid hash chain without fully enforcing event
+  order/release boundaries, adjudication could place a positive boundary at an
+  isolated final grid point, and plaintext timing/media identifiers could
+  bypass opaque packet IDs.
+- The verifier now enforces the complete ordered event-state machine, exact
+  release/submission boundaries, monotonic server timestamps and completion
+  ordering. Rehashed adversarial logs for all three failure modes are tests.
+- Positive adjudication now must leave the configured two-observation stable
+  tail; the final isolated point is rejected.
+- Generated local author view r4 with the same 100 frames but no `talk_id`,
+  absolute timing or raw frame SHA in author rows. Author/frame views use a
+  scorer-secret media binding; audio timing sheets are server-private and the
+  HTTP UI exposes prefix indices only. r3 is superseded before any labels were
+  collected.

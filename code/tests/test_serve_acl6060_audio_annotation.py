@@ -12,6 +12,7 @@ from scripts.acl6060_source_event_annotation_v2 import (
 )
 from scripts.serve_acl6060_audio_annotation import (
     SequentialAudioSession,
+    event_hash,
     read_events,
 )
 
@@ -60,6 +61,45 @@ def make_task(tmp_path: Path) -> tuple[dict, Path]:
     return task, audio_root
 
 
+def complete_session(tmp_path: Path) -> tuple[list[dict], Path]:
+    task, audio_root = make_task(tmp_path)
+    event_log = tmp_path / "events.jsonl"
+    output = tmp_path / "completed.jsonl"
+    session = SequentialAudioSession([task], audio_root, event_log, output)
+    session.submit_question(
+        {"packet_id": task["packet_id"], "status": "not_answerable", "option_id": None}
+    )
+    while not session.state()["complete"]:
+        state = session.state()
+        session.current_audio(task["packet_id"])
+        session.submit_prefix(
+            {
+                "packet_id": task["packet_id"],
+                "step_index": state["next_step_index"],
+                "status": "insufficient",
+                "option_id": None,
+            }
+        )
+    rows = [json.loads(line) for line in output.read_text().splitlines()]
+    return rows, event_log
+
+
+def rewrite_and_bind(rows: list[dict], event_log: Path, events: list[dict]) -> None:
+    previous = None
+    for index, event in enumerate(events):
+        event["event_index"] = index
+        event["previous_event_sha256"] = previous
+        event["event_sha256"] = event_hash(event)
+        previous = event["event_sha256"]
+    event_log.write_text(
+        "".join(json.dumps(event, sort_keys=True) + "\n" for event in events)
+    )
+    completed = next(event for event in events if event["event_type"] == "item_completed")
+    rows[0]["audio_submitted_at_utc"] = completed["server_time_utc"]
+    rows[0]["interaction_log_tail_sha256"] = completed["event_sha256"]
+    rows[0]["interaction_log_sha256"] = hashlib.sha256(event_log.read_bytes()).hexdigest()
+
+
 def test_sequential_session_gates_audio_and_exports_auditable_sheet(tmp_path):
     task, audio_root = make_task(tmp_path)
     event_log = tmp_path / "events.jsonl"
@@ -75,6 +115,7 @@ def test_sequential_session_gates_audio_and_exports_auditable_sheet(tmp_path):
             "option_id": None,
         }
     )
+    assert "current_prefix_end_sec" not in session.state()
     audio = session.current_audio(task["packet_id"])
     clipped = tmp_path / "clipped.wav"
     clipped.write_bytes(audio)
@@ -137,3 +178,39 @@ def test_event_chain_rejects_tampering(tmp_path):
     event_log.write_text(json.dumps(row) + "\n")
     with pytest.raises(ValueError, match="Event hash mismatch"):
         read_events(event_log)
+
+
+def test_log_verifier_rejects_wrong_release_boundary_with_valid_hash_chain(tmp_path):
+    rows, event_log = complete_session(tmp_path)
+    events = read_events(event_log)
+    release = next(event for event in events if event["event_type"] == "prefix_released")
+    release["prefix_end_sec"] = 2.0
+    rewrite_and_bind(rows, event_log, events)
+    with pytest.raises(ValueError, match="Invalid prefix release boundary"):
+        verify_sequential_interaction_log(rows, event_log)
+
+
+def test_log_verifier_rejects_early_completion_with_valid_hash_chain(tmp_path):
+    rows, event_log = complete_session(tmp_path)
+    events = read_events(event_log)
+    completed = next(event for event in events if event["event_type"] == "item_completed")
+    events.remove(completed)
+    events.insert(2, completed)
+    rewrite_and_bind(rows, event_log, events)
+    with pytest.raises(ValueError, match="Item completion is out of order"):
+        verify_sequential_interaction_log(rows, event_log)
+
+
+def test_log_verifier_rejects_noncausal_timestamps_with_valid_hash_chain(tmp_path):
+    rows, event_log = complete_session(tmp_path)
+    events = read_events(event_log)
+    question = next(
+        event for event in events if event["event_type"] == "question_only_submitted"
+    )
+    release = next(event for event in events if event["event_type"] == "prefix_released")
+    release["server_time_utc"] = "2026-08-01T00:00:00Z"
+    question["server_time_utc"] = "2026-08-01T00:00:01Z"
+    rows[0]["question_only_submitted_at_utc"] = question["server_time_utc"]
+    rewrite_and_bind(rows, event_log, events)
+    with pytest.raises(ValueError, match="timestamps are not monotonic"):
+        verify_sequential_interaction_log(rows, event_log)
