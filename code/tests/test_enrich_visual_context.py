@@ -5,8 +5,33 @@ import sys
 import threading
 import time
 import types
+from pathlib import Path
 
+import pytest
 from PIL import Image
+
+from scripts.enrich_visual_context import first_frame
+
+
+def test_first_frame_resolves_portable_frame_root_and_rejects_escape(tmp_path):
+    root = tmp_path / "frames"
+    frame = root / "talk" / "frame.jpg"
+    frame.parent.mkdir(parents=True)
+    frame.write_bytes(b"frame")
+    item = types.SimpleNamespace(
+        video=types.SimpleNamespace(frame_paths=["talk/frame.jpg"])
+    )
+    assert first_frame(item, str(root)) == str(frame.resolve())
+
+    item.video.frame_paths = ["../outside.jpg"]
+    with pytest.raises(ValueError, match="must be relative"):
+        first_frame(item, str(root))
+
+    link = root / "linked.jpg"
+    link.symlink_to(frame)
+    item.video.frame_paths = ["linked.jpg"]
+    with pytest.raises(ValueError, match="cannot traverse a symlink"):
+        first_frame(item, str(root))
 
 
 def test_enrich_visual_context_with_mock_provider(tmp_path):

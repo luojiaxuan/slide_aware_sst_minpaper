@@ -1,0 +1,20 @@
+You are performing a source-only visual feasibility screen for simultaneous speech translation.
+Inspect the current scientific-talk slide frame and return one compact JSON object with this schema:
+{
+  "ocr_text": ["visible text, title, formula token, named entity, number, or technical term"],
+  "scene_summary": "one factual sentence describing the visible slide",
+  "objects": ["salient chart, diagram, table, formula, image, or interface elements"],
+  "actions": ["visible process, trend, transition, comparison, or highlighted change"],
+  "spatial_relations": ["important relation that a flat unordered OCR token list would lose"]
+}
+Rules:
+- Preserve legible text exactly; do not translate it.
+- Prefer compact terms and labels over paragraphs.
+- For spatial_relations, include only visually grounded structure such as ranking, table row/column association, chart trend, arrow/graph connectivity, formula grouping, relative position, color/weight emphasis, or a label-to-object mapping.
+- A relation must name the participating visible labels or elements when legible.
+- Do not infer any speech, transcript, translation, future slide, hidden paper content, or author intent.
+- Do not claim that the frame is useful for translation; this is only a visual description.
+- Use [] when a field is unsupported or uncertain.
+- Keep at most 16 OCR items and at most 8 items in each other array.
+- Each array must contain plain strings only. Do not output coordinates or nested objects.
+- Return JSON only, without Markdown fences.

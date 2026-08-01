@@ -1069,3 +1069,29 @@ or a stronger Qwen3-VL variant if available.
 - No human label was created by this work. Stage 4 remains causally blocked until
   question authoring, author audio review and two disjoint audio trajectories
   are frozen.
+
+## 2026-08-01 MCIF Reference-Free VLM Screen Input Freeze
+
+- Confirmed the statistical role split before doing more computation: five ACL
+  dev talks are discovery/futility only; five ACL eval talks cannot produce a
+  two-sided sign-test p-value below `0.0625`; the planned confirmatory unit is
+  the 21-talk MCIF subset, with at least 15 talks required to contain eligible
+  events. No segment-level pseudo-replication or noise-seed inflation is allowed.
+- Added `build_mcif_visual_context_screen.py` and a Qwen3-VL source-screen prompt.
+  The builder verifies the sealed MCIF source manifest, complete 21-talk state
+  set, contiguous intervals, state IDs, root confinement, symlink rejection and
+  every evidence-frame SHA256 before producing model input.
+- Materialized all 304 causal states, not a model-selected subset. Frozen input
+  SHA256 is `62fa1fb540ae279ddafcb2b8449a8cde355ea6fe828dd7ec6534d04c6d605073`;
+  frame-binding-set SHA256 is
+  `a2399ad294035557803f3a75d1ebe65613da99b89a5f36597124fd0c83bf4ad9`.
+  Source transcript, target/reference and model output were not consumed.
+- This artifact is a private automatic prescreen, not annotation or evidence of
+  translation benefit. Its output cannot drop states, supply suggested answers
+  to human authors, define `image_needed`, or enter paper statistics. The Git
+  contract is `data/manifests/mcif_visual_context_screen_input_v1_20260801.json`;
+  generated data remains local pending the Qwen3-VL run and private HF upload.
+- Four new regressions cover complete source-only construction, reference-seal
+  rejection, frame-hash drift, path escape, timeline gaps and symlink media. The
+  complete project suite passes `170 tests` with the same two upstream
+  `pypinyin` deprecation warnings.

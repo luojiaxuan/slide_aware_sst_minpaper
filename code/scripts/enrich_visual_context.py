@@ -174,6 +174,7 @@ def main() -> None:
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--dtype", choices=["auto", "float16", "bfloat16", "float32"], default="bfloat16")
     parser.add_argument("--prompt-file", default=None)
+    parser.add_argument("--frame-root", default=None)
     parser.add_argument("--max-new-tokens", type=int, default=256)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--offset", type=int, default=0)
@@ -229,7 +230,7 @@ def build_tasks(
             tasks.append(EnrichmentTask(passthrough=item))
             skipped += 1
             continue
-        frame_path = first_frame(item)
+        frame_path = first_frame(item, getattr(args, "frame_root", None))
         if frame_path is None:
             flush_pending()
             tasks.append(EnrichmentTask(passthrough=item))
@@ -432,10 +433,27 @@ def has_context(item: ChallengeItem) -> bool:
     return bool(visual and (visual.ocr_text or visual.scene_summary or visual.objects or visual.actions))
 
 
-def first_frame(item: ChallengeItem) -> str | None:
+def first_frame(item: ChallengeItem, frame_root: str | None = None) -> str | None:
     if not item.video or not item.video.frame_paths:
         return None
-    return item.video.frame_paths[0]
+    frame_path = Path(item.video.frame_paths[0])
+    if frame_root is None:
+        return str(frame_path)
+    root_path = Path(frame_root)
+    if root_path.is_symlink():
+        raise ValueError("Frame root cannot be a symlink")
+    root = root_path.resolve(strict=True)
+    if frame_path.is_absolute() or ".." in frame_path.parts:
+        raise ValueError("Frame path must be relative when --frame-root is set")
+    component = root
+    for part in frame_path.parts:
+        component = component / part
+        if component.is_symlink():
+            raise ValueError("Frame path cannot traverse a symlink")
+    resolved = (root / frame_path).resolve(strict=True)
+    if not resolved.is_file() or not resolved.is_relative_to(root):
+        raise ValueError("Frame path escapes --frame-root")
+    return str(resolved)
 
 
 def read_done_ids(path: Path) -> set[str]:

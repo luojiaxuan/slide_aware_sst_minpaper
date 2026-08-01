@@ -104,6 +104,36 @@ difference。候选条件是 `patch p75 >= 0.03` 或至少 12% patches 的 MAE `
 动画。它仍可能漏掉很小的局部更新，因此产物叫 candidate timeline，不叫 ground-truth
 slide boundary。需要精确 timing 的 event 若落在 transition window 内，必须排除 primary。
 
+## Reference-free Qwen3-VL source screen
+
+已冻结覆盖全部 304 个 causal states 的 private VLM screen input，而不是根据像素或 OCR
+挑选一部分 states。输入 SHA256 是
+`62fa1fb540ae279ddafcb2b8449a8cde355ea6fe828dd7ec6534d04c6d605073`；frame binding
+set SHA256 是
+`a2399ad294035557803f3a75d1ebe65613da99b89a5f36597124fd0c83bf4ad9`。Git manifest：
+[`../data/manifests/mcif_visual_context_screen_input_v1_20260801.json`](../data/manifests/mcif_visual_context_screen_input_v1_20260801.json)。
+
+构建命令：
+
+```bash
+cd code
+MCIF_ROOT=/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9
+PYTHONPATH=. .venv/bin/python scripts/build_mcif_visual_context_screen.py \
+  --causal-states "$MCIF_ROOT/qa/state_candidates_v2/causal_states.jsonl" \
+  --source-manifest ../data/manifests/mcif_translation_subset_materialized_20260801.json \
+  --state-root "$MCIF_ROOT/qa/state_candidates_v2" \
+  --output "$MCIF_ROOT/prescreen/qwen3_vl_source_screen_v1/input.jsonl" \
+  --summary-out ../data/manifests/mcif_visual_context_screen_input_v1_20260801.json \
+  --portable-output-label ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9/prescreen/qwen3_vl_source_screen_v1/input.jsonl
+```
+
+Prompt 是
+[`../code/configs/mcif_qwen3_vl_source_screen_v1.txt`](../code/configs/mcif_qwen3_vl_source_screen_v1.txt)，
+明确分开 visible text 与 flat OCR 会丢失的 chart/table/formula/layout/emphasis relation。
+该 pass 只做 source-side feasibility triage：不读取 transcript/reference/translation，不得删
+state，不得给 human author 看 suggested answer，也不得作为 `image_needed` 标签或 paper
+结果。它不是 blueprint 中受 oracle gate 约束的 automatic integration/compiler。
+
 ## 什么结果才足以支撑 paper
 
 仅有小幅 aggregate BLEU/COMET 提升不够。至少需要以下证据链：
@@ -143,7 +173,9 @@ correctness 不低于 -1 pp；它们是资源投入门槛，不是尚未注册�
 2. ACL dev 468-state frame timeline 已完成，见
    [`ACL6060_VISUAL_TIMELINE_20260801.md`](ACL6060_VISUAL_TIMELINE_20260801.md)；100-row
    balanced seed 也已冻结，下一步完成独立双标注。
-3. 冻结 candidate/source-packet/target-scoring 三件套，先跑 oracle headroom：document、
+3. MCIF 304-state reference-free VLM screen input 已冻结；完成私有 source-only prescreen、
+   QA 和 private HF upload，但不得用其输出修改 human inventory。
+4. 冻结 candidate/source-packet/target-scoring 三件套，先跑 oracle headroom：document、
    OCR、correct semantic/relation、matched wrong，覆盖 native 与 noise。
-4. 只有看到 content-specific early-commit 或稳定 robustness signal 后，才投入 automatic
+5. 只有看到 content-specific early-commit 或稳定 robustness signal 后，才投入 automatic
    VLM compiler、selection/gating 与 GPU inference。

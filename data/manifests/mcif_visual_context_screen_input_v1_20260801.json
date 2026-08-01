@@ -1,0 +1,17 @@
+{
+  "artifact": "reference_free_visual_context_screen_input_v1",
+  "causal_state_count": 304,
+  "causal_state_rows_sha256": "8942680b4825a2c6ecbeff462725f8b3b51cc002326e436c2ee7ea7d65fc6b0a",
+  "dataset": "mcif",
+  "frame_binding_set_sha256": "a2399ad294035557803f3a75d1ebe65613da99b89a5f36597124fd0c83bf4ad9",
+  "interpretation": "The manifest is a private source-only VLM prescreen over every causal state. It is not a human label, eligibility decision, or paper result, and no state may be dropped based on its output.",
+  "model_output_consumed": false,
+  "portable_output_label": "ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9/prescreen/qwen3_vl_source_screen_v1/input.jsonl",
+  "screen_input_sha256": "62fa1fb540ae279ddafcb2b8449a8cde355ea6fe828dd7ec6534d04c6d605073",
+  "source_transcript_consumed": false,
+  "status": "READY_FOR_PRIVATE_VLM_SCREEN_NOT_ANNOTATION",
+  "subset": "iwslt2026_translation_21",
+  "talk_count": 21,
+  "target_or_reference_consumed": false,
+  "upstream_revision": "e24065b919758263cfe5d157057278affe76ea7b"
+}

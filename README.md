@@ -6,6 +6,10 @@
 > 283 visually reviewed transition candidates and 304 conservative causal
 > states including initial states; each state unlocks only after two stable
 > frames. This establishes **visual/timing readiness, not translation benefit**.
+> A hash-bound, reference-free 304-state input is now frozen for a private
+> Qwen3-VL source-only prescreen. Its output may describe OCR and visual
+> relations but cannot become a human label, eligibility decision, sample
+> filter, or paper result.
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28
