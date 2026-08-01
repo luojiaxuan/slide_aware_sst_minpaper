@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "artifact": "mcif_flat_ocr_and_structured_text_source_screen_v1",
+  "packages": {
+    "paddleocr": "3.7.0",
+    "paddlepaddle_gpu": "3.3.0"
+  },
+  "upstream": {
+    "paddleocr_git_tag": "v3.7.0",
+    "paddleocr_git_commit": "b03f46425e8ff4442b268ce449e3eef758146cd4",
+    "paddleocr_wheel_sha256": "c0f0a81ad4112727f30c6fcf986ac0ef6a120d31ee0991a01fae0357ee32d338"
+  },
+  "inference_engine": "paddle_static",
+  "model_source": "huggingface",
+  "models": {
+    "layout_detection": "PP-DocLayout_plus-L",
+    "region_detection": "PP-DocBlockLayout",
+    "text_detection": "PP-OCRv6_medium_det",
+    "text_recognition": "PP-OCRv6_medium_rec",
+    "textline_orientation": "PP-LCNet_x1_0_textline_ori",
+    "table_classification": "PP-LCNet_x1_0_table_cls",
+    "wired_table_structure_recognition": "SLANeXt_wired",
+    "wireless_table_structure_recognition": "SLANet_plus",
+    "wired_table_cells_detection": "RT-DETR-L_wired_table_cell_det",
+    "wireless_table_cells_detection": "RT-DETR-L_wireless_table_cell_det",
+    "table_orientation_classification": "PP-LCNet_x1_0_doc_ori",
+    "formula_recognition": "PP-FormulaNet_plus-L",
+    "chart_recognition": "PP-Chart2Table"
+  },
+  "modules": {
+    "use_doc_orientation_classify": false,
+    "use_doc_unwarping": false,
+    "use_textline_orientation": true,
+    "use_seal_recognition": false,
+    "use_table_recognition": true,
+    "use_formula_recognition": true,
+    "use_chart_recognition": true,
+    "use_region_detection": true,
+    "format_block_content": true,
+    "markdown_ignore_labels": []
+  },
+  "batch_sizes": {
+    "input": 8,
+    "textline_orientation": 32,
+    "text_recognition": 32,
+    "formula_recognition": 8,
+    "chart_recognition": 1
+  },
+  "thresholds": {
+    "text_recognition_score": 0.0
+  },
+  "interpretation": "Flat OCR is the complete PP-OCRv6 overall OCR result in provider order. Structured text adds PP-StructureV3 layout, reading order, table, formula, and chart parsing over the same source frame and OCR models. PaddleOCR-VL is excluded because it is a document VLM, not a pure OCR baseline."
+}
