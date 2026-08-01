@@ -1144,3 +1144,32 @@ or a stronger Qwen3-VL variant if available.
   checks pass; manifest SHA256 is `4e1008ab...9cccc`. Uploaded 308 paths to the
   private MCIF source-prescreen repo at revision `4e80dd0a...ae49`, tag
   `mcif-native-causal-evidence-v1`; the remote checksum manifest is byte-identical.
+
+## 2026-08-01 MCIF Native OCR / Structure Evidence Completion
+
+- 在全部 304 个 native causal frames 上完成 matched flat PP-OCRv6 与
+  PP-StructureV3 抽取；21 talks 全覆盖，6 shards 为 `51,51,51,51,50,50`，0 failed
+  rows。source transcript、audio、target 和 reference 均未读取。
+- 冻结 PaddleOCR `3.7.0`、PaddleX `3.7.2`、PaddlePaddle GPU `3.3.0`、
+  `paddle_dynamic` 和 13-model byte-tree manifest。PP-Chart2Table 的 tied embedding
+  已做 runtime identity 检查；PaddleOCR-VL 被明确排除，因为它不是 OCR baseline。
+- 修复 PP-Structure table reconciliation 对 `KMeans(n_clusters=0)` 的批级失败污染：runner
+  递归隔离单帧，并只对精确 trigger 应用冻结 fallback。17 rows 最终通过
+  `disable_table_recognition` 完成，保留 flat OCR 和非 table structure；0 rows 丢失。
+- 最终产物含 7,123 flat OCR items 和 1,780 structure blocks。严格可机器读取的 non-flat
+  union 为 65 rows / 18 talks：chart 53、table 7、formula 5；另有 17 rows 只是 table
+  detection placeholders，不能当作 R1 table serialization。
+- 44-row hash-deterministic visual QA 支持 positive strata 的 broad precision，但在
+  layout/plain strata 中看到漏检 numerical tables、small chart、relation diagram 和
+  semantic illustration。因此自动 tiers 不能过滤 raw-image condition、定义
+  `image_needed` 或估计 event prevalence。
+- Hyper01 正式配置只占 GPU 0/1，每卡 3 workers；冻结 10 秒平均 utilization 为
+  98.6% / 98.9%。全套本地回归为 `227 passed`，仅有两个既有 `pypinyin`
+  deprecation warnings。
+- Portable 6.2 MB bundle 已上传 private HF：
+  [`gavinlaw/slide-aware-sst-mcif-source-prescreen@09004d42/ppstructurev3_source_screen_v1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/09004d4262278b26a1f2f014fdd908427f55797a/ppstructurev3_source_screen_v1)，
+  tag `mcif-ppstructurev3-source-screen-v1`。22 个远端文件已全量重下载，21-entry
+  `SHA256SUMS` 全部通过。
+- R0/R1 input extraction 至此完成。下一步是冻结 source-event packets / target scoring，
+  再做 document、unordered OCR、structured text、raw image、matched wrong 的 native/noisy
+  oracle headroom；当前仍没有 MCIF translation output 或 paper effect estimate。

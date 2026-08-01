@@ -102,6 +102,7 @@ permission is obtained.
 | Artifact | Local path | Canonical or intended HF destination | Upload status |
 | --- | --- | --- | --- |
 | MCIF 304-state native-resolution causal visual evidence v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9/evidence/native_causal_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/4e80dd0ae4f6bf4f0633cb9d605286d06f34ae49/native_causal_v1>, revision `4e80dd0ae4f6bf4f0633cb9d605286d06f34ae49`, tag `mcif-native-causal-evidence-v1`; Git manifest: `data/manifests/mcif_native_causal_evidence_v1_20260801.json` | Uploaded and checksum-byte-verified; `private=True`; 304 native PNGs, 21 talks, manifest SHA256 `4e1008ab...9cccc`; detector bucket-center correction moves evidence and availability from nominal `t` to actual `t+0.5s`, leaving the first half-second context-free. Source-only input for OCR/structure/raw-image baselines, not annotation or result |
+| MCIF 304-state flat PP-OCRv6 + PP-StructureV3 source screen | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9/evidence/ppstructurev3_source_screen_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/09004d4262278b26a1f2f014fdd908427f55797a/ppstructurev3_source_screen_v1>, revision `09004d4262278b26a1f2f014fdd908427f55797a`, tag `mcif-ppstructurev3-source-screen-v1`; Git manifest: `data/manifests/mcif_ppstructurev3_source_screen_v1_20260801.json` | Uploaded and full-remote-redownload checksum verified; `private=True`; 304 rows, 7,123 flat OCR items, 65 strict machine-readable chart/table/formula rows, 17 table-detection-only fallbacks, 0 failed rows. Automatic structure tiers are not labels, recall-complete negatives, ST results or evidence that pixels beat OCR |
 | MCIF 304-state reference-free Qwen3-VL-32B source screen | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9/prescreen/qwen3_vl_source_screen_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen>, revision `5da477ff7d199dbded0ffe44d6b41b9cd8c8e75d`, tag `mcif-source-only-qwen3-vl-32b-v1`; Git manifests: `data/manifests/mcif_visual_context_screen_{input_v1,qwen3_vl_32b_v1}_20260801.json` | Uploaded and checksum-byte-verified; `private=True`; 304/304 rows, 21 talks, 0 duplicate/parse failure/empty context; output SHA256 `55a6dafe...79682`; 98 same-prompt repairs then 6 compact repairs. Source-only prescreen, not annotation, sample filter, ST result or pixels-beyond-OCR evidence |
 | ACL60/60 dev controlled acoustic v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/noise/corruptions/acl6060_dev_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-controlled-acoustic-dev>, commit `d28c499c8845c4991b5ccea27bc9a2ad520f51fa`, tag `acl6060-controlled-acoustic-v1-20260801` | Uploaded; 75 source-only WAV files plus five metadata/card files; `private=True`; remote metadata and sampled WAV byte-verified |
 | ACL60/60 dev source-event annotation workspace v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/workspace_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-events>, revision `3199207c66b159ab39f662a32e0f6d633c9c2b79`, tag `acl6060-source-event-workspace-v1-20260801` | Uploaded; `private=True`; 100 frames, 100 source-only clips, isolated blank A/B sheets; no transcript/target/reference/model output; remote inventory and three downloaded files byte-verified; labels remain pending |
@@ -344,6 +345,12 @@ confirmed.
     An agent spot check also found one hallucinated arrow. The required baseline
     ladder is therefore unordered OCR, layout/structure-preserving text, and raw
     image; beating only unordered OCR does not establish that pixels are needed.
+36. The matched native-frame PP-OCRv6/PP-StructureV3 screen is complete at
+    private HF revision `09004d42...5797a`: 304/304 rows, 65 strict
+    machine-readable non-flat rows and 17 table-detection-only fallbacks. A
+    44-row visual QA found genuine structures in positive samples and clear
+    false negatives in layout/plain strata. These outputs freeze R0/R1 inputs
+    but cannot filter states, define labels or establish `vision > OCR`.
 
 ## Current Next Actions (2026-08-01)
 
@@ -359,8 +366,9 @@ confirmed.
    two-person cohort. Report all
    negatives, right-censoring, agreement and adjudication without modifying raw
    sheets.
-3. Use only aggregate MCIF prescreen coverage to refine the source-only rubric;
-   never expose row-level model suggestions to annotators or alter the frozen
+3. Treat MCIF morphology, native-frame OCR and structured-text extraction as
+   completed input readiness. Never expose row-level model suggestions to
+   annotators, treat automatic tiers as verified negatives, or alter the frozen
    304-state inventory. Freeze source-only packets and target scoring
    independently, then map document-only, unordered OCR, layout/structure-
    preserving text, raw image, matched wrong evidence, and native/noisy audio

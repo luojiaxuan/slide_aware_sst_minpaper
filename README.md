@@ -25,6 +25,14 @@
 > repo at revision
 > [`4e80dd0a`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/4e80dd0ae4f6bf4f0633cb9d605286d06f34ae49/native_causal_v1),
 > tag `mcif-native-causal-evidence-v1`; remote checksums are byte-verified.
+> 同一批 304 个 native causal frames 的 matched `flat PP-OCRv6 ->
+> PP-StructureV3` 输入层也已完成并冻结在 private HF revision
+> [`09004d42`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/09004d4262278b26a1f2f014fdd908427f55797a/ppstructurev3_source_screen_v1)，
+> tag `mcif-ppstructurev3-source-screen-v1`。304/304 rows 成功、0 failure；严格
+> machine-readable non-flat tier 为 65 rows / 18 talks，其中 chart 53、table 7、
+> formula 5。另有 17 个 table rows 只保留 detection placeholder，不能冒充结构化表格。
+> 44-row visual QA 还发现 negative strata 中有漏检 table/chart/diagram，因此自动层只用于
+> 构造 matched R0/R1 controls，不能过滤 raw-image condition 或定义 event label。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28

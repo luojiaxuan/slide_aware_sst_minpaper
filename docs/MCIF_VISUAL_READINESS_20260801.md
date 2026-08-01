@@ -135,6 +135,56 @@ Private HF source of truth：
 tag `mcif-native-causal-evidence-v1`；repo privacy 和远端 307-entry checksum manifest
 均已验证。
 
+## Native flat OCR / structured text evidence
+
+已在同一批 304 个 native causal frames 上完成 matched strong-text 输入层。它不读取
+transcript、audio、target 或 reference，并保留与 raw-image condition 完全相同的 state ID、
+frame hash 和 availability timing：
+
+- `R0` flat text：`PP-OCRv6_medium_det` + `PP-OCRv6_medium_rec`；
+- `R1` structured text：`PP-StructureV3`，显式输出 layout labels、reading order、bbox、
+  chart Markdown、table HTML 和 formula LaTeX；
+- `R2` raw image：仍使用同一 native PNG，不允许自动 structure screen 删除任何 state。
+
+冻结环境是 PaddleOCR `3.7.0`、PaddleX `3.7.2`、PaddlePaddle GPU `3.3.0`，
+`paddle_dynamic` engine。13 个实际模型目录的 byte-tree manifest SHA256 为
+`1a198c896a6d5f14bf78eeaba484e970962711bdddb103dc0f7d65961e41a5f2`，model-set
+SHA256 为 `293fae63149152935b8fb11a555d27667a9df1988d8281a0c074fc26079580af`。
+
+最终 6 shards 为 `51,51,51,51,50,50`，304/304 rows、21/21 talks、0 failure；flat OCR
+共有 7,123 items，structure 共有 1,780 blocks。严格区分“检测到结构”和“可被 text baseline
+消费的结构”后：
+
+| 自动层 | rows | talks | 解释 |
+| --- | ---: | ---: | --- |
+| machine-readable chart | 53 | 18 | 66 个 chart blocks 序列化为 Markdown table |
+| machine-readable table | 7 | 6 | 7 个 table blocks 序列化为 HTML table |
+| machine-readable formula | 5 | 3 | 12 个 formula blocks 序列化为 LaTeX |
+| 任一 machine-readable non-flat structure | 65 | 18 | 非互斥 union；只用于候选分层 |
+| table detection only | 17 | 10 | 21 个 image placeholders，不算可读 table |
+| layout hierarchy | 292 | 21 | title/header/footer 等；不能直接解释为 beyond-OCR |
+
+17 个 table rows 触发 PaddleX reconciliation 的 `KMeans(n_clusters=0)` bug。runner 先递归
+隔离到单帧，再按冻结策略尝试 fallback；最终只有 `disable_table_recognition` 成功。这些帧仍
+保留 flat OCR 和非 table structure，不能把 image placeholder 包装成完整 R1 table。
+
+hash-deterministic 44-row contact-sheet QA 覆盖上述 strata。8/8 chart、7/7
+machine-readable table、5/5 formula 和 8/8 table-detection-only 样本都能在 frame 中看到
+对应 broad structure；但 layout/plain strata 也出现漏检 numerical table、small chart、
+relation diagram 和 semantic illustration。因此 65-row strict tier 看起来有可用 precision，
+但不是 recall-complete negative set，不能用于过滤 raw-image states、估计 event prevalence 或
+定义 `image_needed`。
+
+Private HF source of truth：
+[`gavinlaw/slide-aware-sst-mcif-source-prescreen@09004d42/ppstructurev3_source_screen_v1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/09004d4262278b26a1f2f014fdd908427f55797a/ppstructurev3_source_screen_v1)，
+tag `mcif-ppstructurev3-source-screen-v1`。远端 22 files 已全量重下载并通过 21-entry
+`SHA256SUMS`。Git provenance：
+[`../data/manifests/mcif_ppstructurev3_source_screen_v1_20260801.json`](../data/manifests/mcif_ppstructurev3_source_screen_v1_20260801.json)。
+
+Hyper01 正式抽取只使用 GPU 0/1，每卡 3 workers；冻结的 10 秒样本平均利用率为 98.6% /
+98.9%。两进程/卡的早期配置因 shard imbalance 和 fallback tail 未稳定通过 90%，已保留为
+failed tuning attempt，不进入最终配置。
+
 ## Reference-free Qwen3-VL source screen
 
 已冻结覆盖全部 304 个 causal states 的 private VLM screen input，而不是根据像素或 OCR
@@ -243,12 +293,11 @@ correctness 不低于 -1 pp；它们是资源投入门槛，不是尚未注册�
 2. ACL dev 468-state frame timeline 已完成，见
    [`ACL6060_VISUAL_TIMELINE_20260801.md`](ACL6060_VISUAL_TIMELINE_20260801.md)；100-row
    balanced seed 也已冻结，下一步完成独立双标注。
-3. MCIF 304-state private source-only morphology prescreen、QA 和 HF upload 已完成；只用
-   aggregate coverage 完善 annotation rubric，不得用逐行输出修改 inventory 或提示
-   annotator。原生分辨率 `t+0.5s` causal evidence 已完成并上传 private HF。
-4. 在修正后的 native evidence 上冻结 `flat PP-OCRv6 -> PP-StructureV3 -> raw image`
-   三层 evidence，再跑 oracle headroom：document、
+3. MCIF 304-state private source-only morphology prescreen、native evidence、flat PP-OCRv6、
+   PP-StructureV3、QA 和 HF upload 均已完成；逐行自动输出不得修改 inventory、提示
+   annotator 或过滤 raw-image condition。
+4. 下一步冻结 source-event packets 和 target scoring，再跑 oracle headroom：document、
    unordered OCR、layout/structure-preserving text、raw image、matched wrong，覆盖 native
-   与 noise。
+   与 noise。R0/R1 input extraction 已完成，不等于 event 或 system output 已完成。
 5. 只有看到 content-specific early-commit 或稳定 robustness signal 后，才投入 automatic
    VLM compiler、selection/gating 与 GPU inference。

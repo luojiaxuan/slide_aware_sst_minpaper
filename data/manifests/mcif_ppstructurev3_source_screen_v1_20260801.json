@@ -1,0 +1,118 @@
+{
+  "artifact": "mcif_flat_ocr_and_ppstructurev3_source_screen_v1",
+  "status": "UPLOADED_PRIVATE_SOURCE_ONLY_AUTOMATIC_DIAGNOSTIC_NOT_ST_RESULT",
+  "upstream": {
+    "repo": "FBK-MT/MCIF",
+    "revision": "e24065b919758263cfe5d157057278affe76ea7b",
+    "license": "cc-by-4.0",
+    "native_evidence_revision": "4e80dd0ae4f6bf4f0633cb9d605286d06f34ae49",
+    "native_evidence_manifest_sha256": "4e1008ab919a0020f7e99bff3264bdf36c28bdc3a4a61508298db6c6f6b9cccc"
+  },
+  "generation": {
+    "extraction_git_commit": "e24c54d58841fcb08ff7557b797734b122b2c158",
+    "analysis_git_commit": "896d77d6d7d4b29c5e3c5f232cd38ce6b15aeb87",
+    "config": "code/configs/mcif_ppstructurev3_source_screen_v1.json",
+    "config_sha256": "84e678fe470d57c978e495b4de51573c0fc0a2860b2b981d0332bdd40ccfe6a1",
+    "resolved_config_sha256": "296b5e188ce9853c5f814a304ea4b9efbb44a09118db431efe92a61711925e67",
+    "scripts": [
+      "code/scripts/prepare_mcif_ppstructure_models.py",
+      "code/scripts/run_mcif_ppstructure_screen.py",
+      "code/scripts/finalize_mcif_ppstructure_screen.py",
+      "code/scripts/analyze_mcif_ppstructure_screen.py",
+      "code/scripts/render_mcif_ppstructure_qa_sheets.py"
+    ],
+    "packages": {
+      "paddleocr": "3.7.0",
+      "paddlex": "3.7.2",
+      "paddlepaddle_gpu": "3.3.0"
+    },
+    "models": {
+      "flat_text_detection": "PP-OCRv6_medium_det",
+      "flat_text_recognition": "PP-OCRv6_medium_rec",
+      "structure_pipeline": "PP-StructureV3",
+      "model_manifest_sha256": "1a198c896a6d5f14bf78eeaba484e970962711bdddb103dc0f7d65961e41a5f2",
+      "model_set_sha256": "293fae63149152935b8fb11a555d27667a9df1988d8281a0c074fc26079580af",
+      "inference_engine": "paddle_dynamic"
+    }
+  },
+  "inventory": {
+    "talks": 21,
+    "rows": 304,
+    "unique_ids": 304,
+    "flat_ocr_items": 7123,
+    "structured_blocks": 1780,
+    "source_transcript_consumed": false,
+    "target_or_reference_consumed": false,
+    "failed_rows": 0
+  },
+  "strict_evidence_tiers": {
+    "machine_readable_nonflat_structure_rows": 65,
+    "machine_readable_nonflat_structure_talks": 18,
+    "machine_readable_chart_rows": 53,
+    "machine_readable_table_rows": 7,
+    "machine_readable_formula_rows": 5,
+    "table_detection_only_rows": 17,
+    "layout_hierarchy_rows": 292,
+    "interpretation": "Categories overlap. Table image placeholders are detection-only and are excluded from the machine-readable table tier. Automatic categories are not recall-complete and cannot filter raw-image conditions."
+  },
+  "fallback": {
+    "trigger": "PaddleX table reconciliation KMeans(n_clusters=0)",
+    "strategy": "disable_table_recognition",
+    "rows": 17,
+    "preserved_outputs": "flat OCR plus non-table PP-Structure blocks",
+    "failed_rows_after_fallback": 0
+  },
+  "quality_audit": {
+    "qa_inventory_rows": 44,
+    "qa_inventory_sha256": "591942b1bf0d8af5ebd4f4c9052b0a910b58485404815cbba5b8818918b40830",
+    "qa_sheets_manifest_sha256": "e2bdea6eee3d2afa85b527fde1772bfdc69262442ef1c8379ff947a0e4f49aaa",
+    "visual_spot_check_sha256": "5b74ac6e3129d8ef98a3a3612003a6e290afed8b128f2e3f2fe24697d3df4a45",
+    "positive_sample_observation": "8/8 chart, 7/7 machine-readable table, 5/5 formula and 8/8 table-detection-only frames visibly contain the claimed broad structure.",
+    "negative_sample_observation": "Layout/plain strata contain missed charts, tables, relation diagrams and semantic illustrations; strict automatic tiers are high-precision candidates, not verified negatives or event labels.",
+    "flat_ocr_tokens_covered_by_structure_p50": 0.876404,
+    "structure_tokens_recoverable_from_flat_ocr_p50": 0.777778
+  },
+  "runtime": {
+    "host": "hyper01",
+    "container": "sglang-omni-jaxan",
+    "run_id": "mcif_ppstructurev3_source_screen_v1_20260801_130050",
+    "physical_gpu_ids": [
+      0,
+      1
+    ],
+    "workers_per_gpu": 3,
+    "shard_row_counts": [
+      51,
+      51,
+      51,
+      51,
+      50,
+      50
+    ],
+    "gpu_10_second_average_utilization_percent": {
+      "0": 98.6,
+      "1": 98.9
+    },
+    "gpu_utilization_target_percent": 90,
+    "utilization_target_met": true
+  },
+  "checksums": {
+    "output_sha256": "0d40c51cdaf44916a11411b6335103e9ab5a0447c1a3567b8c957aebda5e4e06",
+    "final_report_sha256": "8c40d153d18d09caf24a41099228307642ab6e53477906da6656c4b9d52ee365",
+    "analysis_report_sha256": "3f9705ad22757ed8fd59ff3f8ac464cba4508178b1e9aa003c1da338a0ef316c",
+    "bundle_checksum_manifest_sha256": "7514fd86af3164ad4eaecf82057a3255eb43068a74a5d53466b517984bd44d52",
+    "bundle_checksum_entries": 21
+  },
+  "local_staging": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9/evidence/ppstructurev3_source_screen_v1",
+  "hugging_face": {
+    "repo": "gavinlaw/slide-aware-sst-mcif-source-prescreen",
+    "repo_type": "dataset",
+    "path": "ppstructurev3_source_screen_v1",
+    "private_verified": true,
+    "revision": "09004d4262278b26a1f2f014fdd908427f55797a",
+    "tag": "mcif-ppstructurev3-source-screen-v1",
+    "remote_path_count": 22,
+    "full_remote_redownload_checksum_verified": true
+  },
+  "interpretation": "This artifact freezes matched flat OCR and structured-text inputs over identical native causal frames. It enables R0/R1/raw-image controls but does not establish source-event eligibility, translation benefit, or that raw pixels are necessary."
+}
