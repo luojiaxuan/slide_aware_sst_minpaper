@@ -1,0 +1,76 @@
+{
+  "artifact": "mcif_beyond_ocr_validation_workspace_v1",
+  "status": "UPLOADED_PRIVATE_TWO_ROLE_VIEWS_READY_HUMAN_LABELS_0_OF_304",
+  "local_staging": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/annotation/mcif_beyond_ocr_validation_workspace_v1",
+  "hugging_face": {
+    "repo": "gavinlaw/slide-aware-sst-mcif-outcomes",
+    "repo_type": "dataset",
+    "private_verified": true,
+    "path": "beyond_ocr_validation_workspace_v1",
+    "revision": "861401f295ab122e69c4f22820b8d501e891e6db",
+    "tag": "mcif-beyond-ocr-validation-workspace-v1",
+    "full_remote_redownload_files": 102,
+    "full_remote_redownload_byte_verified": true
+  },
+  "provenance": {
+    "builder_git_commit": "9da94a2e53f5cb612d21c65296917131b64d58ef",
+    "candidate_inventory_hf_revision": "01defe410b4fde07c647d8ed241dfbe501b5d691",
+    "source_ladder_hf_revision": "b13bd2045644f90a6de6be19f77a4af3acaa924f",
+    "reference_segments_sha256": "e7840e1b0cd0589e1a643b5d450c86372c4e6c6f67de594959926f9152ae172a",
+    "source_evidence_ladder_sha256": "8f77312b93562afd8a92ea0b3139fe5f91b21b08e9740d311a1fd0a83b594f7f",
+    "source_only_vlm_output_sha256": "55a6dafe5ebd1fc5f37226de7ce48e601d61e1fb914287a81bdb8f92b0479682",
+    "r1_strict_candidates_sha256": "ca6ba588e8e1e48a2bf686535dbc835c606e6c1c5dd454d4864fdd1796ef2a55",
+    "r2_semantic_candidates_sha256": "07e5cd1cfe77415392dfd1ce292e0784ce0078ccbe7d511eb5dce5f46422c273"
+  },
+  "inventory": {
+    "candidates": 152,
+    "candidate_segments": 120,
+    "candidate_talks": 21,
+    "r1_strict_candidates": 2,
+    "r2_semantic_candidates": 150,
+    "visual_validation_items": 152,
+    "target_author_items": 152,
+    "current_states": 91,
+    "unique_native_media_files": 91
+  },
+  "role_boundaries": {
+    "visual_validator_view": "slide + R0 + clean R1 blocks + candidate + proposed evidence; no source segment, target reference, real ids, timing, lead, or scorer mapping",
+    "target_author_view": "candidate + English source segment + Chinese reference; no slide, OCR, evidence tier, VLM description, real ids, timing, lead, or scorer mapping",
+    "scorer_private": "candidate, role-view and causal-state joins; never distribute to either annotator",
+    "visual_validator_forbidden_field_leaks": 0,
+    "target_author_forbidden_field_leaks": 0
+  },
+  "artifact_integrity": {
+    "files": 102,
+    "bytes": 32709288,
+    "visual_items_sha256": "bcc84ab17ae797a5c185d545aa2c0fefa7a6c146c56607325f967b0bf834efad",
+    "target_items_sha256": "c55e3a5a0d883fa2ab679ff4d440c12e3b2ede65b52541980e09f3163494f133",
+    "scorer_mapping_sha256": "d81a6ed026a1bfd300bfae82e37e232c4b7943f082751b52463ab76c8381cb3d",
+    "visual_checksum_entries": 93,
+    "visual_checksum_sha256": "014dbab23cc3f0c922854166de9fdb8361f96565f8390751bcf1cee424b4af4e",
+    "target_checksum_entries": 2,
+    "target_checksum_sha256": "e8229d4c008e2edf9159228e78c899ae4f11b2d818225262ddc36ff19f18917f",
+    "scorer_checksum_entries": 1,
+    "scorer_checksum_sha256": "84942d710971e84cf22d36eb974bbfe021760ca1347dff5ae7680929a93867f0",
+    "root_checksum_entries": 98,
+    "root_checksum_sha256": "0b480c19a1de2c0cbb2997290cde97a5f6dc0c25e01e6cf8affdcade5580c422",
+    "independent_rebuild_byte_identical": true
+  },
+  "quality_audit": {
+    "targeted_tests": 7,
+    "project_tests": 340,
+    "project_test_warnings": 2,
+    "all_candidate_rows_replayed_exactly_from_frozen_inputs": true,
+    "all_distributed_media_hash_and_dimensions_verified": true,
+    "all_role_rows_row_hash_verified": true,
+    "all_checksum_entries_verified": true
+  },
+  "human_labels": {
+    "visual_validation_completed": 0,
+    "visual_validation_total": 152,
+    "target_author_completed": 0,
+    "target_author_total": 152,
+    "audio_sufficiency_complete": false
+  },
+  "use_boundary": "Distribute exactly one role subtree per annotator. Never expose scorer_private or cross-role views. No item may enter audio sufficiency, event packets, inference, or pixels-beyond-OCR claims before both role freezes join successfully."
+}

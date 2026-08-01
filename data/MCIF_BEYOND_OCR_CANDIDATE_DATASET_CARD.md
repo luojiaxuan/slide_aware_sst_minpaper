@@ -64,3 +64,20 @@ source-side screening 或 control construction。它不能给 R0 target-event au
 删除“不好看”的 R2 condition。下一步必须生成物理隔离的 R1/R2 human-validation view；只有
 人工确认 visual description 正确、OCR 确实不足、event/target realization 合格的项，才可进入
 后续 audio sufficiency 与 event packet 流程。
+
+## Validation Workspace
+
+候选对应的双角色 workspace 已冻结在 private HF revision
+[`861401f2/beyond_ocr_validation_workspace_v1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/861401f295ab122e69c4f22820b8d501e891e6db/beyond_ocr_validation_workspace_v1)，
+tag `mcif-beyond-ocr-validation-workspace-v1`。它包含：
+
+- 152-item `visual_validator_view`：slide、R0、clean R1 blocks、candidate、proposed evidence；
+  不含 source segment、target reference、real ids、timing/lead 或 scorer mapping；
+- 152-item `target_author_view`：candidate、English segment、Chinese reference；不含 slide、
+  OCR、evidence tier、VLM description、timing/lead 或 scorer mapping；
+- `scorer_private`：保存两个 opaque item ids 与 candidate/state 的真实 join，禁止给任一 annotator。
+
+91 张 current-state native PNG 经过 hash/dimension 重验并使用 opaque media ids。102-file
+workspace 与独立 rebuild byte-identical，private HF 全量回下载逐字节验证；当前两侧都是
+`0/152` human labels。详细 manifest：
+[`manifests/mcif_beyond_ocr_validation_workspace_v1_20260801.json`](manifests/mcif_beyond_ocr_validation_workspace_v1_20260801.json)。

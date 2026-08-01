@@ -78,6 +78,14 @@
 > tag `mcif-beyond-ocr-candidate-inventory-v1`，远端 6 files 已全量回下载逐字节验证。R2 来自
 > source-only Qwen3-VL 描述，包含明显泛化噪声；它只是待独立人工验证的 proposal pool，
 > 仍不支持 `pixels > OCR`，也不能进入 inference 或替代 R0 authoring。
+> 152 个 beyond-OCR candidates 已进一步编译成物理隔离的双角色 workspace：152-item
+> `visual_validator_view` 只含 slide/R0/R1/candidate/evidence，152-item
+> `target_author_view` 只含 candidate/English source/Chinese reference，真实关联仅在
+> `scorer_private`。91 张 current-state native PNG 去重分发，机器审计为 0 forbidden-field
+> leak、0 human labels。workspace 冻结在 private HF revision
+> [`861401f2`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/861401f295ab122e69c4f22820b8d501e891e6db/beyond_ocr_validation_workspace_v1)，
+> tag `mcif-beyond-ocr-validation-workspace-v1`；102 files 全量回下载逐字节验证通过。只有两个
+> 角色的 frozen labels 成功 join 后，候选才可进入 audio sufficiency/event packets。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28

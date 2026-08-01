@@ -1351,3 +1351,28 @@ or a stronger Qwen3-VL variant if available.
 - 下一步构造与 R0 authoring 物理隔离的 R1/R2 validation workspace。人工先判断 VLM 描述是否
   符合 pixels、候选是否真的无法由 R0 OCR 得到、是否构成可计分 En→Zh event；通过后才进入
   独立 audio-sufficiency 与 event-packet gate。
+
+## 2026-08-01 MCIF Beyond-OCR Dual-role Validation Workspace Completion
+
+- 没有把 R1/R2 proposals 塞回 R0 author UI。新增 builder 对 919 references、304 ladder states、
+  304 source-only VLM rows 与 152 candidate rows 做完整 deterministic replay；只有逐行完全一致才
+  生成 workspace。实现绑定 clean Git `9da94a2`。
+- `visual_validator_view` 有 152 items，只展示 opaque item/media id、candidate、current native
+  slide、R0、clean R1 blocks 和 proposed evidence。它不含 English source segment、Chinese
+  reference、talk/segment/state id、timing、lead 或 scorer mapping；R2 item 明确要求同时判断
+  visual correctness、candidate support、R0 insufficiency 与 R1 insufficiency。
+- `target_author_view` 有 152 items，只展示另一个独立 opaque id、candidate、English segment 与
+  Chinese reference，用于 event eligibility、canonical source event 和 acceptable/forbidden Zh
+  realizations。它不含 slide、OCR、evidence tier、VLM description、timing、lead 或 scorer mapping。
+- `scorer_private` 保存两个 role ids 与 candidate/state 的真实 join，禁止给任一 annotator。
+  91 个 candidate-current states 的 native PNG 按 state 去重、重验 bytes/dimensions 并重命名为
+  opaque media ids。机器字段审计为 visual/target 两侧 0 forbidden leaks、0 labels。
+- 7 个 targeted tests 与全套 `340 passed` 通过，仅有两个既有 `pypinyin` warnings。正式
+  workspace 102 files / 32,709,288 bytes；第二次完整构建逐字节一致，visual/target/scorer/root
+  checksum entries 93/2/1/98 全通过。
+- 上传 private HF revision
+  [`861401f2/beyond_ocr_validation_workspace_v1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/861401f295ab122e69c4f22820b8d501e891e6db/beyond_ocr_validation_workspace_v1)，
+  tag `mcif-beyond-ocr-validation-workspace-v1`；102 files 全量回下载并逐字节验证。
+- 当前 visual 与 target 两侧都为 0/152。下一步实现 role-specific working-sheet validator、
+  localhost UI 与 create-once freeze/join；join 前不得生成 audio task、event packets 或
+  `pixels > OCR` 统计。
