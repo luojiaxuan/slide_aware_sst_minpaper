@@ -36,8 +36,9 @@
   ],
   "rerun_reason": "The historical three-condition run did not record an immutable model revision; all five conditions are rerun in one frozen matrix.",
   "selected_gpu_count": 2,
-  "workers_per_gpu": 2,
-  "shard_count": 4,
+  "workers_per_gpu": 1,
+  "batch_items": 4,
+  "shard_count": 2,
   "interpretation": {
     "slide_vs_wrong": "within-talk page specificity",
     "wrong_vs_cross_talk": "broad talk/domain priming",

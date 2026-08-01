@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import signal
 import subprocess
 import sys
 import time
@@ -25,6 +26,19 @@ def line_count(path: Path) -> int:
     return sum(1 for line in path.open(encoding="utf-8") if line.strip())
 
 
+def request_stop(process: subprocess.Popen) -> None:
+    if process.poll() is None:
+        os.killpg(process.pid, signal.SIGTERM)
+
+
+def wait_or_kill(process: subprocess.Popen, timeout: float = 30) -> int:
+    try:
+        return process.wait(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        os.killpg(process.pid, signal.SIGKILL)
+        return process.wait()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--items", type=Path, required=True)
@@ -34,6 +48,7 @@ def main() -> None:
     parser.add_argument("--model-revision", required=True)
     parser.add_argument("--conditions", default="none,slide,wrong,cross_talk,blank")
     parser.add_argument("--workers-per-gpu", type=int, default=1)
+    parser.add_argument("--batch-items", type=int, default=1)
     parser.add_argument("--chunk-s", type=float, default=1.0)
     parser.add_argument("--max-new-tokens", type=int, default=96)
     parser.add_argument("--seed", type=int, default=0)
@@ -46,6 +61,8 @@ def main() -> None:
         raise ValueError("GPU ids must be unique")
     if args.workers_per_gpu < 1:
         raise ValueError("workers-per-gpu must be positive")
+    if args.batch_items < 1:
+        raise ValueError("batch-items must be positive")
     worker_gpu_ids = [
         gpu_id
         for gpu_id in gpu_ids
@@ -54,6 +71,14 @@ def main() -> None:
     conditions = [value.strip() for value in args.conditions.split(",") if value.strip()]
     rows = [line for line in args.items.read_text(encoding="utf-8").splitlines() if line]
     args.run_root.mkdir(parents=True, exist_ok=True)
+    stop_requested = False
+
+    def request_supervisor_stop(_signum, _frame) -> None:
+        nonlocal stop_requested
+        stop_requested = True
+
+    signal.signal(signal.SIGTERM, request_supervisor_stop)
+    signal.signal(signal.SIGINT, request_supervisor_stop)
     workers = []
     for shard_index, gpu_id in enumerate(worker_gpu_ids):
         output = args.run_root / f"runs_shard_{shard_index}.jsonl"
@@ -75,6 +100,8 @@ def main() -> None:
             str(args.chunk_s),
             "--max-new-tokens",
             str(args.max_new_tokens),
+            "--batch-items",
+            str(args.batch_items),
             "--device-map",
             "cuda:0",
             "--shard-count",
@@ -92,6 +119,7 @@ def main() -> None:
             env=environment,
             stdout=log,
             stderr=subprocess.STDOUT,
+            start_new_session=True,
         )
         workers.append((shard_index, process, log, output, log_path))
 
@@ -99,6 +127,8 @@ def main() -> None:
     try:
         remaining = {shard_index for shard_index, *_ in workers}
         while remaining:
+            if stop_requested:
+                raise KeyboardInterrupt
             for shard_index, process, log, output, log_path in workers:
                 if shard_index not in remaining:
                     continue
@@ -111,17 +141,13 @@ def main() -> None:
                 if code != 0:
                     for peer_index, peer, _, _, _ in workers:
                         if peer_index in remaining and peer.poll() is None:
-                            peer.terminate()
+                            request_stop(peer)
                     break
             if any(code != 0 for code in exit_codes.values()):
                 for peer_index, peer, peer_log, _, _ in workers:
                     if peer_index not in remaining:
                         continue
-                    try:
-                        code = peer.wait(timeout=30)
-                    except subprocess.TimeoutExpired:
-                        peer.kill()
-                        code = peer.wait()
+                    code = wait_or_kill(peer)
                     if not peer_log.closed:
                         peer_log.close()
                     exit_codes[peer_index] = code
@@ -132,12 +158,8 @@ def main() -> None:
     finally:
         for _, process, log, _, _ in workers:
             if process.poll() is None:
-                process.terminate()
-                try:
-                    process.wait(timeout=30)
-                except subprocess.TimeoutExpired:
-                    process.kill()
-                    process.wait()
+                request_stop(process)
+                wait_or_kill(process)
             if not log.closed:
                 log.close()
 
@@ -180,6 +202,7 @@ def main() -> None:
         "conditions": conditions,
         "gpu_ids": gpu_ids,
         "workers_per_gpu": args.workers_per_gpu,
+        "batch_items": args.batch_items,
         "worker_gpu_ids": worker_gpu_ids,
         "model": args.model,
         "model_revision": args.model_revision,

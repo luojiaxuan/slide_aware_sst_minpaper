@@ -30,13 +30,16 @@ from __future__ import annotations
 import argparse
 import json
 import time
+from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Iterator
 
 import numpy as np
-import torch
 
 
 def main() -> None:
+    import torch
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--items", required=True,
                     help="JSONL/JSON: id, audio, slide_image, wrong_image, "
@@ -48,6 +51,8 @@ def main() -> None:
     ap.add_argument("--chunk-s", type=float, default=1.0,
                     help="audio revealed per READ step (seconds)")
     ap.add_argument("--max-new-tokens", type=int, default=96)
+    ap.add_argument("--batch-items", type=int, default=1,
+                    help="number of active streaming items generated together")
     ap.add_argument("--device-map", default="auto")
     ap.add_argument("--attn", default="sdpa")
     ap.add_argument("--limit", type=int, default=0)
@@ -55,6 +60,8 @@ def main() -> None:
     ap.add_argument("--shard-index", type=int, default=0)
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
+    if args.batch_items < 1:
+        raise ValueError("batch-items must be positive")
 
     from transformers import (AutoConfig, Qwen3OmniMoeProcessor,
                               Qwen3OmniMoeThinkerForConditionalGeneration)
@@ -66,6 +73,7 @@ def main() -> None:
     tokenizer = processor.tokenizer
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.padding_side = "left"
     cfg = AutoConfig.from_pretrained(
         args.model, revision=args.model_revision, trust_remote_code=True
     )
@@ -94,15 +102,24 @@ def main() -> None:
 
     with out_path.open("a", encoding="utf-8") as out:
         for cond in [value.strip() for value in args.conditions.split(",") if value.strip()]:
-            for i, it in enumerate(items):
-                if (it["id"], cond) in done:
-                    continue
-                t0 = time.time()
-                rec = stream_one(it, cond, processor, tokenizer, model, args)
-                rec["wall_s"] = round(time.time() - t0, 1)
+            todo = [
+                (index, item) for index, item in enumerate(items)
+                if (item["id"], cond) not in done
+            ]
+            for i, rec, wall_s in stream_many(
+                todo,
+                cond,
+                processor,
+                tokenizer,
+                model,
+                args,
+                batch_size=args.batch_items,
+            ):
+                rec["wall_s"] = round(wall_s, 1)
                 out.write(json.dumps(rec, ensure_ascii=False) + "\n")
                 out.flush()
-                print(f"[{cond}] {i+1}/{len(items)} {it['id']} "
+                done.add((rec["id"], cond))
+                print(f"[{cond}] {i+1}/{len(items)} {rec['id']} "
                       f"{rec['n_chunks']}ch {rec['wall_s']}s", flush=True)
     print("PROBE_DONE", flush=True)
 
@@ -123,7 +140,24 @@ def read_audio(path: str) -> tuple[np.ndarray, int]:
     return np.nan_to_num(a.reshape(-1)), int(sr)
 
 
-def stream_one(item, cond, processor, tokenizer, model, args) -> dict:
+@dataclass
+class StreamState:
+    source_index: int
+    item: dict
+    condition: str
+    audio: np.ndarray
+    sample_rate: int
+    chunk_samples: int
+    n_chunks: int
+    image: str | None
+    step: int = 0
+    committed: list[str] = field(default_factory=list)
+    previous: list[str] = field(default_factory=list)
+    events: list[tuple[int, int]] = field(default_factory=list)
+    started_at: float = field(default_factory=time.time)
+
+
+def prepare_stream_state(source_index: int, item: dict, cond: str, args) -> StreamState:
     audio, sr = read_audio(item["audio"])
     chunk = max(1, int(round(args.chunk_s * sr)))
     n_chunks = max(1, int(np.ceil(len(audio) / chunk)))
@@ -140,47 +174,199 @@ def stream_one(item, cond, processor, tokenizer, model, args) -> dict:
         image = item.get(image_fields[cond])
         if not image:
             raise ValueError(f"Missing image for {cond}: {item['id']}")
+    return StreamState(
+        source_index=source_index,
+        item=item,
+        condition=cond,
+        audio=audio,
+        sample_rate=sr,
+        chunk_samples=chunk,
+        n_chunks=n_chunks,
+        image=image,
+    )
 
-    committed: list[str] = []
-    prev: list[str] = []
-    events: list[tuple[int, int]] = []
-    tgt = item.get("tgt_lang", "English")
 
-    for step in range(1, n_chunks + 1):
-        prefix_audio = audio[: step * chunk]
-        text = translate_prefix(prefix_audio, sr, image, item, tgt,
-                                processor, tokenizer, model, args)
-        full = text.split()
-        if step == n_chunks:
-            k = len(committed)
-            if len(full) > k:
-                committed = committed + full[k:]
-                events.append((step, len(committed)))
-        else:
-            agree = full[:lcp(prev, full)]
-            if len(agree) > len(committed) and \
-                    [w.lower() for w in agree[:len(committed)]] == \
-                    [w.lower() for w in committed]:
-                committed = agree
-                events.append((step, len(committed)))
-        prev = full
+def stream_many(
+    indexed_items: list[tuple[int, dict]],
+    cond: str,
+    processor,
+    tokenizer,
+    model,
+    args,
+    *,
+    batch_size: int,
+) -> Iterator[tuple[int, dict, float]]:
+    if batch_size < 1:
+        raise ValueError("batch_size must be positive")
+    pending = iter(indexed_items)
+    active: list[StreamState] = []
 
-    return {"id": item["id"], "condition": cond, "n_chunks": n_chunks,
-            "chunk_s": args.chunk_s, "events": events,
-            "hypothesis": " ".join(committed),
-            "reference": item.get("reference", ""),
-            "image_used": image or "",
-            "model": args.model,
-            "model_revision": args.model_revision,
-            "attention": args.attn,
-            "max_new_tokens": args.max_new_tokens,
-            "seed": args.seed,
-            "shard_index": args.shard_index,
-            "shard_count": args.shard_count}
+    def refill() -> None:
+        while len(active) < batch_size:
+            try:
+                source_index, item = next(pending)
+            except StopIteration:
+                return
+            active.append(prepare_stream_state(source_index, item, cond, args))
+
+    refill()
+    while active:
+        prefixes = [
+            state.audio[: (state.step + 1) * state.chunk_samples]
+            for state in active
+        ]
+        texts = translate_prefix_batch(
+            prefixes,
+            [state.sample_rate for state in active],
+            [state.image for state in active],
+            [state.item for state in active],
+            [state.item.get("tgt_lang", "English") for state in active],
+            processor,
+            tokenizer,
+            model,
+            args,
+        )
+        completed: list[tuple[int, dict, float]] = []
+        remaining: list[StreamState] = []
+        for state, text in zip(active, texts, strict=True):
+            record = advance_stream_state(state, text, args)
+            if record is None:
+                remaining.append(state)
+            else:
+                completed.append(
+                    (state.source_index, record, time.time() - state.started_at)
+                )
+        active = remaining
+        refill()
+        yield from completed
+
+
+def advance_stream_state(state: StreamState, text: str, args) -> dict | None:
+    state.step += 1
+    full = text.split()
+    if state.step == state.n_chunks:
+        k = len(state.committed)
+        if len(full) > k:
+            state.committed.extend(full[k:])
+            state.events.append((state.step, len(state.committed)))
+    else:
+        agree = full[:lcp(state.previous, full)]
+        if len(agree) > len(state.committed) and \
+                [word.lower() for word in agree[:len(state.committed)]] == \
+                [word.lower() for word in state.committed]:
+            state.committed = agree
+            state.events.append((state.step, len(state.committed)))
+    state.previous = full
+    if state.step < state.n_chunks:
+        return None
+    return {
+        "id": state.item["id"],
+        "condition": state.condition,
+        "n_chunks": state.n_chunks,
+        "chunk_s": args.chunk_s,
+        "events": state.events,
+        "hypothesis": " ".join(state.committed),
+        "reference": state.item.get("reference", ""),
+        "image_used": state.image or "",
+        "model": args.model,
+        "model_revision": args.model_revision,
+        "attention": args.attn,
+        "max_new_tokens": args.max_new_tokens,
+        "batch_items": args.batch_items,
+        "seed": args.seed,
+        "shard_index": args.shard_index,
+        "shard_count": args.shard_count,
+    }
+
+
+def stream_one(item, cond, processor, tokenizer, model, args) -> dict:
+    result = list(
+        stream_many(
+            [(0, item)],
+            cond,
+            processor,
+            tokenizer,
+            model,
+            args,
+            batch_size=1,
+        )
+    )
+    if len(result) != 1:
+        raise RuntimeError("single-item stream produced an invalid result count")
+    return result[0][1]
 
 
 def translate_prefix(audio_prefix, sr, image_path, item, tgt,
                      processor, tokenizer, model, args) -> str:
+    return translate_prefix_batch(
+        [audio_prefix],
+        [sr],
+        [image_path],
+        [item],
+        [tgt],
+        processor,
+        tokenizer,
+        model,
+        args,
+    )[0]
+
+
+def translate_prefix_batch(audio_prefixes, sample_rates, image_paths, items, targets,
+                           processor, tokenizer, model, args) -> list[str]:
+    if not (
+        len(audio_prefixes) == len(sample_rates) == len(image_paths)
+        == len(items) == len(targets)
+    ):
+        raise ValueError("batched prefix inputs have different lengths")
+    if not audio_prefixes:
+        return []
+    if len(set(sample_rates)) != 1:
+        raise ValueError("all audio in a generation batch must share one sample rate")
+    texts = [
+        build_prompt(audio_prefix, image_path, item, target, processor)
+        for audio_prefix, image_path, item, target in zip(
+            audio_prefixes, image_paths, items, targets, strict=True
+        )
+    ]
+    images = [path for path in image_paths if path]
+    if images and len(images) != len(image_paths):
+        raise ValueError("a generation batch cannot mix image and audio-only conditions")
+    inputs = processor(
+        text=texts,
+        audio=list(audio_prefixes),
+        images=images or None,
+        videos=None,
+        return_tensors="pt",
+        padding=True,
+        sampling_rate=sample_rates[0],
+        use_audio_in_video=False,
+    )
+    device = next(model.parameters()).device
+    dtype = next(model.parameters()).dtype
+    for key, value in list(inputs.items()):
+        if hasattr(value, "to"):
+            inputs[key] = value.to(device=device, dtype=dtype) \
+                if key == "input_features" else value.to(device=device)
+    import torch
+
+    with torch.inference_mode():
+        generated = model.generate(
+            **inputs,
+            max_new_tokens=args.max_new_tokens,
+            do_sample=False,
+            pad_token_id=tokenizer.pad_token_id,
+            eos_token_id=tokenizer.eos_token_id,
+        )
+    prompt_width = inputs["input_ids"].shape[1]
+    if generated.shape[0] != len(audio_prefixes):
+        raise RuntimeError("model returned an unexpected generation batch size")
+    return [
+        clean(tokenizer.decode(row[prompt_width:], skip_special_tokens=True))
+        for row in generated
+    ]
+
+
+def build_prompt(audio_prefix, image_path, item, tgt, processor) -> str:
     content: list[dict] = []
     if image_path:
         content.append({"type": "image", "image": image_path})
@@ -195,26 +381,11 @@ def translate_prefix(audio_prefix, sr, image_path, item, tgt,
                     f"translate only what was actually said. Output only the "
                     f"{tgt} translation."})
     messages = [{"role": "user", "content": content}]
-
-    text = processor.apply_chat_template(messages, add_generation_prompt=True,
-                                         tokenize=False)
-    images = [image_path] if image_path else None
-    inputs = processor(text=text, audio=[audio_prefix], images=images,
-                       videos=None, return_tensors="pt", padding=True,
-                       sampling_rate=sr, use_audio_in_video=False)
-    device = next(model.parameters()).device
-    dtype = next(model.parameters()).dtype
-    for k, v in list(inputs.items()):
-        if hasattr(v, "to"):
-            inputs[k] = v.to(device=device, dtype=dtype) if k == "input_features" \
-                else v.to(device=device)
-    with torch.inference_mode():
-        gen = model.generate(**inputs, max_new_tokens=args.max_new_tokens,
-                             do_sample=False,
-                             pad_token_id=tokenizer.pad_token_id,
-                             eos_token_id=tokenizer.eos_token_id)
-    new = gen[0, inputs["input_ids"].shape[1]:]
-    return clean(tokenizer.decode(new, skip_special_tokens=True))
+    return processor.apply_chat_template(
+        messages,
+        add_generation_prompt=True,
+        tokenize=False,
+    )
 
 
 def clean(t: str) -> str:
