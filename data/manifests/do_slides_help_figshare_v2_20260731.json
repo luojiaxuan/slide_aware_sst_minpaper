@@ -1,0 +1,47 @@
+{
+  "artifact": "Do Slides Help? code and data",
+  "article_id": 30158932,
+  "version": 2,
+  "doi": "10.6084/m9.figshare.30158932.v2",
+  "canonical_url": "https://figshare.com/articles/software/Code_and_data/30158932",
+  "api_url": "https://api.figshare.com/v2/articles/30158932",
+  "license": "CC BY 4.0",
+  "published_date": "2025-09-18T17:37:23Z",
+  "outer_archive": {
+    "name": "Visual_ASR.zip",
+    "figshare_file_id": 58080118,
+    "download_url": "https://ndownloader.figshare.com/files/58080118",
+    "bytes": 216507975,
+    "md5": "44ecf0026b19664d431fd6d7a5855836",
+    "sha256": "f771d3f6f03026ad1510cf6840b47df3406b06b804926ab3ae18af99f663d4cc"
+  },
+  "acl6060_images": {
+    "archive_path": "Visual_ASR/benchmark/ACL_60_60_images.zip",
+    "bytes": 48795909,
+    "sha256": "ba794c97f474b1c8894ea17e33d936ab5b181f3b62b13c91f9b35fea7122fc75",
+    "image_count": 884,
+    "dev": {
+      "talk_ids": ["110", "117", "268", "367", "590"],
+      "rows": 468,
+      "metadata_path": "Visual_ASR/benchmark/acl_dev/acl_dev.json",
+      "metadata_sha256": "88cd02af60ce96cbd45381cc295916919d39875c7162a5afaca84171685637b8"
+    },
+    "eval": {
+      "talk_ids": ["111", "410", "468", "567", "597"],
+      "rows": 416,
+      "metadata_path": "Visual_ASR/benchmark/acl_eval/acl_eval.json",
+      "metadata_sha256": "78e5d253a2be5af46d43d899b2d2fecff2d290911884cc1115c3fc28fe91d6fe"
+    }
+  },
+  "provenance": {
+    "paper": "https://aclanthology.org/2025.emnlp-main.814/",
+    "frame_method": "One midpoint frame extracted from the original ACL talk video for each ACL60/60 audio segment.",
+    "training_slide_note": "The released ACL60/60 evaluation frames are real video frames. Synthetic LaTeX/PDF slides in the paper are used for training-data augmentation and are not these evaluation frames."
+  },
+  "inference_firewall": {
+    "metadata_contains_source_transcript": true,
+    "required_action": "Build a frame-only inference view containing talk id, frame path, and conservative availability timestamp. Never mount the sentence field in inference."
+  },
+  "local_staging": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/do-slides-help/figshare-v2",
+  "status": "DOWNLOADED_HASH_VERIFIED_NOT_YET_IMPORTED"
+}

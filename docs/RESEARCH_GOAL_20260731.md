@@ -2,8 +2,9 @@
 
 更新日期：2026-07-31
 
-状态：**Route A 的 scope record。两条路线的当前 GO/HOLD 判断与共享实验以
-[`DUAL_ROUTE_DECISION_20260731.md`](DUAL_ROUTE_DECISION_20260731.md) 为准。**
+状态：**历史 Route A scope record。当前 paper identity 与 oracle-first 执行顺序以
+[`PAPER_STORY_DECISION_20260731.md`](PAPER_STORY_DECISION_20260731.md) 为准；本文件
+只保留 semantic-slide 系统与 control 细节。**
 
 ## 一句话目标
 
@@ -99,9 +100,9 @@ visible-but-unspoken hallucination、wrong-evidence adoption、copy rate、AL/LA
    否则 method 应选择最便宜、最可审计且效果相当的结构化 evidence。
 
 若只通过第 1 层而不通过第 2 层，结果是 slide-derived contextual SST，而不是
-raw-vision paper；此时必须回到 dual-route contract，证明非术语 proposition/discourse
-memory 超过 term/entity/abstract/PDF-RAG baselines。仅超过 EGTA 的 term memory 不足以
-建立广义 context claim。
+raw-vision finding；此时按当前 contract 只报告 primary C5 correct-vs-control 与
+`C6 = C5`，并把非术语 proposition/discourse 作为 C4 secondary baseline。仅超过
+EGTA 的 term memory 不足以建立广义 context claim。
 
 ### B. 时间与持久性
 
@@ -213,8 +214,8 @@ setting 下 `correct - same-talk wrong = +0.34 chrF (p=0.22)`，没有证明局�
 
 ## Route A 的后续步骤
 
-1. 先执行 dual-route contract 的共享 `C0-C7` pilot，不为 Route A 单独建设第二套
-   runner 或 context pipeline。
+1. 先执行当前 paper-story contract 的 event-density + oracle screen，不为 Route A
+   单独建设第二套 runner 或 context pipeline。
 2. 只有 `C6 > C5` 的 A-GO gate 通过，才把共享条件映射为本文的 nested R0→R3、
    stale/wrong 和 native/+5/0 dB confirmatory config。
 3. 随后扩充 `image_needed` annotation、做 MDE/power audit、冻结 heuristic 与 one-shot

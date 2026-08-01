@@ -4,6 +4,9 @@
 
 对象：[`ACL_PAPER_BLUEPRINT_20260731.md`](ACL_PAPER_BLUEPRINT_20260731.md)
 
+状态：**历史 Route A review。当前单一 paper story 与更新后的 collision boundary 见
+[`PAPER_STORY_DECISION_20260731.md`](PAPER_STORY_DECISION_20260731.md)。**
+
 方式：主 agent 完成 primary-paper audit 后，由独立只读 agent 以 ACL reviewer 立场审计。
 
 ## 审计前 verdict

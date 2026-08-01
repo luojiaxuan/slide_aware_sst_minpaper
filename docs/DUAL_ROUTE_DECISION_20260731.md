@@ -2,9 +2,12 @@
 
 更新日期：2026-07-31
 
-状态：**当前权威的路线选择与 Phase-A 实验 contract。**
+状态：**`C0-C7` 与 Phase-A control contract 仍有效；paper identity 与执行优先级已由
+[`PAPER_STORY_DECISION_20260731.md`](PAPER_STORY_DECISION_20260731.md) 取代。**
 
-本文档取代“只能做 live-slide semantic evidence”的单一路线判断，但不废弃
+本文档保留 dual-route 决策形成过程与详细 controls，但不再决定最终论文身份。
+当前 paper 把 C1-C4 视为 external/secondary baselines，C5 视为 primary current-slide
+intervention，C6 视为 gated pixel-derived secondary。本文档不废弃
 [`ACL_PAPER_BLUEPRINT_20260731.md`](ACL_PAPER_BLUEPRINT_20260731.md) 中已经冻结的
 Route A 细节。后者现在是 Route A 的专项 blueprint；本文件决定两条路线如何在同一
 pilot 中比较、何时升级、何时停止。
@@ -182,9 +185,9 @@ Route A 只在 `VISUAL_RELATION` slice 上成立。若 pooled BLEU 上涨但 ima
 | `C2` | entities/abstract static prompt | CUHKSZ-style baseline |
 | `C3` | phrase boost + pretranslated PDF BM25/RAG | MLLP-style baseline |
 | `C4` | PDF-derived proposition/discourse memory | Route B1 核心 |
-| `C5` | C4 + slide OCR/layout propositions | slide text 增量 |
+| `C5` | frozen C3 + current-slide OCR/layout propositions | primary current-slide treatment |
 | `C6` | C5 + image-specific visual relations | Route A 增量 |
-| `C7` | C4-C6 的 same-domain wrong、shuffled、stale controls | 因果内容控制 |
+| `C7` | C4-C6 的 same-domain wrong、shuffled、stale controls | C5 matched control 为 primary，其余 secondary |
 
 所有条件：
 
@@ -263,6 +266,9 @@ span 或 commit decision。标注时不得查看系统输出。
 
 ## 8. GO / NO-GO Gates
 
+**本节是历史 dual-route gate。当前唯一 primary estimand、SESOI、oracle gate 与 power
+要求以 [`PAPER_STORY_DECISION_20260731.md`](PAPER_STORY_DECISION_20260731.md) 为准。**
+
 这些是 dev futility gates，不是最终论文显著性判定。
 
 ### B1-GO
@@ -296,8 +302,8 @@ span 或 commit decision。标注时不得查看系统输出。
 4. 增益分布在多个 talks，不由单张 chart 或单个 noise seed 驱动；
 5. image-needed events 数量足够支撑后续 talk-cluster power analysis。
 
-若 `C5 > C4` 但 `C6 = C5`，保留 slide-derived structured context，不声称 raw
-vision。若 `C6` 只在极端 noise 下有效，Route A 不升级为主 paper。
+若 primary C5 correct-vs-control 通过但 `C6 = C5`，只保留 current-slide structured
+finding，不声称 raw vision。若 `C6` 只在极端 noise 下有效，pixels 不进入主结论。
 
 ## 9. Pilot 后的论文身份
 
@@ -323,6 +329,8 @@ vision。若 `C6` 只在极端 noise 下有效，Route A 不升级为主 paper�
 | 当前动作 | HOLD inside shared pilot | GO first |
 
 ## 10. 执行顺序
+
+**本节已被 oracle-first 顺序取代，仅保留历史记录；不得执行。**
 
 1. 冻结 ACL60/60 dev/eval 与 MCIF revisions、licenses、talk ids；
 2. 接通 long-form SimulST runner，先复现 C0-C3；

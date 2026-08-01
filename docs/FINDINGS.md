@@ -125,57 +125,54 @@ inference, not direct measurement. **Evidence:** `runs_bias{2,4,8}.jsonl`,
    most of the injected image is irrelevant. RASST-style chunkwise retrieval over
    the visual channel is a different mechanism and remains untested.
 
-### Dual-route decision after related-work audit (2026-07-31)
+### Paper-story decision after locked collision audit (2026-07-31)
 
 The authoritative decision is now
-[`DUAL_ROUTE_DECISION_20260731.md`](DUAL_ROUTE_DECISION_20260731.md). Route B1
-is a conditional GO: compile typed, non-terminological context from paper/deck/
-slide materials before the talk, then test whether proposition, discourse and
-relation evidence improves SimulST beyond term memory, entities/abstract, and
-PDF BM25/RAG. Route A remains a HOLD inside the same pilot: promote a vision
-claim only if image-specific relations beat matched slide OCR/layout
-propositions.
+[`PAPER_STORY_DECISION_20260731.md`](PAPER_STORY_DECISION_20260731.md). The
+paper no longer switches between Route B1 and Route A. Its only primary question
+is whether correct current-slide content beats a time/type/budget-matched
+same-talk stale/wrong slide after both conditions receive the same strong
+document context.
 
-- **[high] Correction:** EGTA (arXiv:2607.17766) and RASST are terminology-only.
-  They materially collide with a new term retriever/gate, but they do not close
-  proposition, discourse, relation, or visual context.
-- **[high] Generic pre-talk context is still not a contribution by itself.**
-  IWSLT 2026 systems already use named entities, abstracts, phrase boosting,
-  paper pretranslation and BM25 translation memory. These become `C1-C3`
-  mandatory baselines.
-- **[hypothesis] Route B1 survives only if correct non-term context beats
-  term/entity/abstract/PDF-RAG at matched token budget and also beats
-  wrong/shuffled memory on predeclared term-masked events.** No such result has
-  been produced yet.
-- **[hypothesis] Route A survives only if `image + OCR` beats matched
-  `OCR/layout-only` semantics on `visual_relation` events.** Image-vs-none is
-  insufficient.
-- Direct raw-image representations remain optional. If structured evidence
-  matches them, the cheaper auditable representation wins.
+- **[high] Collision verdict:** independent Paper-Search and Scoop-Check both
+  returned Level 3 / partial overlap. No checked paper implements the full
+  conjunction, but its broad components are crowded.
+- **[high] New collision boundary:** OmniFusion/BOOM occupy slide-aware live
+  SimulST; VAPO occupies look-then-listen, OCR/image, mismatched-slide, and
+  visual-interference analysis; visual-context SiMT occupies anticipation and
+  image-conditioned READ/WRITE. These cannot be headline claims.
+- **[high] Remaining defensible axis:** with the document packet frozen, isolate
+  current-slide content identity and causal availability through correct versus
+  same-talk stale/wrong interventions.
+- **[hypothesis] Primary outcome:** talk-weighted +5 pp gain in stable correct
+  decisions before source audio resolves a locked forced choice, with final
+  correctness non-inferior by -1 pp. No such result exists yet.
+- **[high] Pixels are secondary:** a null C6 result is inconclusive unless a
+  gold visual-relation control is positive and a powered equivalence test passes.
 - Lip vision, AVMuST-TED execution, and slide+lip hybrid experiments remain out
   of scope.
-- All multimodal material is compiled before the talk in Route B1. Runtime VLM
-  calls are forbidden; only frozen causal lookup is allowed. Cold compilation,
-  on-path lookup, GPU seconds/RTF, and computation-aware latency are reported
-  separately.
 
-The next scientific action is a shared `C0-C7` futility screen, not model
-training. The eventual paper identity is conditional: context-aware if B1 alone
-passes, semantic vision if A passes, and no paper investment if gains reduce to
-terms or generic PDF RAG.
+The next scientific action is not a full `C0-C7` GPU run. First import the
+verified ACL60/60 real-frame supplement, blind-label evidence-opportunity
+density, and run document-only versus correct/wrong source-only oracle packets. If
+even the oracle has no content-specific accuracy or commit headroom, stop the
+automatic C3-C6 implementation.
 
 ### 2026 literature/data audit update (2026-07-31)
 
-- **[high] MCIF's 21-talk translation subset should be the primary held-out
-  benchmark.** The current HF revision has a broader 100-talk media pool; the
-  translation subset has 21 ACL 2023
+- **[high] MCIF's 21-talk translation subset is the primary project-held-out
+  long-form source, but its visual tier is not ready yet.** The current HF
+  revision has a broader 100-talk media pool; the translation subset has 21 ACL 2023
   talks, original MP4/WAV, human English transcripts, professional De/It/Zh
   translations, CC BY 4.0, and an official IWSLT 2026 long-form SimulST path.
-  This is stronger for talk-level inference than the five ACL60/60 eval talks.
+  This is stronger for talk-level inference than the five ACL60/60 eval talks,
+  but it becomes a visual confirmatory set only after the 21 videos and causal
+  slide timelines pass QA.
 - **[high] ACL60/60 should be development/replication, not the only main test.**
-  Its professional translations and external term tags are valuable, but its
-  audio was selected to be clear and the current repo only integrates five dev
-  talks. **Evidence:** ACL60/60 paper/release and local video audit.
+  Its professional translations and external term tags are valuable, and the
+  verified *Do Slides Help?* Figshare v2 supplement now adds 884 real frames
+  covering all 10 talks. Its audio remains deliberately clear, and five eval
+  talks alone are underpowered for a broad confirmatory claim.
 - **[high] MCIF and ACL60/60 are not native noisy benchmarks.** Noise must be
   described as a controlled full-talk intervention, with native audio reported
   separately. Noise seeds are repeated measures, not independent talks.

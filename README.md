@@ -11,18 +11,17 @@
 > per-claim confidence levels, raw-evidence pointers, and what would overturn
 > each conclusion.
 >
-> **Current research goal:** compare two semantic-context routes in one
-> falsifiable pilot. Route B1 precompiles typed, non-terminological context from
-> paper/deck/slide materials before the talk and keeps the VLM off the streaming
-> path. Route A tests whether image-specific relations add anything beyond
-> matched slide OCR/layout propositions. The authoritative route decision,
-> shared baselines, metrics, and GO gates are in
-> [docs/DUAL_ROUTE_DECISION_20260731.md](docs/DUAL_ROUTE_DECISION_20260731.md).
-> [docs/ACL_PAPER_BLUEPRINT_20260731.md](docs/ACL_PAPER_BLUEPRINT_20260731.md)
-> remains the detailed Route A contract, not the sole active plan. Lip video and
-> slide+lip hybrid experiments remain out of scope. The independent ACL-style
-> cross-review and remaining rejection risks are in
-> [docs/ACL_BLUEPRINT_REVIEW_20260731.md](docs/ACL_BLUEPRINT_REVIEW_20260731.md).
+> **Current paper story:** after giving a SimulST system the same strong
+> document/PDF context, test whether the causally available correct current
+> slide produces earlier stable correct decisions than a time-, type-, and
+> budget-matched same-talk stale/wrong slide. This is the only primary
+> estimand; non-term document representations and pixels-beyond-OCR are gated
+> secondary questions. The authoritative paper identity, audit, data update,
+> and kill test are in
+> [docs/PAPER_STORY_DECISION_20260731.md](docs/PAPER_STORY_DECISION_20260731.md).
+> The previous dual-route document remains the detailed `C0-C7` contract, not
+> the current narrative. Lip video and slide+lip hybrid experiments remain out
+> of scope.
 
 ## Original hypothesis (for the record)
 
@@ -55,20 +54,22 @@ latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
 
 ## Current paper direction (decided 2026-07-31)
 
-- **Route B1, conditional GO:** determine whether propositions, discourse
-  referents, relations, and scope compiled before a talk improve SimulST beyond
-  term memory, entities/abstract prompting, and PDF BM25/RAG.
-- **Route A, HOLD inside the same pilot:** promote a vision-aware claim only if
-  image-specific visual relations beat schema- and token-matched slide
-  OCR/layout propositions on predeclared `visual_relation` events.
-- **Route B0, NO-GO:** whole-PDF prompts, generic RAG, term/entity extraction,
-  or a new gate over those payloads are strong baselines, not contributions.
-- **Primary benchmark:** the 21-talk MCIF translation subset used by the
-  official IWSLT 2026 SimulST development corpus, En→Zh primary and En→De
-  replication. The current MCIF HF revision contains a broader 100-talk media
-  pool; only those 21 talks have the frozen translation protocol here.
+- **Single primary question:** does correct current-slide content beat a
+  matched same-talk stale/wrong slide after both receive the same frozen strong
+  document context?
+- **Primary outcome:** talk-weighted difference in stable correct decisions
+  emitted before source audio resolves the forced-choice ambiguity; SESOI is
+  +5 percentage points with a -1 pp final-correctness non-inferiority margin.
+- **Secondary only:** C1-C4 baseline variants and C6 pixels beyond OCR/layout.
+  Pixel nulls are inconclusive without a gold visual-relation positive control,
+  at least 15 eligible talk clusters, and an equivalence test.
+- **Project-held-out long-form source:** the 21-talk MCIF translation subset
+  used by the official IWSLT 2026 SimulST development corpus, En→Zh primary and
+  En→De replication. It becomes a visual-tier confirmatory set only after all
+  21 corresponding videos and causal slide timelines pass QA.
 - **Replication benchmark:** ACL60/60 dev/eval En→Zh, using its external term
-  annotations and direct lineage to *Do Slides Help?*.
+  annotations and direct lineage to *Do Slides Help?*. The verified Figshare v2
+  supplement adds 884 real talk-video frames covering all 10 talks.
 - **Private diagnostic:** Chinese-LiPS-Long for slide dwell/change timing and
   Chinese ASR/terminology probes. It is not a paper-grade ST ranking set without
   independent human references and confirmed use scope.
@@ -86,21 +87,20 @@ current benchmark contract.
 
 ## Next execution milestone
 
-Build the shared Phase-A dual-route futility screen:
+Run the data-density and oracle headroom screen before building the full
+automatic ladder:
 
-1. Phase-A data and runner revisions are frozen in
-   [docs/PHASE_A_DATA_RUNNER_FREEZE_20260731.md](docs/PHASE_A_DATA_RUNNER_FREEZE_20260731.md).
-   Build automatic, reference-free `C1-C2` context packets, implement the
-   causal ASR-prefix retriever required by `C3`, and pass a one-talk
-   no-reference dry run on the pinned long-form runner.
-2. Reproduce `C0-C3`: audio-only, automatic terminology memory,
-   entities/abstract prompt, and PDF phrase boost + pretranslated BM25/RAG.
-3. Compile `C4-C6`: document proposition/discourse memory, slide OCR/layout
-   propositions, and image-specific visual relations. Keep extraction offline
-   before the talk and match online context budgets.
-4. Blind-label 200-300 context-critical events, then run `C0-C7` on five
-   ACL60/60 dev talks at native and +5 dB. Keep all 21 MCIF talks held out until
-   one route passes its gate and the final system is frozen.
+1. Import the verified *Do Slides Help?* supplement into a frame-only ACL60/60
+   inference view; strip the bundled source transcript and use conservative
+   frame availability.
+2. Blind-label 80-120 candidate evidence-opportunity events on the five ACL dev
+   talks and estimate non-term/current-slide/image-specific density.
+3. Freeze candidate inventory, source-only packets, and target scoring, then
+   compare document-only, correct source-only oracle, and matched wrong oracle.
+   Continue only if correct evidence reaches the +5 pp primary SESOI across at
+   least 3/5 talks.
+4. Only after the oracle passes, reproduce `C0-C3`, compile `C4-C6`, and run the
+   frozen automatic ladder. Keep ACL eval and all 21 MCIF talks held out.
 
 ## Rules
 

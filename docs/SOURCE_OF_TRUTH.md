@@ -18,7 +18,9 @@ links, or handoff state.
 ## Current Git Pointers
 
 - GitHub repo: <https://github.com/luojiaxuan/slide_aware_sst_minpaper>
-- Current dual-route decision and shared Phase-A experiment contract:
+- Current paper identity, collision audit, primary intervention and oracle kill test:
+  [`docs/PAPER_STORY_DECISION_20260731.md`](PAPER_STORY_DECISION_20260731.md)
+- Preserved `C0-C7` and Phase-A control contract:
   [`docs/DUAL_ROUTE_DECISION_20260731.md`](DUAL_ROUTE_DECISION_20260731.md)
 - Phase-A data/runner freeze, provenance and no-reference boundary:
   [`docs/PHASE_A_DATA_RUNNER_FREEZE_20260731.md`](PHASE_A_DATA_RUNNER_FREEZE_20260731.md)
@@ -32,7 +34,7 @@ links, or handoff state.
   [`docs/FINDINGS.md`](FINDINGS.md)
 - OmniFusion latency/control reassessment:
   [`docs/OMNIFUSION_REASSESSMENT_20260731.md`](OMNIFUSION_REASSESSMENT_20260731.md)
-- Historical project framing (superseded by the dual-route decision):
+- Historical project framing (superseded by the current paper-story decision):
   [`docs/planning/SLIDE_CONTEXT_AWARE_MVP.md`](planning/SLIDE_CONTEXT_AWARE_MVP.md)
 - Agent handoff plan: [`docs/planning/AGENT_START_HERE.md`](planning/AGENT_START_HERE.md)
 - Historical Chinese-LiPS experiment matrix:
@@ -57,6 +59,7 @@ links, or handoff state.
 | --- | --- | --- |
 | Primary long-form held-out benchmark | MCIF paper/project: <https://arxiv.org/abs/2507.19634>, <https://mt.fbk.eu/mcif/>; HF `FBK-MT/MCIF` | Media pool frozen at revision `e24065b919758263cfe5d157057278affe76ea7b` (100 talks); official IWSLT ZIP freezes the 21-talk translation subset at SHA256 `445a4b92...88cedb7`; reference contents unopened |
 | Development and tagged-term replication | [ACL60/60 official release](https://aclanthology.org/2023.iwslt-1.2/) | dev/eval 5+5 complete talks, 468+416 gold segments and term annotations frozen at archive SHA256 `5f2a3855...cfce7cc`; inference and scoring views physically separated |
+| ACL60/60 real frame supplement | [Do Slides Help? Figshare v2](https://figshare.com/articles/software/Code_and_data/30158932) | CC BY 4.0 outer archive SHA256 `f771d3f6...3d4cc`; 884 frames cover all 10 talks; downloaded and verified, frame-only inference import pending |
 | Private timing/diagnostic benchmark | Chinese-LiPS derived private HF repo below | Available; not a paper-grade ST ranking set |
 | Controlled acoustic corruptions | MUSAN <https://www.openslr.org/17/> and AcousticRooms <https://www.openslr.org/119/> | Selected; revisions/seeds/mixing manifests not yet frozen |
 
@@ -136,61 +139,70 @@ confirmed.
 
 ## Current Durable Decisions (2026-07-31)
 
-1. Explore two semantic-context routes in one shared pilot; do not build or
-   present them as two equal paper contributions.
-2. Route B1 is conditional GO: precompile typed proposition, discourse,
-   relation, slide-text and optional visual context before the talk; keep the
-   VLM and test-time learning off the SimulST path.
-3. Route A is HOLD inside that pilot. Promote it only if image-specific visual
-   relations beat schema- and token-matched slide OCR/layout propositions.
-4. Generic whole-PDF prompts, named entities/abstracts, terminology memory,
+1. The single paper identity is current-slide content attribution after strong
+   document context for long-form SimulST.
+2. The only primary comparison gives both conditions the same frozen C3
+   document packet, then compares correct current-slide C5 against a
+   time/type/budget-matched same-talk stale/wrong C5 control.
+3. The primary outcome is the talk-weighted risk difference in stable correct
+   decisions emitted before source-audio forced-choice disambiguation. SESOI is
+   +5 percentage points; target-event final-correctness non-inferiority margin
+   is -1 pp.
+4. C1-C3 are external baseline variants; C4 non-term document propositions and
+   C6 pixels beyond OCR/layout are gated secondary questions. A pixel null is
+   inconclusive without a positive gold visual-relation control and a powered
+   equivalence test.
+5. Generic whole-PDF prompts, named entities/abstracts, terminology memory,
    phrase boosting, pretranslation and BM25/RAG are mandatory baselines, not
    contributions.
-5. EGTA and RASST are terminology-only. They close a term-only fallback but do
+6. EGTA and RASST are terminology-only. They close a term-only fallback but do
    not close proposition, discourse, relation or vision-aware context.
-6. Use the shared conditions `C0-C7`: audio-only; term memory; entities/abstract;
-   phrase boost + PDF RAG; document proposition/discourse; slide OCR/layout;
-   image-specific visual relation; matched wrong/shuffled/stale controls.
 7. Precompilation does not grant future-slide access. PDF memory is available
    before the talk; slide-derived entries unlock only at the real stable-slide
    timestamp. Deck-known-in-advance is a labeled ablation, not the primary run.
-8. Route B1 must improve term/entity-masked context-critical events beyond
-   `C1-C3` at matched context budget and beat wrong/shuffled memory.
-9. Route A must pass `C6 > C5` on predeclared pooled `visual_relation` events;
-   image-vs-none or aggregate BLEU alone cannot support a vision claim.
-10. Lip video and slide+lip hybrid experiments remain out of scope. AVMuST-TED
+8. Primary events use a source-side forced choice and an annotator interval
+   `[t_last_insufficient, t_first_sufficient]`; events with unresolved boundary
+   disagreement or slide-transition ambiguity are excluded from primary.
+9. Freeze candidate inventory, source-only evidence packets, and target scoring
+   as three independent artifacts. Packet builders never read references or
+   target translations.
+10. Before automatic C3-C6 implementation, run a blind event-density screen and
+    source-only correct-vs-wrong oracle capability test on ACL dev.
+11. Lip video and slide+lip hybrid experiments remain out of scope. AVMuST-TED
    is retained only as related-work and historical licensing context.
-11. The current speech+image result does not establish correct-slide content
+12. The current speech+image result does not establish correct-slide content
     use: its wrong slide comes from the same lecture.
-12. Measure slide dwell and slide-to-speech lead/lag rather than treating the
+13. The verified *Do Slides Help?* supplement contains 884 real ACL60/60 video
+    frames. Its metadata includes source transcripts, so only a stripped
+    frame-only manifest may enter inference.
+14. Measure slide dwell and slide-to-speech lead/lag rather than treating the
     estimated 30-60 s window as fact.
-13. Report cold pre-talk compilation, evidence-ready timing, on-path lookup,
+15. Report cold pre-talk compilation, evidence-ready timing, on-path lookup,
     packet tokens, GPU seconds/RTF, and computation-aware AL/LAAL separately.
-14. The 21-talk MCIF translation subset is the primary project-held-out
-    benchmark (En→Zh main, En→De replication); the current HF revision also
-    contains 79 non-translation media talks. ACL60/60 dev is the futility
-    screen and eval is replication.
-15. Native audio is Route B1's primary pilot condition. Controlled +5 dB noise
-    is Route A's primary stress condition; synthetic noise is not evidence of
-    real-world prevalence.
-16. Use Qwen pseudo references for development only; paper ranking requires
+16. ACL eval is only a five-talk replication pilot. MCIF is confirmatory only
+    after at least 15/21 talks have eligible events and its video hashes, slide
+    timelines, transition QA, inference-safe manifests, and MDE gate pass.
+17. Use Qwen pseudo references for development only; paper ranking requires
     human or independently produced references.
-17. Before any MCIF output, push frozen route, config, prompt, model, selector,
+18. Before any MCIF output, push frozen route, config, prompt, model, selector,
     metric and noise hashes. Run inference without mounted references and score
     only after the append-only 21-talk completion ledger closes.
-18. Git stores code/contracts/results; Hugging Face stores reusable data/model
+19. Git stores code/contracts/results; Hugging Face stores reusable data/model
     artifacts. Chinese-LiPS remains private diagnostic data, not the main paper.
 
 ## Current Next Actions (2026-07-31)
 
-1. Build automatic reference-free `C1-C2` context packets from the frozen five
-   ACL60/60 dev papers, then implement C3 causal ASR-prefix retrieval; preserve
-   exact WAV-list order and the 256-token-per-channel limit.
-2. Materialize the pinned Qwen model snapshots, pass a one-talk no-reference
-   dry run, then reproduce `C0-C3` on all five dev talks.
-3. Compile the typed `C4-C6` memories before each talk and blind-label 200-300
-   context-critical events on the five ACL60/60 dev talks.
-4. Run `C0-C7` at native and +5 dB with matched context budgets, then apply the
-   B1/A futility gates exactly once.
-5. Keep all 21 MCIF talks held out. Only a passing route proceeds to MDE/power,
-   frozen selector/evaluator, and one-shot confirmatory evaluation.
+1. Import the verified Figshare frames into a frame-only ACL60/60 manifest;
+   strip `sentence`, match the 468 dev rows to audio offsets, cluster slide
+   states, represent transitions as intervals, and use conservative first-frame
+   availability.
+2. Blind-label 80-120 source-side forced-choice candidates on ACL dev, including
+   random-span coverage and negative cases. Freeze candidate, source-only
+   packet, and target-scoring artifacts independently.
+3. Run document-only, correct source-only oracle, and matched wrong oracle.
+   Stop automatic C3-C6/GPU work if correct evidence does not reach the +5 pp
+   primary SESOI across at least 3/5 talks.
+4. Only after the oracle passes, build C1-C3, run a no-reference dry run, and
+   compile C4-C6 under the frozen primary/secondary protocol.
+5. Keep ACL eval and all 21 MCIF talks held out until prompts, schema, selector,
+   metrics, MDE, and the MCIF visual timeline are frozen and pushed.

@@ -2,10 +2,11 @@
 
 更新日期：2026-07-31
 
-状态：**Route A 的详细 paper contract，不再是唯一活跃路线。当前路线选择与共享
-Phase-A pilot 以 [`DUAL_ROUTE_DECISION_20260731.md`](DUAL_ROUTE_DECISION_20260731.md)
-为准；只有 Route A 通过其中的 A-GO gate 后，才执行本文的完整 confirmatory plan。
-实验结果尚未产生，所有正向结论均为待检验假设。**
+状态：**历史 Route A 的详细 confirmatory contract。当前 paper identity、ordered
+evidence ladder 与 oracle-first priority 以
+[`PAPER_STORY_DECISION_20260731.md`](PAPER_STORY_DECISION_20260731.md) 为准；本文只在
+`C6 > C5` 后提供 image-specific confirmatory 细节。实验结果尚未产生，所有正向结论
+均为待检验假设。**
 
 ## 1. 结论先行
 

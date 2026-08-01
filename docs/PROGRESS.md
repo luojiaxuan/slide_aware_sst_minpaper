@@ -483,7 +483,7 @@ or a stronger Qwen3-VL variant if available.
 - Stopped Chinese-LiPS pseudo-reference expansion and new multimodal training
   pending the shared pilot.
 
-## Open Items
+## Superseded Open Items (before paper-story audit)
 
 1. Build automatic reference-free `C1-C2` packets from the frozen ACL60/60
    dev PDFs, implement C3 causal retrieval, and pass the pinned one-talk
@@ -530,3 +530,49 @@ or a stronger Qwen3-VL variant if available.
   covered by the builder logic.
 - Detailed record:
   [`docs/PHASE_A_DATA_RUNNER_FREEZE_20260731.md`](PHASE_A_DATA_RUNNER_FREEZE_20260731.md).
+
+## 2026-07-31 Paper Story and Real-Frame Data Audit
+
+- Locked `docs/DUAL_ROUTE_DECISION_20260731.md` at SHA256
+  `ccb8376cbca48328ec1640dae6bd4aa516b07e8161a51c406e6936be7cd48767`
+  before literature judgment.
+- Ran independent primary-paper search and Scoop-Check. Both returned
+  Level 3 / partial overlap.
+- Added 2026 collision boundaries:
+  - OmniFusion and BOOM occupy slide-aware live/simultaneous translation;
+  - VAPO occupies look-then-listen, image/OCR, mismatched-slide, and visual
+    interference for slide ASR;
+  - visual-context SiMT occupies image-conditioned anticipation/READ-WRITE;
+  - EGTA/RASST and Context Helps/DoCIA occupy terminology selection and
+    discourse-context components.
+- Froze a single paper identity in
+  [`docs/PAPER_STORY_DECISION_20260731.md`](PAPER_STORY_DECISION_20260731.md):
+  current-slide content attribution after strong document context, measured as
+  correct-vs-matched-stale/wrong stable decisions before source-audio
+  disambiguation. C1-C4 and pixels-beyond-OCR are gated secondary questions.
+- Downloaded the official *Do Slides Help?* Figshare v2 supplement under CC BY
+  4.0 and verified outer SHA256
+  `f771d3f6f03026ad1510cf6840b47df3406b06b804926ab3ae18af99f663d4cc`.
+- Verified its real ACL60/60 frame coverage: dev 468 + eval 416 = 884 frames
+  over all 10 talks. These are video frames, not the paper's synthetic
+  transcript-to-LaTeX training slides.
+- Recorded source, hashes, coverage, local staging, and transcript-leakage
+  firewall in
+  [`data/manifests/do_slides_help_figshare_v2_20260731.json`](../data/manifests/do_slides_help_figshare_v2_20260731.json).
+- Changed the immediate execution order: import a frame-only inference view,
+  blind-label 80-120 source-side forced-choice candidates, then run
+  document-only versus correct/wrong source-only oracle packets. Automatic
+  C3-C6 and GPU inference are conditional on oracle headroom.
+- A separate hostile ACL review rejected the first broad “evidence sufficiency
+  ladder” revision for circular oracle construction, non-nested conditions,
+  five-talk power, subjective timing, underpowered pixel nulls, and missing
+  MCIF visual readiness.
+- Revised the final story to one primary contrast: after the same frozen C3
+  document context, compare correct current-slide C5 against a time/type/budget-
+  matched same-talk stale/wrong C5 control. Primary SESOI is +5 pp in stable
+  correct decisions before source-audio disambiguation; final-correctness
+  non-inferiority margin is -1 pp.
+- Added independent candidate/source-packet/target-scoring freezes, fixed-prefix
+  forced-choice timing intervals, source-only oracle packets, conservative
+  slide-state transitions, a gold visual-relation positive control, and an
+  MCIF gate requiring at least 15 eligible talks before confirmatory claims.

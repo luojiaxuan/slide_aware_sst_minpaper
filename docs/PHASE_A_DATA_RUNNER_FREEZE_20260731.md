@@ -2,7 +2,9 @@
 
 日期：2026-07-31
 状态：**数据与 runner revision 已冻结；`C0-C2` contract-driven launcher 已实现，
-`C1-C2` packets 与 `C3` causal retriever 尚未完成，GPU inference 尚未启动。**
+`C1-C2` packets 与 `C3` causal retriever 尚未完成，GPU inference 尚未启动。Paper-story
+audit 后的 oracle-first 执行优先级以
+[`PAPER_STORY_DECISION_20260731.md`](PAPER_STORY_DECISION_20260731.md) 为准。**
 
 ## 结论
 
@@ -126,12 +128,18 @@ Canonical Git manifests：
 - [`../data/manifests/acl6060_critical_files_20260731.jsonl`](../data/manifests/acl6060_critical_files_20260731.jsonl)
 - [`../data/manifests/mcif_files_e24065b9.jsonl`](../data/manifests/mcif_files_e24065b9.jsonl)
 - [`../data/manifests/acl6060_dev_simulstream_20260731.json`](../data/manifests/acl6060_dev_simulstream_20260731.json)
+- [`../data/manifests/do_slides_help_figshare_v2_20260731.json`](../data/manifests/do_slides_help_figshare_v2_20260731.json)
 
 ## 下一步
 
-1. 从五篇 ACL dev PDF 自动生成 `C1-C2` packets，不使用 official tags/references。
-2. 先生成 `C1-C2` static packets，再实现 `C3` causal ASR-prefix retriever；当前
-   launcher 会拒绝 C3。
-3. 在 GPU host materialize exact model snapshots；先做一个 talk 的 C0/C1 dry run，
+1. 先导入已校验的 *Do Slides Help?* ACL60/60 frames，生成只含 talk/frame/causal
+   availability 的 inference view；原 JSON 的 `sentence` 字段不得进入 inference。
+2. Blind 标注 80-120 个 source-side forced-choice candidates，独立冻结 source-only
+   packets 与 target scoring，并运行 document-only、correct oracle、matched wrong
+   oracle 的 headroom screen。
+3. Oracle 通过后，从五篇 ACL dev PDF 自动生成 `C1-C2` packets，再实现 `C3` causal
+   ASR-prefix retriever；当前 launcher 会拒绝 C3。
+4. 在 GPU host materialize exact model snapshots；先做一个 talk 的 C0/C1 dry run，
    检查 talk order、增量 commits、log completeness、RTF 和 context token logs。
-4. dry run 通过后跑五个 dev talks 的 `C0-C3`，再决定是否实现 `C4-C6`。
+5. dry run 通过后跑五个 dev talks 的 `C0-C3`，再实现 primary C5 intervention 与
+   gated C4/C6 secondary conditions。
