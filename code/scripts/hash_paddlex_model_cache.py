@@ -29,8 +29,19 @@ def canonical_hash(value: object) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
-def hash_model_directory(root: Path, name: str) -> dict[str, Any]:
-    model_root = root / name
+def resolved_model_name(requested_name: str, engine: str) -> str:
+    if engine in {"paddle_dynamic", "transformers"}:
+        return f"{requested_name}_safetensors"
+    if engine == "paddle_static":
+        return requested_name
+    raise ValueError(f"Unsupported PaddleX engine: {engine}")
+
+
+def hash_model_directory(
+    root: Path, requested_name: str, engine: str
+) -> dict[str, Any]:
+    resolved_name = resolved_model_name(requested_name, engine)
+    model_root = root / resolved_name
     if not model_root.is_dir() or model_root.is_symlink():
         raise FileNotFoundError(f"Missing plain PaddleX model directory: {model_root}")
     files = []
@@ -50,7 +61,8 @@ def hash_model_directory(root: Path, name: str) -> dict[str, Any]:
     if not files:
         raise ValueError(f"PaddleX model directory is empty: {model_root}")
     return {
-        "name": name,
+        "requested_name": requested_name,
+        "resolved_name": resolved_name,
         "file_count": len(files),
         "size_bytes": sum(item["size_bytes"] for item in files),
         "tree_sha256": canonical_hash(files),
@@ -62,8 +74,9 @@ def build_manifest(config: dict[str, Any], official_models_root: Path) -> dict[s
     models = config.get("models") or {}
     if not models:
         raise ValueError("Config contains no PaddleX models")
+    engine = config.get("inference_engine")
     unique_models = [
-        hash_model_directory(official_models_root, name)
+        hash_model_directory(official_models_root, name, engine)
         for name in sorted(set(models.values()))
     ]
     return {
@@ -75,7 +88,11 @@ def build_manifest(config: dict[str, Any], official_models_root: Path) -> dict[s
         "unique_models": unique_models,
         "model_set_sha256": canonical_hash(
             [
-                {"name": model["name"], "tree_sha256": model["tree_sha256"]}
+                {
+                    "requested_name": model["requested_name"],
+                    "resolved_name": model["resolved_name"],
+                    "tree_sha256": model["tree_sha256"],
+                }
                 for model in unique_models
             ]
         ),

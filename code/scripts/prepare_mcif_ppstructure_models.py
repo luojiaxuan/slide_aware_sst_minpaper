@@ -4,18 +4,59 @@
 from __future__ import annotations
 
 import argparse
+import gc
 import json
 import os
 from pathlib import Path
 from typing import Any, Callable
 
-from hash_paddlex_model_cache import build_manifest
+from hash_paddlex_model_cache import build_manifest, resolved_model_name
 from run_mcif_ppstructure_screen import (
     canonical_hash,
     create_pipeline,
     load_json,
     validate_config,
 )
+
+
+def validate_runtime_pipeline(pipeline: Any) -> dict[str, Any]:
+    paddlex_pipeline = pipeline.paddlex_pipeline
+    internal = getattr(paddlex_pipeline, "_pipeline", paddlex_pipeline)
+    chart_model = internal.chart_recognition_model.infer
+    input_weight = chart_model.get_input_embeddings().weight
+    output_weight = chart_model.get_output_embeddings().weight
+    if input_weight is not output_weight or input_weight.name != output_weight.name:
+        raise ValueError("PP-Chart2Table input and output embeddings are not tied")
+    return {
+        "chart_tied_embeddings": {
+            "same_parameter": True,
+            "parameter_name": input_weight.name,
+            "shape": [int(value) for value in input_weight.shape],
+        }
+    }
+
+
+def ensure_model_cache(
+    config: dict[str, Any], official_models_root: Path, device: str
+) -> None:
+    from paddlex.inference.models import create_predictor
+
+    engine = config["inference_engine"]
+    for requested_name in sorted(set(config["models"].values())):
+        resolved_name = resolved_model_name(requested_name, engine)
+        if (official_models_root / resolved_name).is_dir():
+            continue
+        predictor = create_predictor(
+            requested_name,
+            device=device,
+            engine=engine,
+        )
+        del predictor
+        gc.collect()
+        if not (official_models_root / resolved_name).is_dir():
+            raise FileNotFoundError(
+                f"PaddleX did not materialize expected model: {resolved_name}"
+            )
 
 
 def prepare(
@@ -26,6 +67,8 @@ def prepare(
     resolved_config_out: Path,
     model_manifest_out: Path,
     create_pipeline_fn: Callable = create_pipeline,
+    validate_runtime_fn: Callable = validate_runtime_pipeline,
+    ensure_model_cache_fn: Callable = ensure_model_cache,
 ) -> dict[str, Any]:
     validate_config(config)
     if os.environ.get("PADDLE_PDX_MODEL_SOURCE", "huggingface").lower() != config[
@@ -45,11 +88,14 @@ def prepare(
     pipeline, package_versions = create_pipeline_fn(config, device)
     try:
         pipeline.export_paddlex_config_to_yaml(str(resolved_tmp))
+        runtime_validations = validate_runtime_fn(pipeline)
     finally:
         pipeline.close()
+    ensure_model_cache_fn(config, official_models_root, device)
     manifest = build_manifest(config, official_models_root.resolve(strict=True))
     manifest["package_versions"] = package_versions
     manifest["config_sha256"] = canonical_hash(config)
+    manifest["runtime_validations"] = runtime_validations
     manifest_tmp.write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )

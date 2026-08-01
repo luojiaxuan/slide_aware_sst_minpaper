@@ -205,9 +205,17 @@ def test_model_manifest_must_bind_config_and_every_model():
         "config_sha256": module.canonical_hash(frozen),
         "models": frozen["models"],
         "unique_models": [
-            {"name": name, "tree_sha256": "a" * 64, "file_count": 1}
+            {
+                "requested_name": name,
+                "resolved_name": f"{name}_safetensors",
+                "tree_sha256": "a" * 64,
+                "file_count": 1,
+            }
             for name in sorted(set(frozen["models"].values()))
         ],
+        "runtime_validations": {
+            "chart_tied_embeddings": {"same_parameter": True}
+        },
     }
     module.validate_model_manifest(manifest, frozen, module.canonical_hash(frozen))
     manifest["unique_models"].pop()

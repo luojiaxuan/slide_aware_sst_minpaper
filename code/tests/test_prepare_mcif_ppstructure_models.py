@@ -44,7 +44,7 @@ def test_prepare_writes_atomic_model_and_resolved_manifests(tmp_path, monkeypatc
     config = json.loads(config_path.read_text(encoding="utf-8"))
     models_root = tmp_path / "official_models"
     for name in set(config["models"].values()):
-        model_root = models_root / name
+        model_root = models_root / f"{name}_safetensors"
         model_root.mkdir(parents=True)
         (model_root / "weights.bin").write_bytes(name.encode())
     pipeline = FakePipeline()
@@ -68,6 +68,10 @@ def test_prepare_writes_atomic_model_and_resolved_manifests(tmp_path, monkeypatc
         resolved_config_out=resolved,
         model_manifest_out=manifest_path,
         create_pipeline_fn=factory,
+        validate_runtime_fn=lambda _: {
+            "chart_tied_embeddings": {"same_parameter": True}
+        },
+        ensure_model_cache_fn=lambda *_: None,
     )
     assert pipeline.closed
     assert resolved.read_text(encoding="utf-8") == "pipeline: frozen\n"
@@ -83,4 +87,8 @@ def test_prepare_writes_atomic_model_and_resolved_manifests(tmp_path, monkeypatc
             resolved_config_out=resolved,
             model_manifest_out=manifest_path,
             create_pipeline_fn=factory,
+            validate_runtime_fn=lambda _: {
+                "chart_tied_embeddings": {"same_parameter": True}
+            },
+            ensure_model_cache_fn=lambda *_: None,
         )

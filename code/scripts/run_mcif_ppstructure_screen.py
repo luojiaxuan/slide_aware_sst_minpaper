@@ -104,14 +104,21 @@ def validate_model_manifest(
     if manifest.get("models") != config["models"]:
         raise ValueError("PaddleX model manifest inventory changed")
     records = manifest.get("unique_models") or []
-    names = [record.get("name") for record in records]
+    names = [record.get("requested_name") for record in records]
     if len(names) != len(set(names)) or set(names) != set(config["models"].values()):
         raise ValueError("PaddleX model manifest is incomplete")
     for record in records:
         if not isinstance(record.get("tree_sha256"), str) or len(record["tree_sha256"]) != 64:
             raise ValueError("PaddleX model manifest contains an invalid tree hash")
+        if not isinstance(record.get("resolved_name"), str) or not record["resolved_name"]:
+            raise ValueError("PaddleX model manifest contains an invalid resolved name")
         if not isinstance(record.get("file_count"), int) or record["file_count"] <= 0:
             raise ValueError("PaddleX model manifest contains an empty model")
+    chart_validation = (manifest.get("runtime_validations") or {}).get(
+        "chart_tied_embeddings"
+    ) or {}
+    if chart_validation.get("same_parameter") is not True:
+        raise ValueError("PaddleX chart tied embeddings were not validated")
 
 
 def validate_input_rows(
