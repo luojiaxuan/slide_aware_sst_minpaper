@@ -1,0 +1,179 @@
+{
+  "schema_version": "acl6060_source_event_annotation_v2",
+  "scope": "development_story_discovery_only",
+  "supersedes_protocol_only": "acl6060_source_event_annotation_v1",
+  "seed_and_media_unchanged": true,
+  "roles": {
+    "minimum_question_authors": 1,
+    "minimum_independent_audio_validators": 2,
+    "minimum_independent_frame_validators": 2,
+    "audio_and_frame_validator_cohorts_disjoint": true,
+    "question_authors_and_all_validators_disjoint": true,
+    "adjudicator_required": true,
+    "adjudicator_disjoint_from_authors_and_validators": true,
+    "validator_order_randomized": true
+  },
+  "stage_order": [
+    "frame_only_question_authoring_and_hash_lock",
+    "author_source_audio_relevance_check",
+    "validator_audio_only_boundary_pass",
+    "validator_frame_only_answer_pass",
+    "agreement_report",
+    "adjudication"
+  ],
+  "blinding": {
+    "question_author_before_lock": [
+      "current_frame",
+      "packet_timing"
+    ],
+    "question_author_forbidden_before_lock": [
+      "source_audio",
+      "source_transcript",
+      "target_translation",
+      "reference",
+      "model_output"
+    ],
+    "audio_validator_visible": [
+      "causal_source_audio_from_talk_start",
+      "locked_source_question",
+      "locked_randomized_options",
+      "prefix_grid"
+    ],
+    "audio_validator_forbidden": [
+      "frame",
+      "canonical_answer",
+      "source_transcript",
+      "target_translation",
+      "reference",
+      "model_output",
+      "other_validator_labels"
+    ],
+    "frame_validator_visible": [
+      "current_frame",
+      "locked_source_question",
+      "locked_randomized_options"
+    ],
+    "frame_validator_forbidden": [
+      "source_audio",
+      "canonical_answer",
+      "source_transcript",
+      "target_translation",
+      "reference",
+      "model_output",
+      "other_validator_labels"
+    ]
+  },
+  "question_authoring": {
+    "forced_choice_min_options": 2,
+    "forced_choice_max_options": 4,
+    "options_must_be_unique": true,
+    "canonical_answer_required": true,
+    "lock_hash_algorithm": "sha256_canonical_json_v1",
+    "lock_must_precede_audio_review": true,
+    "authoring_status": [
+      "pending",
+      "candidate",
+      "negative_no_visual_question",
+      "exclude_other"
+    ]
+  },
+  "author_audio_review": {
+    "speech_relevance_status": [
+      "pending",
+      "addressed",
+      "not_addressed",
+      "exclude_other",
+      "not_applicable"
+    ]
+  },
+  "audio_boundary": {
+    "prefix_step_sec": 0.96,
+    "audio_context_start_sec": 0.0,
+    "grid_anchor": "t_evidence_sec",
+    "grid_end": "min(t_evidence_sec_plus_60, source_audio_end)",
+    "boundary_times_use_full_talk_seconds": true,
+    "complete_response_trajectory_required": true,
+    "sequential_delivery_backend_required": true,
+    "append_only_interaction_log_required": true,
+    "minimum_stable_correct_steps": 2,
+    "response_states": [
+      "insufficient",
+      "uncertain",
+      "option"
+    ],
+    "first_stable_correct_is_derived_after_gold_unseal": true,
+    "right_censor_when_no_stable_correct_answer": true,
+    "maximum_primary_boundary_disagreement_steps": 2
+  },
+  "frame_validation": {
+    "frame_support_status": [
+      "pending",
+      "supported",
+      "unsupported",
+      "ambiguous"
+    ],
+    "frame_answer_required_when_supported": true,
+    "validator_relabels_evidence_subtypes": true
+  },
+  "adjudication": {
+    "status": [
+      "pending",
+      "resolved",
+      "unresolvable"
+    ],
+    "reason_labels": [
+      "boundary_disagreement",
+      "modality_label_disagreement",
+      "answer_disagreement",
+      "annotation_error",
+      "media_or_timing_failure",
+      "other"
+    ],
+    "append_only": true
+  },
+  "primary_eligibility": {
+    "author_candidate_and_audio_addressed": true,
+    "full_source_audio_gold_matches_visual_gold": true,
+    "question_only_not_uniquely_answerable": true,
+    "both_validators_frame_supported": true,
+    "both_frame_answers_match_canonical": true,
+    "both_audio_first_sufficient_answers_match_canonical": true,
+    "both_audio_responses_at_t_evidence_not_canonical": true,
+    "boundary_gap_within_maximum_steps_or_adjudicated": true
+  },
+  "agreement_metrics": [
+    "frame_answer_exact_agreement",
+    "frame_answer_accuracy_to_locked_canonical",
+    "audio_first_sufficient_answer_exact_agreement",
+    "audio_primary_component_agreement",
+    "boundary_gap_steps",
+    "boundary_interval_overlap",
+    "evidence_subtype_jaccard",
+    "stratified_yield_by_talk_and_selection_stratum"
+  ],
+  "evidence_subtypes": [
+    "ocr_sufficient",
+    "layout_required",
+    "chart_relation",
+    "formula_structure",
+    "visual_emphasis",
+    "speaker_or_object_visual"
+  ],
+  "negative_labels": [
+    "audio_already_sufficient",
+    "visual_not_unique",
+    "visual_gold_mismatch",
+    "no_future_spoken_answer",
+    "stale_frame",
+    "question_only_answerable"
+  ],
+  "exclusion_labels": [
+    "unintelligible_audio",
+    "nonunique_full_audio_gold",
+    "clipped_context",
+    "media_error",
+    "timing_unresolved",
+    "other"
+  ],
+  "target_stage_physically_separate": true
+}

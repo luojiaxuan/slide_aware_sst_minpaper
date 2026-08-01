@@ -710,3 +710,53 @@ or a stronger Qwen3-VL variant if available.
   one downloaded WAV. Labels remain `PENDING_DOUBLE_ANNOTATION`.
 - Detailed record:
   [`docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md`](ACL6060_SOURCE_EVENT_ANNOTATION_V1.md).
+
+## 2026-08-01 ACL60/60 Annotation Protocol v2
+
+- Independent methodology review rejected direct use of v1 A/B sheets. Two
+  independently authored forced-choice questions have no common answer space,
+  and seeing the frame answer before audio contaminates audio sufficiency.
+- Found a second P0: v1 windows include only five seconds before evidence and
+  cannot rule out an earlier answer in the full causal source prefix. v1 media
+  remains valid, but its annotation protocol is superseded.
+- Froze v2 as frame-only canonical authoring, question hash lock, author
+  full-audio relevance/gold check, two blinded talk-start causal-audio response
+  trajectories, then validation by a separate two-person frame-only cohort and
+  append-only adjudication. Author/audio/frame role IDs must all be distinct.
+- The audio grid starts at exact `t_evidence` and advances by 0.96 s. Validators
+  fill every `insufficient|uncertain|option_id` response through the restricted
+  `t_evidence+60s` endpoint; scorer derives first stable correct after unsealing
+  gold. Right-censoring is explicit.
+- Removed sampling-prior leakage: author/validator views omit stratum, replace
+  original A-numbers with 100 salted opaque ids, globally hash-randomize author
+  order, and independently randomize option order per validator. Real mapping
+  remains scorer-side only.
+- Implemented stage builders, author post-lock audio-review bundles, immutable
+  content/annotation hashes, actual-media hash revalidation, field allowlist
+  checks, full trajectory/grid validation, physically separate audio/frame
+  bundles, opaque per-validator option IDs/item order, two disjoint validator
+  cohorts, agreement metrics and adjudication flags. Nine packager/scorer tests cover
+  locks, grids, minimum stable evidence, packet completeness, negative
+  denominators, agreement and modality separation.
+- Implemented a sequential HTTP backend that withholds audio before question-only
+  lock, returns only `0..g_k`, rejects out-of-order responses, and emits a
+  hash-chained append-only interaction log. Two backend tests cover causal WAV
+  clipping, export and tamper rejection. Formal deployment must deny annotators
+  direct filesystem access to the audio root.
+- Implemented append-only adjudication sheets keyed to raw report-row hashes.
+  Conflicts remain `primary_eligible=null` until a locked decision exists, so
+  disagreement cannot be silently converted to a negative. Question-only
+  answerability is a non-overridable hard failure; positive adjudicated boundaries
+  must remain on the causal prefix grid.
+- Implemented the frozen-design prevalence estimator with per-stratum sample
+  count checks, finite-population correction, standard error and 95% CI. It
+  refuses to estimate while any adjudication or source exclusion remains unresolved.
+- Replaced the public fixed-salt opaque IDs with scorer-secret HMAC IDs; public
+  enumeration of `A001--A020` can no longer recover selection stratum.
+- Materialized author view r3: 100 frames, 0 WAV, 6,331,896 bytes. All frame
+  hashes and forbidden-field checks pass. No human labels exist.
+- Froze the ten `talk × stratum` pool sizes and inclusion probabilities. Raw
+  balanced-seed yield is not overall prevalence; the latter requires
+  inverse-probability weighting over 468 observations.
+- Detailed record:
+  [`docs/ACL6060_SOURCE_EVENT_ANNOTATION_V2.md`](ACL6060_SOURCE_EVENT_ANNOTATION_V2.md).

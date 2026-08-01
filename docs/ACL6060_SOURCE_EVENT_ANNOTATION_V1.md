@@ -2,9 +2,10 @@
 
 日期：2026-08-01
 
-状态：**100-row balanced seed、source-only media workspace 和两份隔离标签表均已生成；
-等待两个独立 source-side annotators。Automatic OCR diagnostic 只验证 headroom，不是已完成
-event inventory。Workspace 不含 source transcript、target/reference 或模型输出。**
+状态：**v1 seed/media workspace 已冻结并上传；v1 annotation protocol 已被 v2 supersede，
+不得直接填写 `annotator_a/b.jsonl`。Automatic OCR diagnostic 只验证 headroom，不是已完成
+event inventory。Workspace 不含 source transcript、target/reference 或模型输出。权威人工流程见
+[`ACL6060_SOURCE_EVENT_ANNOTATION_V2.md`](ACL6060_SOURCE_EVENT_ANNOTATION_V2.md)。**
 
 ## 目的
 
@@ -169,7 +170,6 @@ PYTHONPATH=. .venv/bin/python scripts/materialize_acl6060_source_event_workspace
 
 ## Completion gate
 
-报告每 talk/stratum 的 eligible、negative、excluded 数量，forced-choice agreement、
-boundary interval overlap/gap 和 subtype agreement。只有在 100 packets 中出现足够且跨
-talk 分布的 anticipatory events，才进入 current-vs-stale/wrong oracle rollout。此处不提前
-冻结最低 event count；先完成双标注并报告完整分布，再用开发证据决定是否继续。
+本节原 v1 gate 已 superseded。v1 的自拟 question 无法定义 forced-choice agreement，且
+`t_evidence-5s` clip 不能证明完整 causal prefix 尚不足。v2 使用共同 locked question、
+talk-start causal audio trajectory、frame/audio 物理分离和 scorer-side stratified weighting。

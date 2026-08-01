@@ -30,8 +30,10 @@ links, or handoff state.
   [`docs/CONTROLLED_ACOUSTIC_PIPELINE_20260801.md`](CONTROLLED_ACOUSTIC_PIPELINE_20260801.md)
 - ACL dev transcript-free visual timeline and transition false-negative audit:
   [`docs/ACL6060_VISUAL_TIMELINE_20260801.md`](ACL6060_VISUAL_TIMELINE_20260801.md)
-- ACL dev source-side event seed and double-annotation contract:
+- ACL dev source-side seed/media provenance and superseded v1 protocol:
   [`docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md`](ACL6060_SOURCE_EVENT_ANNOTATION_V1.md)
+- ACL dev authoritative blinded annotation v2 protocol and tooling:
+  [`docs/ACL6060_SOURCE_EVENT_ANNOTATION_V2.md`](ACL6060_SOURCE_EVENT_ANNOTATION_V2.md)
 - Route A ACL paper and confirmatory experiment contract:
   [`docs/ACL_PAPER_BLUEPRINT_20260731.md`](ACL_PAPER_BLUEPRINT_20260731.md)
 - Independent ACL-style review and resolved/residual risks:
@@ -95,6 +97,7 @@ permission is obtained.
 | --- | --- | --- | --- |
 | ACL60/60 dev controlled acoustic v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/noise/corruptions/acl6060_dev_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-controlled-acoustic-dev>, commit `d28c499c8845c4991b5ccea27bc9a2ad520f51fa`, tag `acl6060-controlled-acoustic-v1-20260801` | Uploaded; 75 source-only WAV files plus five metadata/card files; `private=True`; remote metadata and sampled WAV byte-verified |
 | ACL60/60 dev source-event annotation workspace v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/workspace_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-events>, revision `3199207c66b159ab39f662a32e0f6d633c9c2b79`, tag `acl6060-source-event-workspace-v1-20260801` | Uploaded; `private=True`; 100 frames, 100 source-only clips, isolated blank A/B sheets; no transcript/target/reference/model output; remote inventory and three downloaded files byte-verified; labels remain pending |
+| ACL60/60 source-event author view v2 r3 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/author_view_v2_blinded_r3` | Intended separate private HF repo: `gavinlaw/slide-aware-sst-acl6060-source-event-author-v2` | `PENDING_HF_UPLOAD`; 100 secret-HMAC-ID frames, 0 audio, no selection stratum; scorer mapping/secret excluded; no labels yet |
 | Chinese-LiPS frame-backed train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified.jsonl` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-context-sst-chinese-lips>, revision `a83770446ded4599bf9d95d2b77cdcc7fe359ef7`, tag `qwen3_vl_context_v1` | Not uploaded as a separate raw artifact |
 | Qwen2.5-VL pilot enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
 | Qwen2.5-VL pilot enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
@@ -228,11 +231,33 @@ confirmed.
     segment-frame exact-match events establish nonzero anticipation headroom,
     but the 901 overlapping n-grams and 344 de-nested candidates are not human
     event counts and cannot establish ST or pixels-beyond-OCR gains.
+26. v1 A/B annotation sheets are superseded. v2 uses one hash-locked canonical
+    question per packet, two audio validators plus a disjoint two-person frame
+    cohort, opaque per-validator option IDs/order, complete talk-start causal-
+    audio trajectories, and immutable scorer-side agreement records.
+27. The balanced 50/50 transition/random seed reports stratified yield. Overall
+    observation-level prevalence requires the frozen per-talk/stratum inclusion
+    probabilities; raw eligible/100 is not a natural event-density estimate.
+28. Static causal WAV bundles are intermediate media artifacts, not proof of
+    sequential annotation. The v2 HTTP backend enforces question-only lock and
+    stepwise prefix release, and `freeze-audio` verifies its hash-chained event
+    log. Formal deployment must also deny direct audio-root filesystem access.
+29. Validator conflicts remain missing (`primary_eligible=null`) until a
+    report-hash-bound adjudication is locked. Overall 468-observation prevalence
+    uses the frozen stratified finite-population estimator and is suppressed
+    while any adjudication or source exclusion remains unresolved. Hard failures
+    such as question-only answerability cannot be adjudicated positive.
+30. Author packet IDs use a scorer-only HMAC secret, not a public fixed salt.
+    The secret and true mapping remain outside Git and author-facing HF; only
+    their SHA256 provenance is recorded.
 
 ## Current Next Actions (2026-08-01)
 
-1. Complete double source-side annotation of the frozen 100-row ACL dev seed;
-   report all eligible, negative and excluded rows plus agreement.
+1. Complete v2 frame-only canonical item authoring and freeze question hashes;
+   deploy the implemented prefix gate to two independent audio validators, then
+   use a disjoint two-person cohort for frame validation. Report all
+   negatives, right-censoring, agreement and adjudication without modifying raw
+   sheets.
 2. Freeze source-only packets and target scoring independently, then map
    document-only, OCR, correct semantic/relation oracle, matched wrong
    evidence, and native/noisy audio headroom. A stable signal in any route can

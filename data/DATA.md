@@ -10,7 +10,7 @@ only documents locations and local staging conventions. No media is committed to
 | [gavinlaw/mtedx-v-eval](https://huggingface.co/datasets/gavinlaw/mtedx-v-eval) | mTEDx-V: talk-level long-form X→En manifests (es/fr/it/ru/el→en, 100 talks, ~18 h), `talk_id` = live YouTube ID, `visual_signal/` OCR stratification | CC BY-NC-ND 4.0 (manifests only, no media) | Realistic-noisy X→En eval stratum |
 | [gavinlaw/chinese-lips-longform-debug](https://huggingface.co/datasets/gavinlaw/chinese-lips-longform-debug) | Chinese-LiPS long-form: `orig_timeline` (real gaps restored) + `silence_removed` variants, 3 talks ~97 min; `en_draft_demo/` sample refs | CC BY-NC-SA 4.0 | Clean-visual zh→En stratum (En refs in progress) |
 | [gavinlaw/slide-aware-sst-controlled-acoustic-dev](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-controlled-acoustic-dev) | ACL60/60 dev full-talk controlled acoustic variants; 75 source-only PCM16 WAV files plus exact manifests/contracts | CC BY 4.0 / Apache 2.0 provenance | Private Phase-A robustness inputs; commit `d28c499c8845c4991b5ccea27bc9a2ad520f51fa`, tag `acl6060-controlled-acoustic-v1-20260801` |
-| [gavinlaw/slide-aware-sst-acl6060-source-events](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-events) | 100 ACL dev frame/audio packets and isolated blank A/B source-event sheets | CC BY 4.0 | Private; revision `3199207c66b159ab39f662a32e0f6d633c9c2b79`, tag `acl6060-source-event-workspace-v1-20260801`; labels pending |
+| [gavinlaw/slide-aware-sst-acl6060-source-events](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-events) | 100 ACL dev frame/audio packets and historical blank v1 A/B sheets | CC BY 4.0 | Private; revision `3199207c66b159ab39f662a32e0f6d633c9c2b79`, tag `acl6060-source-event-workspace-v1-20260801`; v1 sheets superseded by v2 |
 
 ## Phase-A frozen sources
 
@@ -26,6 +26,7 @@ only documents locations and local staging conventions. No media is committed to
 | ACL60/60 dev source-event seed v1 | derived from frame-only observations; no transcript/target/model output | 100 pending packets: 20 per talk, balanced change/random strata | [`annotations/acl6060_dev_source_event_seed_v1_20260801.jsonl`](annotations/acl6060_dev_source_event_seed_v1_20260801.jsonl), [`../docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md`](../docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md) |
 | ACL60/60 dev automatic anticipation diagnostic | source-only segment timing + Tesseract OCR over 468 real frames | 149 independent segment-frame matches; automatic headroom only, human audit pending | [`manifests/acl6060_dev_ocr_anticipation_v1_20260801.json`](manifests/acl6060_dev_ocr_anticipation_v1_20260801.json) |
 | ACL60/60 dev source-event workspace v1 | private HF revision `3199207c66b159ab39f662a32e0f6d633c9c2b79` | 100 frame/audio packets and isolated A/B sheets; no transcript/target/reference/model output; labels pending | [`manifests/acl6060_dev_source_event_workspace_v1_20260801.json`](manifests/acl6060_dev_source_event_workspace_v1_20260801.json) |
+| ACL60/60 dev source-event annotation v2 | local author view pending separate private HF upload | 100 opaque-ID frame-only author packets; 0 audio; scorer mapping/stratum physically excluded; no labels | [`manifests/acl6060_dev_source_event_annotation_v2_20260801.json`](manifests/acl6060_dev_source_event_annotation_v2_20260801.json), [`manifests/acl6060_dev_source_event_sampling_design_v2_20260801.json`](manifests/acl6060_dev_source_event_sampling_design_v2_20260801.json) |
 
 ACL60/60 dev 的 inference/scoring bundle 只在本地 staging；Git 仅保存
 [`manifests/acl6060_dev_simulstream_20260731.json`](manifests/acl6060_dev_simulstream_20260731.json)
@@ -54,6 +55,8 @@ ACL60/60 dev 的 inference/scoring bundle 只在本地 staging；Git 仅保存
   `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/noise/`.
 - ACL dev source-event OCR, automatic diagnostic and double-annotation workspace:
   `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/`.
+- ACL dev blinded v2 author/scorer views:
+  `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/`.
 - Historical staging: `~/research_idea/data_prep/` (`mtedx_videos/` 3.0G probe
   videos, `chinese_lips/` 1.9G raw+rebuilt audio).
 

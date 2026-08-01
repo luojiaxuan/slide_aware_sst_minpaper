@@ -1,0 +1,101 @@
+{
+  "dataset": "acl6060",
+  "split": "dev",
+  "artifact": "source_event_sampling_design_v2",
+  "status": "FROZEN_FOR_STRATIFIED_YIELD",
+  "total_observation_count": 468,
+  "transition_candidate_pool_count": 97,
+  "hash_random_observation_pool_count": 371,
+  "selected_count": 100,
+  "selection_salt": "acl6060-source-event-seed-v1",
+  "sampling_unit": "causal_frame_observation",
+  "strata": [
+    {
+      "talk_id": "2022.acl-long.110",
+      "selection_stratum": "transition_candidate",
+      "pool_count": 25,
+      "selected_count": 10,
+      "inclusion_probability": 0.4,
+      "inverse_probability_weight": 2.5
+    },
+    {
+      "talk_id": "2022.acl-long.110",
+      "selection_stratum": "hash_random_observation",
+      "pool_count": 83,
+      "selected_count": 10,
+      "inclusion_probability": 0.120481927711,
+      "inverse_probability_weight": 8.3
+    },
+    {
+      "talk_id": "2022.acl-long.117",
+      "selection_stratum": "transition_candidate",
+      "pool_count": 22,
+      "selected_count": 10,
+      "inclusion_probability": 0.454545454545,
+      "inverse_probability_weight": 2.2
+    },
+    {
+      "talk_id": "2022.acl-long.117",
+      "selection_stratum": "hash_random_observation",
+      "pool_count": 83,
+      "selected_count": 10,
+      "inclusion_probability": 0.120481927711,
+      "inverse_probability_weight": 8.3
+    },
+    {
+      "talk_id": "2022.acl-long.268",
+      "selection_stratum": "transition_candidate",
+      "pool_count": 24,
+      "selected_count": 10,
+      "inclusion_probability": 0.416666666667,
+      "inverse_probability_weight": 2.4
+    },
+    {
+      "talk_id": "2022.acl-long.268",
+      "selection_stratum": "hash_random_observation",
+      "pool_count": 83,
+      "selected_count": 10,
+      "inclusion_probability": 0.120481927711,
+      "inverse_probability_weight": 8.3
+    },
+    {
+      "talk_id": "2022.acl-long.367",
+      "selection_stratum": "transition_candidate",
+      "pool_count": 13,
+      "selected_count": 10,
+      "inclusion_probability": 0.769230769231,
+      "inverse_probability_weight": 1.3
+    },
+    {
+      "talk_id": "2022.acl-long.367",
+      "selection_stratum": "hash_random_observation",
+      "pool_count": 69,
+      "selected_count": 10,
+      "inclusion_probability": 0.144927536232,
+      "inverse_probability_weight": 6.9
+    },
+    {
+      "talk_id": "2022.acl-long.590",
+      "selection_stratum": "transition_candidate",
+      "pool_count": 13,
+      "selected_count": 10,
+      "inclusion_probability": 0.769230769231,
+      "inverse_probability_weight": 1.3
+    },
+    {
+      "talk_id": "2022.acl-long.590",
+      "selection_stratum": "hash_random_observation",
+      "pool_count": 53,
+      "selected_count": 10,
+      "inclusion_probability": 0.188679245283,
+      "inverse_probability_weight": 5.3
+    }
+  ],
+  "reporting_rule": "Report raw yield per talk and stratum. Overall observation-level prevalence, if reported, must use inverse-probability weighting over all ten strata.",
+  "interpretation_limit": "Transition candidates are defined by the audited high-precision/incomplete v1 detector. Weighted prevalence applies to the frozen 468-observation frame stream, not to an unobserved continuous slide-change process.",
+  "source_hashes": {
+    "frame_observations_sha256": "dba4fa3055aef0053f37d1795215110b4ad07b732e3b82325252e80d2e1f2fa5",
+    "transition_candidates_sha256": "2a1f4c126078bfbe1860f7dcc5c825dce791126972d9229dbafa620105fb4549",
+    "source_event_seed_sha256": "2163f2ce23082601bd6da7a75f6d50813be8c7932558027daba7422a90ffdec8"
+  }
+}
