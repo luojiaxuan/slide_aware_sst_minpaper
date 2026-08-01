@@ -979,3 +979,32 @@ or a stronger Qwen3-VL variant if available.
   dev effect estimate.
 - Contract:
   [`docs/ACL6060_EVENT_TRAJECTORY_SCORING_V1.md`](ACL6060_EVENT_TRAJECTORY_SCORING_V1.md).
+
+## 2026-08-01 Production Causal Inference Worker
+
+- Implemented `run_causal_event_inference_worker.py` and
+  `merge_causal_event_worker_shards.py` for in-process Qwen3-Omni generation.
+  The worker batches only across talks; within a talk it permits one released
+  prefix at a time, commits the exact hypothesis hash before advancing, and
+  assigns an independent session to every event/condition/acoustic stream. It
+  carries no persistent model KV or audio cache across prefixes.
+- Closed all three P1 findings from the independent read-only review. Contract
+  and ready bytes are now read once into one validated snapshot; the merger also
+  verifies the ready marker. The contract freezes exact read-only model and
+  tokenizer mounts; workers hash both trees before load and after generation,
+  then replay every rendered evidence packet through the model processor's
+  actual tokenizer and require exact token-ID equality.
+- Each done marker now binds contract/schedule/evidence hashes, worker
+  index/count, deterministic talk partition, PID/process-start ticks, complete
+  start-audit process-tree hash and canonical output path. Merge maps every
+  shard to one exact audited command and rejects missing, duplicate, stale,
+  overlapping or externally substituted workers before validating the complete
+  event/condition/acoustic/prefix matrix.
+- Added regressions for processor-tokenizer drift, deterministic worker
+  provenance, two acoustic conditions and two events sharing the same talk and
+  frontier time. The focused worker/scorer suite passes 37 tests; the complete
+  project suite passes `155 tests` with only two upstream `pypinyin` deprecation
+  warnings. All three affected CLIs also pass direct `--help` import/startup
+  checks. A formal model smoke and ACL run remain intentionally blocked until
+  human source/target outcomes are frozen and the same canonical container is
+  rebuilt with read-only rootfs, `network=none` and narrow mounts.

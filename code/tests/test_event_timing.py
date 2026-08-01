@@ -882,6 +882,7 @@ def inference_audit(phase="workers_start"):
                 "--inference-contract-ready-file /run/inference_contract.ready.json "
                 "--scientific-config /run/scientific_config.json "
                 "--model-artifact-root /models/frozen "
+                "--tokenizer-artifact-root /tokenizers/frozen "
                 f"--model-id fixture/model --model-revision {'d' * 40}"
             ),
             "marker_process": True,
@@ -924,6 +925,11 @@ def inference_audit(phase="workers_start"):
                 "read_only": True,
             },
             {"source": "/host/model", "destination": "/models/frozen", "read_only": True},
+            {
+                "source": "/host/tokenizer",
+                "destination": "/tokenizers/frozen",
+                "read_only": True,
+            },
         ],
         process_open_file_paths=["/data/public/audio.wav"],
         forbidden_artifact_exposure_detected=False,
@@ -970,6 +976,8 @@ def inference_contract(config):
         worker_scientific_config_path="/run/scientific_config.json",
         model_artifact_host_root_path="/host/model",
         worker_model_artifact_root_path="/models/frozen",
+        tokenizer_artifact_host_root_path="/host/tokenizer",
+        worker_tokenizer_artifact_root_path="/tokenizers/frozen",
         expected_worker_count=1,
         inference_repo_path="/data/repo",
         container_image_id="8" * 64,
@@ -1056,7 +1064,7 @@ def test_inference_contract_and_result_attestation_bind_outputs_and_inputs():
     with pytest.raises(ValueError):
         InferenceEnvironmentAudit.model_validate(bad_audit)
     bad_mount_payload = start_audit.model_dump()
-    bad_mount_payload["observed_mounts"][-1]["read_only"] = False
+    bad_mount_payload["observed_mounts"][-2]["read_only"] = False
     bad_start_audit = InferenceEnvironmentAudit.model_validate(bad_mount_payload)
     bad_mount_payload["capture_phase"] = "workers_end"
     bad_end_audit = InferenceEnvironmentAudit.model_validate(bad_mount_payload)
@@ -1066,6 +1074,23 @@ def test_inference_contract_and_result_attestation_bind_outputs_and_inputs():
             attestation,
             bad_start_audit,
             bad_end_audit,
+            **kwargs,
+        )
+    bad_tokenizer_mount_payload = start_audit.model_dump()
+    bad_tokenizer_mount_payload["observed_mounts"][-1]["read_only"] = False
+    bad_tokenizer_start_audit = InferenceEnvironmentAudit.model_validate(
+        bad_tokenizer_mount_payload
+    )
+    bad_tokenizer_mount_payload["capture_phase"] = "workers_end"
+    bad_tokenizer_end_audit = InferenceEnvironmentAudit.model_validate(
+        bad_tokenizer_mount_payload
+    )
+    with pytest.raises(ValueError, match="tokenizer artifact tree.*read-only"):
+        validate_inference_provenance(
+            contract,
+            attestation,
+            bad_tokenizer_start_audit,
+            bad_tokenizer_end_audit,
             **kwargs,
         )
     replaced_end_payload = end_audit.model_dump()
@@ -1488,6 +1513,7 @@ def test_scoring_cli_writes_hashed_complete_analysis(tmp_path):
                         f"--inference-contract-ready-file {inference_contract_ready_path} "
                         f"--scientific-config {scientific_config_path} "
                         f"--model-artifact-root {tokenizer_dir} "
+                        f"--tokenizer-artifact-root {tokenizer_dir} "
                         f"--model-id fixture/model --model-revision {'d' * 40}"
                 ),
                 "marker_process": True,
@@ -1715,6 +1741,7 @@ def test_scoring_cli_writes_hashed_complete_analysis(tmp_path):
         worker_contract_ready_file_path=str(inference_contract_ready_path),
         worker_scientific_config_path=str(scientific_config_path),
         worker_model_artifact_root_path=str(tokenizer_dir),
+        worker_tokenizer_artifact_root_path=str(tokenizer_dir),
         scoring_protected_artifact_roots=[
             str(target_path),
             str(outcome_commitment_path),

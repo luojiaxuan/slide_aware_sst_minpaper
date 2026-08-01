@@ -117,9 +117,9 @@ hash-chained interaction log。Scorer
 当前 Hyper00 diagnostic canonical container 仍将整个个人 `/data` 以 writable 方式挂入，
 不满足 read-only rootfs + narrow-mount contract；正式 ACL run 必须等当前 workload 结束后
 重建同名 canonical container，并把 full PCM/target/outcome roots 留在 host/broker 侧。
-因此当前状态是 **scorer、contract 与 broker protocol primitives ready，但 production
-inference worker 尚未实现**。Fresh paper-grade generation 仍被 worker integration、正式
-isolation rebuild 与人工 outcome freeze 阻塞；这里没有 system result。
+Production Qwen3-Omni worker 与 audited shard merger 已实现并通过本地回归；fresh
+paper-grade generation 仍被正式 isolation rebuild 与人工 outcome freeze 阻塞；这里没有
+ACL system result。
 
 Literal matcher 使用 Unicode NFKC 和 token-boundary matching。`C` 不匹配 `C++`，
 `GPT-4/GPT4` 与 `U.S./US` 按技术缩写规则归一；CJK 空格可忽略，但不能跨标点拼接。
@@ -233,7 +233,34 @@ PYTHONPATH=src python scripts/serve_causal_audio_prefixes.py \
   --broker-audit <run-root>/causal_audio_broker_audit.json
 ```
 
-Inference worker 在 barrier 等待时 capture start audit：
+确认 contract/ready、worker output/done/shutdown 文件都不存在后，先启动全部 worker。每个
+worker 固定一个 index，显式选择 GPU，并在模型加载前写 barrier-waiting marker；同一命令形状
+重复 `<N>` 次：
+
+```bash
+CUDA_VISIBLE_DEVICES=<gpu-id> PYTHONPATH=src python scripts/run_causal_event_inference_worker.py \
+  --run-id <run-id> \
+  --worker-index <i> \
+  --worker-count <N> \
+  --inference-contract <worker-visible-root>/inference_contract.json \
+  --inference-contract-ready-file <worker-visible-root>/inference_contract.ready.json \
+  --scientific-config <worker-visible-root>/scientific_config.json \
+  --model-artifact-root <worker-visible-model-root> \
+  --tokenizer-artifact-root <worker-visible-tokenizer-root> \
+  --model-id <model-id> \
+  --model-revision <40-char-revision> \
+  --causal-audio-schedule <worker-visible-root>/causal_audio_schedule.json \
+  --causal-audio-broker-audit <worker-visible-root>/causal_audio_broker_audit.json \
+  --evidence-packets <worker-visible-root>/evidence_packets.jsonl \
+  --broker-socket <worker-visible-socket>/audio.sock \
+  --output <worker-visible-root>/worker-<i>.jsonl \
+  --barrier-waiting-file <worker-visible-root>/worker-<i>.waiting.json \
+  --done-file <worker-visible-root>/worker-<i>.done.json \
+  --shutdown-file <worker-visible-root>/worker-<i>.shutdown
+```
+
+全部 waiting marker 出现且 PID/start ticks 与 live process 相符后，在 worker 仍等待 barrier 时
+capture start audit：
 
 ```bash
 PYTHONPATH=src python scripts/capture_inference_environment_audit.py \
@@ -275,27 +302,41 @@ PYTHONPATH=src python scripts/build_inference_contract.py \
   --worker-contract-ready-file-path <worker-visible-root>/inference_contract.ready.json \
   --worker-scientific-config-path <worker-visible-root>/scientific_config.json \
   --worker-model-artifact-root-path <worker-visible-model-root> \
+  --worker-tokenizer-artifact-root-path <worker-visible-tokenizer-root> \
   --scoring-protected-artifact-root <host-target-outcome-root> \
   --code-repo <clean-worktree> \
   --output <run-root>/inference_contract.json \
   --ready-file <worker-visible-root>/inference_contract.ready.json
 ```
 
-Worker 命令必须显式包含同一对 `--inference-contract` 和
-`--inference-contract-ready-file` 参数，并在任何模型 generation 前调用
-`slidesst.eval.inference_contract.wait_for_inference_contract_ready` 重算 contract hash；builder
-和 scorer 都会从 live process command 再次核对 barrier path、scientific config path、
-model id/revision/root。Worker 还必须调用
-`slidesst.eval.inference_contract.load_frozen_scientific_config`。当前
-仓库还没有调用这些 helper 并执行模型 generation 的 production worker；在该入口实现并通过
-end-to-end audit 前，本节是可执行 protocol contract，不是可启动的正式 inference pipeline。
-该 worker 还必须为每个 session 建立独立 inference state，禁止跨 acoustic stream 复用
-audio/model cache；broker 的串行 in-flight 约束不能单独证明 worker 内部 state isolation。
-Worker 每生成一步 hypothesis 后还必须调用
-`commit_causal_audio_observation`，成功后才能请求下一 prefix，最后一步同样必须 commit。
+Worker 从 ready/contract 各读一次并返回同一 validated contract/hash snapshot，不再二次读取
+contract 计算 trajectory identity。Builder、worker、merger 和 scorer 都核对 barrier path、
+scientific config、model/tokenizer identity 与 exact read-only mounts。模型加载前和全部
+generation 后重算完整 model/tokenizer tree；实际 Qwen3-Omni processor tokenizer 逐 packet
+重放 rendered evidence，必须与 frozen token IDs 完全一致。每个
+`event × condition × acoustic` 使用独立 session，每次 generation 都只接收本次 broker prefix，
+不保留跨 prefix 的 model KV/audio state；每步 hypothesis hash commit 成功后才请求下一 prefix。
+Worker 写完 hash-bound shard/done marker 后保持进程存活，等待 end audit 与 shutdown marker。
 
-全部 trajectories 写完但 worker 尚未退出时，用同一 capture 命令把 phase 改成
-`workers_end`。Broker 结束后依次封装 release log 与 result attestation：
+全部 done marker 出现但 worker 尚未退出时，用同一 capture 命令把 phase 改成
+`workers_end`。确认 start/end process tree 一致后创建各 worker 的 shutdown marker 并等待退出。
+Merger 必须在与 audited command 相同的 output/done path namespace 下执行；它重验 ready、
+start audit、PID/start ticks、确定性 talk partition 与完整矩阵：
+
+```bash
+PYTHONPATH=src python scripts/merge_causal_event_worker_shards.py \
+  --inference-contract <worker-visible-root>/inference_contract.json \
+  --inference-contract-ready-file <worker-visible-root>/inference_contract.ready.json \
+  --inference-environment-start-audit <run-root>/inference_environment_start_audit.json \
+  --causal-audio-schedule <worker-visible-root>/causal_audio_schedule.json \
+  --evidence-packets <worker-visible-root>/evidence_packets.jsonl \
+  --worker-output <worker-visible-root>/worker-0.jsonl \
+  --worker-done <worker-visible-root>/worker-0.done.json \
+  ... \
+  --output <run-root>/trajectories.jsonl
+```
+
+Broker 结束后依次封装 release log 与 result attestation：
 
 ```bash
 PYTHONPATH=src python scripts/finalize_causal_audio_release_log.py \

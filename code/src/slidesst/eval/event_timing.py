@@ -734,6 +734,8 @@ class InferenceContract(StrictModel):
     worker_scientific_config_path: str = Field(min_length=1)
     model_artifact_host_root_path: str = Field(min_length=1)
     worker_model_artifact_root_path: str = Field(min_length=1)
+    tokenizer_artifact_host_root_path: str = Field(min_length=1)
+    worker_tokenizer_artifact_root_path: str = Field(min_length=1)
     expected_worker_count: int = Field(gt=0)
     inference_repo_path: str = Field(min_length=1)
     container_image_id: str = Field(pattern=SHA256_PATTERN)
@@ -755,6 +757,8 @@ class InferenceContract(StrictModel):
             self.worker_scientific_config_path,
             self.model_artifact_host_root_path,
             self.worker_model_artifact_root_path,
+            self.tokenizer_artifact_host_root_path,
+            self.worker_tokenizer_artifact_root_path,
         ):
             if not canonical_absolute_posix_path(path):
                 raise ValueError("worker contract barrier paths must be canonical and absolute")
@@ -1491,6 +1495,10 @@ def validate_inference_provenance(
             ("--inference-contract-ready-file", contract.worker_contract_ready_file_path),
             ("--scientific-config", contract.worker_scientific_config_path),
             ("--model-artifact-root", contract.worker_model_artifact_root_path),
+            (
+                "--tokenizer-artifact-root",
+                contract.worker_tokenizer_artifact_root_path,
+            ),
             ("--model-id", contract.model_id),
             ("--model-revision", contract.model_revision),
         )
@@ -1513,6 +1521,12 @@ def validate_inference_provenance(
             source=contract.model_artifact_host_root_path,
             destination=contract.worker_model_artifact_root_path,
             label="model artifact tree",
+        )
+        require_read_only_mount(
+            environment_audit,
+            source=contract.tokenizer_artifact_host_root_path,
+            destination=contract.worker_tokenizer_artifact_root_path,
+            label="tokenizer artifact tree",
         )
     for trajectory in trajectories:
         if trajectory.inference_run_id != contract.run_id:

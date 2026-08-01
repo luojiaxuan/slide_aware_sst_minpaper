@@ -141,10 +141,11 @@ current benchmark contract.
    annotation/adjudication artifacts before output, captures start/end process-tree
    isolation, and includes an executable external audio broker. Its synchronized
    talk-level frontier prevents every condition/event/noise stream from seeing a
-   later audio time until all current-time hypotheses commit. Paper-grade fresh
-   generation remains blocked on a production inference worker, the read-only
-   `network=none` narrow-mount container rebuild and unfinished human outcome
-   artifacts; no ACL system result exists yet.
+   later audio time until all current-time hypotheses commit. The production
+   Qwen3-Omni worker and audited shard merger are now implemented and tested;
+   paper-grade fresh generation remains blocked on the read-only `network=none`
+   narrow-mount container rebuild and unfinished human outcome artifacts. No ACL
+   system result exists yet.
 
 ## Rules
 

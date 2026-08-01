@@ -300,10 +300,15 @@ confirmed.
     and must match, so per-GPU environments may differ but worker restarts cannot
     pass unnoticed. Container destinations, host mount sources and scoring
     protected roots are separate namespaces, and actual target/outcome/audio
-    roots are linked to the forbidden host set. A production inference worker
-    that actually invokes the barrier and causal broker APIs is not implemented
-    yet; it must also prove session-local inference state and no cross-acoustic
-    cache reuse. The current broad writable
+    roots are linked to the forbidden host set. The production Qwen3-Omni worker
+    now consumes one contract snapshot, rehashes model/tokenizer trees before
+    load and after generation, replays every evidence packet with the processor's
+    actual tokenizer, uses a distinct session for every event/condition/acoustic
+    stream, and never persists cross-prefix model/audio cache. Its done marker
+    binds contract/schedule/evidence hashes, deterministic talk partition,
+    PID/process-start ticks, audited process tree and canonical shard path. The
+    merger checks the ready marker and maps every shard to one exact start-audit
+    worker command before accepting the complete matrix. The current broad writable
     `/data` diagnostic container cannot satisfy this isolation; fresh paper-grade
     generation remains blocked on rebuilding the same canonical container after
     active work and completing human outcome artifacts. The primary
@@ -337,9 +342,13 @@ confirmed.
    practical headroom. Use the frozen event scorer in
    [`ACL6060_EVENT_TRAJECTORY_SCORING_V1.md`](ACL6060_EVENT_TRAJECTORY_SCORING_V1.md);
    do not substitute aggregate BLEU/AL for its content-specific timing outcome.
-4. Run small automatic comparisons for viable routes, including naive prompts,
+4. After the human freeze, rebuild the canonical inference container with
+   read-only rootfs, `network=none`, narrow read-only model/tokenizer/config
+   mounts and no target/reference/full-audio mount. Run the implemented causal
+   workers and audited merger before any scoring artifact is exposed.
+5. Run small automatic comparisons for viable routes, including naive prompts,
    selection/gating, and direct-image input. Preserve the complete declared
    development matrix.
-5. Select the final paper story from development evidence, then freeze and push
+6. Select the final paper story from development evidence, then freeze and push
    its main claim, metric, model/config, slices, and decision rule before ACL
    eval or MCIF is read.

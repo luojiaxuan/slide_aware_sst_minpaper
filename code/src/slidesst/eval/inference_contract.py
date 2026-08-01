@@ -110,6 +110,7 @@ def build_inference_contract(
     worker_contract_ready_file_path: str,
     worker_scientific_config_path: str,
     worker_model_artifact_root_path: str,
+    worker_tokenizer_artifact_root_path: str,
     scoring_protected_artifact_roots: list[str],
     code_repo: Path,
     output: Path,
@@ -197,6 +198,9 @@ def build_inference_contract(
     normalized_scoring_roots = [Path(root).resolve(strict=True).as_posix() for root in scoring_protected_artifact_roots]
     scientific_config_host_path = scientific_config.resolve(strict=True).as_posix()
     model_artifact_host_root_path = model_artifact_root.resolve(strict=True).as_posix()
+    tokenizer_artifact_host_root_path = tokenizer_artifact_root.resolve(
+        strict=True
+    ).as_posix()
     _require_protected(target_scores, normalized_scoring_roots)
     _require_protected(outcome_commitment, normalized_scoring_roots)
     _require_protected(outcome_artifact_root, normalized_scoring_roots)
@@ -212,6 +216,12 @@ def build_inference_contract(
         destination=worker_model_artifact_root_path,
         label="model artifact tree",
     )
+    require_read_only_mount(
+        start_audit,
+        source=tokenizer_artifact_host_root_path,
+        destination=worker_tokenizer_artifact_root_path,
+        label="tokenizer artifact tree",
+    )
 
     marker_processes = [
         process for process in start_audit.worker_processes if process.marker_process
@@ -221,6 +231,7 @@ def build_inference_contract(
         ("--inference-contract-ready-file", worker_contract_ready_file_path),
         ("--scientific-config", worker_scientific_config_path),
         ("--model-artifact-root", worker_model_artifact_root_path),
+        ("--tokenizer-artifact-root", worker_tokenizer_artifact_root_path),
         ("--model-id", scientific.model_id),
         ("--model-revision", scientific.model_revision),
     )
@@ -271,6 +282,8 @@ def build_inference_contract(
         worker_scientific_config_path=worker_scientific_config_path,
         model_artifact_host_root_path=model_artifact_host_root_path,
         worker_model_artifact_root_path=worker_model_artifact_root_path,
+        tokenizer_artifact_host_root_path=tokenizer_artifact_host_root_path,
+        worker_tokenizer_artifact_root_path=worker_tokenizer_artifact_root_path,
         expected_worker_count=len(marker_processes),
         inference_repo_path=start_audit.inference_repo_path,
         container_image_id=start_audit.container_image_id,
@@ -323,6 +336,24 @@ def wait_for_inference_contract_ready(
     timeout_sec: float,
     poll_interval_sec: float = 0.1,
 ) -> InferenceContract:
+    contract, _ = wait_for_inference_contract_snapshot(
+        run_id=run_id,
+        inference_contract=inference_contract,
+        ready_file=ready_file,
+        timeout_sec=timeout_sec,
+        poll_interval_sec=poll_interval_sec,
+    )
+    return contract
+
+
+def wait_for_inference_contract_snapshot(
+    *,
+    run_id: str,
+    inference_contract: Path,
+    ready_file: Path,
+    timeout_sec: float,
+    poll_interval_sec: float = 0.1,
+) -> tuple[InferenceContract, str]:
     if timeout_sec <= 0 or poll_interval_sec <= 0:
         raise ValueError("contract barrier timeout and polling interval must be positive")
     deadline = time.monotonic() + timeout_sec
@@ -330,6 +361,21 @@ def wait_for_inference_contract_ready(
         if time.monotonic() >= deadline:
             raise TimeoutError("timed out waiting for inference contract ready marker")
         time.sleep(poll_interval_sec)
+    return load_inference_contract_snapshot(
+        run_id=run_id,
+        inference_contract=inference_contract,
+        ready_file=ready_file,
+        require_worker_paths=True,
+    )
+
+
+def load_inference_contract_snapshot(
+    *,
+    run_id: str | None,
+    inference_contract: Path,
+    ready_file: Path,
+    require_worker_paths: bool,
+) -> tuple[InferenceContract, str]:
     if ready_file.is_symlink() or inference_contract.is_symlink():
         raise ValueError("inference contract barrier artifacts cannot be symlinks")
     ready_bytes = ready_file.read_bytes()
@@ -344,15 +390,19 @@ def wait_for_inference_contract_ready(
         raise ValueError("inference contract ready marker schema drift")
     if ready_payload["schema_version"] != "acl6060_event_inference_contract_ready_v1":
         raise ValueError("unsupported inference contract ready marker")
-    if ready_payload["run_id"] != run_id:
+    if run_id is not None and ready_payload["run_id"] != run_id:
         raise ValueError("inference contract ready marker run id mismatch")
-    if ready_payload["inference_contract_sha256"] != hashlib.sha256(contract_bytes).hexdigest():
+    contract_sha256 = hashlib.sha256(contract_bytes).hexdigest()
+    if ready_payload["inference_contract_sha256"] != contract_sha256:
         raise ValueError("inference contract ready marker hash mismatch")
     contract = InferenceContract.model_validate_json(contract_bytes)
-    if contract.run_id != run_id:
+    if contract.run_id != ready_payload["run_id"]:
+        raise ValueError("inference contract and ready marker run ids differ")
+    if run_id is not None and contract.run_id != run_id:
         raise ValueError("inference contract run id mismatch")
-    if contract.worker_inference_contract_path != inference_contract.as_posix():
-        raise ValueError("worker opened a different inference contract path")
-    if contract.worker_contract_ready_file_path != ready_file.as_posix():
-        raise ValueError("worker opened a different contract ready-file path")
-    return contract
+    if require_worker_paths:
+        if contract.worker_inference_contract_path != inference_contract.as_posix():
+            raise ValueError("worker opened a different inference contract path")
+        if contract.worker_contract_ready_file_path != ready_file.as_posix():
+            raise ValueError("worker opened a different contract ready-file path")
+    return contract, contract_sha256
