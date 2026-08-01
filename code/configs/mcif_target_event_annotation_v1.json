@@ -1,0 +1,62 @@
+{
+  "schema_version": "mcif_target_event_annotation_config_v1",
+  "target_language": "zh",
+  "candidate_scope": "r0_exact_lexical_first_occurrence",
+  "selection": "exhaustive_one_author_item_per_candidate_bearing_segment",
+  "maximum_final_events_per_segment": 1,
+  "annotation_statuses": [
+    "pending",
+    "eligible",
+    "no_target_alignment",
+    "generic_or_unscorable",
+    "visual_mismatch",
+    "exclude_quality"
+  ],
+  "target_reference_alignments": [
+    "explicit",
+    "paraphrased",
+    "omitted",
+    "uncertain"
+  ],
+  "slide_evidence_statuses": [
+    "supported",
+    "ambiguous",
+    "not_supported"
+  ],
+  "eligible_gates": {
+    "selected_candidate_option_required": true,
+    "canonical_source_event_required": true,
+    "acceptable_target_realization_required": true,
+    "target_reference_alignment_allowed": [
+      "explicit",
+      "paraphrased"
+    ],
+    "slide_evidence_status_required": "supported"
+  },
+  "noneligible_gates": {
+    "scoring_answers_must_be_empty": true,
+    "target_reference_alignment_required": true,
+    "slide_evidence_status_required": true
+  },
+  "access_boundary": {
+    "target_event_author_view": [
+      "current_slide",
+      "r0_ocr",
+      "r1_structured_text",
+      "english_source_reference",
+      "chinese_target_reference",
+      "candidate_options"
+    ],
+    "audio_validator_forbidden": [
+      "slide",
+      "r0_ocr",
+      "r1_structured_text",
+      "source_reference",
+      "target_reference",
+      "candidate_options",
+      "scorer_mapping",
+      "author_labels"
+    ]
+  },
+  "interpretation": "A frozen target-event author label is still provisional until independent audio-only sufficiency validation. This config does not define SourceEventTiming, primary eligibility, an ST result, event prevalence, or pixels-beyond-OCR evidence."
+}

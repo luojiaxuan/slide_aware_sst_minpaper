@@ -44,6 +44,67 @@ IMMUTABLE_FIELDS = (
 )
 
 
+def validate_config(config: dict[str, Any]) -> None:
+    expected = {
+        "schema_version": "mcif_target_event_annotation_config_v1",
+        "target_language": "zh",
+        "candidate_scope": "r0_exact_lexical_first_occurrence",
+        "selection": "exhaustive_one_author_item_per_candidate_bearing_segment",
+        "maximum_final_events_per_segment": 1,
+        "annotation_statuses": [
+            "pending",
+            "eligible",
+            "no_target_alignment",
+            "generic_or_unscorable",
+            "visual_mismatch",
+            "exclude_quality",
+        ],
+        "target_reference_alignments": [
+            "explicit",
+            "paraphrased",
+            "omitted",
+            "uncertain",
+        ],
+        "slide_evidence_statuses": ["supported", "ambiguous", "not_supported"],
+        "eligible_gates": {
+            "selected_candidate_option_required": True,
+            "canonical_source_event_required": True,
+            "acceptable_target_realization_required": True,
+            "target_reference_alignment_allowed": ["explicit", "paraphrased"],
+            "slide_evidence_status_required": "supported",
+        },
+        "noneligible_gates": {
+            "scoring_answers_must_be_empty": True,
+            "target_reference_alignment_required": True,
+            "slide_evidence_status_required": True,
+        },
+    }
+    if any(config.get(key) != value for key, value in expected.items()):
+        raise ValueError("MCIF target-event annotation config differs from code contract")
+    boundary = config.get("access_boundary") or {}
+    if set(boundary.get("audio_validator_forbidden") or []) != {
+        "slide",
+        "r0_ocr",
+        "r1_structured_text",
+        "source_reference",
+        "target_reference",
+        "candidate_options",
+        "scorer_mapping",
+        "author_labels",
+    }:
+        raise ValueError("MCIF target-event annotation audio firewall differs")
+
+
+def load_frozen_config(path: Path, expected_sha256: str) -> dict[str, Any]:
+    if file_sha256(path) != expected_sha256:
+        raise ValueError("MCIF target-event annotation config hash differs")
+    config = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(config, dict):
+        raise ValueError("MCIF target-event annotation config is not an object")
+    validate_config(config)
+    return config
+
+
 def row_hash_valid(row: dict[str, Any]) -> bool:
     return row.get("row_sha256") == canonical_sha256(
         {key: value for key, value in row.items() if key != "row_sha256"}
@@ -474,6 +535,8 @@ def main() -> None:
     initialize.add_argument("--expected-input-sha256", required=True)
     initialize.add_argument("--working-sheet", type=Path, required=True)
     initialize.add_argument("--annotator-id", required=True)
+    initialize.add_argument("--config", type=Path, required=True)
+    initialize.add_argument("--expected-config-sha256", required=True)
     initialize.add_argument("--expected-items", type=int, default=355)
     freeze = subparsers.add_parser("freeze")
     freeze.add_argument("--input-sheet", type=Path, required=True)
@@ -484,11 +547,14 @@ def main() -> None:
     freeze.add_argument("--expected-mapping-sha256", required=True)
     freeze.add_argument("--annotator-id", required=True)
     freeze.add_argument("--locked-at-utc", required=True)
+    freeze.add_argument("--config", type=Path, required=True)
+    freeze.add_argument("--expected-config-sha256", required=True)
     freeze.add_argument("--output-root", type=Path, required=True)
     freeze.add_argument("--expected-items", type=int, default=355)
     args = parser.parse_args()
     if file_sha256(args.input_sheet) != args.expected_input_sha256:
         raise ValueError("MCIF author input sheet hash differs from contract")
+    load_frozen_config(args.config, args.expected_config_sha256)
     input_rows = load_jsonl(args.input_sheet)
     if args.command == "init":
         if args.working_sheet.exists() or args.working_sheet.is_symlink():

@@ -10,12 +10,16 @@ from scripts.mcif_target_event_annotation import (
     WORKING_SCHEMA,
     freeze_annotations,
     initialize_working_rows,
+    load_frozen_config,
     validate_input_rows,
     validate_mapping_rows,
     validate_working_row,
     validate_working_rows,
     write_jsonl_atomic,
 )
+
+
+CONFIG_PATH = Path(__file__).parents[1] / "configs" / "mcif_target_event_annotation_v1.json"
 
 
 def input_row(index: int, *, options: int = 2) -> dict:
@@ -111,6 +115,20 @@ def fixture():
     )
     mappings = [mapping_row(row, index) for index, row in enumerate(source)]
     return source, working, mappings
+
+
+def test_frozen_config_matches_code_and_rejects_hash_or_contract_drift(tmp_path):
+    config = load_frozen_config(CONFIG_PATH, file_sha256(CONFIG_PATH))
+    assert config["target_language"] == "zh"
+    assert config["maximum_final_events_per_segment"] == 1
+    with pytest.raises(ValueError, match="config hash"):
+        load_frozen_config(CONFIG_PATH, "0" * 64)
+    changed = tmp_path / "changed.json"
+    payload = copy.deepcopy(config)
+    payload["eligible_gates"]["slide_evidence_status_required"] = "ambiguous"
+    changed.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="differs from code contract"):
+        load_frozen_config(changed, file_sha256(changed))
 
 
 def test_initialize_working_rows_preserves_only_bound_inputs_and_blank_labels():

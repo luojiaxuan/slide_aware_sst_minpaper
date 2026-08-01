@@ -9,6 +9,16 @@ from scripts.build_mcif_visual_token_controls import canonical_sha256, file_sha2
 from scripts.serve_mcif_target_event_authoring import TargetEventAuthoringSession
 
 
+CONFIG_PATH = Path(__file__).parents[1] / "configs" / "mcif_target_event_annotation_v1.json"
+
+
+def config_kwargs() -> dict:
+    return {
+        "config_path": CONFIG_PATH,
+        "expected_config_sha256": file_sha256(CONFIG_PATH),
+    }
+
+
 def source_row(media_path: Path, workspace: Path) -> dict:
     relative = media_path.relative_to(workspace).as_posix()
     row = {
@@ -75,6 +85,7 @@ def build_session(tmp_path: Path):
         workspace_root=workspace,
         working_sheet=working_sheet,
         annotator_id="target-author-01",
+        **config_kwargs(),
         expected_items=1,
     )
     return session, input_sheet, workspace, working_sheet
@@ -117,6 +128,7 @@ def test_session_saves_eligible_row_and_resumes(tmp_path):
         workspace_root=workspace,
         working_sheet=working_sheet,
         annotator_id="target-author-01",
+        **config_kwargs(),
         expected_items=1,
     )
     assert resumed.state(0)["canonical_source_event_en"] == (
@@ -175,6 +187,7 @@ def test_session_rejects_wrong_input_hash_and_media_byte_drift(tmp_path):
             workspace_root=workspace,
             working_sheet=tmp_path / "wrong-hash.jsonl",
             annotator_id="target-author-01",
+            **config_kwargs(),
             expected_items=1,
         )
     media = session.media_path(0)
@@ -186,6 +199,7 @@ def test_session_rejects_wrong_input_hash_and_media_byte_drift(tmp_path):
             workspace_root=workspace,
             working_sheet=working_sheet,
             annotator_id="target-author-01",
+            **config_kwargs(),
             expected_items=1,
         )
 
@@ -211,6 +225,7 @@ def test_session_rejects_symlink_media_and_path_escape(tmp_path):
             workspace_root=workspace,
             working_sheet=tmp_path / "working.jsonl",
             annotator_id="target-author-01",
+            **config_kwargs(),
             expected_items=1,
         )
 
@@ -227,6 +242,7 @@ def test_session_rejects_symlink_media_and_path_escape(tmp_path):
             workspace_root=workspace,
             working_sheet=tmp_path / "escaped-working.jsonl",
             annotator_id="target-author-01",
+            **config_kwargs(),
             expected_items=1,
         )
 
@@ -240,6 +256,7 @@ def test_resume_rejects_annotator_or_immutable_drift(tmp_path):
             workspace_root=workspace,
             working_sheet=working_sheet,
             annotator_id="target-author-02",
+            **config_kwargs(),
             expected_items=1,
         )
     row = json.loads(working_sheet.read_text())
@@ -255,6 +272,7 @@ def test_resume_rejects_annotator_or_immutable_drift(tmp_path):
             workspace_root=workspace,
             working_sheet=working_sheet,
             annotator_id="target-author-01",
+            **config_kwargs(),
             expected_items=1,
         )
 

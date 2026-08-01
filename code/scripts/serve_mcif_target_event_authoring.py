@@ -15,6 +15,7 @@ from PIL import Image
 from scripts.build_mcif_visual_token_controls import canonical_sha256, file_sha256, load_jsonl
 from scripts.mcif_target_event_annotation import (
     initialize_working_rows,
+    load_frozen_config,
     validate_working_row,
     validate_working_rows,
     write_jsonl_atomic,
@@ -43,6 +44,8 @@ class TargetEventAuthoringSession:
         workspace_root: Path,
         working_sheet: Path,
         annotator_id: str,
+        config_path: Path,
+        expected_config_sha256: str,
         expected_items: int,
     ) -> None:
         if input_sheet.resolve() == working_sheet.resolve():
@@ -59,6 +62,7 @@ class TargetEventAuthoringSession:
         self.working_sheet = working_sheet
         self.annotator_id = annotator_id
         self.expected_items = expected_items
+        self.config = load_frozen_config(config_path, expected_config_sha256)
         self.lock = threading.Lock()
         self.source_rows = load_jsonl(input_sheet)
         if working_sheet.exists():
@@ -134,22 +138,11 @@ class TargetEventAuthoringSession:
             "slide_evidence_status": row["slide_evidence_status"],
             "annotation_note": row["annotation_note"],
             "allowed_statuses": [
-                "eligible",
-                "no_target_alignment",
-                "generic_or_unscorable",
-                "visual_mismatch",
-                "exclude_quality",
+                value for value in self.config["annotation_statuses"] if value != "pending"
             ],
-            "allowed_target_alignments": [
-                "explicit",
-                "paraphrased",
-                "omitted",
-                "uncertain",
-            ],
-            "allowed_slide_evidence_statuses": [
-                "supported",
-                "ambiguous",
-                "not_supported",
+            "allowed_target_alignments": self.config["target_reference_alignments"],
+            "allowed_slide_evidence_statuses": self.config[
+                "slide_evidence_statuses"
             ],
         }
 
@@ -560,6 +553,8 @@ def main() -> None:
     parser.add_argument("--workspace-root", type=Path, required=True)
     parser.add_argument("--working-sheet", type=Path, required=True)
     parser.add_argument("--annotator-id", required=True)
+    parser.add_argument("--config", type=Path, required=True)
+    parser.add_argument("--expected-config-sha256", required=True)
     parser.add_argument("--expected-items", type=int, default=355)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=43871)
@@ -572,6 +567,8 @@ def main() -> None:
         workspace_root=args.workspace_root,
         working_sheet=args.working_sheet,
         annotator_id=args.annotator_id,
+        config_path=args.config,
+        expected_config_sha256=args.expected_config_sha256,
         expected_items=args.expected_items,
     )
     server = ThreadingHTTPServer((args.host, args.port), make_handler(session))
