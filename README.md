@@ -33,6 +33,12 @@
 > formula 5。另有 17 个 table rows 只保留 detection placeholder，不能冒充结构化表格。
 > 44-row visual QA 还发现 negative strata 中有漏检 table/chart/diagram，因此自动层只用于
 > 构造 matched R0/R1 controls，不能过滤 raw-image condition 或定义 event label。
+> 三层输入现已物化为不丢 state 的 portable ladder，并冻结在 private HF revision
+> [`b13bd204`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/b13bd2045644f90a6de6be19f77a4af3acaa924f/source_evidence_ladder_v1)，
+> tag `mcif-source-evidence-ladder-v1`。R0 是不含 bbox 的 flat OCR text；R1 保留 label、
+> normalized bbox、reading order 与可机器读取的 chart/table/formula，并把 image tags 降为
+> 明确 placeholder；R2 指向同一 native PNG，不在 ladder 中复制图像。304/304 rows 的 PNG
+> hashes/dimensions 重验通过，第二次构建 byte-identical，远端 6 files 全量重下载验证通过。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28

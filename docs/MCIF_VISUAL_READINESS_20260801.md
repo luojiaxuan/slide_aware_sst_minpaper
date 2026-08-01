@@ -185,6 +185,33 @@ Hyper01 正式抽取只使用 GPU 0/1，每卡 3 workers；冻结的 10 秒样�
 98.9%。两进程/卡的早期配置因 shard imbalance 和 fallback tail 未稳定通过 90%，已保留为
 failed tuning attempt，不进入最终配置。
 
+## Portable R0/R1/R2 evidence ladder
+
+已用 Git `e991969ac2c9a9bd1fab6fca0fa3ea904cec2631` 将上述两个 immutable artifacts
+确定性合并为 304-state ladder，未按自动结构类别删除任何 state：
+
+- `R0` 只暴露 flat PP-OCRv6 provider-order text，不把 bbox 放入 model input；
+- `R1` 暴露 PP-Structure label、normalized bbox、reading order 以及 chart Markdown、table
+  HTML、formula LaTeX；所有 `<img>` tags 都替换为显式 non-text placeholder；
+- `R2` 指向 `native_causal_v1/frames/...` 中完全相同的 causal PNG，不在 ladder bundle 中
+  复制 90 MB images。
+
+builder 重新打开并验证了 304/304 PNG 的 SHA256 与尺寸。第二次独立构建的全部 6 files
+byte-identical；ladder SHA256 为
+`8f77312b93562afd8a92ea0b3139fe5f91b21b08e9740d311a1fd0a83b594f7f`，
+row-binding-set SHA256 为
+`84874eafd465659d4650faa2b25f26f0ccc15d00b7422472ea619effaa7a1a8b`。
+
+Private HF source of truth：
+[`gavinlaw/slide-aware-sst-mcif-source-prescreen@b13bd204/source_evidence_ladder_v1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/b13bd2045644f90a6de6be19f77a4af3acaa924f/source_evidence_ladder_v1)，
+tag `mcif-source-evidence-ladder-v1`。远端 6 files 已全量重下载并逐字节比较，5-entry
+`SHA256SUMS` 全部通过。Git provenance：
+[`../data/manifests/mcif_source_evidence_ladder_v1_20260801.json`](../data/manifests/mcif_source_evidence_ladder_v1_20260801.json)。
+
+该 ladder 仍不是 source event、`image_needed` label 或 translation result。下一步需要冻结
+Qwen3-Omni processor revision 与 visual token count，构造同 token budget 的
+`matched_wrong_image`，再进入 native/noisy oracle headroom。
+
 ## Reference-free Qwen3-VL source screen
 
 已冻结覆盖全部 304 个 causal states 的 private VLM screen input，而不是根据像素或 OCR

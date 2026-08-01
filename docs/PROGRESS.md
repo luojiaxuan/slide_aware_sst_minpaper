@@ -1192,3 +1192,20 @@ or a stronger Qwen3-VL variant if available.
   token 漂移、batch 顺序恢复与 broker 集成。全套测试为 `235 passed`，两个既有 warning。
 - 当前没有新 data artifact。下一步物化 304-state `R0/R1/R2` portable ladder，构造
   visual-token-matched wrong-image controls，再上传 private HF revision。
+
+## 2026-08-01 MCIF R0/R1/R2 Evidence Ladder Completion
+
+- 新增 fail-closed builder，在 clean Git `e991969` 上重新验证 304 native PNG 的 bytes、
+  dimensions、timing、ID 与 PPStructure frame binding，并拒绝 transcript/reference/target、
+  symlink、路径逃逸、provenance drift 和不完整 state matrix。全套回归为 `248 passed`。
+- 物化 304 rows / 21 talks：R0 为不含 bbox 的 flat OCR text；R1 为 label、normalized bbox、
+  reading order 和 chart/table/formula serialization，344 个 image tags 被降为 explicit
+  visual placeholders；R2 引用同一 native PNG，不复制 images。
+- ladder SHA256 为 `8f77312b...94f7f`，row-binding set 为 `84874eaf...1a8b`；第二次构建
+  6/6 files byte-identical，本地 5-entry `SHA256SUMS` 全通过。
+- 上传 private HF revision
+  [`b13bd204/source_evidence_ladder_v1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/b13bd2045644f90a6de6be19f77a4af3acaa924f/source_evidence_ladder_v1)，
+  tag `mcif-source-evidence-ladder-v1`。远端 6 files 已全量重下载并逐字节验证，5 个 payload
+  checksums 全通过。
+- 下一步冻结 Qwen3-Omni processor/image token budget，构造 deterministic
+  `matched_wrong_image`；当前仍没有 event labels、translation output 或 paper effect。

@@ -1,0 +1,74 @@
+{
+  "artifact": "mcif_source_evidence_ladder_v1",
+  "status": "UPLOADED_PRIVATE_SOURCE_ONLY_R0_R1_R2_INPUT_NOT_ANNOTATION_OR_ST_RESULT",
+  "upstream": {
+    "repo": "FBK-MT/MCIF",
+    "revision": "e24065b919758263cfe5d157057278affe76ea7b",
+    "license": "cc-by-4.0",
+    "native_hf_revision": "4e80dd0ae4f6bf4f0633cb9d605286d06f34ae49",
+    "native_manifest_sha256": "4e1008ab919a0020f7e99bff3264bdf36c28bdc3a4a61508298db6c6f6b9cccc",
+    "ppstructure_hf_revision": "09004d4262278b26a1f2f014fdd908427f55797a",
+    "ppstructure_output_sha256": "0d40c51cdaf44916a11411b6335103e9ab5a0447c1a3567b8c957aebda5e4e06"
+  },
+  "generation": {
+    "git_commit": "e991969ac2c9a9bd1fab6fca0fa3ea904cec2631",
+    "script": "code/scripts/build_mcif_evidence_ladder.py",
+    "command": "cd code && PYTHONPATH=. .venv/bin/python scripts/build_mcif_evidence_ladder.py --native-manifest $MCIF_ROOT/evidence/native_causal_v1/manifest.jsonl --native-root $MCIF_ROOT/evidence/native_causal_v1/frames --native-provenance ../data/manifests/mcif_native_causal_evidence_v1_20260801.json --ppstructure-output $MCIF_ROOT/evidence/ppstructurev3_source_screen_v1/final/mcif_ppstructurev3_source_screen_v1.jsonl --ppstructure-provenance ../data/manifests/mcif_ppstructurev3_source_screen_v1_20260801.json --code-repo .. --output-root $MCIF_ROOT/evidence/source_evidence_ladder_v1 --expected-rows 304 --expected-talks 21"
+  },
+  "inventory": {
+    "rows": 304,
+    "talks": 21,
+    "r0_flat_ocr_items": 7123,
+    "r0_rows_with_text": 304,
+    "r1_structured_blocks": 1780,
+    "r1_content_kind_counts": {
+      "chart_markdown": 66,
+      "formula_latex": 12,
+      "table_html": 7,
+      "text": 1351,
+      "visual_placeholder": 344
+    },
+    "r2_raw_image_rows": 304,
+    "source_transcript_consumed": false,
+    "target_or_reference_consumed": false
+  },
+  "tier_contract": {
+    "r0": "flat PP-OCRv6 provider-order text only; no boxes in model_input_text",
+    "r1": "PP-StructureV3 labels, normalized boxes, reading order and recognized chart/table/formula serialization; image tags replaced by explicit non-text placeholders",
+    "r2": "the identical native causal PNG under native_causal_v1/frames; images are referenced, not duplicated in the ladder bundle",
+    "all_states_retained": true,
+    "automatic_tiers_are_image_needed_labels": false
+  },
+  "model_input_character_lengths": {
+    "r0_flat_ocr": {"min": 7, "median": 287.5, "p95": 1012, "max": 6729},
+    "r1_structured_text": {"min": 215, "median": 1130.0, "p95": 2863, "max": 8474}
+  },
+  "checksums": {
+    "ladder_sha256": "8f77312b93562afd8a92ea0b3139fe5f91b21b08e9740d311a1fd0a83b594f7f",
+    "row_binding_set_sha256": "84874eafd465659d4650faa2b25f26f0ccc15d00b7422472ea619effaa7a1a8b",
+    "source_binding_sha256": "2375c4f5998a41c2056df1688ceb949ac5b1034bb71d8e8212f033af598639fb",
+    "checksum_manifest_sha256": "6d3ba102f590b19da94f768f6c21559335da16a947d7c725976c3b588bbde70c",
+    "checksum_entries": 5,
+    "bundle_bytes": 1381089
+  },
+  "hugging_face": {
+    "repo": "gavinlaw/slide-aware-sst-mcif-source-prescreen",
+    "repo_type": "dataset",
+    "path": "source_evidence_ladder_v1",
+    "private_verified": true,
+    "revision": "b13bd2045644f90a6de6be19f77a4af3acaa924f",
+    "tag": "mcif-source-evidence-ladder-v1",
+    "remote_path_count": 6,
+    "full_remote_redownload_byte_verified": true,
+    "remote_checksum_entries_verified": 5
+  },
+  "local_staging": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9/evidence/source_evidence_ladder_v1",
+  "quality_audit": {
+    "real_input_dry_run_passed": true,
+    "independent_rebuild_byte_identical": true,
+    "native_png_sha_and_dimensions_revalidated": 304,
+    "project_tests": 248,
+    "project_test_warnings": 2
+  },
+  "interpretation": "This is a matched source-side input ladder, not annotation, an image-needed label, a translation output, or evidence that pixels outperform OCR. Visual-token matching and matched-wrong-image construction remain pending."
+}

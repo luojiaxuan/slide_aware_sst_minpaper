@@ -2,7 +2,7 @@
 
 日期：2026-08-01
 
-状态：**代码与测试已闭环；304-state evidence ladder 尚未物化。**
+状态：**代码、测试与 304-state evidence ladder 已闭环；visual-token matching 尚未完成。**
 
 ## 为什么需要 v2
 
@@ -61,11 +61,12 @@ off-path 版本。
 
 ## 下一步
 
-1. 从同一批 304 个 native causal frames 物化 `R0 flat OCR / R1 structured text / R2 raw image`；
+1. [完成] 从同一批 304 个 native causal frames 物化并上传 private HF revision 的
+   `R0 flat OCR / R1 structured text / R2 raw image`；
 2. 冻结 image processor revision 与每帧 visual token count；
 3. 只在相同 visual token count 内构造 deterministic `matched_wrong_image`；
-4. 上传 private HF revision，并在 Git manifest 中记录 revision、schema、hash 与生成命令；
-5. 再冻结 source-event packet、target scoring 和 native/noisy oracle headroom run。
+4. 冻结 source-event packet、target scoring 和 native/noisy oracle headroom run。
 
-在第 4 步完成前，v2 只有 Git code contract，没有可复用的数据 artifact，不能启动正式
-raw-image inference。
+当前可复用 ladder 位于 private HF revision
+`b13bd2045644f90a6de6be19f77a4af3acaa924f`。在第 3 步完成前仍不能启动正式
+raw-image matched-control inference。
