@@ -76,7 +76,17 @@ Git summaries：
 
 Git summary：
 [`../data/manifests/acl6060_dev_source_event_workspace_v1_20260801.json`](../data/manifests/acl6060_dev_source_event_workspace_v1_20260801.json)。
-Private Hugging Face revision 在首个 Git provenance commit 后上传并回填。
+
+Canonical reusable artifact 是 private HF dataset
+[`gavinlaw/slide-aware-sst-acl6060-source-events`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-events)：
+
+- revision `3199207c66b159ab39f662a32e0f6d633c9c2b79`；
+- tag `acl6060-source-event-workspace-v1-20260801`；
+- source Git provenance commit `17d773bd305affb144d6cbd50bc158f25c0f4f2d`；
+- `private=True`；remote 307 files（包含 HF 自动 `.gitattributes`）、100 WAV、100
+  frames、100 packet JSON；
+- 已从 immutable revision 强制下载 `dataset_manifest.json`、annotator A sheet 和一条
+  WAV，并与 local bytes/SHA256 一致。
 
 ## Annotation protocol
 

@@ -702,8 +702,11 @@ or a stronger Qwen3-VL variant if available.
   PCM16/16 kHz clips totaling 6,498.51 s, and isolated annotator A/B JSONL
   files. All packet/media hashes, WAV lengths, unique ids and forbidden-field
   scans pass. No transcript, target/reference or model output is present.
-- Local workspace is 205 MB and currently `PENDING_HF_UPLOAD` to private
-  `gavinlaw/slide-aware-sst-acl6060-source-events`. Labels remain
-  `PENDING_DOUBLE_ANNOTATION`.
+- Uploaded the 205 MB workspace to private HF dataset
+  `gavinlaw/slide-aware-sst-acl6060-source-events` at revision
+  `3199207c66b159ab39f662a32e0f6d633c9c2b79`, tag
+  `acl6060-source-event-workspace-v1-20260801`. Verified privacy, the complete
+  307-file inventory and byte identity for metadata, one annotation sheet and
+  one downloaded WAV. Labels remain `PENDING_DOUBLE_ANNOTATION`.
 - Detailed record:
   [`docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md`](ACL6060_SOURCE_EVENT_ANNOTATION_V1.md).

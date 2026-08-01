@@ -20,6 +20,8 @@
 > no-target/reference/model-output 检查，当前状态仍是
 > `PENDING_DOUBLE_ANNOTATION`。见
 > [docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md](docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md)。
+> Media workspace 已冻结在 private HF revision
+> [`3199207c`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-acl6060-source-events/tree/3199207c66b159ab39f662a32e0f6d633c9c2b79)。
 >
 > The earlier Chinese-LiPS diagnostic remains a warning: with audio input and
 > the slide supplied through a
