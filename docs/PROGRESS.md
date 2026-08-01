@@ -1251,3 +1251,30 @@ or a stronger Qwen3-VL variant if available.
   target events。下一步先冻结 event inventory、audio-insufficient boundaries 和 target
   scoring，再做 state-to-event packet join；当前仍没有 MCIF event label、translation output
   或 paper effect。
+
+## 2026-08-01 MCIF Outcome Candidate Inventory Completion
+
+- 在 source evidence ladder、visual controls 和 media bytes 全部冻结之后，新增 outcome-only
+  extractor；它按 `audio-segments.yaml` 的 919 个 physical rows 对齐 official En/Zh/De/It
+  references，并显式处理 En 的 14 个 talk-level quote wrappers 与 It 的 21 个 wrappers。
+  不使用会跨行误解析的整文件 CSV reader。
+- 候选定义为 English reference 中第一次出现、且在该 segment start 时仍由当前 causal R0
+  OCR state 精确可见的 token/phrase。严格嵌套项被折叠；记录 earliest contiguous evidence
+  state 与保守 lead lower bound。输出 954 candidates / 21 talks，其中 phrase 732、token 222；
+  689 个 lead 至少 5 秒、458 个至少 10 秒，最大 148.111 秒。
+- 每个候选明确标记 `AUTOMATIC_REFERENCE_AWARE_CANDIDATE_NOT_GOLD_EVENT`，human
+  eligibility、Zh/De/It acceptable/forbidden realizations、audio-insufficient 和 first-sufficient
+  boundaries 均为空。它只证明存在可审计的 anticipation candidate pool，不证明 translation
+  gain、pixels > OCR 或 event prevalence。
+- Builder 绑定 official archive、source ladder、inference timing 和 clean Git `2778222`，拒绝
+  talk/timing/hash/source-only contract drift、非因果状态窗口和非原子覆盖。9 个定向测试及全套
+  `278 passed` 通过，仅有两个既有 `pypinyin` warnings；第二次完整构建 10/10 files
+  byte-identical，9-entry `SHA256SUMS` 全通过。
+- 产物上传到独立 private HF dataset
+  [`gavinlaw/slide-aware-sst-mcif-outcomes@64dee522/outcome_candidate_inventory_v1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/64dee5225e609fc0e900c7d6cd239ae6c702dc5c/outcome_candidate_inventory_v1)，
+  tag `mcif-outcome-candidate-inventory-v1`。repo privacy 已确认，完整 snapshot 回下载后 data
+  bundle、dataset card 与 9 个 payload checksums 全部逐字节验证。
+- 下一步从 954 candidates 生成按 talk、lead、phrase/token 与 visual state 分层的 blinded
+  annotation sheet，先冻结 event eligibility 与 target realizations，再独立标注 audio
+  sufficiency。只有通过这两个 gate 的事件才能进入 state-to-event packets 和 native/noisy
+  oracle headroom。

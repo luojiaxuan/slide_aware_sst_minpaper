@@ -1,7 +1,7 @@
 # Slide-Aware Simultaneous Speech Translation — investigation record
 
-> **Status (2026-08-01).** The 21-talk MCIF translation subset is now
-> materialized without extracting or reading references. All 21 videos passed
+> **Status (2026-08-01).** The 21-talk MCIF translation subset source-side path
+> was materialized without extracting or reading references. All 21 videos passed
 > frozen hash checks and visual inspection. A 1 s reference-free pass produced
 > 283 visually reviewed transition candidates and 304 conservative causal
 > states including initial states; each state unlocks only after two stable
@@ -52,6 +52,14 @@
 > tag `mcif-qwen3-omni-visual-control-media-v1`；105 files 全量重下载验证通过。它尚未定义
 > target event 或 `SourceEventTiming`，因此仍不是正式 event packet、ST 结果或
 > `vision > OCR` 证据。
+> 在上述 source-side inputs/controls 冻结之后，official references 已单独进入严格隔离的
+> outcome-side inventory。919 个 En/Zh/De/It segments 产生 954 个 high-recall lexical
+> candidates；689 个至少提前 5 秒，458 个至少提前 10 秒。artifact 冻结在独立 private HF
+> revision
+> [`64dee522`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/64dee5225e609fc0e900c7d6cd239ae6c702dc5c/outcome_candidate_inventory_v1)，
+> tag `mcif-outcome-candidate-inventory-v1`，全量回下载逐字节验证通过。这些仍是 reference-aware
+> 自动候选，不是 gold events；human eligibility、target realization 与 audio sufficiency 均未
+> 标注，且该 repo 永远不能挂载到 inference。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28

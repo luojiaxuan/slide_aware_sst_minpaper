@@ -1,0 +1,68 @@
+{
+  "artifact": "mcif_outcome_candidate_inventory_v1",
+  "status": "UPLOADED_PRIVATE_REFERENCE_AWARE_AUTOMATIC_CANDIDATES_PENDING_HUMAN_FREEZE",
+  "upstream": {
+    "official_archive": "mcif-long-trans.zip",
+    "official_archive_sha256": "445a4b92d0083b5416515a9639fcef126b72a5e80ef59d962dc30f82688cedb7",
+    "segment_metadata_member_sha256": "d50212b4bac17e42deffb832b766497f3a88fbaed261ccafd8fffa71a899e3a0",
+    "source_evidence_ladder_sha256": "8f77312b93562afd8a92ea0b3139fe5f91b21b08e9740d311a1fd0a83b594f7f",
+    "inference_manifest_sha256": "7c8138bcaf32f619b76dec5f919d7fb63c141260ed0df4fc93a1a7da822b6f11"
+  },
+  "generation": {
+    "git_commit": "27782229290f3f571020ea34928416b4b5884072",
+    "script": "code/scripts/build_mcif_outcome_candidate_inventory.py",
+    "command": "cd code && .venv/bin/python -m scripts.build_mcif_outcome_candidate_inventory --archive $MCIF_ARCHIVE --expected-archive-sha256 445a4b92d0083b5416515a9639fcef126b72a5e80ef59d962dc30f82688cedb7 --ladder $MCIF_LADDER --expected-ladder-sha256 8f77312b93562afd8a92ea0b3139fe5f91b21b08e9740d311a1fd0a83b594f7f --inference-manifest $MCIF_INFERENCE --expected-inference-manifest-sha256 7c8138bcaf32f619b76dec5f919d7fb63c141260ed0df4fc93a1a7da822b6f11 --code-repo .. --output-root $NEW_OUTPUT --max-ngram 4 --expected-segments 919 --expected-talks 21",
+    "host": "local_mac",
+    "gpu_used": false
+  },
+  "inventory": {
+    "segments": 919,
+    "talks": 21,
+    "reference_languages": [
+      "en",
+      "zh",
+      "de",
+      "it"
+    ],
+    "reference_physical_lines_per_language": 919,
+    "automatic_candidates": 954,
+    "candidate_talks": 21,
+    "phrase_candidates": 732,
+    "token_candidates": 222,
+    "candidate_lead_ge_5_sec": 689,
+    "candidate_lead_ge_10_sec": 458,
+    "candidate_lead_max_sec": 148.111,
+    "official_reference_consumed": true,
+    "model_output_consumed": false,
+    "human_event_labels_complete": false,
+    "audio_sufficiency_labels_complete": false
+  },
+  "checksums": {
+    "reference_segments_sha256": "e7840e1b0cd0589e1a643b5d450c86372c4e6c6f67de594959926f9152ae172a",
+    "candidate_events_sha256": "3b1f85137c4443bd65cb82beb4217301b2f4e67ae9a7cd45ded3cbc3e5dde5a2",
+    "checksum_manifest_sha256": "4b64e46e6402eac3ce36d67f28f59f5b16810299da66c3902cd6ace295b56454",
+    "dataset_card_sha256": "8b391ed4ba2283b1d68c9b55e9dcf4b89e8267891e351728a36782c4dc91bca3",
+    "checksum_entries": 9,
+    "bundle_files": 10,
+    "bundle_bytes": 3369548
+  },
+  "hugging_face": {
+    "repo": "gavinlaw/slide-aware-sst-mcif-outcomes",
+    "repo_type": "dataset",
+    "path": "outcome_candidate_inventory_v1",
+    "private_verified": true,
+    "revision": "64dee5225e609fc0e900c7d6cd239ae6c702dc5c",
+    "tag": "mcif-outcome-candidate-inventory-v1",
+    "remote_payload_path_count": 11,
+    "full_remote_redownload_byte_verified": true,
+    "remote_checksum_entries_verified": 9
+  },
+  "local_staging": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/outcomes/mcif_outcome_candidate_inventory_v1",
+  "quality_audit": {
+    "independent_rebuild_byte_identical": true,
+    "project_tests": 278,
+    "project_test_warnings": 2
+  },
+  "use_boundary": "This private artifact is outcome-side. Official references and all revealing derivatives must never enter inference, prompt construction, training-data generation, source-side screening, or control construction.",
+  "interpretation": "Exact source-reference and causally available OCR overlaps are high-recall annotation candidates only. They are not gold target events, acceptable target realizations, audio-sufficiency labels, translation outputs, or paper effects."
+}
