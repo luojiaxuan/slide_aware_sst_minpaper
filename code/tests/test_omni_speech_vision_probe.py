@@ -1,4 +1,5 @@
 from types import SimpleNamespace
+from threading import Event
 
 import numpy as np
 import pytest
@@ -14,6 +15,7 @@ def args(**overrides):
         "attn": "sdpa",
         "max_new_tokens": 8,
         "batch_items": 2,
+        "prefetch_next_batch": False,
         "seed": 0,
         "shard_index": 0,
         "shard_count": 1,
@@ -68,6 +70,57 @@ def test_prepare_stream_state_requires_condition_image(monkeypatch):
         probe.prepare_stream_state(0, {"id": "a", "audio": "a.wav"}, "slide", args())
     with pytest.raises(ValueError, match="Unknown condition"):
         probe.prepare_stream_state(0, {"id": "a", "audio": "a.wav"}, "future", args())
+
+
+def test_prefetched_stream_overlaps_next_processor_batch_with_generation(monkeypatch):
+    lengths = {"a.wav": 2, "b.wav": 3, "c.wav": 1}
+    monkeypatch.setattr(
+        probe,
+        "read_audio",
+        lambda path: (np.ones(lengths[path], dtype=np.float32), 1),
+    )
+    next_batch_started = Event()
+    prepare_calls = []
+
+    def fake_prepare(plans, processor):
+        prepared = [(state.item["id"], step) for state, step in plans]
+        prepare_calls.append(prepared)
+        if len(prepare_calls) > 1:
+            next_batch_started.set()
+        return prepared
+
+    generation_calls = 0
+
+    def fake_generate(prepared, batch_size, tokenizer, model, runtime_args):
+        nonlocal generation_calls
+        generation_calls += 1
+        if generation_calls == 1:
+            assert next_batch_started.wait(timeout=1)
+        assert len(prepared) == batch_size
+        return [" ".join([item_id] * step) for item_id, step in prepared]
+
+    monkeypatch.setattr(probe, "prepare_prefix_plans", fake_prepare)
+    monkeypatch.setattr(probe, "generate_prepared_prefix_batch", fake_generate)
+    items = [
+        (0, {"id": "a", "audio": "a.wav"}),
+        (1, {"id": "b", "audio": "b.wav"}),
+        (2, {"id": "c", "audio": "c.wav"}),
+    ]
+    results = list(
+        probe.stream_many(
+            items,
+            "none",
+            None,
+            None,
+            None,
+            args(prefetch_next_batch=True),
+            batch_size=2,
+        )
+    )
+
+    assert generation_calls == 3
+    assert {record["id"] for _, record, _ in results} == {"a", "b", "c"}
+    assert all(record["prefetch_next_batch"] for _, record, _ in results)
 
 
 def test_translate_prefix_batch_rejects_mixed_sample_rates():

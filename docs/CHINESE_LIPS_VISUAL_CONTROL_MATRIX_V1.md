@@ -42,10 +42,11 @@ revision。v1 因此在同一锁定模型版本上完整重跑五个条件，不
 - blank image：固定白色 RGB PNG，builder 在 run root 生成并记录 SHA256；
 - streaming：1.0 s audio chunk、两次连续 hypothesis 的 Local Agreement、
   greedy decoding、`max_new_tokens=96`、seed 0；
-- execution：Hyper00 两张 H200。`attempt 2` 实测每卡两个独立模型 worker 的
-  利用率不足，因此正式实现改为每卡一个模型 worker、进程内动态维持四个 active
-  streaming items，共两个 resumable shards；batching 属于已记录的执行参数，不改写
-  五个 conditions、streaming policy、模型 revision 或样本集合。
+- execution：Hyper00 两张 H200。`attempt 2/3/4` 逐步定位为模型副本数、batch 和
+  processor gap 问题；当前实现是每卡一个模型 worker、进程内动态维持 16 个 active
+  streaming items，并把 next-prefix CPU preprocessing 与 current GPU generation 重叠，
+  共两个 resumable shards。batch/prefetch 属于已记录的执行参数，不改写五个
+  conditions、streaming policy、模型 revision 或样本集合。
 
 机器可读配置：
 [`code/configs/chinese_lips_visual_controls_v1.json`](../code/configs/chinese_lips_visual_controls_v1.json)。
@@ -74,12 +75,13 @@ revision。v1 因此在同一锁定模型版本上完整重跑五个条件，不
 
 ## 状态
 
-`BATCHED_RUNNER_READY_FOR_RELAUNCH`。前两次尝试均已停止且没有 worker 残留；已有
+`PIPELINED_RUNNER_READY_FOR_RELAUNCH`。前四次尝试均已停止且没有 worker 残留；已有
 部分输出只作吞吐诊断，不能误报为正式结果或与新两 shard run 混合。
 
 已完成的 launch preparation：
 
-- Git launch state：`main@2fb0410`；Hyper00 detached worktree：
+- initial launch state：`main@2fb0410`；batched runner state：`main@6b73121`；
+  Hyper00 detached worktree：
   `/data/projects/slide_aware_sst_minpaper/worktrees/visual-controls-v1`；
 - run root：
   `/data/projects/slide_aware_sst_minpaper/runs/chinese_lips_visual_controls_v1_qwen3_omni_2gpu_20260801_132051`；
@@ -112,8 +114,17 @@ revision。v1 因此在同一锁定模型版本上完整重跑五个条件，不
 停止；supervisor 被停止后暴露出四个 orphan worker，已按精确 PID 清理，GPU `3/5` 回到
 `1 MiB`。四个 partial shard 最终行数为 `23/19/20/19`，全部原样保留在旧 run root。
 
-代码现改为 `workers_per_gpu=1`、`batch_items=4`、`shard_count=2`，动态 refill active
-items，并让 launcher 以独立进程组启动 worker、在 `SIGTERM`/`SIGINT` 后进入统一清理。
-本地 probe/control focused tests 为 `6 passed`。下一次启动使用全新 run root，避免把旧
-四 shard partial outputs 与新两 shard assignment 混合；启动后重新做 10 秒利用率采样，
-若仍低于 `90%`，保留该 run 并增大 batch，而不改变科学参数。
+`attempt 3` 使用每卡一模型、`batch_items=4`，GPU `3/5` 正式 10 秒均值为
+`36.5%/37.8%`，最终保留 `16/12` partial rows。`attempt 4` 提高到
+`batch_items=16`，正式均值提高到 `78.0%/90.9%`，双卡 `84.45%`，最终保留
+`91/91` partial rows；GPU 3 峰值已到约 `132 GiB`，因此不盲目尝试 batch 32。
+两个 run 分别保存在：
+
+- `/data/projects/slide_aware_sst_minpaper/runs/chinese_lips_visual_controls_v1_qwen3_omni_batch4_2gpu_20260801_150926`；
+- `/data/projects/slide_aware_sst_minpaper/runs/chinese_lips_visual_controls_v1_qwen3_omni_batch16_2gpu_20260801_151240`。
+
+当前代码保持 `workers_per_gpu=1`、`batch_items=16`、`shard_count=2`，新增
+`prefetch_next_batch=true` 双缓冲；launcher 继续用独立进程组并在
+`SIGTERM`/`SIGINT` 后统一清理。本地 probe/control focused tests 为 `7 passed`，其中
+同步测试证明 next processor batch 在 current generation 返回前已启动。下一次使用全新
+run root，重新做 10 秒采样；只有双卡平均利用率达到 `90%+` 才持续运行到 1030 rows。

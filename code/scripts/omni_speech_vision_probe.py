@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import json
 import time
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterator
@@ -53,6 +54,8 @@ def main() -> None:
     ap.add_argument("--max-new-tokens", type=int, default=96)
     ap.add_argument("--batch-items", type=int, default=1,
                     help="number of active streaming items generated together")
+    ap.add_argument("--prefetch-next-batch", action="store_true",
+                    help="overlap next-prefix CPU processing with current generation")
     ap.add_argument("--device-map", default="auto")
     ap.add_argument("--attn", default="sdpa")
     ap.add_argument("--limit", type=int, default=0)
@@ -198,6 +201,38 @@ def stream_many(
 ) -> Iterator[tuple[int, dict, float]]:
     if batch_size < 1:
         raise ValueError("batch_size must be positive")
+    if getattr(args, "prefetch_next_batch", False):
+        yield from stream_many_prefetched(
+            indexed_items,
+            cond,
+            processor,
+            tokenizer,
+            model,
+            args,
+            batch_size=batch_size,
+        )
+        return
+    yield from stream_many_unprefetched(
+        indexed_items,
+        cond,
+        processor,
+        tokenizer,
+        model,
+        args,
+        batch_size=batch_size,
+    )
+
+
+def stream_many_unprefetched(
+    indexed_items: list[tuple[int, dict]],
+    cond: str,
+    processor,
+    tokenizer,
+    model,
+    args,
+    *,
+    batch_size: int,
+) -> Iterator[tuple[int, dict, float]]:
     pending = iter(indexed_items)
     active: list[StreamState] = []
 
@@ -241,6 +276,69 @@ def stream_many(
         yield from completed
 
 
+def stream_many_prefetched(
+    indexed_items: list[tuple[int, dict]],
+    cond: str,
+    processor,
+    tokenizer,
+    model,
+    args,
+    *,
+    batch_size: int,
+) -> Iterator[tuple[int, dict, float]]:
+    pending = iter(indexed_items)
+    plans: list[tuple[StreamState, int]] = []
+    while len(plans) < batch_size:
+        try:
+            source_index, item = next(pending)
+        except StopIteration:
+            break
+        state = prepare_stream_state(source_index, item, cond, args)
+        plans.append((state, 1))
+    if not plans:
+        return
+
+    prepared = prepare_prefix_plans(plans, processor)
+    with ThreadPoolExecutor(max_workers=1, thread_name_prefix="prefix-preprocessor") as executor:
+        while plans:
+            next_plans = [
+                (state, step + 1)
+                for state, step in plans
+                if step < state.n_chunks
+            ]
+            while len(next_plans) < batch_size:
+                try:
+                    source_index, item = next(pending)
+                except StopIteration:
+                    break
+                state = prepare_stream_state(source_index, item, cond, args)
+                next_plans.append((state, 1))
+            prefetched = (
+                executor.submit(prepare_prefix_plans, next_plans, processor)
+                if next_plans else None
+            )
+            texts = generate_prepared_prefix_batch(
+                prepared,
+                len(plans),
+                tokenizer,
+                model,
+                args,
+            )
+            completed: list[tuple[int, dict, float]] = []
+            for (state, expected_step), text in zip(plans, texts, strict=True):
+                if state.step + 1 != expected_step:
+                    raise RuntimeError("prefetched stream step is out of order")
+                record = advance_stream_state(state, text, args)
+                if record is not None:
+                    completed.append(
+                        (state.source_index, record, time.time() - state.started_at)
+                    )
+            yield from completed
+            plans = next_plans
+            if prefetched is not None:
+                prepared = prefetched.result()
+
+
 def advance_stream_state(state: StreamState, text: str, args) -> dict | None:
     state.step += 1
     full = text.split()
@@ -273,6 +371,7 @@ def advance_stream_state(state: StreamState, text: str, args) -> dict | None:
         "attention": args.attn,
         "max_new_tokens": args.max_new_tokens,
         "batch_items": args.batch_items,
+        "prefetch_next_batch": getattr(args, "prefetch_next_batch", False),
         "seed": args.seed,
         "shard_index": args.shard_index,
         "shard_count": args.shard_count,
@@ -313,6 +412,39 @@ def translate_prefix(audio_prefix, sr, image_path, item, tgt,
 
 def translate_prefix_batch(audio_prefixes, sample_rates, image_paths, items, targets,
                            processor, tokenizer, model, args) -> list[str]:
+    inputs = prepare_model_inputs(
+        audio_prefixes,
+        sample_rates,
+        image_paths,
+        items,
+        targets,
+        processor,
+    )
+    return generate_prepared_prefix_batch(
+        inputs,
+        len(audio_prefixes),
+        tokenizer,
+        model,
+        args,
+    )
+
+
+def prepare_prefix_plans(plans, processor):
+    return prepare_model_inputs(
+        [
+            state.audio[: step * state.chunk_samples]
+            for state, step in plans
+        ],
+        [state.sample_rate for state, _ in plans],
+        [state.image for state, _ in plans],
+        [state.item for state, _ in plans],
+        [state.item.get("tgt_lang", "English") for state, _ in plans],
+        processor,
+    )
+
+
+def prepare_model_inputs(audio_prefixes, sample_rates, image_paths, items, targets,
+                         processor):
     if not (
         len(audio_prefixes) == len(sample_rates) == len(image_paths)
         == len(items) == len(targets)
@@ -341,6 +473,10 @@ def translate_prefix_batch(audio_prefixes, sample_rates, image_paths, items, tar
         sampling_rate=sample_rates[0],
         use_audio_in_video=False,
     )
+    return inputs
+
+
+def generate_prepared_prefix_batch(inputs, batch_size, tokenizer, model, args) -> list[str]:
     device = next(model.parameters()).device
     dtype = next(model.parameters()).dtype
     for key, value in list(inputs.items()):
@@ -358,7 +494,7 @@ def translate_prefix_batch(audio_prefixes, sample_rates, image_paths, items, tar
             eos_token_id=tokenizer.eos_token_id,
         )
     prompt_width = inputs["input_ids"].shape[1]
-    if generated.shape[0] != len(audio_prefixes):
+    if generated.shape[0] != batch_size:
         raise RuntimeError("model returned an unexpected generation batch size")
     return [
         clean(tokenizer.decode(row[prompt_width:], skip_special_tokens=True))

@@ -49,6 +49,7 @@ def main() -> None:
     parser.add_argument("--conditions", default="none,slide,wrong,cross_talk,blank")
     parser.add_argument("--workers-per-gpu", type=int, default=1)
     parser.add_argument("--batch-items", type=int, default=1)
+    parser.add_argument("--prefetch-next-batch", action="store_true")
     parser.add_argument("--chunk-s", type=float, default=1.0)
     parser.add_argument("--max-new-tokens", type=int, default=96)
     parser.add_argument("--seed", type=int, default=0)
@@ -111,6 +112,8 @@ def main() -> None:
             "--seed",
             str(args.seed),
         ]
+        if args.prefetch_next_batch:
+            command.append("--prefetch-next-batch")
         environment = os.environ.copy()
         environment["CUDA_VISIBLE_DEVICES"] = gpu_id
         log = log_path.open("a", encoding="utf-8")
@@ -203,6 +206,7 @@ def main() -> None:
         "gpu_ids": gpu_ids,
         "workers_per_gpu": args.workers_per_gpu,
         "batch_items": args.batch_items,
+        "prefetch_next_batch": args.prefetch_next_batch,
         "worker_gpu_ids": worker_gpu_ids,
         "model": args.model,
         "model_revision": args.model_revision,
