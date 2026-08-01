@@ -39,6 +39,15 @@
 > normalized bbox、reading order 与可机器读取的 chart/table/formula，并把 image tags 降为
 > 明确 placeholder；R2 指向同一 native PNG，不在 ladder 中复制图像。304/304 rows 的 PNG
 > hashes/dimensions 重验通过，第二次构建 byte-identical，远端 6 files 全量重下载验证通过。
+> 对应的 Qwen3-Omni processor budget 与 wrong-image candidate specs 也已冻结在 private HF
+> revision
+> [`b2c9a409`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/b2c9a4093cb14cf15e26ff72efe941406bbaf59f/visual_token_controls_v1)，
+> tag `mcif-qwen3-omni-visual-token-controls-v1`。304/304 cross-talk controls 和
+> 283/304 causally-prior same-talk controls 均经过真实 processor 验证；203 个 cross-talk
+> controls 天然同尺寸，101 个使用冻结的 aspect-preserving fit-and-pad spec，最终
+> `image_grid_thw` 与 visual-token count 均精确匹配 source。该 artifact 仍只是 source-only
+> candidate/transform contract；transformed bytes 要到 event packet compiler 中物化并绑定，
+> 不是 ST 结果或 `vision > OCR` 证据。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28
@@ -171,8 +180,10 @@ current benchmark contract.
    frame-only cohort. v1 media remains
    reusable, but its A/B annotation sheets are superseded. No human label is
    complete yet.
-2. Freeze candidate inventory, source-only packets and target scoring; compare
-   audio/document-only, token-budget-matched unordered OCR, layout/structure-
+2. The 304-state visual-token inventory and deterministic stale/wrong candidate
+   specs are frozen. Next materialize transformed control bytes inside hash-bound
+   source-only packets and freeze target scoring; then compare audio/document-only,
+   token-budget-matched unordered OCR, layout/structure-
    preserving text, current raw image, and matched stale/wrong evidence under
    native and controlled-noise audio. This ladder separates “context helps”
    from “raw pixels are necessary.”

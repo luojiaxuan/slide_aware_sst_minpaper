@@ -1209,3 +1209,26 @@ or a stronger Qwen3-VL variant if available.
   checksums 全通过。
 - 下一步冻结 Qwen3-Omni processor/image token budget，构造 deterministic
   `matched_wrong_image`；当前仍没有 event labels、translation output 或 paper effect。
+
+## 2026-08-01 MCIF Qwen3-Omni Visual-token Controls Completion
+
+- 在 clean Git `7e9b3e3` 上用
+  `Qwen/Qwen3-Omni-30B-A3B-Instruct@26291f793822fb6be9555850f06dfe95f2d7e695`
+  与 `transformers==5.6.0` 处理全部 304 个 R2 images；冻结 7-file processor manifest、
+  prompt/message order、9 种 `image_grid_thw` 和 450--2040 visual-token counts。9/9
+  representative images 加入 1 秒 dummy audio 后 token count 不变。
+- 初始实现要求跨 talk candidate 天然拥有相同 grid/token，但正式数据的
+  `mcif:EqmWoxNDIr:S000` 是自然单例，contract 因而 fail closed。最终没有降为近似
+  compute matching：优先天然同尺寸/同 grid；缺失时冻结 aspect-preserving
+  `contain + center + black pad + bicubic` transform，并将最终 image 再送入同一 processor。
+- 304/304 cross-talk controls 与 283/304 causally-prior same-talk stale controls 全覆盖可定义
+  states；203 个 cross-talk controls 天然同尺寸，101 个使用 transform spec。587 个最终
+  processor inputs 的 `image_grid_thw` 和 visual-token count 全部与 source 精确相同。
+- CPU-only 正式构建与独立第二次构建的 6/6 files byte-identical；全套测试为
+  `261 passed`，仅有两个既有 `pypinyin` warnings。上传 private HF revision
+  [`b2c9a409/visual_token_controls_v1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/b2c9a4093cb14cf15e26ff72efe941406bbaf59f/visual_token_controls_v1)，
+  tag `mcif-qwen3-omni-visual-token-controls-v1`；远端 6 files 已全量重下载并逐字节验证。
+- Artifact 只冻结 candidate original-image references 与 transform specs，不物化 101 张
+  transformed control images，也不选择最终 paper control。下一步在 source-event packet
+  compiler 中生成并 hash-bind 最终 bytes，冻结 target scoring，再执行 native/noisy oracle
+  headroom；当前仍没有 MCIF event label、translation output 或 paper effect。

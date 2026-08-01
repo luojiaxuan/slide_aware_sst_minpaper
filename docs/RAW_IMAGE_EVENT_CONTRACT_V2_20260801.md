@@ -57,16 +57,22 @@ off-path 版本。
 - scoring matrix：`code/configs/acl6060_event_trajectory_scoring_v2.json`
 - regression：`code/tests/test_image_evidence_v2.py`
 
-全套回归：`235 passed`，只有两个既有 `pypinyin` deprecation warnings。
+visual-token/control builder 完成后的全套回归：`261 passed`，只有两个既有
+`pypinyin` deprecation warnings。
 
 ## 下一步
 
 1. [完成] 从同一批 304 个 native causal frames 物化并上传 private HF revision 的
    `R0 flat OCR / R1 structured text / R2 raw image`；
-2. 冻结 image processor revision 与每帧 visual token count；
-3. 只在相同 visual token count 内构造 deterministic `matched_wrong_image`；
-4. 冻结 source-event packet、target scoring 和 native/noisy oracle headroom run。
+2. [完成] 冻结 Qwen3-Omni image processor revision、每帧 `image_grid_thw` 与 visual
+   token count；
+3. [完成 candidate spec] 构造 deterministic `same_talk_stale` 与
+   `cross_talk_wrong`。天然 processor-shape 不匹配的 101 个 cross-talk candidates 使用
+   冻结 fit-and-pad spec，并经真实 processor 验证最终 grid/token 精确相同；
+4. 在 source-event packet 中物化并 hash-bind transformed control bytes，冻结 target
+   scoring 和 native/noisy oracle headroom run。
 
 当前可复用 ladder 位于 private HF revision
-`b13bd2045644f90a6de6be19f77a4af3acaa924f`。在第 3 步完成前仍不能启动正式
-raw-image matched-control inference。
+`b13bd2045644f90a6de6be19f77a4af3acaa924f`；processor/control specs 位于 private HF
+revision `b2c9a4093cb14cf15e26ff72efe941406bbaf59f`。第 4 步前仍不能启动正式 raw-image
+matched-control inference，因为 transform spec 不是最终 media bytes。

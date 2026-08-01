@@ -208,9 +208,37 @@ tag `mcif-source-evidence-ladder-v1`。远端 6 files 已全量重下载并逐�
 `SHA256SUMS` 全部通过。Git provenance：
 [`../data/manifests/mcif_source_evidence_ladder_v1_20260801.json`](../data/manifests/mcif_source_evidence_ladder_v1_20260801.json)。
 
-该 ladder 仍不是 source event、`image_needed` label 或 translation result。下一步需要冻结
-Qwen3-Omni processor revision 与 visual token count，构造同 token budget 的
-`matched_wrong_image`，再进入 native/noisy oracle headroom。
+该 ladder 仍不是 source event、`image_needed` label 或 translation result。其 processor
+budget 与 source-only matched-control contract 见下一节。
+
+## Qwen3-Omni visual-token and wrong-image controls
+
+使用 `Qwen/Qwen3-Omni-30B-A3B-Instruct` immutable revision
+`26291f793822fb6be9555850f06dfe95f2d7e695` 和 `transformers==5.6.0`，已对全部
+304 个 R2 images 冻结 `image_grid_thw` 与 visual-token count。共出现 9 种 processor
+shape，visual-token counts 从 450 到 2040；对每种 shape 各取一张图加入 1 秒 dummy audio
+重跑，9/9 保持不变。
+
+control candidate 不使用 transcript、target/reference、audio content 或 ST output：
+
+- `same_talk_stale` 选取同 talk 中最近且已 causally available 的 prior state，覆盖
+  283/304 states；21 个 initial states 按定义没有 stale candidate；
+- `cross_talk_wrong` 覆盖 304/304 states，优先同尺寸、同 processor grid、同 visual-token
+  count，最后才按最小 aspect-ratio distance 与固定 seed 选 unrelated talk image；
+- 203 个 cross-talk controls 天然同尺寸；其余 101 个携带 `contain + centered black pad +
+  bicubic` transform spec。对 304 cross-talk 与 283 stale inputs 共 587 条重新通过真实
+  processor，最终 `image_grid_thw` 和 visual-token count 全部与 source 精确相同。
+
+第一次与第二次独立 CPU-only 构建的 6 files byte-identical。Private HF source of truth：
+[`gavinlaw/slide-aware-sst-mcif-source-prescreen@b2c9a409/visual_token_controls_v1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/b2c9a4093cb14cf15e26ff72efe941406bbaf59f/visual_token_controls_v1)，
+tag `mcif-qwen3-omni-visual-token-controls-v1`。远端 6 files 已全量重下载并逐字节验证；
+Git provenance：
+[`../data/manifests/mcif_qwen3_omni_visual_token_controls_v1_20260801.json`](../data/manifests/mcif_qwen3_omni_visual_token_controls_v1_20260801.json)。
+
+该 bundle 只保存 original-image references 与 deterministic transform specs，不复制或物化
+101 张 transformed control images。下一步必须在 source-event packet compiler 中生成并
+hash-bind 最终 bytes，再冻结 target scoring 和 native/noisy oracle headroom。它不是
+`image_needed` label、最终 paper control 选择或 `vision > OCR` 结果。
 
 ## Reference-free Qwen3-VL source screen
 
@@ -321,10 +349,11 @@ correctness 不低于 -1 pp；它们是资源投入门槛，不是尚未注册�
    [`ACL6060_VISUAL_TIMELINE_20260801.md`](ACL6060_VISUAL_TIMELINE_20260801.md)；100-row
    balanced seed 也已冻结，下一步完成独立双标注。
 3. MCIF 304-state private source-only morphology prescreen、native evidence、flat PP-OCRv6、
-   PP-StructureV3、QA 和 HF upload 均已完成；逐行自动输出不得修改 inventory、提示
-   annotator 或过滤 raw-image condition。
-4. 下一步冻结 source-event packets 和 target scoring，再跑 oracle headroom：document、
-   unordered OCR、layout/structure-preserving text、raw image、matched wrong，覆盖 native
-   与 noise。R0/R1 input extraction 已完成，不等于 event 或 system output 已完成。
+   PP-StructureV3、Qwen3-Omni visual-token/control specs、QA 和 HF upload 均已完成；逐行
+   自动输出不得修改 inventory、提示 annotator 或过滤 raw-image condition。
+4. 下一步在 source-event packets 中物化并 hash-bind 101 个 fit-and-pad controls，冻结
+   target scoring，再跑 oracle headroom：document、unordered OCR、layout/structure-
+   preserving text、raw image、matched wrong，覆盖 native 与 noise。Input/control-spec
+   readiness 已完成，不等于 event 或 system output 已完成。
 5. 只有看到 content-specific early-commit 或稳定 robustness signal 后，才投入 automatic
    VLM compiler、selection/gating 与 GPU inference。

@@ -1,0 +1,96 @@
+{
+  "artifact": "mcif_qwen3_omni_visual_token_controls_v1",
+  "status": "UPLOADED_PRIVATE_SOURCE_ONLY_PROCESSOR_CONTROL_SPECS_NOT_ANNOTATION_OR_ST_RESULT",
+  "upstream": {
+    "dataset_repo": "FBK-MT/MCIF",
+    "dataset_revision": "e24065b919758263cfe5d157057278affe76ea7b",
+    "license": "cc-by-4.0",
+    "native_image_hf_revision": "4e80dd0ae4f6bf4f0633cb9d605286d06f34ae49",
+    "source_ladder_hf_revision": "b13bd2045644f90a6de6be19f77a4af3acaa924f",
+    "source_ladder_sha256": "8f77312b93562afd8a92ea0b3139fe5f91b21b08e9740d311a1fd0a83b594f7f"
+  },
+  "processor": {
+    "model_id": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+    "model_revision": "26291f793822fb6be9555850f06dfe95f2d7e695",
+    "transformers_version": "5.6.0",
+    "processor_required_file_set_sha256": "09863b698846e3fd989235c24c7dc648426dc76e92c3e15c65e09e7b5ad6a6ed",
+    "processor_binding_sha256": "0e1f6127feb128d561bd24444fb9c237f40db8ea90dde2f6df4bdb738609c6bf",
+    "image_audio_message_order": ["image", "text", "audio"],
+    "audio_invariance_representatives": 9
+  },
+  "generation": {
+    "git_commit": "7e9b3e328233bf1a32bb562c976251b1a5e5d790",
+    "script": "code/scripts/build_mcif_visual_token_controls.py",
+    "command": "CUDA_VISIBLE_DEVICES= python code/scripts/build_mcif_visual_token_controls.py --ladder $MCIF_INPUT/source_evidence_ladder_v1/ladder.jsonl --expected-ladder-sha256 8f77312b93562afd8a92ea0b3139fe5f91b21b08e9740d311a1fd0a83b594f7f --source-root $MCIF_INPUT --processor-root $QWEN3_OMNI_PROCESSOR_SNAPSHOT --model-id Qwen/Qwen3-Omni-30B-A3B-Instruct --model-revision 26291f793822fb6be9555850f06dfe95f2d7e695 --code-repo . --output-root $OUTPUT --batch-size 8",
+    "host": "Hyper00",
+    "gpu_used": false
+  },
+  "inventory": {
+    "rows": 304,
+    "talks": 21,
+    "visual_token_count_distribution": {
+      "450": 17,
+      "558": 13,
+      "740": 9,
+      "880": 24,
+      "1260": 14,
+      "1334": 23,
+      "1363": 14,
+      "1380": 11,
+      "2040": 179
+    },
+    "same_talk_stale_coverage": 283,
+    "cross_talk_wrong_coverage": 304,
+    "cross_talk_same_dimensions": 203,
+    "cross_talk_fit_pad_to_source_canvas": 101,
+    "control_processor_records_verified": 587,
+    "source_transcript_consumed": false,
+    "target_or_reference_consumed": false
+  },
+  "control_contract": {
+    "pairing_seed": "mcif-visual-token-controls-v1",
+    "cross_talk_preference_order": [
+      "same_dimensions",
+      "same_image_grid_thw",
+      "same_visual_token_count",
+      "closest_aspect_ratio_then_fit_pad"
+    ],
+    "fallback_transform": {
+      "fit": "contain",
+      "canvas_alignment": "center",
+      "pad_rgb": [0, 0, 0],
+      "resample": "bicubic"
+    },
+    "post_transform_processor_grid_and_token_exact_match_verified": true,
+    "transformed_image_bytes_materialized": false,
+    "final_paper_control_selected": false
+  },
+  "checksums": {
+    "visual_token_inventory_sha256": "bbf2e1b62a036ae311d433a4fef5cbb479cfdcf6ebf1d50c2f727ebd4f458c7c",
+    "matched_wrong_candidates_sha256": "fbdefae79a5205803ea3db6c07748e14edcda40f8cf123e99a1b7aaa5c3a7f30",
+    "processor_manifest_sha256": "b09170c0b29ead892381c7a54af5abd921e95623b4d4ff46a6af5782d5198dae",
+    "checksum_manifest_sha256": "3c6e57d08d597ea7388c13e23fab4250d379b9aad5245648935909d367dfcdc3",
+    "checksum_entries": 5,
+    "bundle_files": 6,
+    "bundle_bytes": 854481
+  },
+  "hugging_face": {
+    "repo": "gavinlaw/slide-aware-sst-mcif-source-prescreen",
+    "repo_type": "dataset",
+    "path": "visual_token_controls_v1",
+    "private_verified": true,
+    "revision": "b2c9a4093cb14cf15e26ff72efe941406bbaf59f",
+    "tag": "mcif-qwen3-omni-visual-token-controls-v1",
+    "remote_path_count": 6,
+    "full_remote_redownload_byte_verified": true,
+    "remote_checksum_entries_verified": 5
+  },
+  "local_staging": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9/evidence/mcif_visual_token_controls_v1",
+  "quality_audit": {
+    "independent_rebuild_byte_identical": true,
+    "native_png_sha_and_dimensions_revalidated": 304,
+    "project_tests": 261,
+    "project_test_warnings": 2
+  },
+  "interpretation": "This artifact freezes source-only processor budgets and deterministic wrong-image candidate/transform specifications. It is not a materialized event packet, annotation, image-needed label, translation output, final control choice, or evidence that pixels outperform OCR."
+}
