@@ -24,7 +24,9 @@ Phase-A contract 是
 
 - ACL60/60 的 5 个 dev talks：Phase-A futility screen。
 - ACL60/60 eval：通过 gate 后的 replication。
-- MCIF 21 talks：project-held-out confirmatory benchmark；系统冻结前禁止访问 outputs。
+- MCIF 当前 HF revision 有 100 个 long-media talks；其中官方 IWSLT translation
+  subset 的 21 talks 是 project-held-out confirmatory benchmark。其 IDs 已冻结，系统
+  冻结前禁止读取 references 或运行 outputs。
 - Chinese-LiPS：private timing/ASR diagnostic only，不是 paper ranking 主数据。
 
 ## 当前实验矩阵
@@ -48,8 +50,10 @@ budget 和 selection path。
 
 ## 下一步
 
-1. 冻结 ACL60/60 与 MCIF revisions、licenses、talk ids 和 hashes；
-2. 接通 long-form SimulST runner，先复现 `C0-C3`；
+1. 数据与 runner revisions 已冻结；先读
+   [`../PHASE_A_DATA_RUNNER_FREEZE_20260731.md`](../PHASE_A_DATA_RUNNER_FREEZE_20260731.md)；
+2. 自动构建 reference-free `C1-C2` packets，实现 `C3` causal ASR-prefix
+   retriever，完成 one-talk dry run，再复现 `C0-C3`；
 3. 冻结 typed-memory schema，构建 `C4-C6` extraction QA；
 4. blind 标注 200-300 个 term/entity-masked context-critical events；
 5. 在 ACL60/60 dev 跑 native/+5 dB `C0-C7`，按 B1/A gates 作一次路线决策；

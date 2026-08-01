@@ -478,16 +478,17 @@ or a stronger Qwen3-VL variant if available.
   - generic Route B0 is NO-GO.
 - Defined shared conditions `C0-C7`, term-masked context-critical evaluation,
   matched wrong/shuffled/stale controls, and separate B1/A futility gates.
-- Reserved all 21 MCIF talks as project-held-out. Five ACL60/60 dev talks are
-  for route screening only.
+- Reserved the 21-talk MCIF translation subset as project-held-out. Five
+  ACL60/60 dev talks are for route screening only.
 - Stopped Chinese-LiPS pseudo-reference expansion and new multimodal training
   pending the shared pilot.
 
 ## Open Items
 
-1. Freeze ACL60/60 dev/eval and MCIF revisions, licenses, talk ids, and file
-   hashes; reconstruct causal slide timelines.
-2. Connect the long-form SimulST runner and reproduce `C0-C3`: audio-only,
+1. Build automatic reference-free `C1-C2` packets from the frozen ACL60/60
+   dev PDFs, implement C3 causal retrieval, and pass the pinned one-talk
+   no-reference dry run.
+2. Reproduce `C0-C3`: audio-only,
    terminology memory, entities/abstract, and phrase boost + PDF BM25/RAG.
 3. Freeze the typed-memory schema and build offline `C4-C6` extraction QA.
    Slide-derived entries may be precomputed but only unlock at their real
@@ -497,3 +498,35 @@ or a stronger Qwen3-VL variant if available.
 5. Run the native/+5 dB `C0-C7` futility screen with matched packet budgets and
    apply the B1/A gates once. Do not access MCIF outputs before a route, system,
    selector and evaluator are frozen.
+
+## 2026-07-31 Phase-A Data and Runner Freeze
+
+- Downloaded and verified the official ACL60/60 attachment:
+  SHA256 `5f2a3855b5f442c83e6461c32e8a8deb6c2b053518b02b957eb4686bacfce7cc`.
+  Frozen 10 full talks, 468 dev + 416 eval gold segments, multilingual text/XML
+  and tagged-terminology file hashes.
+- Built separate five-talk ACL dev inference/scoring views. Inference rows expose
+  audio, paper and paper abstract only; scoring paths never enter the inference
+  process. Official tagged terms are labels, not C1 runtime hints.
+- Corrected MCIF scope: HF revision
+  `e24065b919758263cfe5d157057278affe76ea7b` contains 100 long-media talks;
+  the IWSLT translation subset contains 21 talks.
+- Downloaded the official IWSLT `mcif-long-trans.zip`, verified SHA256
+  `445a4b92d0083b5416515a9639fcef126b72a5e80ef59d962dc30f82688cedb7`,
+  and froze the 21 talk IDs from matching audio/PDF filenames without reading
+  reference contents.
+- Pinned the IWSLT baseline, SimulStream, OmniSTEval and four Qwen model
+  revisions in `code/configs/phase_a_c0_c3.yaml`.
+- Added a thin context adapter that validates talk/WAV order, exact C0-C3 packet
+  schema, scoring-key isolation and 256-token-per-channel ASR/MT budgets. The upstream
+  baseline is not vendored because its frozen commit has no LICENSE file.
+- Added the only allowed contract-driven launcher. It rejects C3 until causal
+  retrieval exists, verifies upstream/toolkit commits and exact offline HF
+  snapshots, derives a hash-bound non-reusable run directory, and never accepts
+  scoring paths.
+- Reconstructed all 468 ACL dev gold segment offsets by exact PCM matching
+  against the full talk WAVs and generated a separate OmniSTEval-compatible
+  scoring bundle. Adjacent official gold segments can overlap, which is now
+  covered by the builder logic.
+- Detailed record:
+  [`docs/PHASE_A_DATA_RUNNER_FREEZE_20260731.md`](PHASE_A_DATA_RUNNER_FREEZE_20260731.md).

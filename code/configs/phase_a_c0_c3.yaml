@@ -1,0 +1,89 @@
+contract_version: phase_a_c0_c3_v1
+status: data_and_runner_frozen_context_packets_pending
+
+dataset:
+  name: acl6060
+  split: dev
+  source_language: en
+  target_language: zh
+  protocol: long_form_unsegmented_audio
+  source_snapshot: data/manifests/phase_a_sources_20260731.json
+  talk_snapshot: data/manifests/acl6060_talks_20260731.jsonl
+  inference_references_mounted: false
+  scoring_is_separate_process: true
+
+held_out:
+  acl6060_eval: no_inference_before_dev_route_gate
+  mcif: archive_metadata_only_no_reference_content_or_outputs_before_frozen_run_commit
+
+conditions:
+  C0:
+    name: audio_only
+    runtime_context: []
+    launcher_status: ready_after_packet_and_model_preflight
+  C1:
+    name: automatic_term_memory
+    runtime_context: [paper_pdf_auto_terms]
+    forbidden_context: [official_tagged_terminology]
+    launcher_status: ready_after_packet_and_model_preflight
+  C2:
+    name: entities_and_abstract
+    runtime_context: [paper_abstract, paper_pdf_auto_entities]
+    launcher_status: ready_after_packet_and_model_preflight
+  C3:
+    name: phrase_boost_and_pretranslated_pdf_bm25
+    runtime_context: [paper_pdf_auto_phrase_boost, paper_pdf_pretranslated_bm25]
+    launcher_status: blocked_causal_asr_prefix_retriever_unimplemented
+
+context_contract:
+  compilation_before_talk: true
+  online_vlm: false
+  test_time_learning: false
+  causal_audio_query_only: true
+  max_injected_tokens_per_channel: 256
+  max_combined_tokens: 512
+  log_selected_source_ids: true
+  log_packet_tokens: true
+
+runner:
+  upstream:
+    repo: https://github.com/owaski/iwslt-2026-baselines
+    revision: 7e2974bb3c850fde9bd62f3fa3103f9f345a56d0
+    license_status: no_license_file_at_revision
+    usage: exact_external_checkout_not_vendored
+  adapter_class: slidesst.iwslt_context_adapter.PhaseAContextSpeechProcessor
+  toolkit:
+    repo: https://github.com/hlt-mt/simulstream
+    revision: 86e0f1ed82cb59018515b246e115e298bb0bd7da
+    git_describe: v0.3.0-7-g86e0f1e
+  evaluation:
+    repo: https://github.com/pe-trik/OmniSTEval
+    revision: b275fac51796e82178aac088c2a57068fe822afc
+    version: 0.1.10
+    mode: longform_simulstream
+  models:
+    asr:
+      repo: Qwen/Qwen3-ASR-1.7B
+      revision: 7278e1e70fe206f11671096ffdd38061171dd6e5
+    forced_aligner:
+      repo: Qwen/Qwen3-ForcedAligner-0.6B
+      revision: c7cbfc2048c462b0d63a45797104fc9db3ad62b7
+    mt:
+      repo: Qwen/Qwen3-4B-Instruct-2507
+      revision: cdbee75f17c01a7cc42f958dc650907174af0554
+    context_compiler:
+      repo: Qwen/Qwen3-30B-A3B-Instruct-2507-FP8
+      revision: 5a5a776300a41aaa681dd7ff0106608ef2bc90db
+  policy:
+    primary_chunk_ms: 960
+    latency_sweep_chunk_ms: [640, 960, 1280]
+    min_start_seconds: 5.0
+    asr_commit: two_hypothesis_longest_common_prefix_at_punctuation
+    mt_commit: two_hypothesis_longest_common_prefix
+    latency_unit: char
+  launch_blocked_until:
+    - automatic_C1_C2_context_bundle_built
+    - causal_C3_retriever_implemented_for_C3_only
+    - pinned_model_snapshots_materialized
+    - runtime_lock_and_container_image_digest_frozen
+    - one_talk_no_reference_dry_run_passes

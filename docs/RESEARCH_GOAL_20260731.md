@@ -138,7 +138,8 @@ per-chunk vision 的计算成本，并且相对 audio-only 不产生可测的 au
 
 ### MCIF：主 held-out test
 
-MCIF 包含 21 个 ACL 2023 scientific talks（约 1 h 58 m）、原始 MP4/WAV、人工
+MCIF 当前 HF revision 包含 100 个 long-media talks；其中最初的 21-talk translation
+subset（约 1 h 58 m）包含 ACL 2023 scientific talks、原始 MP4/WAV、人工
 English transcript 和专业 De/It/Zh translations，采用 CC BY 4.0，并已进入 IWSLT
 2026 long-form SimulST protocol。主方向为 En→Zh，En→De 作复制。它比只有 5 个
 eval talks 的 ACL60/60 更适合 talk-cluster inference，也是当前最优先接入的数据。

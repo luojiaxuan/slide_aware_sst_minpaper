@@ -63,9 +63,10 @@ latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
   OCR/layout propositions on predeclared `visual_relation` events.
 - **Route B0, NO-GO:** whole-PDF prompts, generic RAG, term/entity extraction,
   or a new gate over those payloads are strong baselines, not contributions.
-- **Primary benchmark:** MCIF long-form scientific talks, En→Zh primary and
-  En→De replication. It has 21 talks, video/audio and professional references,
-  and is the official IWSLT 2026 SimulST development corpus.
+- **Primary benchmark:** the 21-talk MCIF translation subset used by the
+  official IWSLT 2026 SimulST development corpus, En→Zh primary and En→De
+  replication. The current MCIF HF revision contains a broader 100-talk media
+  pool; only those 21 talks have the frozen translation protocol here.
 - **Replication benchmark:** ACL60/60 dev/eval En→Zh, using its external term
   annotations and direct lineage to *Do Slides Help?*.
 - **Private diagnostic:** Chinese-LiPS-Long for slide dwell/change timing and
@@ -87,11 +88,13 @@ current benchmark contract.
 
 Build the shared Phase-A dual-route futility screen:
 
-1. Freeze MCIF and ACL60/60 revisions/licenses and reconstruct causal slide
-   timelines, including measured dwell and slide-to-speech lead/lag.
-2. Connect a long-form IWSLT 2026 runner and reproduce `C0-C3`: audio-only,
-   terminology memory, entities/abstract prompt, and PDF phrase boost +
-   pretranslated BM25/RAG.
+1. Phase-A data and runner revisions are frozen in
+   [docs/PHASE_A_DATA_RUNNER_FREEZE_20260731.md](docs/PHASE_A_DATA_RUNNER_FREEZE_20260731.md).
+   Build automatic, reference-free `C1-C2` context packets, implement the
+   causal ASR-prefix retriever required by `C3`, and pass a one-talk
+   no-reference dry run on the pinned long-form runner.
+2. Reproduce `C0-C3`: audio-only, automatic terminology memory,
+   entities/abstract prompt, and PDF phrase boost + pretranslated BM25/RAG.
 3. Compile `C4-C6`: document proposition/discourse memory, slide OCR/layout
    propositions, and image-specific visual relations. Keep extraction offline
    before the talk and match online context budgets.

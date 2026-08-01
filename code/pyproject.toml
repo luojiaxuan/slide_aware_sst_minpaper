@@ -16,7 +16,8 @@ dependencies = [
   "sacrebleu>=2.4",
   "jieba>=0.42.1",
   "pypinyin>=0.50.0",
-  "rank-bm25>=0.2.2"
+  "rank-bm25>=0.2.2",
+  "lxml>=5.0"
 ]
 
 [tool.setuptools.packages.find]

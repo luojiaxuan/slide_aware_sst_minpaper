@@ -1,4 +1,10 @@
-# ACL 60/60 (S3) Integration Recon — feasibility CONFIRMED
+# ACL 60/60 (S3) Integration Recon — historical
+
+> 本页是 2026-07-19 的早期侦察记录，已由
+> [`PHASE_A_DATA_RUNNER_FREEZE_20260731.md`](PHASE_A_DATA_RUNNER_FREEZE_20260731.md)
+> 取代。官方 ACL60/60 attachment 已完整冻结，dev/eval 都包含 full WAV、gold/SHAS
+> segments、multilingual text/XML 和 tagged terminology；当前流程不再依赖 RASST
+> mirror 作为数据真值，也不把官方 tagged terms 当作 C1 runtime input。
 
 Date: 2026-07-19 (overnight recon). Conclusion: **zero-obstacle integration**;
 the cleanest video recovery of all three strata.

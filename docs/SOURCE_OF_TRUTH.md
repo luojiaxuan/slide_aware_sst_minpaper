@@ -13,13 +13,15 @@ links, or handoff state.
 | Lightweight progress and artifact index | This Git repo under `docs/` | Active |
 | Reusable datasets and generated data artifacts | Hugging Face Hub | Qwen3-VL bundle uploaded to a private dataset repo |
 | Reusable checkpoints/adapters | Hugging Face Hub | None yet |
-| Local staging and active runs | Hyper00 `/data` paths | Temporary, not canonical |
+| Local staging and active runs | Local `ResearchStudio/data/vision-aware-sst/` and verified GPU-host `/data` paths | Temporary, not canonical |
 
 ## Current Git Pointers
 
 - GitHub repo: <https://github.com/luojiaxuan/slide_aware_sst_minpaper>
 - Current dual-route decision and shared Phase-A experiment contract:
   [`docs/DUAL_ROUTE_DECISION_20260731.md`](DUAL_ROUTE_DECISION_20260731.md)
+- Phase-A data/runner freeze, provenance and no-reference boundary:
+  [`docs/PHASE_A_DATA_RUNNER_FREEZE_20260731.md`](PHASE_A_DATA_RUNNER_FREEZE_20260731.md)
 - Route A ACL paper and confirmatory experiment contract:
   [`docs/ACL_PAPER_BLUEPRINT_20260731.md`](ACL_PAPER_BLUEPRINT_20260731.md)
 - Independent ACL-style review and resolved/residual risks:
@@ -53,8 +55,8 @@ links, or handoff state.
 
 | Role | Canonical source | Status |
 | --- | --- | --- |
-| Primary long-form held-out benchmark | MCIF paper/project: <https://arxiv.org/abs/2507.19634>, <https://mt.fbk.eu/mcif/>; intended HF source `FBK-MT/MCIF` | Selected; exact HF revision, file hashes and local manifest not yet frozen |
-| Development and tagged-term replication | ACL60/60 official IWSLT release | Five dev videos currently integrated; eval media, translations and term annotations still need immutable manifests |
+| Primary long-form held-out benchmark | MCIF paper/project: <https://arxiv.org/abs/2507.19634>, <https://mt.fbk.eu/mcif/>; HF `FBK-MT/MCIF` | Media pool frozen at revision `e24065b919758263cfe5d157057278affe76ea7b` (100 talks); official IWSLT ZIP freezes the 21-talk translation subset at SHA256 `445a4b92...88cedb7`; reference contents unopened |
+| Development and tagged-term replication | [ACL60/60 official release](https://aclanthology.org/2023.iwslt-1.2/) | dev/eval 5+5 complete talks, 468+416 gold segments and term annotations frozen at archive SHA256 `5f2a3855...cfce7cc`; inference and scoring views physically separated |
 | Private timing/diagnostic benchmark | Chinese-LiPS derived private HF repo below | Available; not a paper-grade ST ranking set |
 | Controlled acoustic corruptions | MUSAN <https://www.openslr.org/17/> and AcousticRooms <https://www.openslr.org/119/> | Selected; revisions/seeds/mixing manifests not yet frozen |
 
@@ -164,8 +166,10 @@ confirmed.
     estimated 30-60 s window as fact.
 13. Report cold pre-talk compilation, evidence-ready timing, on-path lookup,
     packet tokens, GPU seconds/RTF, and computation-aware AL/LAAL separately.
-14. MCIF is the primary project-held-out benchmark (En→Zh main, En→De
-    replication); ACL60/60 dev is the futility screen and eval is replication.
+14. The 21-talk MCIF translation subset is the primary project-held-out
+    benchmark (En→Zh main, En→De replication); the current HF revision also
+    contains 79 non-translation media talks. ACL60/60 dev is the futility
+    screen and eval is replication.
 15. Native audio is Route B1's primary pilot condition. Controlled +5 dB noise
     is Route A's primary stress condition; synthetic noise is not evidence of
     real-world prevalence.
@@ -179,10 +183,11 @@ confirmed.
 
 ## Current Next Actions (2026-07-31)
 
-1. Freeze MCIF and ACL60/60 eval revisions/licenses/hashes, then reconstruct
-   causal slide timelines and measure dwell plus slide-to-speech lead/lag.
-2. Connect a long-form SimulST runner and reproduce `C0-C3` before implementing
-   any new method.
+1. Build automatic reference-free `C1-C2` context packets from the frozen five
+   ACL60/60 dev papers, then implement C3 causal ASR-prefix retrieval; preserve
+   exact WAV-list order and the 256-token-per-channel limit.
+2. Materialize the pinned Qwen model snapshots, pass a one-talk no-reference
+   dry run, then reproduce `C0-C3` on all five dev talks.
 3. Compile the typed `C4-C6` memories before each talk and blind-label 200-300
    context-critical events on the five ACL60/60 dev talks.
 4. Run `C0-C7` at native and +5 dB with matched context budgets, then apply the

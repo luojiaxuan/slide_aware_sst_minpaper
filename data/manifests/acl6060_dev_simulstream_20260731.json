@@ -1,0 +1,33 @@
+{
+  "dataset": "acl6060",
+  "split": "dev",
+  "talk_ids": [
+    "2022.acl-long.268",
+    "2022.acl-long.367",
+    "2022.acl-long.590",
+    "2022.acl-long.110",
+    "2022.acl-long.117"
+  ],
+  "segment_count": 468,
+  "inference_view_sha256": "6c1a40bedd3b352fd2206ea506b4fa838a0d7f9b8db7f7c2c747db644e7ef0e2",
+  "inference_files": {
+    "wav_list.txt": {
+      "bytes": 650,
+      "sha256": "dd585c1ed9ce6822ed608c73cf6ad0acaafa85da6da521fb9a79341ce2c41f05"
+    }
+  },
+  "scoring_files": {
+    "source.en.txt": {
+      "bytes": 49243,
+      "sha256": "aa37f443c0e1c6d23fac0ef285230c29e9a25e7941d45cb796c622a5c15452d1"
+    },
+    "reference.zh.txt": {
+      "bytes": 43472,
+      "sha256": "0b1e32490472b7ff98c8a3d0a83092d10b633283ebc7b4daf1888e3a344f4f72"
+    },
+    "audio-segments.yaml": {
+      "bytes": 38281,
+      "sha256": "ed18ddd03a55e0c4719e725b7843d0039f36c6dca3342d9061243dd7c5c241b2"
+    }
+  }
+}

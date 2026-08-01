@@ -166,7 +166,9 @@ terms or generic PDF RAG.
 
 ### 2026 literature/data audit update (2026-07-31)
 
-- **[high] MCIF should be the primary held-out benchmark.** It has 21 ACL 2023
+- **[high] MCIF's 21-talk translation subset should be the primary held-out
+  benchmark.** The current HF revision has a broader 100-talk media pool; the
+  translation subset has 21 ACL 2023
   talks, original MP4/WAV, human English transcripts, professional De/It/Zh
   translations, CC BY 4.0, and an official IWSLT 2026 long-form SimulST path.
   This is stronger for talk-level inference than the five ACL60/60 eval talks.

@@ -146,7 +146,7 @@ RTF 和 computation-aware LongYAAL，同时保持质量？
 
 | 角色 | 数据 | 规模/性质 | 用途 | 当前动作 |
 | --- | --- | --- | --- | --- |
-| **主 held-out test** | **MCIF** | 21 个 ACL 2023 scientific talks，约 1 h 58 m；原始 MP4/WAV；人工 English transcript；专业 De/It/Zh translations；CC BY 4.0 | long-form En→Zh 主方向；En→De 复制；真实 talk video/slide；接 IWSLT 2026 protocol | 拉取 HF `FBK-MT/MCIF`，重建 slide timeline，不改 test labels |
+| **主 held-out test** | **MCIF translation subset** | 当前 HF revision 有 100 个 long-media talks；其中 21 个 ACL 2023 talks（约 1 h 58 m）构成 translation/IWSLT subset，含原始 MP4/WAV、人工 English transcript、专业 De/It/Zh translations；CC BY 4.0 | long-form En→Zh 主方向；En→De 复制；真实 talk video/slide；接 IWSLT 2026 protocol | 冻结 HF media-pool revision 与官方 21-talk IWSLT archive，重建 slide timeline，不改 test labels |
 | **development + tagged-term replication** | **ACL60/60** | dev 5 talks + eval 5 talks；专业 10 语翻译；第三方术语标签；音频本身刻意选得较清晰 | dev 调 policy/noise；eval 做 En→Zh 复制与 term metrics；直接延续 *Do Slides Help?* | 当前 repo 只有 dev 5 talks，补齐 eval 与官方 term annotations |
 | **private diagnostic** | Chinese-LiPS-Long | 21 sessions/约 11.1 h private reconstruction；1080p slide；连续 timeline；无独立 paper-grade ST refs | 测 dwell/lead-lag、change detector、zh ASR/术语机制；不做 headline ST 排名 | 只在 private HF revision 上运行；先人工小样本，不扩大 pseudo refs |
 | **未来外部验证** | LECTRANS | 383 h，162 min human-verified eval；当前匿名 ARR submission 声称 accepted 后发布 | 发布且许可明确后，验证 academic-lecture generalization | 不作为当前 blocker，不依赖尚未发布的数据 |
@@ -164,7 +164,8 @@ MCIF 不是天然 noisy benchmark：其构建排除了 inaudible、excessive-noi
 microphone 样本。因此主表必须分开报告 native audio 与受控 corruption，不能把合成
 噪声冒充自然分布。
 
-HF 上 `long/short × fixed/mixed` 是共享同一批 21 talks 的 task configs，不是独立的
+原始 MCIF translation benchmark 的 `long/short × fixed/mixed` 共享同一批 21 talks，
+不是独立的
 train/dev/test split。为避免最严重的 model-selection leakage，本项目把 **全部 21 个
 MCIF talks 设为 project-held-out test**：不能用其 references、模型输出或逐 talk
 结果改 prompt、extractor、policy、noise level 或 metric。开发只使用 ACL60/60 dev

@@ -214,7 +214,8 @@ Phase A 仅使用 ACL60/60 的 5 个 dev talks，作为 futility screen：
 - 不能用 5 个 talks 宣称 paper-level significance；
 - 不能用极端 noise 中才出现的 gain 代替 native usefulness。
 
-MCIF 21 talks 保持 project-held-out。在 route、representation、selector、prompt、model、
+MCIF 官方 IWSLT translation subset 的 21 talks（当前 HF revision 的 100-talk media
+pool 中的一部分）保持 project-held-out。在 route、representation、selector、prompt、model、
 metric 和 gate 冻结前，不运行 MCIF outputs。ACL60/60 eval 用于最终 replication；若
 IWSLT ACL-TALKS blind test 可访问，再作为独立验证。
 
