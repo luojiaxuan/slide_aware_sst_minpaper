@@ -105,6 +105,24 @@ def config() -> dict:
             "use_region_detection": True,
             "format_block_content": True,
         },
+        "fallbacks": {
+            "zero_cluster_table_reconciliation": {
+                "trigger_error_type": "InvalidParameterError",
+                "trigger_message": "The 'n_clusters' parameter of KMeans must be an int in the range [1, inf). Got 0 instead.",
+                "sequence": [
+                    {
+                        "name": "disable_ocr_table_cell_reconciliation",
+                        "predict_overrides": {
+                            "use_ocr_results_with_table_cells": False
+                        },
+                    },
+                    {
+                        "name": "disable_table_recognition",
+                        "predict_overrides": {"use_table_recognition": False},
+                    },
+                ],
+            }
+        },
     }
 
 
@@ -221,3 +239,54 @@ def test_model_manifest_must_bind_config_and_every_model():
     manifest["unique_models"].pop()
     with pytest.raises(ValueError, match="incomplete"):
         module.validate_model_manifest(manifest, frozen, module.canonical_hash(frozen))
+
+
+def test_batch_failure_isolated_and_zero_cluster_fallback_recorded(tmp_path):
+    module = load_module()
+    zero_cluster_error = type("InvalidParameterError", (Exception,), {})
+    message = config()["fallbacks"]["zero_cluster_table_reconciliation"][
+        "trigger_message"
+    ]
+
+    class Result:
+        def __init__(self, path):
+            self.json = {"res": {"input_path": path}}
+
+    class Pipeline:
+        def __init__(self):
+            self.calls = []
+
+        def predict(self, paths, **kwargs):
+            self.calls.append((list(paths), kwargs))
+            if any("bad" in path for path in paths) and not kwargs:
+                raise zero_cluster_error(message)
+            return [Result(path) for path in paths]
+
+    paths = [str(tmp_path / "good.png"), str(tmp_path / "bad.png")]
+    pipeline = Pipeline()
+    policy = config()["fallbacks"]["zero_cluster_table_reconciliation"]
+    outcomes = module.predict_paths_with_fallback(pipeline, paths, policy)
+    assert [outcome["path"] for outcome in outcomes] == paths
+    assert "fallback" not in outcomes[0]
+    assert outcomes[1]["fallback"]["strategy"] == (
+        "disable_ocr_table_cell_reconciliation"
+    )
+    assert outcomes[1]["fallback"]["predict_overrides"] == {
+        "use_ocr_results_with_table_cells": False
+    }
+    assert pipeline.calls[0] == (paths, {})
+    assert pipeline.calls[-1][1] == {"use_ocr_results_with_table_cells": False}
+
+
+def test_unrelated_single_item_error_is_not_masked(tmp_path):
+    module = load_module()
+
+    class Pipeline:
+        def predict(self, paths, **kwargs):
+            raise RuntimeError("unrelated")
+
+    path = str(tmp_path / "bad.png")
+    policy = config()["fallbacks"]["zero_cluster_table_reconciliation"]
+    outcomes = module.predict_paths_with_fallback(Pipeline(), [path], policy)
+    assert type(outcomes[0]["error"]).__name__ == "RuntimeError"
+    assert "fallback" not in outcomes[0]

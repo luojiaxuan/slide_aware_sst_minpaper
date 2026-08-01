@@ -50,5 +50,25 @@
   "thresholds": {
     "text_recognition_score": 0.0
   },
+  "fallbacks": {
+    "zero_cluster_table_reconciliation": {
+      "trigger_error_type": "InvalidParameterError",
+      "trigger_message": "The 'n_clusters' parameter of KMeans must be an int in the range [1, inf). Got 0 instead.",
+      "sequence": [
+        {
+          "name": "disable_ocr_table_cell_reconciliation",
+          "predict_overrides": {
+            "use_ocr_results_with_table_cells": false
+          }
+        },
+        {
+          "name": "disable_table_recognition",
+          "predict_overrides": {
+            "use_table_recognition": false
+          }
+        }
+      ]
+    }
+  },
   "interpretation": "Flat OCR is the complete PP-OCRv6 overall OCR result in provider order. Structured text adds PP-StructureV3 layout, reading order, table, formula, and chart parsing over the same source frame and OCR models. PaddleOCR-VL is excluded because it is a document VLM, not a pure OCR baseline. The common engine is paddle_dynamic because PP-Chart2Table does not support paddle_static."
 }

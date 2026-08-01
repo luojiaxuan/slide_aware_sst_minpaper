@@ -92,6 +92,25 @@ def validate_config(config: dict[str, Any]) -> None:
     }
     if not all(modules.get(name) is True for name in required_modules):
         raise ValueError("Structured text modules must remain enabled")
+    fallback = (config.get("fallbacks") or {}).get(
+        "zero_cluster_table_reconciliation"
+    ) or {}
+    if fallback.get("trigger_error_type") != "InvalidParameterError":
+        raise ValueError("The zero-cluster fallback trigger type changed")
+    if "n_clusters" not in str(fallback.get("trigger_message")):
+        raise ValueError("The zero-cluster fallback trigger message changed")
+    sequence = fallback.get("sequence") or []
+    if sequence != [
+        {
+            "name": "disable_ocr_table_cell_reconciliation",
+            "predict_overrides": {"use_ocr_results_with_table_cells": False},
+        },
+        {
+            "name": "disable_table_recognition",
+            "predict_overrides": {"use_table_recognition": False},
+        },
+    ]:
+        raise ValueError("The zero-cluster fallback sequence changed")
 
 
 def validate_model_manifest(
@@ -335,6 +354,7 @@ def build_output_row(
     package_versions: dict[str, str],
     model_manifest_sha256: str,
     shard_index: int,
+    inference_fallback: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     width = int(input_row["frame_width"])
     height = int(input_row["frame_height"])
@@ -366,6 +386,7 @@ def build_output_row(
             "shard_index": shard_index,
         },
         "model_settings": result.get("model_settings") or {},
+        "inference_fallback": inference_fallback,
         "flat_ocr": parse_flat_ocr(result, width, height),
         "structured_text": parse_structured_text(result, width, height),
         "source_transcript_consumed": False,
@@ -479,6 +500,81 @@ def result_payload(result: Any) -> dict[str, Any]:
     return payload
 
 
+def collect_payloads(
+    pipeline: Any, paths: list[str], predict_overrides: dict[str, Any] | None = None
+) -> dict[str, dict[str, Any]]:
+    results = pipeline.predict(paths, **(predict_overrides or {}))
+    payloads = [result_payload(result) for result in results]
+    if len(payloads) != len(paths):
+        raise ValueError("PP-Structure batch result count differs from input")
+    by_path = {str(Path(payload["input_path"]).resolve()): payload for payload in payloads}
+    expected = {str(Path(path).resolve()) for path in paths}
+    if set(by_path) != expected:
+        raise ValueError("PP-Structure output paths differ from input")
+    return by_path
+
+
+def predict_paths_with_fallback(
+    pipeline: Any,
+    paths: list[str],
+    fallback_policy: dict[str, Any],
+) -> list[dict[str, Any]]:
+    try:
+        payloads = collect_payloads(pipeline, paths)
+        return [
+            {"path": path, "payload": payloads[str(Path(path).resolve())]}
+            for path in paths
+        ]
+    except Exception as exc:
+        if len(paths) > 1:
+            outcomes = []
+            for path in paths:
+                outcomes.extend(
+                    predict_paths_with_fallback(pipeline, [path], fallback_policy)
+                )
+            return outcomes
+
+        trigger_matches = (
+            type(exc).__name__ == fallback_policy.get("trigger_error_type")
+            and str(exc) == fallback_policy.get("trigger_message")
+        )
+        if trigger_matches:
+            attempts = []
+            for fallback in fallback_policy.get("sequence") or []:
+                try:
+                    payloads = collect_payloads(
+                        pipeline, paths, fallback["predict_overrides"]
+                    )
+                    return [
+                        {
+                            "path": paths[0],
+                            "payload": payloads[str(Path(paths[0]).resolve())],
+                            "fallback": {
+                                "trigger_error_type": type(exc).__name__,
+                                "trigger_error": str(exc),
+                                "strategy": fallback["name"],
+                                "predict_overrides": fallback["predict_overrides"],
+                            },
+                        }
+                    ]
+                except Exception as fallback_exc:
+                    attempts.append(
+                        {
+                            "strategy": fallback["name"],
+                            "error_type": type(fallback_exc).__name__,
+                            "error": str(fallback_exc),
+                        }
+                    )
+            return [
+                {
+                    "path": paths[0],
+                    "error": exc,
+                    "fallback_attempts": attempts,
+                }
+            ]
+        return [{"path": paths[0], "error": exc}]
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input-manifest", type=Path, required=True)
@@ -525,41 +621,44 @@ def main() -> None:
 
     input_manifest_sha256 = sha256_file(args.input_manifest)
     batch_size = int(config["batch_sizes"]["input"])
+    fallback_policy = config["fallbacks"]["zero_cluster_table_reconciliation"]
     succeeded = len(completed_ids)
     failures = 0
     for batch in chunks(pending, batch_size):
         batch_paths = [str(paths[row["id"]]) for row in batch]
-        try:
-            results = pipeline.predict(batch_paths)
-            payloads = [result_payload(result) for result in results]
-            if len(payloads) != len(batch):
-                raise ValueError("PP-Structure batch result count differs from input")
-            by_path = {str(Path(payload["input_path"]).resolve()): payload for payload in payloads}
-            for row, path in zip(batch, batch_paths, strict=True):
-                payload = by_path.get(str(Path(path).resolve()))
-                if payload is None:
-                    raise ValueError(f"Missing PP-Structure output for {row['id']}")
+        rows_by_path = {
+            str(Path(path).resolve()): row
+            for row, path in zip(batch, batch_paths, strict=True)
+        }
+        outcomes = predict_paths_with_fallback(
+            pipeline, batch_paths, fallback_policy
+        )
+        for outcome in outcomes:
+            row = rows_by_path[str(Path(outcome["path"]).resolve())]
+            if "error" not in outcome:
                 output_row = build_output_row(
                     row,
-                    payload,
+                    outcome["payload"],
                     config=config,
                     config_sha256=config_sha256,
                     input_manifest_sha256=input_manifest_sha256,
                     package_versions=package_versions,
                     model_manifest_sha256=model_manifest_sha256,
                     shard_index=args.shard_index,
+                    inference_fallback=outcome.get("fallback"),
                 )
                 append_jsonl(args.output, output_row)
                 succeeded += 1
-        except Exception as exc:
-            failures += len(batch)
-            for row in batch:
+            else:
+                exc = outcome["error"]
+                failures += 1
                 append_jsonl(
                     args.failures,
                     {
                         "id": row["id"],
                         "error_type": type(exc).__name__,
                         "error": str(exc),
+                        "fallback_attempts": outcome.get("fallback_attempts") or [],
                     },
                 )
         print(

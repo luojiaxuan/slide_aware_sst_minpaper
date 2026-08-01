@@ -62,6 +62,7 @@ def validate_row(
     expected_input_manifest_sha256: str,
     expected_model_manifest_sha256: str,
     expected_models: dict[str, str],
+    expected_fallback_policy: dict[str, Any],
 ) -> None:
     item_id = source["id"]
     protected = (
@@ -133,6 +134,25 @@ def validate_row(
         for block in structured.get("blocks") or []
     ):
         raise ValueError(f"Invalid structure block in {item_id}")
+    if "inference_fallback" not in output:
+        raise ValueError(f"Missing inference fallback record for {item_id}")
+    fallback = output["inference_fallback"]
+    if fallback is not None:
+        strategies = {
+            item["name"]: item["predict_overrides"]
+            for item in expected_fallback_policy["sequence"]
+        }
+        strategy = fallback.get("strategy")
+        if strategy not in strategies:
+            raise ValueError(f"Unexpected inference fallback for {item_id}")
+        if fallback.get("predict_overrides") != strategies[strategy]:
+            raise ValueError(f"Inference fallback overrides changed for {item_id}")
+        if fallback.get("trigger_error_type") != expected_fallback_policy[
+            "trigger_error_type"
+        ]:
+            raise ValueError(f"Inference fallback trigger changed for {item_id}")
+        if fallback.get("trigger_error") != expected_fallback_policy["trigger_message"]:
+            raise ValueError(f"Inference fallback message changed for {item_id}")
 
 
 def finalize(
@@ -161,6 +181,7 @@ def finalize(
     structure_bbox_out_of_bounds = 0
     shard_counts = Counter()
     package_version_counts = Counter()
+    fallback_counts = Counter()
     finalized = []
     for source in input_rows:
         output = output_by_id[source["id"]]
@@ -171,6 +192,9 @@ def finalize(
             expected_input_manifest_sha256=input_manifest_sha256,
             expected_model_manifest_sha256=model_manifest_sha256,
             expected_models=config["models"],
+            expected_fallback_policy=config["fallbacks"][
+                "zero_cluster_table_reconciliation"
+            ],
         )
         flat = output["flat_ocr"]
         structured = output["structured_text"]
@@ -195,6 +219,8 @@ def finalize(
         package_version_counts[
             json.dumps(provenance["package_versions"], sort_keys=True)
         ] += 1
+        fallback = output["inference_fallback"]
+        fallback_counts["none" if fallback is None else fallback["strategy"]] += 1
         finalized.append(output)
 
     report = {
@@ -224,6 +250,7 @@ def finalize(
         },
         "shard_counts": dict(sorted(shard_counts.items())),
         "package_version_counts": dict(sorted(package_version_counts.items())),
+        "inference_fallback_counts": dict(sorted(fallback_counts.items())),
         "source_transcript_consumed": False,
         "target_or_reference_consumed": False,
         "interpretation": (

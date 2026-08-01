@@ -36,6 +36,18 @@ def source(item_id: str, talk: str, state_id: int) -> dict:
 def config() -> dict:
     return {
         "models": {"text_detection": "PP-OCRv6_medium_det"},
+        "fallbacks": {
+            "zero_cluster_table_reconciliation": {
+                "trigger_error_type": "InvalidParameterError",
+                "trigger_message": "n_clusters=0",
+                "sequence": [
+                    {
+                        "name": "disable_table_recognition",
+                        "predict_overrides": {"use_table_recognition": False},
+                    }
+                ],
+            }
+        },
     }
 
 
@@ -78,6 +90,7 @@ def output(row: dict, config_sha: str, input_sha: str, *, label: str = "chart") 
                 {"label": label, "content": "A", "bbox_out_of_bounds": False}
             ],
         },
+        "inference_fallback": None,
         "source_transcript_consumed": False,
         "target_or_reference_consumed": False,
     }
@@ -105,6 +118,7 @@ def test_finalize_orders_rows_and_counts_structure():
     assert report["structured_text"]["rows_with_chart"] == 1
     assert report["structured_text"]["rows_with_formula"] == 1
     assert report["shard_counts"] == {"0": 1, "1": 1}
+    assert report["inference_fallback_counts"] == {"none": 2}
 
 
 @pytest.mark.parametrize(
