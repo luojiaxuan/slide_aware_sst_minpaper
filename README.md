@@ -46,8 +46,12 @@
 > 283/304 causally-prior same-talk controls 均经过真实 processor 验证；203 个 cross-talk
 > controls 天然同尺寸，101 个使用冻结的 aspect-preserving fit-and-pad spec，最终
 > `image_grid_thw` 与 visual-token count 均精确匹配 source。该 artifact 仍只是 source-only
-> candidate/transform contract；transformed bytes 要到 event packet compiler 中物化并绑定，
-> 不是 ST 结果或 `vision > OCR` 证据。
+> candidate/transform contract。101 张 transformed wrong-image bytes 随后已在 state-level
+> media bundle 中物化并冻结到 private HF revision
+> [`0001171c`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/0001171cf661d605c6fa344df7cd3f90d291d194/visual_control_media_v1)，
+> tag `mcif-qwen3-omni-visual-control-media-v1`；105 files 全量重下载验证通过。它尚未定义
+> target event 或 `SourceEventTiming`，因此仍不是正式 event packet、ST 结果或
+> `vision > OCR` 证据。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28
@@ -180,9 +184,10 @@ current benchmark contract.
    frame-only cohort. v1 media remains
    reusable, but its A/B annotation sheets are superseded. No human label is
    complete yet.
-2. The 304-state visual-token inventory and deterministic stale/wrong candidate
-   specs are frozen. Next materialize transformed control bytes inside hash-bound
-   source-only packets and freeze target scoring; then compare audio/document-only,
+2. The 304-state visual-token inventory, deterministic stale/wrong candidates,
+   and 101 transformed wrong-image bytes are frozen. Next freeze target events
+   and scoring, then join each event to immutable state-level media inside
+   hash-bound source-only packets; then compare audio/document-only,
    token-budget-matched unordered OCR, layout/structure-
    preserving text, current raw image, and matched stale/wrong evidence under
    native and controlled-noise audio. This ladder separates “context helps”

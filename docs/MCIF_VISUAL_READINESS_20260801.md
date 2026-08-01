@@ -235,10 +235,22 @@ tag `mcif-qwen3-omni-visual-token-controls-v1`。远端 6 files 已全量重下�
 Git provenance：
 [`../data/manifests/mcif_qwen3_omni_visual_token_controls_v1_20260801.json`](../data/manifests/mcif_qwen3_omni_visual_token_controls_v1_20260801.json)。
 
-该 bundle 只保存 original-image references 与 deterministic transform specs，不复制或物化
-101 张 transformed control images。下一步必须在 source-event packet compiler 中生成并
-hash-bind 最终 bytes，再冻结 target scoring 和 native/noisy oracle headroom。它不是
-`image_needed` label、最终 paper control 选择或 `vision > OCR` 结果。
+该 control-spec bundle 只保存 original-image references 与 deterministic transforms；
+101 张 transformed controls 随后已由 clean Git `62328c7` 在 CPU-only Hyper00 run 中物化。
+输出含 101 PNGs / 25,580,679 bytes，203 个 cross-talk 和 283 个 stale identity controls
+继续引用 canonical native images，不复制原图。全部 587 个最终 media inputs 再过同一
+processor，grid/token 精确匹配；第二次独立构建的 105 files byte-identical。
+
+Materialized state-level media 的 private HF source of truth：
+[`gavinlaw/slide-aware-sst-mcif-source-prescreen@0001171c/visual_control_media_v1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/0001171cf661d605c6fa344df7cd3f90d291d194/visual_control_media_v1)，
+tag `mcif-qwen3-omni-visual-control-media-v1`。远端 105 files 已全量重下载并逐字节验证，
+104-entry `SHA256SUMS` 全通过；Git provenance：
+[`../data/manifests/mcif_qwen3_omni_visual_control_media_v1_20260801.json`](../data/manifests/mcif_qwen3_omni_visual_control_media_v1_20260801.json)。
+
+这些仍是 visual states，不是 target events。下一步先冻结 target-event inventory、
+`audio_insufficient_until_sec` 与 scoring，再把 state media join 成 `SourceEventTiming` 和
+`EvidencePacketSpec`；不能把 304 states 直接冒充 304 events。当前仍没有 `image_needed`
+label、最终 paper control 选择或 `vision > OCR` 结果。
 
 ## Reference-free Qwen3-VL source screen
 
@@ -351,9 +363,10 @@ correctness 不低于 -1 pp；它们是资源投入门槛，不是尚未注册�
 3. MCIF 304-state private source-only morphology prescreen、native evidence、flat PP-OCRv6、
    PP-StructureV3、Qwen3-Omni visual-token/control specs、QA 和 HF upload 均已完成；逐行
    自动输出不得修改 inventory、提示 annotator 或过滤 raw-image condition。
-4. 下一步在 source-event packets 中物化并 hash-bind 101 个 fit-and-pad controls，冻结
-   target scoring，再跑 oracle headroom：document、unordered OCR、layout/structure-
-   preserving text、raw image、matched wrong，覆盖 native 与 noise。Input/control-spec
-   readiness 已完成，不等于 event 或 system output 已完成。
+4. 101 个 fit-and-pad control bytes 已在 state-level bundle 中物化并 hash-bind。下一步冻结
+   target-event inventory 与 scoring，再 join `SourceEventTiming` / `EvidencePacketSpec`，然后
+   跑 oracle headroom：document、unordered OCR、layout/structure-preserving text、raw image、
+   matched wrong，覆盖 native 与 noise。Input/media readiness 已完成，不等于 event 或
+   system output 已完成。
 5. 只有看到 content-specific early-commit 或稳定 robustness signal 后，才投入 automatic
    VLM compiler、selection/gating 与 GPU inference。

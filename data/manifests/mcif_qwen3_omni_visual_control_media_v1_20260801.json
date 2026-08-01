@@ -1,0 +1,67 @@
+{
+  "artifact": "mcif_qwen3_omni_visual_control_media_v1",
+  "status": "UPLOADED_PRIVATE_SOURCE_ONLY_STATE_CONTROL_MEDIA_NOT_EVENT_PACKET_OR_ST_RESULT",
+  "upstream": {
+    "dataset_repo": "FBK-MT/MCIF",
+    "dataset_revision": "e24065b919758263cfe5d157057278affe76ea7b",
+    "license": "cc-by-4.0",
+    "native_image_hf_revision": "4e80dd0ae4f6bf4f0633cb9d605286d06f34ae49",
+    "visual_token_controls_hf_revision": "b2c9a4093cb14cf15e26ff72efe941406bbaf59f",
+    "visual_token_inventory_sha256": "bbf2e1b62a036ae311d433a4fef5cbb479cfdcf6ebf1d50c2f727ebd4f458c7c",
+    "matched_wrong_candidates_sha256": "fbdefae79a5205803ea3db6c07748e14edcda40f8cf123e99a1b7aaa5c3a7f30",
+    "processor_manifest_sha256": "b09170c0b29ead892381c7a54af5abd921e95623b4d4ff46a6af5782d5198dae"
+  },
+  "processor": {
+    "model_id": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+    "model_revision": "26291f793822fb6be9555850f06dfe95f2d7e695",
+    "transformers_version": "5.6.0",
+    "pillow_version": "12.2.0",
+    "processor_binding_sha256": "0e1f6127feb128d561bd24444fb9c237f40db8ea90dde2f6df4bdb738609c6bf"
+  },
+  "generation": {
+    "git_commit": "62328c7fa7e3f199c20eaf3bd246be9dbcf9dced",
+    "script": "code/scripts/build_mcif_visual_control_media.py",
+    "command": "PYTHONPATH=code CUDA_VISIBLE_DEVICES= python code/scripts/build_mcif_visual_control_media.py --inventory $CONTROLS/visual_token_inventory.jsonl --expected-inventory-sha256 bbf2e1b62a036ae311d433a4fef5cbb479cfdcf6ebf1d50c2f727ebd4f458c7c --controls $CONTROLS/matched_wrong_candidates.jsonl --expected-controls-sha256 fbdefae79a5205803ea3db6c07748e14edcda40f8cf123e99a1b7aaa5c3a7f30 --processor-manifest $CONTROLS/processor_manifest.json --expected-processor-manifest-sha256 b09170c0b29ead892381c7a54af5abd921e95623b4d4ff46a6af5782d5198dae --source-controls-hf-revision b2c9a4093cb14cf15e26ff72efe941406bbaf59f --source-root $MCIF_INPUT --processor-root $QWEN3_OMNI_PROCESSOR_SNAPSHOT --code-repo . --output-root $OUTPUT --batch-size 8",
+    "host": "Hyper00",
+    "gpu_used": false
+  },
+  "inventory": {
+    "rows": 304,
+    "talks": 21,
+    "same_talk_stale_coverage": 283,
+    "cross_talk_wrong_coverage": 304,
+    "identity_processor_inputs": 486,
+    "fit_pad_to_source_canvas_inputs": 101,
+    "processor_records_verified": 587,
+    "materialized_media_files": 101,
+    "materialized_media_bytes": 25580679,
+    "source_transcript_consumed": false,
+    "target_or_reference_consumed": false
+  },
+  "checksums": {
+    "control_media_manifest_sha256": "16aae2790bf29afa6256a332f495621707c6489b581148f3cb14220a3c03e9ae",
+    "checksum_manifest_sha256": "ee5be56fac217bcdfa67aa6e938e221fdd77ad96036726c775f250b0d845bccb",
+    "checksum_entries": 104,
+    "bundle_files": 105,
+    "bundle_bytes": 26437818
+  },
+  "hugging_face": {
+    "repo": "gavinlaw/slide-aware-sst-mcif-source-prescreen",
+    "repo_type": "dataset",
+    "path": "visual_control_media_v1",
+    "private_verified": true,
+    "revision": "0001171cf661d605c6fa344df7cd3f90d291d194",
+    "tag": "mcif-qwen3-omni-visual-control-media-v1",
+    "remote_path_count": 105,
+    "full_remote_redownload_byte_verified": true,
+    "remote_checksum_entries_verified": 104
+  },
+  "local_staging": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9/evidence/mcif_visual_control_media_v1",
+  "quality_audit": {
+    "independent_rebuild_byte_identical": true,
+    "native_input_bytes_revalidated": 304,
+    "project_tests": 269,
+    "project_test_warnings": 2
+  },
+  "interpretation": "This artifact materializes source-only state-level wrong-image media and binds final bytes to the frozen processor budget. It does not define target events, event timing, source-event packets, labels, translations, final paper controls, or ST effects."
+}

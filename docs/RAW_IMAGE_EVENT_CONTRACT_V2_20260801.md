@@ -57,7 +57,7 @@ off-path 版本。
 - scoring matrix：`code/configs/acl6060_event_trajectory_scoring_v2.json`
 - regression：`code/tests/test_image_evidence_v2.py`
 
-visual-token/control builder 完成后的全套回归：`261 passed`，只有两个既有
+state-level control media builder 完成后的全套回归：`269 passed`，只有两个既有
 `pypinyin` deprecation warnings。
 
 ## 下一步
@@ -69,10 +69,12 @@ visual-token/control builder 完成后的全套回归：`261 passed`，只有两
 3. [完成 candidate spec] 构造 deterministic `same_talk_stale` 与
    `cross_talk_wrong`。天然 processor-shape 不匹配的 101 个 cross-talk candidates 使用
    冻结 fit-and-pad spec，并经真实 processor 验证最终 grid/token 精确相同；
-4. 在 source-event packet 中物化并 hash-bind transformed control bytes，冻结 target
-   scoring 和 native/noisy oracle headroom run。
+4. [完成 state media] 101 个 transformed control bytes 已物化并 hash-bind；下一步冻结
+   target-event inventory/scoring，再将 state media join 到 source-event packets，执行
+   native/noisy oracle headroom run。
 
 当前可复用 ladder 位于 private HF revision
 `b13bd2045644f90a6de6be19f77a4af3acaa924f`；processor/control specs 位于 private HF
-revision `b2c9a4093cb14cf15e26ff72efe941406bbaf59f`。第 4 步前仍不能启动正式 raw-image
-matched-control inference，因为 transform spec 不是最终 media bytes。
+revision `b2c9a4093cb14cf15e26ff72efe941406bbaf59f`；最终 state media 位于 private HF revision
+`0001171cf661d605c6fa344df7cd3f90d291d194`。仍不能启动正式 raw-image matched-control
+inference：当前阻塞项是 event/target-scoring freeze，而不是 control media bytes。

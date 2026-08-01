@@ -1232,3 +1232,22 @@ or a stronger Qwen3-VL variant if available.
   transformed control images，也不选择最终 paper control。下一步在 source-event packet
   compiler 中生成并 hash-bind 最终 bytes，冻结 target scoring，再执行 native/noisy oracle
   headroom；当前仍没有 MCIF event label、translation output 或 paper effect。
+
+## 2026-08-01 MCIF Visual Control Media Completion
+
+- 新增 state-level source-only media builder；它拒绝 source/control row drift、candidate
+  identity drift、forbidden target/reference flags、path traversal、processor drift 和非原子
+  结束态。全套回归为 `269 passed`，仅有两个既有 `pypinyin` warnings。
+- 在 clean Git `62328c7` 上物化 101 个 `fit_pad_to_source_canvas` cross-talk controls，输出
+  25,580,679 bytes PNG；其余 203 个 cross-talk 和 283 个 same-talk stale identity inputs
+  继续引用 canonical native media，不复制图像。
+- 304 rows / 21 talks 的 587 个最终 control inputs 已全部从保存后的 bytes 重过 frozen
+  Qwen3-Omni processor，`image_grid_thw` 与 visual-token count 全匹配。正式构建与独立
+  rebuild 的 105/105 files byte-identical；104-entry `SHA256SUMS` 全通过。
+- 上传 private HF revision
+  [`0001171c/visual_control_media_v1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/0001171cf661d605c6fa344df7cd3f90d291d194/visual_control_media_v1)，
+  tag `mcif-qwen3-omni-visual-control-media-v1`；远端 105 files 已全量重下载并逐字节验证。
+- 该产物刻意不生成 `SourceEventTiming` 或 `EvidencePacketSpec`：304 visual states 不是 304
+  target events。下一步先冻结 event inventory、audio-insufficient boundaries 和 target
+  scoring，再做 state-to-event packet join；当前仍没有 MCIF event label、translation output
+  或 paper effect。
