@@ -576,3 +576,19 @@ or a stronger Qwen3-VL variant if available.
   forced-choice timing intervals, source-only oracle packets, conservative
   slide-state transitions, a gold visual-relation positive control, and an
   MCIF gate requiring at least 15 eligible talks before confirmatory claims.
+
+### Exploration-strategy correction
+
+- Rejected the premature assumption that the project must select one paper
+  story and one primary estimand before running development experiments.
+- Reclassified ACL dev as an explicit multi-route discovery stage covering
+  current-content anticipation, noisy-speech robustness, pixels beyond OCR, and
+  evidence selection/integration. Correct versus matched stale/wrong evidence
+  remains a common content-use validity control, not the only allowed outcome.
+- OmniFusion is now treated as a weak application precedent rather than a paper
+  that closes usable simultaneous ST with slides; its latency and attribution
+  gaps remain part of the opportunity.
+- The rigor boundary moves to the dev/held-out split: record the complete
+  declared development matrix, choose the most defensible route from dev
+  evidence, then commit/push a frozen primary claim and analysis before reading
+  ACL eval or MCIF results.

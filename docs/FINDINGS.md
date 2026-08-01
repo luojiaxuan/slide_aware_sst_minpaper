@@ -125,38 +125,40 @@ inference, not direct measurement. **Evidence:** `runs_bias{2,4,8}.jsonl`,
    most of the injected image is irrelevant. RASST-style chunkwise retrieval over
    the visual channel is a different mechanism and remains untested.
 
-### Paper-story decision after locked collision audit (2026-07-31)
+### Paper-story exploration after locked collision audit (2026-07-31)
 
-The authoritative decision is now
+The authoritative exploration strategy is now
 [`PAPER_STORY_DECISION_20260731.md`](PAPER_STORY_DECISION_20260731.md). The
-paper no longer switches between Route B1 and Route A. Its only primary question
-is whether correct current-slide content beats a time/type/budget-matched
-same-talk stale/wrong slide after both conditions receive the same strong
-document context.
+project does not freeze a final paper story before development evidence. It
+tests current-content attribution, noisy-speech robustness, pixels beyond OCR,
+and evidence integration in a declared development matrix, then freezes one
+main route before held-out evaluation.
 
 - **[high] Collision verdict:** independent Paper-Search and Scoop-Check both
   returned Level 3 / partial overlap. No checked paper implements the full
   conjunction, but its broad components are crowded.
-- **[high] New collision boundary:** OmniFusion/BOOM occupy slide-aware live
-  SimulST; VAPO occupies look-then-listen, OCR/image, mismatched-slide, and
+- **[high] New collision boundary:** OmniFusion/BOOM establish related
+  slide-aware translation applications, but OmniFusion's latency and streaming
+  usability do not close off-critical-path semantic integration. VAPO occupies
+  look-then-listen, OCR/image, mismatched-slide, and
   visual-interference analysis; visual-context SiMT occupies anticipation and
   image-conditioned READ/WRITE. These cannot be headline claims.
-- **[high] Remaining defensible axis:** with the document packet frozen, isolate
-  current-slide content identity and causal availability through correct versus
-  same-talk stale/wrong interventions.
-- **[hypothesis] Primary outcome:** talk-weighted +5 pp gain in stable correct
-  decisions before source audio resolves a locked forced choice, with final
-  correctness non-inferior by -1 pp. No such result exists yet.
-- **[high] Pixels are secondary:** a null C6 result is inconclusive unless a
+- **[high] Remaining research space:** persistent slide semantics compiled off
+  the online critical path, with content attribution, noisy-audio interaction,
+  beyond-OCR relations, and selective integration as candidate mechanisms.
+- **[hypothesis] Candidate Route-A outcome:** talk-weighted gain in stable
+  correct decisions before source audio resolves a locked forced choice, with
+  final correctness preserved. No such result exists yet.
+- **[high] Pixel nulls need care:** a null C6 result is inconclusive unless a
   gold visual-relation control is positive and a powered equivalence test passes.
 - Lip vision, AVMuST-TED execution, and slide+lip hybrid experiments remain out
   of scope.
 
-The next scientific action is not a full `C0-C7` GPU run. First import the
+The next scientific action is not an unstructured full `C0-C7` GPU run. First import the
 verified ACL60/60 real-frame supplement, blind-label evidence-opportunity
-density, and run document-only versus correct/wrong source-only oracle packets. If
-even the oracle has no content-specific accuracy or commit headroom, stop the
-automatic C3-C6 implementation.
+density, and map semantic, relation, correct/wrong, native/noisy oracle headroom.
+Any stable route can justify a focused automatic method; stop only if all gold
+evidence routes lack practical headroom.
 
 ### 2026 literature/data audit update (2026-07-31)
 

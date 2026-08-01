@@ -1,30 +1,37 @@
-# Paper Story Decision：Current-Slide Evidence Beyond Document Context
+# Paper Story Exploration：Persistent Slide Semantics for SimulST
 
 更新日期：2026-07-31
 
-状态：**当前权威的 paper identity 与执行优先级。** 本文件取代
+状态：**当前权威的探索策略与 held-out freeze 边界；最终 paper identity 尚未冻结。**
+本文件取代
 [`DUAL_ROUTE_DECISION_20260731.md`](DUAL_ROUTE_DECISION_20260731.md) 的 A/B paper
 identity 和原始执行顺序；旧文件只保留 `C0-C7` control、no-reference、held-out 与
-runtime contract。本文已经吸收两轮 novelty audit 和一轮 hostile ACL review。
+runtime contract。本文已经吸收两轮 novelty audit、一轮 hostile ACL review，以及
+“不要在实证探索前过早锁死单一故事”的策略纠正。
 
-## 1. 唯一 paper question
+## 1. 研究空间，而非提前冻结的唯一 paper question
 
-> **For a document-aware simultaneous speech translation system, does the
-> causally available current slide make it commit the correct translation
-> earlier than a time- and budget-matched stale or wrong slide?**
+> **Can causally available, persistent slide semantics improve simultaneous
+> speech translation without putting visual processing on the online critical
+> path, and under which evidence and acoustic conditions?**
 
-暂定标题：
+核心系统设定是：一个 slide 通常先于或伴随相关 speech 出现，并持续多个 audio chunks；
+系统换页时编译一次 OCR、layout、relation 或 semantic evidence，streaming decoder 只查询
+缓存。研究重点是这种 **pre-available semantic vision**，不是逐帧 lip video，也不是每个
+audio chunk 都重新调用 omni vision encoder。
 
-> **Does the Current Slide Change Simultaneous Translation Decisions Beyond
-> Document Context?**
+开发阶段保留四条可形成顶会论文的出口：
 
-中文故事：先给系统同一份 strong paper/PDF context，再只改变 current-slide packet 的
-内容身份。若 correct current slide 相比 same-talk stale/wrong slide，能在 audio 自身
-消歧前提高 first stable correct commit，同时不损害 final correctness，才说明 live slide
-content 对 online translation decision 有增量。
+| Route | 可形成的主问题 | 必须看到的实证信号 |
+| --- | --- | --- |
+| A. Attribution / anticipation | 当前 slide 是否让系统在 audio 消歧前更早正确提交？ | correct 显著优于 matched stale/wrong，且 final quality 不退化 |
+| B. Robustness | slide evidence 是否在 noisy、accented、jargon-heavy speech 下补足 audio？ | 随 acoustic quality 降低，correct-slide 增益稳定扩大，wrong-slide 不同步扩大 |
+| C. Beyond OCR | 哪些 layout/chart/formula/diagram evidence 是 OCR prompt 无法表达的？ | pixels/relations 优于 token-budget-matched OCR，且 gold-relation positive control 有效 |
+| D. Integration | 如何选择和注入长驻 slide evidence，避免 irrelevant context 与 hallucination？ | selection/gating 优于 naive OCR/image prompt 的 quality-latency-safety Pareto frontier |
 
-这是一个 **current-slide content attribution paper**。它不是 broad context paper，也不
-预设 raw pixels 必须有用。
+Route A 的 correct-vs-wrong test 是所有路线共用的 **content-use validity control**，但不是
+现在就排他的最终 paper story。允许开发实验决定最终标题、主要 claim 和方法重点；要求是
+完整保留探索结果，并在独立 held-out evaluation 前冻结最终方案。
 
 ## 2. 为什么这个空间仍存在
 
@@ -34,18 +41,19 @@ content 对 online translation decision 有增量。
 
 | 已有工作 | 已占据 | 本文剩余差异 |
 | --- | --- | --- |
-| OmniFusion | slide-aware SimulST、Local Agreement、earlier/stable commits | 未隔离 current content、document baseline、stale/wrong timing |
+| OmniFusion | 展示了 slide-aware speech translation 的应用外形 | 端到端 latency 与 streaming usability 很弱；未解决 off-critical-path integration、current-content attribution 或 strong OCR baseline，不能视为封死本方向 |
 | BOOM | current slide screenshots + live lecture translation | 没有 matched causal content intervention |
 | VAPO | look-then-listen、image/OCR、mismatched slide、visual interference | ASR，不是 document-aware SimulST commit attribution |
 | EGTA / RASST | paper terminology、causal selection、shuffled control | term memory 是本文共同 baseline，不是贡献 |
 | Context Helps / DoCIA | discourse-aware ST、wrong context、latency/stability | 使用历史 speech/translation，不是 live current slide |
 | visual-context SiMT | pre-observed image、anticipation、READ/WRITE | caption text MT，不是 long-form raw speech + stale slide state |
 
-因此不能再声称 first visual SimulST、first live slides、look-then-listen、visual
-anticipation、wrong-image control 或 async cache。唯一可守住的轴是：**在同一 strong
-document context 之后，current-slide content 的 matched causal decision effect。**
+因此不把 “first visual SimulST” 当作主要 novelty，也不因 OmniFusion 存在就把研究退化为
+单一 attribution paper。可守住并值得实证探索的空间是：**把持久、先到达的 slide
+semantics 从 streaming critical path 中分离，并证明何时、为何、以何种 integration
+方式真正改善 online decisions。**
 
-## 3. 单一 primary estimand
+## 3. 开发期 outcome family 与 held-out primary freeze
 
 每个 event `i` 先定义 source-side forced choice，例如 lexical sense、referent、relation、
 scope 或 reordering decision。对 condition `c` 定义：
@@ -60,22 +68,39 @@ before or at t_last_insufficient and remains correct in the final output.
 source-side ambiguity interval：前者仍不足以完成 forced choice，后者已经足够。
 落在 interval 内的 commit 是 timing-ambiguous，只进 sensitivity analysis。
 
-Primary estimand：
+Route A 的候选 estimand：
 
 ```text
-Delta_primary = E_talk[ mean_i(Y_i(current_correct) - Y_i(matched_control)) ]
+Delta_attribution = E_talk[ mean_i(Y_i(current_correct) - Y_i(matched_control)) ]
 ```
 
 - `current_correct`：strong document packet + causally available current-slide packet；
 - `matched_control`：完全相同的 document packet、interface、schema、source type、解锁
   时间和 token bin，只把 slide identity 替换为 same-talk stale/wrong state；
 - 每个 talk 等权，events 不作为独立 talks；
-- smallest effect of interest 固定为 **+5 percentage points**；
-- confirmatory claim 要求 talk-cluster CI 下界大于 0，point estimate 至少 +5 pp；
-- target-event final correctness 的 non-inferiority margin 固定为 **-1 pp**。
+- 开发期把 **+5 percentage points** 作为是否值得追加成本的 practical signal，不把它
+  冒充已经预注册的最终 paper threshold；
+- target-event final correctness 同时记录，开发期参考 non-inferiority margin 为 **-1 pp**。
 
-Primary hypothesis 只有这一个。`C5 vs C3`、non-term propositions、pixels、noise、语言和
-模型 replication 全部采用预先写明的 gatekeeping，不能替代 primary failure。
+开发期同时记录以下 outcome family，不要求其中某一个在看数据前排他地成为论文主线：
+
+- final translation quality：BLEU、chrF、COMET 或数据允许的独立 human score；
+- online behavior：AL/LAAL、first stable correct commit、revision/flicker；
+- evidence-sensitive accuracy：term、entity、sense、relation、scope、reordering events；
+- robustness curve：不同 SNR/noise type 下的 quality 与 latency interaction；
+- content specificity：correct、stale/wrong、unrelated 与 empty evidence；
+- visual increment：pixels/relations 相对 token-budget-matched OCR/layout；
+- safety/cost：wrong-evidence adoption、unspoken hallucination、packet tokens、on-path
+  latency、cold compilation cost 与 GPU seconds。
+
+这不是不受约束地事后挑结果。边界是：
+
+1. 在 ACL dev 前写定要跑的 conditions、metrics 与 slices，并完整保存结果；
+2. 允许根据 dev effect size、稳定性和 failure analysis 选择 Route A-D 或组合方法；
+3. 选择后生成新的 frozen confirmatory contract，写定一个 main claim、primary metric、
+   SESOI、模型/config、允许的 secondary analyses 与 failure criterion；
+4. 只有在该 contract commit/push 后，才能读取 ACL eval/MCIF outputs 或 references；
+5. 论文明确区分 exploratory development 与 held-out confirmation。
 
 ## 4. 三个独立冻结 artifact
 
@@ -96,10 +121,10 @@ Primary hypothesis 只有这一个。`C5 vs C3`、non-term propositions、pixels
    - 不改 source forced choice、event inclusion 或 evidence packet；
    - scoring artifact 永不挂载到 inference process。
 
-Oracle 只是 capability/futility gate，不进入 automatic-system superiority table。Gold
+Oracle 用于 capability mapping，不进入 automatic-system superiority table。Gold
 source-side evidence 可以指出 relation/sense，但不得直接给 target translation。
 
-## 5. Conditions：baseline family 与 primary intervention 分离
+## 5. Conditions：共同 baseline 与候选机制
 
 `C1-C3` 不是严格 ladder，而是 external baseline family：
 
@@ -109,21 +134,22 @@ source-side evidence 可以指出 relation/sense，但不得直接给 target tra
 | `C1` | automatic term memory | RASST/EGTA lineage |
 | `C2` | entities + abstract | static context baseline |
 | `C3` | phrase boost + pretranslated PDF BM25/RAG | selected strong document baseline |
-| `C4` | non-term document propositions/discourse | secondary document representation |
+| `C4` | non-term document propositions/discourse | candidate context representation |
 
-Primary slide conditions 必须共享同一 frozen `C3` document packet：
+用于 content-attribution 的 slide conditions 必须共享同一 frozen `C3` document packet：
 
 | ID | Condition | 角色 |
 | --- | --- | --- |
-| `C5-correct` | C3 + current-slide OCR/layout propositions | primary treatment |
-| `C5-control` | C3 + matched same-talk stale/wrong slide propositions | primary control (`C7`) |
-| `C5-none` | C3 + empty slide slot | non-inferiority/interpretation only |
-| `C6-auto` | C5 + automatically extracted image-specific relation | secondary pixel-derived test |
+| `C5-correct` | C3 + current-slide OCR/layout propositions | candidate semantic treatment |
+| `C5-control` | C3 + matched same-talk stale/wrong slide propositions | content-use control (`C7`) |
+| `C5-none` | C3 + empty slide slot | context-value control |
+| `C6-auto` | C5 + automatically extracted image-specific relation | candidate beyond-OCR treatment |
 | `C6-gold` | C5 + gold source-side visual relation | positive control, not a method |
 
-`C4 > C1-C3` 是 secondary pairwise comparison，不叫 minimum sufficient level。只有
-`C5 -> C6-auto` 是 tested nested representation；所有结论都限定 model、compiler、
-packet budget 与 dataset。
+开发期还需为 C5/C6 增加 native/noisy audio、naive full OCR prompt、retrieved/gated
+packet 与 direct-image input cells。`C4 > C1-C3` 不叫 minimum sufficient level；只有
+matched nested conditions 才能归因 representation 或 integration 的增量。所有结论都
+限定 model、compiler、packet budget 与 dataset。
 
 ## 6. Annotation contract
 
@@ -158,13 +184,14 @@ frames；来源与 hashes 见
 2. transition 表示为 interval，不伪造单点 onset；
 3. 新 state 只在 first confirmed frame 后解锁；
 4. previous state 只在新 state confirmed 后标 stale；
-5. transition interval 内 events 不进入 primary；
+5. transition interval 内 events 不进入需要精确 causal timing 的分析；
 6. exact raw-video timeline 只能在原视频下载、hash 和 QA 后升级。
 
 ## 8. Power 与 benchmark 角色
 
-- **ACL dev 5 talks：** event density、annotation reliability、oracle capability、MDE；
-- **ACL eval 5 talks：** frozen replication pilot。五个 clusters 的 two-sided sign test
+- **ACL dev 5 talks：** event density、annotation reliability、oracle capability、开发期
+  多路线 story discovery 与 MDE；
+- **ACL eval 5 talks：** story freeze 后的 replication pilot。五个 clusters 的 two-sided sign test
   最小 p 值为 0.0625，不能承担 confirmatory significance；
 - **MCIF 21 talks：** 唯一 planned confirmatory source，但必须先完成 21 videos 的 hash、
   slide-state coverage、transition QA、frame-only manifests 与 eligible-event counts。
@@ -174,29 +201,34 @@ MCIF hard readiness gate：
 - 至少 **15 个 independent talks** 含 eligible primary events；
 - dev-estimated talk-cluster MDE 不大于 +5 pp SESOI；
 - references 在完整 inference ledger 关闭前保持未挂载；
-- visual QA、annotation guideline、conditions、model 与 metric 已 commit/push。
+- visual QA、annotation guideline、最终选定的 route、conditions、model 与 metric 已
+  commit/push。
 
 未通过该 gate 时，只能写 ACL pilot/measurement report，不得声称 confirmatory
 current-slide benefit。只有一个 system family 时，结论必须写成 single-system finding；
 paper-level general claim 需要第二个 system family 方向复制。
 
-## 9. Oracle-first kill test
+## 9. Oracle-first capability map
 
-在构建 automatic C1-C6 之前：
+在投入完整 automatic C1-C6 之前，用低成本 oracle 同时判断几类 headroom：
 
 1. 生成 stripped ACL dev slide-state manifest；
 2. blind 标注 80-120 candidates，并包含 negative cases；
 3. 冻结 candidate inventory、source-only packets、target scoring 三个 artifacts；
-4. 三个条件共享同一 frozen source-only document packet，只比较 empty slide slot、
-   correct gold source evidence、matched wrong gold evidence；
-5. correct oracle 必须在至少 3/5 dev talks 方向一致，并达到 +5 pp primary outcome；
-6. 若 oracle 不通过，停止 C3-C6、GPU inference 和正向 paper 投资。
+4. 条件共享同一 frozen source-only document packet，覆盖 empty slide slot、OCR、correct
+   semantic oracle、correct relation oracle、matched wrong evidence；
+5. native/noisy audio 都跑，分别检查 anticipation、recognition support、target-form
+   supply 与 beyond-OCR relation；
+6. 任何 route 若有跨 talk 的 practical signal，就允许为该 route 构建 automatic method；
+   若所有 gold route 都无 headroom，才停止 slide-semantic paper 投资。
 
-Oracle 通过只证明 task 有 capability headroom，不证明 automatic extractor 有效。
+Oracle 通过只证明对应 route 有 capability headroom，不证明 automatic extractor 或
+integration 有效。+5 pp 与 3/5 talks 是开发期优先级信号，不是对所有潜在 story 的统一
+否决线。
 
 ## 10. Pixels / Why not OCR
 
-Pixels 不是 primary story。`C6-auto vs C5-correct` 只在 primary 通过后顺序检验，并配
+Pixels 是候选 Route C，而不是预设必成或预设 secondary。`C6-auto vs C5-correct` 必须配
 `C6-gold` positive control：
 
 - `C6-gold > C5`、`C6-auto = C5`：automatic visual extraction failure；
@@ -207,24 +239,27 @@ Pixels 不是 primary story。`C6-auto vs C5-correct` 只在 primary 通过后�
 
 因此不能默认写 “pixels unnecessary”，也不能使用 *From Papers to Pixels* 标题。
 
-## 11. 固定 claim map
+## 11. 开发结果到 paper route 的选择图
 
-| 结果 | 可写结论 |
+| 开发结果 | 候选 paper route / 下一步 |
 | --- | --- |
-| Primary correct > control，且 final non-inferior | current slide content changes document-aware SimulST decisions |
-| Correct = control 或 final accuracy 回退 | content attribution fails；停止正向 main claim |
-| Oracle 强、automatic C5 弱 | extraction/selection bottleneck；不宣称 system gain |
-| Oracle 弱 | task/data 无 headroom；停止自动 pipeline |
-| Primary 通过、C6-auto/gold 正向 | secondary pixel-derived relation finding |
-| Pixel test 低 power | inconclusive，删除 pixel conclusion |
-| 只有 C1/term gain | RASST/EGTA replication，停止新 paper |
+| correct > matched control，且更早 stable commit | Route A；做 causal anticipation/integration |
+| native audio 弱、noise interaction 强且 content-specific | Route B；做 robust SimulST 与 acoustic-quality-aware gating |
+| C6-gold 与 C6-auto 都稳定优于 OCR | Route C；做 beyond-OCR visual relation extraction |
+| oracle 强、naive prompt 弱、selection/gating 强 | Route D；做 evidence integration method |
+| correct = wrong，但都优于 none | 只有 generic priming；不能声称 current-content use，继续 unrelated control 或停止该路线 |
+| 只有 term gain | 可作为 method component；若无 integration/online 新意，不单独形成论文 |
+| 所有 gold evidence 都无 practical headroom | 停止 slide-semantic 主方向 |
+| 多条路线同时有信号 | 选择机制最一致、可复现且方法贡献最清楚的一条为 main；其余作 supporting analysis |
 
-## 12. 当前唯一下一步
+## 12. 当前下一步
 
-**不跑 GPU。** 先实现 Figshare -> stripped ACL60/60 slide-state manifest，并冻结
+当前先不需要 GPU。实现 Figshare -> stripped ACL60/60 slide-state manifest，并定义
 candidate-event / source-only packet / target-scoring 三阶段 schema。随后做 80-120 event
-density + oracle capability screen。MCIF video readiness 与 confirmatory power 在任何
-positive paper claim 之前是 hard blocker，而不是后续可选项。
+density + multi-route oracle capability map，再以小规模 automatic runs 比较 OCR、semantic
+packet、visual relation、selection/gating 与 native/noisy audio。开发结果出来后才写最终
+paper contract；MCIF video readiness 与 confirmatory power 仍是 held-out general claim 的
+hard blocker。
 
 ## Primary sources added by the audit
 

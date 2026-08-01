@@ -11,13 +11,15 @@
 > per-claim confidence levels, raw-evidence pointers, and what would overturn
 > each conclusion.
 >
-> **Current paper story:** after giving a SimulST system the same strong
-> document/PDF context, test whether the causally available correct current
-> slide produces earlier stable correct decisions than a time-, type-, and
-> budget-matched same-talk stale/wrong slide. This is the only primary
-> estimand; non-term document representations and pixels-beyond-OCR are gated
-> secondary questions. The authoritative paper identity, audit, data update,
-> and kill test are in
+> **Current exploration strategy:** study whether causally available,
+> persistent slide semantics can improve SimulST without putting vision on the
+> streaming critical path. ACL dev is an explicit story-discovery stage across
+> content attribution, noisy-speech robustness, pixels beyond OCR, and
+> evidence-selection/integration. Correct versus matched stale/wrong slides is
+> a shared validity control, not the only allowed paper outcome. After the dev
+> evidence identifies a useful mechanism, freeze one main claim and analysis
+> before touching held-out evaluation. The authoritative strategy, audit, data
+> update, and experiment stages are in
 > [docs/PAPER_STORY_DECISION_20260731.md](docs/PAPER_STORY_DECISION_20260731.md).
 > The previous dual-route document remains the detailed `C0-C7` contract, not
 > the current narrative. Lip video and slide+lip hybrid experiments remain out
@@ -52,17 +54,19 @@ docs/    stage-by-stage progress, plans (BENCHMARK_PLAN.md), planning/ archive
 latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
 ```
 
-## Current paper direction (decided 2026-07-31)
+## Current research direction (revised 2026-07-31)
 
-- **Single primary question:** does correct current-slide content beat a
-  matched same-talk stale/wrong slide after both receive the same frozen strong
-  document context?
-- **Primary outcome:** talk-weighted difference in stable correct decisions
-  emitted before source audio resolves the forced-choice ambiguity; SESOI is
-  +5 percentage points with a -1 pp final-correctness non-inferiority margin.
-- **Secondary only:** C1-C4 baseline variants and C6 pixels beyond OCR/layout.
-  Pixel nulls are inconclusive without a gold visual-relation positive control,
-  at least 15 eligible talk clusters, and an equivalence test.
+- **Research space:** pre-available slide semantics for SimulST, compiled once
+  per persistent slide and reused by the streaming speech path.
+- **Development exits:** current-content attribution and earlier commits;
+  robustness under controlled acoustic corruption; useful visual relations
+  beyond OCR; or a selective integration method with a better quality-latency-
+  hallucination trade-off than naive prompting.
+- **Shared validity controls:** audio/document-only, naive OCR prompt, correct
+  slide, time/type/budget-matched stale/wrong slide, and empty slide slot.
+- **Selection discipline:** use ACL dev and other declared development material
+  to discover which mechanism is real, report the full exploratory matrix, then
+  freeze the main claim, metric, slices, and decision rule before held-out data.
 - **Project-held-out long-form source:** the 21-talk MCIF translation subset
   used by the official IWSLT 2026 SimulST development corpus, En→Zh primary and
   En→De replication. It becomes a visual-tier confirmatory set only after all
@@ -87,20 +91,20 @@ current benchmark contract.
 
 ## Next execution milestone
 
-Run the data-density and oracle headroom screen before building the full
-automatic ladder:
+Build the inference-safe data view, then run a broad but bounded development
+screen before selecting the paper story:
 
 1. Import the verified *Do Slides Help?* supplement into a frame-only ACL60/60
    inference view; strip the bundled source transcript and use conservative
    frame availability.
 2. Blind-label 80-120 candidate evidence-opportunity events on the five ACL dev
    talks and estimate non-term/current-slide/image-specific density.
-3. Freeze candidate inventory, source-only packets, and target scoring, then
-   compare document-only, correct source-only oracle, and matched wrong oracle.
-   Continue only if correct evidence reaches the +5 pp primary SESOI across at
-   least 3/5 talks.
-4. Only after the oracle passes, reproduce `C0-C3`, compile `C4-C6`, and run the
-   frozen automatic ladder. Keep ACL eval and all 21 MCIF talks held out.
+3. Freeze candidate inventory, source-only packets, and target scoring for the
+   development screen; compare document-only, OCR, correct semantic/relation
+   oracle, and matched wrong evidence under native and controlled-noise audio.
+4. Use the observed mechanism to choose one main paper route, then commit its
+   primary estimand, thresholds, model/config, and analysis before ACL eval or
+   MCIF. Keep those data held out during story selection.
 
 ## Rules
 

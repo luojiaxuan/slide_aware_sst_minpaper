@@ -18,7 +18,7 @@ links, or handoff state.
 ## Current Git Pointers
 
 - GitHub repo: <https://github.com/luojiaxuan/slide_aware_sst_minpaper>
-- Current paper identity, collision audit, primary intervention and oracle kill test:
+- Current exploration strategy, collision audit, development routes and held-out freeze:
   [`docs/PAPER_STORY_DECISION_20260731.md`](PAPER_STORY_DECISION_20260731.md)
 - Preserved `C0-C7` and Phase-A control contract:
   [`docs/DUAL_ROUTE_DECISION_20260731.md`](DUAL_ROUTE_DECISION_20260731.md)
@@ -139,19 +139,21 @@ confirmed.
 
 ## Current Durable Decisions (2026-07-31)
 
-1. The single paper identity is current-slide content attribution after strong
-   document context for long-form SimulST.
-2. The only primary comparison gives both conditions the same frozen C3
-   document packet, then compares correct current-slide C5 against a
-   time/type/budget-matched same-talk stale/wrong C5 control.
-3. The primary outcome is the talk-weighted risk difference in stable correct
-   decisions emitted before source-audio forced-choice disambiguation. SESOI is
-   +5 percentage points; target-event final-correctness non-inferiority margin
-   is -1 pp.
-4. C1-C3 are external baseline variants; C4 non-term document propositions and
-   C6 pixels beyond OCR/layout are gated secondary questions. A pixel null is
-   inconclusive without a positive gold visual-relation control and a powered
-   equivalence test.
+1. The final paper identity is intentionally not frozen before development
+   evidence. The research space is persistent, pre-available slide semantics
+   for SimulST without putting vision on the online critical path.
+2. ACL dev supports explicit story discovery across four routes: current-slide
+   attribution/anticipation, noisy-speech robustness, pixels beyond OCR, and
+   evidence selection/integration. Report the complete declared development
+   matrix rather than hiding unsuccessful routes.
+3. Correct versus time/type/budget-matched stale/wrong evidence is a shared
+   content-use validity control. The candidate early-commit risk difference,
+   final quality, AL/LAAL, robustness interactions, event accuracy,
+   hallucination, and runtime all remain development outcomes.
+4. Select the final story using development effect size, cross-talk stability,
+   failure analysis, and method value. Then commit/push one frozen main claim,
+   primary metric, SESOI, model/config, slices, and decision rule before any
+   held-out ACL eval or MCIF result is read.
 5. Generic whole-PDF prompts, named entities/abstracts, terminology memory,
    phrase boosting, pretranslation and BM25/RAG are mandatory baselines, not
    contributions.
@@ -166,8 +168,9 @@ confirmed.
 9. Freeze candidate inventory, source-only evidence packets, and target scoring
    as three independent artifacts. Packet builders never read references or
    target translations.
-10. Before automatic C3-C6 implementation, run a blind event-density screen and
-    source-only correct-vs-wrong oracle capability test on ACL dev.
+10. Before full automatic C3-C6 implementation, run a blind event-density screen
+    and multi-route oracle capability map on ACL dev, including OCR, semantic
+    evidence, visual relations, matched wrong evidence, and native/noisy audio.
 11. Lip video and slide+lip hybrid experiments remain out of scope. AVMuST-TED
    is retained only as related-work and historical licensing context.
 12. The current speech+image result does not establish correct-slide content
@@ -199,10 +202,13 @@ confirmed.
 2. Blind-label 80-120 source-side forced-choice candidates on ACL dev, including
    random-span coverage and negative cases. Freeze candidate, source-only
    packet, and target-scoring artifacts independently.
-3. Run document-only, correct source-only oracle, and matched wrong oracle.
-   Stop automatic C3-C6/GPU work if correct evidence does not reach the +5 pp
-   primary SESOI across at least 3/5 talks.
-4. Only after the oracle passes, build C1-C3, run a no-reference dry run, and
-   compile C4-C6 under the frozen primary/secondary protocol.
-5. Keep ACL eval and all 21 MCIF talks held out until prompts, schema, selector,
-   metrics, MDE, and the MCIF visual timeline are frozen and pushed.
+3. Map document-only, OCR, correct semantic/relation oracle, matched wrong
+   evidence, and native/noisy audio headroom. A stable signal in any route can
+   justify focused automatic implementation; stop only if every gold route lacks
+   practical headroom.
+4. Run small automatic comparisons for viable routes, including naive prompts,
+   selection/gating, and direct-image input. Preserve the complete declared
+   development matrix.
+5. Select the final paper story from development evidence, then freeze and push
+   its main claim, metric, model/config, slices, and decision rule before ACL
+   eval or MCIF is read.
