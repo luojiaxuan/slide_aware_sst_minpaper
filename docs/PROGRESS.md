@@ -765,3 +765,18 @@ or a stronger Qwen3-VL variant if available.
   inverse-probability weighting over 468 observations.
 - Detailed record:
   [`docs/ACL6060_SOURCE_EVENT_ANNOTATION_V2.md`](ACL6060_SOURCE_EVENT_ANNOTATION_V2.md).
+
+## 2026-08-01 Chinese-LiPS Five-Condition Visual Control Freeze
+
+- The historical 206-segment Qwen3-Omni run showed nearly identical gains from
+  current and same-talk wrong slides, but omitted cross-talk and blank-image
+  controls and did not record an immutable model revision.
+- Froze a complete same-revision rerun with `none`, `slide`, `wrong`,
+  `cross_talk`, and `blank`: 1,030 expected records over 206 items.
+- Added deterministic cross-talk frame assignment, a hashed blank-image
+  control, resumable multi-worker GPU sharding, strict completion checks and a
+  paired chrF/AL analyzer.
+- This remains a private, single-talk, machine-reference mechanism diagnostic;
+  it cannot be used as paper-grade model ranking or talk-level inference.
+- Frozen contract:
+  [`docs/CHINESE_LIPS_VISUAL_CONTROL_MATRIX_V1.md`](CHINESE_LIPS_VISUAL_CONTROL_MATRIX_V1.md).

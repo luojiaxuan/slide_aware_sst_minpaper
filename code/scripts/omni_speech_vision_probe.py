@@ -17,6 +17,8 @@ Conditions:
   slide   audio + current slide image         -> vision
   wrong   audio + a different slide's image   -> content control (critical:
           separates real visual information from generic prompt perturbation)
+  cross_talk  audio + a slide from another corpus/talk -> domain control
+  blank       audio + a blank image                  -> vision-slot control
 
 Run inside the sglang-omni container with HF_HOME pointing at the persistent
 cache, e.g.
@@ -37,10 +39,11 @@ import torch
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--items", required=True,
-                    help="JSONL/JSON: id, audio (path), slide_image, wrong_image, "
-                         "reference, src_lang, tgt_lang")
+                    help="JSONL/JSON: id, audio, slide_image, wrong_image, "
+                         "cross_talk_image, blank_image, reference, languages")
     ap.add_argument("--out", required=True)
     ap.add_argument("--model", default="Qwen/Qwen3-Omni-30B-A3B-Instruct")
+    ap.add_argument("--model-revision")
     ap.add_argument("--conditions", default="none,slide,wrong")
     ap.add_argument("--chunk-s", type=float, default=1.0,
                     help="audio revealed per READ step (seconds)")
@@ -48,25 +51,41 @@ def main() -> None:
     ap.add_argument("--device-map", default="auto")
     ap.add_argument("--attn", default="sdpa")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--shard-count", type=int, default=1)
+    ap.add_argument("--shard-index", type=int, default=0)
+    ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
 
     from transformers import (AutoConfig, Qwen3OmniMoeProcessor,
                               Qwen3OmniMoeThinkerForConditionalGeneration)
 
-    processor = Qwen3OmniMoeProcessor.from_pretrained(args.model, trust_remote_code=True)
+    torch.manual_seed(args.seed)
+    processor = Qwen3OmniMoeProcessor.from_pretrained(
+        args.model, revision=args.model_revision, trust_remote_code=True
+    )
     tokenizer = processor.tokenizer
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
-    cfg = AutoConfig.from_pretrained(args.model, trust_remote_code=True)
+    cfg = AutoConfig.from_pretrained(
+        args.model, revision=args.model_revision, trust_remote_code=True
+    )
     model = Qwen3OmniMoeThinkerForConditionalGeneration.from_pretrained(
-        args.model, config=cfg.thinker_config, trust_remote_code=True,
+        args.model, revision=args.model_revision, config=cfg.thinker_config,
+        trust_remote_code=True,
         dtype="auto", device_map=args.device_map,
         attn_implementation=args.attn).eval()
 
     items = load_items(args.items)
+    if args.shard_count < 1 or not 0 <= args.shard_index < args.shard_count:
+        raise ValueError("Invalid shard index/count")
+    items = [
+        item for index, item in enumerate(items)
+        if index % args.shard_count == args.shard_index
+    ]
     if args.limit:
         items = items[:args.limit]
     out_path = Path(args.out)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     done = set()
     if out_path.exists():
         for line in out_path.open():
@@ -74,7 +93,7 @@ def main() -> None:
             done.add((r["id"], r["condition"]))
 
     with out_path.open("a", encoding="utf-8") as out:
-        for cond in args.conditions.split(","):
+        for cond in [value.strip() for value in args.conditions.split(",") if value.strip()]:
             for i, it in enumerate(items):
                 if (it["id"], cond) in done:
                     continue
@@ -109,10 +128,18 @@ def stream_one(item, cond, processor, tokenizer, model, args) -> dict:
     chunk = max(1, int(round(args.chunk_s * sr)))
     n_chunks = max(1, int(np.ceil(len(audio) / chunk)))
     image = None
-    if cond == "slide":
-        image = item.get("slide_image")
-    elif cond == "wrong":
-        image = item.get("wrong_image")
+    image_fields = {
+        "slide": "slide_image",
+        "wrong": "wrong_image",
+        "cross_talk": "cross_talk_image",
+        "blank": "blank_image",
+    }
+    if cond not in {"none", *image_fields}:
+        raise ValueError(f"Unknown condition: {cond}")
+    if cond in image_fields:
+        image = item.get(image_fields[cond])
+        if not image:
+            raise ValueError(f"Missing image for {cond}: {item['id']}")
 
     committed: list[str] = []
     prev: list[str] = []
@@ -142,7 +169,14 @@ def stream_one(item, cond, processor, tokenizer, model, args) -> dict:
             "chunk_s": args.chunk_s, "events": events,
             "hypothesis": " ".join(committed),
             "reference": item.get("reference", ""),
-            "image_used": image or ""}
+            "image_used": image or "",
+            "model": args.model,
+            "model_revision": args.model_revision,
+            "attention": args.attn,
+            "max_new_tokens": args.max_new_tokens,
+            "seed": args.seed,
+            "shard_index": args.shard_index,
+            "shard_count": args.shard_count}
 
 
 def translate_prefix(audio_prefix, sr, image_path, item, tgt,

@@ -60,6 +60,8 @@ links, or handoff state.
   [`docs/QWEN3_DIAGNOSTIC500_EXPERIMENTS_20260707.md`](QWEN3_DIAGNOSTIC500_EXPERIMENTS_20260707.md)
 - Diagnostic human review guide:
   [`docs/DIAGNOSTIC_REVIEW_GUIDE.md`](DIAGNOSTIC_REVIEW_GUIDE.md)
+- Chinese-LiPS five-condition Qwen3-Omni visual-control diagnostic contract:
+  [`docs/CHINESE_LIPS_VISUAL_CONTROL_MATRIX_V1.md`](CHINESE_LIPS_VISUAL_CONTROL_MATRIX_V1.md)
 
 ## Dataset and Artifact Truth
 
@@ -253,19 +255,23 @@ confirmed.
 
 ## Current Next Actions (2026-08-01)
 
-1. Complete v2 frame-only canonical item authoring and freeze question hashes;
+1. Run the frozen Chinese-LiPS five-condition Qwen3-Omni visual-control matrix
+   as a private single-talk mechanism diagnostic. Do not promote it to paper
+   evidence; use it to distinguish page specificity, talk/domain priming,
+   structured-slide priors and vision-slot perturbation.
+2. Complete v2 frame-only canonical item authoring and freeze question hashes;
    deploy the implemented prefix gate to two independent audio validators, then
    use a disjoint two-person cohort for frame validation. Report all
    negatives, right-censoring, agreement and adjudication without modifying raw
    sheets.
-2. Freeze source-only packets and target scoring independently, then map
+3. Freeze source-only packets and target scoring independently, then map
    document-only, OCR, correct semantic/relation oracle, matched wrong
    evidence, and native/noisy audio headroom. A stable signal in any route can
    justify focused automatic implementation; stop only if every gold route lacks
    practical headroom.
-3. Run small automatic comparisons for viable routes, including naive prompts,
+4. Run small automatic comparisons for viable routes, including naive prompts,
    selection/gating, and direct-image input. Preserve the complete declared
    development matrix.
-4. Select the final paper story from development evidence, then freeze and push
+5. Select the final paper story from development evidence, then freeze and push
    its main claim, metric, model/config, slices, and decision rule before ACL
    eval or MCIF is read.

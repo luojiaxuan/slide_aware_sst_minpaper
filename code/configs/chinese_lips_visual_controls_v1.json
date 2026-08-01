@@ -1,0 +1,53 @@
+{
+  "schema_version": "chinese_lips_visual_controls_v1",
+  "scope": "private_story_diagnostic_not_paper_gold",
+  "source_dataset": {
+    "repo": "gavinlaw/chinese-lips-speech-slide-probe",
+    "revision": "6eb395afb46e8dbe05e79b590243979186aa3f1f",
+    "item_count": 206,
+    "reference_status": "machine_draft_existing_probe_only"
+  },
+  "cross_talk_control": {
+    "repo": "gavinlaw/slide-aware-sst-acl6060-source-event-author-v2",
+    "revision": "2fb266d168e0abbf4ace17d3f5de9503a8c46cd6",
+    "frame_count": 100,
+    "mapping_or_labels_consumed": false,
+    "assignment_salt": "cross-talk-control-v1"
+  },
+  "model": {
+    "repo": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+    "revision": "26291f793822fb6be9555850f06dfe95f2d7e695",
+    "device_map_per_worker": "cuda:0",
+    "attention": "sdpa",
+    "do_sample": false,
+    "seed": 0
+  },
+  "streaming": {
+    "chunk_sec": 1.0,
+    "commit_policy": "local_agreement_two_consecutive_hypotheses",
+    "max_new_tokens": 96
+  },
+  "conditions": [
+    "none",
+    "slide",
+    "wrong",
+    "cross_talk",
+    "blank"
+  ],
+  "rerun_reason": "The historical three-condition run did not record an immutable model revision; all five conditions are rerun in one frozen matrix.",
+  "selected_gpu_count": 2,
+  "workers_per_gpu": 2,
+  "shard_count": 4,
+  "interpretation": {
+    "slide_vs_wrong": "within-talk page specificity",
+    "wrong_vs_cross_talk": "broad talk/domain priming",
+    "cross_talk_vs_blank": "structured slide versus generic vision-slot effect",
+    "blank_vs_none": "vision encoder or prompt-slot perturbation"
+  },
+  "limits": [
+    "single Chinese-LiPS talk",
+    "machine-draft references",
+    "diagnostic only",
+    "cross-talk control uses English ACL scientific slides rather than a matched Chinese deck"
+  ]
+}
