@@ -257,6 +257,8 @@ def validate_vlm_rows(
             raise ValueError(f"MCIF VLM scene summary differs from raw output: {item_id}")
         for field in ("ocr_text", "objects", "actions", "spatial_relations"):
             raw_values = parsed.get(field)
+            if raw_values is None and not visual[field]:
+                raw_values = []
             if (
                 not isinstance(raw_values, list)
                 or any(not isinstance(value, str) for value in raw_values)

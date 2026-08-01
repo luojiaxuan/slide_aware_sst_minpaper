@@ -258,6 +258,39 @@ def test_excludes_serialized_labels_markup_r1_text_and_vlm_ocr_text():
     )
 
 
+def test_vlm_validation_accepts_missing_raw_field_only_when_canonical_is_empty():
+    module = load_module()
+    ladder = [ladder_row(module, 0)]
+    ladder_by_id, _ = module.validate_ladder_rows(
+        ladder, expected_rows=1, expected_talks=1
+    )
+    row = vlm_row(0)
+    enrichment = row["visual_context"]["metadata"]["context_enrichment"]
+    raw = json.loads(enrichment["raw_output"])
+    raw.pop("actions")
+    enrichment["raw_output"] = json.dumps(raw)
+    module.validate_vlm_rows(
+        [row],
+        ladder_by_id=ladder_by_id,
+        expected_rows=1,
+        expected_talks=1,
+        expected_model_id="model",
+        expected_model_revision="revision",
+        allowed_prompts={"prompt": "e" * 64},
+    )
+    row["visual_context"]["actions"] = ["invented action"]
+    with pytest.raises(ValueError, match="structured field differs"):
+        module.validate_vlm_rows(
+            [row],
+            ladder_by_id=ladder_by_id,
+            expected_rows=1,
+            expected_talks=1,
+            expected_model_id="model",
+            expected_model_revision="revision",
+            allowed_prompts={"prompt": "e" * 64},
+        )
+
+
 @pytest.mark.parametrize(
     "mutation,match",
     [
