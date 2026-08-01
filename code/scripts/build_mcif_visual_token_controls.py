@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter, defaultdict
+from fractions import Fraction
 import hashlib
 import json
 import os
@@ -15,7 +16,7 @@ import tempfile
 from typing import Any, Iterable
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps
 
 
 PROCESSOR_FILES = (
@@ -32,6 +33,12 @@ VISUAL_PROMPT_TEXT = (
     "Translate only the causal speech."
 )
 PAIRING_SEED = "mcif-visual-token-controls-v1"
+CONTROL_TRANSFORM_CONTRACT = {
+    "fit": "contain",
+    "canvas_alignment": "center",
+    "pad_rgb": [0, 0, 0],
+    "resample": "bicubic",
+}
 
 
 def load_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -335,8 +342,14 @@ def seeded_rank(seed: str, source_id: str, candidate_id: str) -> str:
     ).hexdigest()
 
 
-def candidate_record(candidate: dict[str, Any]) -> dict[str, Any]:
-    return {
+def candidate_record(
+    source: dict[str, Any], candidate: dict[str, Any]
+) -> dict[str, Any]:
+    exact_processor_shape = (
+        candidate["visual_token_count"] == source["visual_token_count"]
+        and candidate["image_grid_thw"] == source["image_grid_thw"]
+    )
+    record = {
         "id": candidate["id"],
         "lecture_id": candidate["lecture_id"],
         "state_id": candidate["state_id"],
@@ -347,7 +360,38 @@ def candidate_record(candidate: dict[str, Any]) -> dict[str, Any]:
         "image_grid_thw": candidate["image_grid_thw"],
         "visual_token_count": candidate["visual_token_count"],
         "inventory_row_sha256": candidate["row_sha256"],
+        "processor_input": {
+            "mode": "identity" if exact_processor_shape else "fit_pad_to_source_canvas",
+            "target_width": source["width"],
+            "target_height": source["height"],
+            "expected_image_grid_thw": source["image_grid_thw"],
+            "expected_visual_token_count": source["visual_token_count"],
+            **CONTROL_TRANSFORM_CONTRACT,
+        },
     }
+    return record
+
+
+def aspect_ratio_distance(source: dict[str, Any], candidate: dict[str, Any]) -> Fraction:
+    numerator = abs(
+        candidate["width"] * source["height"]
+        - source["width"] * candidate["height"]
+    )
+    denominator = candidate["height"] * source["height"]
+    return Fraction(numerator, denominator)
+
+
+def match_level(source: dict[str, Any], candidate: dict[str, Any]) -> str:
+    if (candidate["width"], candidate["height"]) == (
+        source["width"],
+        source["height"],
+    ):
+        return "same_dimensions"
+    if candidate["image_grid_thw"] == source["image_grid_thw"]:
+        return "same_grid"
+    if candidate["visual_token_count"] == source["visual_token_count"]:
+        return "same_visual_token_count"
+    return "fit_pad_to_source_canvas"
 
 
 def build_wrong_image_candidates(
@@ -355,14 +399,11 @@ def build_wrong_image_candidates(
     *,
     seed: str,
 ) -> list[dict[str, Any]]:
-    by_visual_tokens: dict[int, list[dict[str, Any]]] = defaultdict(list)
-    for row in inventory:
-        by_visual_tokens[row["visual_token_count"]].append(row)
     results = []
     for row in inventory:
         candidates = [
             candidate
-            for candidate in by_visual_tokens[row["visual_token_count"]]
+            for candidate in inventory
             if candidate["id"] != row["id"]
             and candidate["source_media_sha256"] != row["source_media_sha256"]
         ]
@@ -373,13 +414,7 @@ def build_wrong_image_candidates(
             and candidate["state_id"] < row["state_id"]
             and candidate["availability_start_sec"] <= row["availability_start_sec"]
         ]
-        stale_same_grid = [
-            candidate
-            for candidate in stale
-            if candidate["image_grid_thw"] == row["image_grid_thw"]
-        ]
-        stale_pool = stale_same_grid or stale
-        stale_pool.sort(key=lambda candidate: (-candidate["state_id"], candidate["id"]))
+        stale.sort(key=lambda candidate: (-candidate["state_id"], candidate["id"]))
         cross_talk = [
             candidate
             for candidate in candidates
@@ -396,19 +431,23 @@ def build_wrong_image_candidates(
             if (candidate["width"], candidate["height"])
             == (row["width"], row["height"])
         ]
-        cross_pool = same_dimensions or same_grid or cross_talk
+        same_tokens = [
+            candidate
+            for candidate in cross_talk
+            if candidate["visual_token_count"] == row["visual_token_count"]
+        ]
+        cross_pool = same_dimensions or same_grid or same_tokens or cross_talk
         if not cross_pool:
-            raise ValueError(f"No cross-talk exact-token control for {row['id']}")
+            raise ValueError(f"No cross-talk wrong-image control for {row['id']}")
         cross = min(
             cross_pool,
-            key=lambda candidate: seeded_rank(seed, row["id"], candidate["id"]),
+            key=lambda candidate: (
+                aspect_ratio_distance(row, candidate),
+                seeded_rank(seed, row["id"], candidate["id"]),
+            ),
         )
-        if same_dimensions:
-            cross_match_level = "same_dimensions"
-        elif same_grid:
-            cross_match_level = "same_grid"
-        else:
-            cross_match_level = "same_visual_token_count"
+        cross_match_level = match_level(row, cross)
+        stale_match_level = None if not stale else match_level(row, stale[0])
         result = {
             "schema_version": "mcif_qwen3_omni_wrong_image_candidates_v1",
             "id": row["id"],
@@ -416,14 +455,10 @@ def build_wrong_image_candidates(
             "state_id": row["state_id"],
             "visual_token_count": row["visual_token_count"],
             "inventory_row_sha256": row["row_sha256"],
-            "same_talk_stale": (
-                None if not stale_pool else candidate_record(stale_pool[0])
-            ),
-            "same_talk_stale_same_grid": bool(stale_same_grid),
-            "cross_talk_wrong": candidate_record(cross),
+            "same_talk_stale": None if not stale else candidate_record(row, stale[0]),
+            "same_talk_stale_match_level": stale_match_level,
+            "cross_talk_wrong": candidate_record(row, cross),
             "cross_talk_match_level": cross_match_level,
-            "cross_talk_same_grid": bool(same_grid),
-            "cross_talk_same_dimensions": bool(same_dimensions),
             "pairing_seed": seed,
             "source_transcript_consumed": False,
             "target_or_reference_consumed": False,
@@ -431,6 +466,100 @@ def build_wrong_image_candidates(
         result["row_sha256"] = canonical_sha256(result)
         results.append(result)
     return results
+
+
+def prepare_control_image(image: Image.Image, processor_input: dict[str, Any]) -> Image.Image:
+    converted = image.convert("RGB")
+    if processor_input["mode"] == "identity":
+        return converted
+    if processor_input["mode"] != "fit_pad_to_source_canvas":
+        converted.close()
+        raise ValueError("Unknown wrong-image processor transform")
+    target_size = (
+        int(processor_input["target_width"]),
+        int(processor_input["target_height"]),
+    )
+    contained = ImageOps.contain(
+        converted,
+        target_size,
+        method=Image.Resampling.BICUBIC,
+    )
+    converted.close()
+    canvas = Image.new("RGB", target_size, tuple(processor_input["pad_rgb"]))
+    offset = (
+        (target_size[0] - contained.width) // 2,
+        (target_size[1] - contained.height) // 2,
+    )
+    canvas.paste(contained, offset)
+    contained.close()
+    return canvas
+
+
+def verify_control_processing(
+    inventory: list[dict[str, Any]],
+    controls: list[dict[str, Any]],
+    *,
+    source_root: Path,
+    processor: Any,
+    batch_size: int,
+) -> dict[str, int]:
+    inventory_by_id = unique_by_id(inventory, "visual-token inventory")
+    records = []
+    for control in controls:
+        source = inventory_by_id[control["id"]]
+        for family in ("same_talk_stale", "cross_talk_wrong"):
+            candidate = control[family]
+            if candidate is not None:
+                records.append((source, family, candidate))
+    image_token_id = processor.tokenizer.convert_tokens_to_ids(processor.image_token)
+    transformed = 0
+    for offset in range(0, len(records), batch_size):
+        batch = records[offset : offset + batch_size]
+        images = []
+        texts = []
+        try:
+            for _, _, candidate in batch:
+                path = resolve_regular_file(source_root, candidate["source_media_path"])
+                with Image.open(path) as image:
+                    prepared = prepare_control_image(image, candidate["processor_input"])
+                images.append(prepared)
+                texts.append(
+                    processor.apply_chat_template(
+                        qwen_image_messages(path, include_audio=False),
+                        add_generation_prompt=True,
+                        tokenize=False,
+                    )
+                )
+                transformed += candidate["processor_input"]["mode"] != "identity"
+            encoded = processor(
+                text=texts,
+                images=images,
+                videos=None,
+                return_tensors="pt",
+                padding=True,
+            )
+        finally:
+            for image in images:
+                image.close()
+        for (source, family, candidate), token_row, grid_row in zip(
+            batch,
+            encoded["input_ids"],
+            encoded["image_grid_thw"],
+            strict=True,
+        ):
+            observed_count = sum(
+                token_id == image_token_id for token_id in row_values(token_row)
+            )
+            observed_grid = row_values(grid_row)
+            if (
+                observed_count != source["visual_token_count"]
+                or observed_grid != source["image_grid_thw"]
+            ):
+                raise ValueError(
+                    f"Wrong-image processor mismatch for {source['id']}:{family}:"
+                    f"{candidate['id']}"
+                )
+    return {"records_verified": len(records), "records_transformed": transformed}
 
 
 def verify_frozen_inputs(
@@ -455,6 +584,7 @@ def summarize(
     inventory: list[dict[str, Any]],
     controls: list[dict[str, Any]],
     audio_audit: list[dict[str, Any]],
+    control_processing_audit: dict[str, int],
 ) -> dict[str, Any]:
     count_distribution = Counter(row["visual_token_count"] for row in inventory)
     grid_distribution = Counter(tuple(row["image_grid_thw"]) for row in inventory)
@@ -471,22 +601,23 @@ def summarize(
         "same_talk_stale_coverage": sum(
             row["same_talk_stale"] is not None for row in controls
         ),
-        "same_talk_stale_same_grid_coverage": sum(
-            row["same_talk_stale_same_grid"] for row in controls
+        "same_talk_stale_match_level_distribution": dict(
+            sorted(
+                Counter(
+                    row["same_talk_stale_match_level"]
+                    for row in controls
+                    if row["same_talk_stale_match_level"] is not None
+                ).items()
+            )
         ),
         "cross_talk_wrong_coverage": sum(
             row["cross_talk_wrong"] is not None for row in controls
-        ),
-        "cross_talk_same_grid_coverage": sum(
-            row["cross_talk_same_grid"] for row in controls
-        ),
-        "cross_talk_same_dimensions_coverage": sum(
-            row["cross_talk_same_dimensions"] for row in controls
         ),
         "cross_talk_match_level_distribution": dict(
             sorted(Counter(row["cross_talk_match_level"] for row in controls).items())
         ),
         "audio_invariance_representatives": len(audio_audit),
+        "control_processing_audit": control_processing_audit,
     }
 
 
@@ -545,7 +676,9 @@ def write_bundle(
             "token count. Candidate controls contain both the nearest causally prior "
             "same-talk state when available and a deterministic cross-talk visual-token-"
             "matched image, preferring equal dimensions and then equal processor grid. "
-            "No target, reference, transcript, audio content, annotation, or ST "
+            "Candidates without a natural processor-shape match carry a deterministic "
+            "fit-and-pad transform that was reprocessed to verify exact grid and token "
+            "equality. No target, reference, transcript, audio content, annotation, or ST "
             "output is included.\n\n"
             f"- model: `{final_report['model_id']}@{final_report['model_revision']}`\n"
             f"- rows / talks: {final_report['rows']} / {final_report['talks']}\n"
@@ -615,6 +748,7 @@ def main() -> None:
         "visual_prompt_text": VISUAL_PROMPT_TEXT,
         "message_order": ["image", "text", "audio"],
         "pairing_seed": PAIRING_SEED,
+        "control_transform_contract": CONTROL_TRANSFORM_CONTRACT,
     }
     from transformers import Qwen3OmniMoeProcessor, __version__ as transformers_version
 
@@ -638,13 +772,25 @@ def main() -> None:
         processor=processor,
     )
     controls = build_wrong_image_candidates(inventory, seed=PAIRING_SEED)
+    control_processing_audit = verify_control_processing(
+        inventory,
+        controls,
+        source_root=args.source_root,
+        processor=processor,
+        batch_size=args.batch_size,
+    )
     verify_frozen_inputs(
         inventory,
         source_root=args.source_root,
         processor_root=args.processor_root,
         expected_processor_files=processor_files,
     )
-    summary = summarize(inventory, controls, audio_audit)
+    summary = summarize(
+        inventory,
+        controls,
+        audio_audit,
+        control_processing_audit,
+    )
     report = {
         "schema_version": "mcif_qwen3_omni_visual_token_controls_report_v1",
         "status": "SOURCE_ONLY_PROCESSOR_INVENTORY_NOT_ANNOTATION_OR_ST_RESULT",
@@ -666,7 +812,8 @@ def main() -> None:
         "interpretation": (
             "The inventory freezes processor-dependent image token budgets. It offers "
             "two source-only wrong-image candidates per state where available; it does "
-            "not choose the final paper control, label image necessity, or measure ST."
+            "not choose the final paper control, materialize transformed image bytes, "
+            "label image necessity, or measure ST."
         ),
     }
     processor_manifest = {

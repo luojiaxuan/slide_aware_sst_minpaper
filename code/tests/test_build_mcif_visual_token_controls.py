@@ -17,6 +17,7 @@ from scripts.build_mcif_visual_token_controls import (
     summarize,
     validate_ladder,
     verify_audio_invariance,
+    verify_control_processing,
     verify_frozen_inputs,
     write_bundle,
 )
@@ -115,9 +116,16 @@ def test_visual_inventory_and_both_control_families_are_exact_token_matched(tmp_
         assert cross["lecture_id"] != source["lecture_id"]
         assert cross["visual_token_count"] == source["visual_token_count"]
         assert control["cross_talk_match_level"] == "same_dimensions"
-        assert control["cross_talk_same_grid"] is True
-        assert control["cross_talk_same_dimensions"] is True
-    report = summarize(inventory, controls, audio_audit)
+        assert cross["processor_input"]["mode"] == "identity"
+    processing_audit = verify_control_processing(
+        inventory,
+        controls,
+        source_root=tmp_path,
+        processor=processor,
+        batch_size=3,
+    )
+    assert processing_audit == {"records_verified": 6, "records_transformed": 0}
+    report = summarize(inventory, controls, audio_audit, processing_audit)
     assert report["same_talk_stale_coverage"] == 2
     assert report["cross_talk_wrong_coverage"] == 4
 
@@ -153,11 +161,50 @@ def test_cross_talk_control_falls_back_to_same_token_with_different_grid(tmp_pat
         row["cross_talk_match_level"] == "same_visual_token_count"
         for row in controls
     )
-    assert all(row["cross_talk_same_grid"] is False for row in controls)
     assert all(
         row["cross_talk_wrong"]["visual_token_count"] == row["visual_token_count"]
         for row in controls
     )
+    assert all(
+        row["cross_talk_wrong"]["processor_input"]["mode"]
+        == "fit_pad_to_source_canvas"
+        for row in controls
+    )
+    audit = verify_control_processing(
+        inventory,
+        controls,
+        source_root=tmp_path,
+        processor=FakeProcessor(),
+        batch_size=2,
+    )
+    assert audit == {"records_verified": 2, "records_transformed": 2}
+
+
+def test_cross_talk_control_transforms_when_natural_token_bucket_is_singleton(tmp_path):
+    rows = [
+        ladder_row(tmp_path, "talk-1", 0, size=(16, 8)),
+        ladder_row(tmp_path, "talk-2", 0, size=(16, 16)),
+    ]
+    inventory = build_visual_token_inventory(
+        rows,
+        source_root=tmp_path,
+        processor=FakeProcessor(),
+        processor_binding_sha256="1" * 64,
+        batch_size=2,
+    )
+    controls = build_wrong_image_candidates(inventory, seed=PAIRING_SEED)
+    assert all(
+        row["cross_talk_match_level"] == "fit_pad_to_source_canvas"
+        for row in controls
+    )
+    audit = verify_control_processing(
+        inventory,
+        controls,
+        source_root=tmp_path,
+        processor=FakeProcessor(),
+        batch_size=2,
+    )
+    assert audit == {"records_verified": 2, "records_transformed": 2}
 
 
 def test_control_builder_rejects_visual_token_group_with_only_one_talk(tmp_path):
@@ -169,7 +216,7 @@ def test_control_builder_rejects_visual_token_group_with_only_one_talk(tmp_path)
         processor_binding_sha256="1" * 64,
         batch_size=2,
     )
-    with pytest.raises(ValueError, match="No cross-talk exact-token control"):
+    with pytest.raises(ValueError, match="No cross-talk wrong-image control"):
         build_wrong_image_candidates(inventory, seed=PAIRING_SEED)
 
 
@@ -281,7 +328,12 @@ def test_write_bundle_is_create_once_and_checksum_bound(tmp_path):
         report={
             "model_id": "fixture/model",
             "model_revision": "2" * 40,
-            **summarize(inventory, controls, audio_audit),
+            **summarize(
+                inventory,
+                controls,
+                audio_audit,
+                {"records_verified": 6, "records_transformed": 0},
+            ),
         },
     )
     assert final["checksum_entries"] == 5
