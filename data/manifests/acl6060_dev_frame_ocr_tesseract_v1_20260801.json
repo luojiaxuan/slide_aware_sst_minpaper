@@ -1,0 +1,48 @@
+{
+  "dataset": "acl6060",
+  "split": "dev",
+  "artifact": "automatic_frame_ocr",
+  "status": "AUTOMATIC_DIAGNOSTIC_NOT_HUMAN_ANNOTATION",
+  "tesseract_version": "tesseract 5.5.2",
+  "language": "eng",
+  "psm": 11,
+  "min_confidence": 50.0,
+  "frame_count": 468,
+  "zero_token_frame_count": 0,
+  "token_count": 26921,
+  "line_count": 10090,
+  "local_output": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/frame_ocr_tesseract_v1.jsonl",
+  "local_output_sha256": "379a8e54ea54f7f1b24ef17bff4acedbe789c05039ac5895752ede6d52d9b5b0",
+  "talks": [
+    {
+      "talk_id": "2022.acl-long.110",
+      "frame_count": 108,
+      "zero_token_frame_count": 0,
+      "token_count": 3641
+    },
+    {
+      "talk_id": "2022.acl-long.117",
+      "frame_count": 105,
+      "zero_token_frame_count": 0,
+      "token_count": 10339
+    },
+    {
+      "talk_id": "2022.acl-long.268",
+      "frame_count": 107,
+      "zero_token_frame_count": 0,
+      "token_count": 6894
+    },
+    {
+      "talk_id": "2022.acl-long.367",
+      "frame_count": 82,
+      "zero_token_frame_count": 0,
+      "token_count": 3711
+    },
+    {
+      "talk_id": "2022.acl-long.590",
+      "frame_count": 66,
+      "zero_token_frame_count": 0,
+      "token_count": 2336
+    }
+  ]
+}

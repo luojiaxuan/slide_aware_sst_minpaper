@@ -678,3 +678,32 @@ or a stronger Qwen3-VL variant if available.
   density or oracle headroom.
 - Annotation guide:
   [`docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md`](ACL6060_SOURCE_EVENT_ANNOTATION_V1.md).
+
+## 2026-08-01 ACL60/60 Source Event Workspace and OCR Headroom
+
+- Built a source-only 468-segment timing manifest from English source XML and
+  gold segment WAV alignment. The builder has no target/reference input and the
+  local manifest is explicitly excluded from inference inputs.
+- Ran deterministic Tesseract 5.5.2 OCR over all 468 dev frame observations:
+  26,921 tokens, 10,090 lines, zero empty frames. Token boxes, confidence,
+  engine settings, hashes and observation intervals are preserved.
+- Added a conservative exact-match diagnostic: a candidate counts only if the
+  first source segment containing it begins while a causal current frame still
+  shows it. Source segment start underestimates within-segment lead.
+- Found 901 overlapping n-gram matches, 344 candidates after nested-subphrase
+  removal and 149 independent segment-frame events. Median candidate lead is
+  10.325 s; 183 candidates are at least 10 s early. This is automatic
+  OCR-sufficient headroom, not a human event count or translation result.
+- The frozen seed contains 38/100 packets with an automatic future candidate
+  and 31/100 with a future phrase. A 50-row high-lead/hash-random review set and
+  visual sheets were generated locally; semantic usefulness remains pending
+  human audit.
+- Materialized 100 source-only annotation packets: 100 frames, 100 mono
+  PCM16/16 kHz clips totaling 6,498.51 s, and isolated annotator A/B JSONL
+  files. All packet/media hashes, WAV lengths, unique ids and forbidden-field
+  scans pass. No transcript, target/reference or model output is present.
+- Local workspace is 205 MB and currently `PENDING_HF_UPLOAD` to private
+  `gavinlaw/slide-aware-sst-acl6060-source-events`. Labels remain
+  `PENDING_DOUBLE_ANNOTATION`.
+- Detailed record:
+  [`docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md`](ACL6060_SOURCE_EVENT_ANNOTATION_V1.md).

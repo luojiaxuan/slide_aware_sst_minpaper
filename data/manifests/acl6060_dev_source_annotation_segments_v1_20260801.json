@@ -1,0 +1,36 @@
+{
+  "dataset": "acl6060",
+  "split": "dev",
+  "artifact": "source_only_annotation_segments",
+  "status": "LOCAL_ANNOTATION_ONLY_NOT_INFERENCE_INPUT",
+  "talk_count": 5,
+  "segment_count": 468,
+  "talks": [
+    {
+      "talk_id": "2022.acl-long.268",
+      "segment_count": 107
+    },
+    {
+      "talk_id": "2022.acl-long.367",
+      "segment_count": 82
+    },
+    {
+      "talk_id": "2022.acl-long.590",
+      "segment_count": 66
+    },
+    {
+      "talk_id": "2022.acl-long.110",
+      "segment_count": 108
+    },
+    {
+      "talk_id": "2022.acl-long.117",
+      "segment_count": 105
+    }
+  ],
+  "local_output": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/source_segments.jsonl",
+  "local_output_sha256": "3c01680b65f1fa574e4700b89581c65048c68d1fea2471da1aa584b11bac2f5b",
+  "source_xml_sha256": "8a2e3c8ac2bc791d2155e85b9a8ec0de6d9acd757950b1355100733ece4d4b09",
+  "source_text_consumed": true,
+  "target_or_reference_consumed": false,
+  "intended_use": "source-side annotation and automatic anticipation diagnostics only"
+}

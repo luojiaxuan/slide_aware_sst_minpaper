@@ -23,6 +23,8 @@ only documents locations and local staging conventions. No media is committed to
 | Controlled acoustic sources | MUSAN/SLR17 plus RIR/Noise SLR28 | archive SHA256/license snapshots frozen; 65 development and 65 disjoint confirmatory sources | [`manifests/controlled_acoustic_source_contract_20260801.json`](manifests/controlled_acoustic_source_contract_20260801.json), [`manifests/controlled_acoustic_source_pool_20260801.json`](manifests/controlled_acoustic_source_pool_20260801.json) |
 | ACL60/60 dev acoustic variants v1 | private HF commit `d28c499c8845c4991b5ccea27bc9a2ad520f51fa` | 5 talks × 15 conditions = 75 PCM16 WAV files; no references/transcripts | [`manifests/acl6060_dev_controlled_acoustic_v1_20260801.jsonl`](manifests/acl6060_dev_controlled_acoustic_v1_20260801.jsonl) |
 | ACL60/60 dev source-event seed v1 | derived from frame-only observations; no transcript/target/model output | 100 pending packets: 20 per talk, balanced change/random strata | [`annotations/acl6060_dev_source_event_seed_v1_20260801.jsonl`](annotations/acl6060_dev_source_event_seed_v1_20260801.jsonl), [`../docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md`](../docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md) |
+| ACL60/60 dev automatic anticipation diagnostic | source-only segment timing + Tesseract OCR over 468 real frames | 149 independent segment-frame matches; automatic headroom only, human audit pending | [`manifests/acl6060_dev_ocr_anticipation_v1_20260801.json`](manifests/acl6060_dev_ocr_anticipation_v1_20260801.json) |
+| ACL60/60 dev source-event workspace v1 | local staging pending private HF upload | 100 frame/audio packets and isolated A/B sheets; no transcript/target/reference/model output | [`manifests/acl6060_dev_source_event_workspace_v1_20260801.json`](manifests/acl6060_dev_source_event_workspace_v1_20260801.json) |
 
 ACL60/60 dev 的 inference/scoring bundle 只在本地 staging；Git 仅保存
 [`manifests/acl6060_dev_simulstream_20260731.json`](manifests/acl6060_dev_simulstream_20260731.json)
@@ -49,6 +51,8 @@ ACL60/60 dev 的 inference/scoring bundle 只在本地 staging；Git 仅保存
   `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/do-slides-help/figshare-v2`.
 - Controlled-acoustic source pools and ACL dev variants:
   `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/noise/`.
+- ACL dev source-event OCR, automatic diagnostic and double-annotation workspace:
+  `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/`.
 - Historical staging: `~/research_idea/data_prep/` (`mtedx_videos/` 3.0G probe
   videos, `chinese_lips/` 1.9G raw+rebuilt audio).
 

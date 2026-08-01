@@ -2,8 +2,9 @@
 
 日期：2026-08-01
 
-状态：**100-row balanced seed 已冻结；等待两个独立 source-side annotators。Seed 不含
-source transcript、target/reference 或模型输出，不是已完成 event inventory。**
+状态：**100-row balanced seed、source-only media workspace 和两份隔离标签表均已生成；
+等待两个独立 source-side annotators。Automatic OCR diagnostic 只验证 headroom，不是已完成
+event inventory。Workspace 不含 source transcript、target/reference 或模型输出。**
 
 ## 目的
 
@@ -30,6 +31,52 @@ SHA256 `2163f2ce23082601bd6da7a75f6d50813be8c7932558027daba7422a90ffdec8`。
 Contract：
 [`../code/configs/acl6060_source_event_annotation_v1.json`](../code/configs/acl6060_source_event_annotation_v1.json)，
 SHA256 `12dc205bc9595665cd2dbe52afb7e1b353872fe9952ff2bc56f1f60cdbd8cd12`。
+
+## Source-only automatic screen
+
+在不读取 target/reference 的前提下，额外构建了本地 source segment timing manifest，并对
+468 个 real talk frames 运行 Tesseract 5.5.2 (`eng`, PSM 11, confidence >= 50)：
+
+- source-only segments：5 talks / 468 segments，SHA256
+  `3c01680b65f1fa574e4700b89581c65048c68d1fea2471da1aa584b11bac2f5b`；
+- OCR：468/468 frames 非空，共 26,921 tokens / 10,090 lines，SHA256
+  `379a8e54ea54f7f1b24ef17bff4acedbe789c05039ac5895752ede6d52d9b5b0`；
+- strict exact-match：901 raw overlapping n-grams；去除嵌套短语后为 344 candidates，
+  对应 149 个独立 `first-spoken source segment × current frame` events；
+- 344 candidates 中 265 个提前量至少 5 秒、183 个至少 10 秒、33 个至少 30 秒；
+  median conservative lead 是 10.325 秒；
+- frozen 100 packets 中 38 个含至少一个自动 future candidate，31 个含 future phrase。
+
+这里把首次含候选的 source segment **起点**当作最早可能 spoken time，并要求该时刻的 causal
+current frame 仍能 OCR 到同一候选。因此 lead 是保守下界。但 exact string 可包含泛词、表格
+header 和语义上无用的重合；这些数字只证明 ACL dev 有足够的 OCR-sufficient anticipation
+headroom 值得双标注，不能证明翻译提升，更不能证明 raw pixels 优于 OCR。50-row 分层 audit
+sheet 已生成但仍是 pending，不能作为人工准确率引用。
+
+Git summaries：
+
+- [`../data/manifests/acl6060_dev_source_annotation_segments_v1_20260801.json`](../data/manifests/acl6060_dev_source_annotation_segments_v1_20260801.json)
+- [`../data/manifests/acl6060_dev_frame_ocr_tesseract_v1_20260801.json`](../data/manifests/acl6060_dev_frame_ocr_tesseract_v1_20260801.json)
+- [`../data/manifests/acl6060_dev_ocr_anticipation_v1_20260801.json`](../data/manifests/acl6060_dev_ocr_anticipation_v1_20260801.json)
+
+## Materialized workspace
+
+本地 staging：
+`/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/workspace_v1`。
+
+- 100 frame copies + 100 mono PCM16/16 kHz source clips；
+- clip 总长 6,498.51 秒，workspace 约 205 MB；
+- 每个 clip 覆盖建议 `[t_evidence-5s, t_evidence+60s]` window；talk 开头按真实
+  boundary 截断，所以 clip 长度为 63.51--65.00 秒；
+- `annotations/annotator_a.jsonl` 与 `annotator_b.jsonl` 各 100 行，annotator id 和
+  SHA256 独立；
+- 所有 media hashes、WAV frame counts、100 个唯一 packet ids 和 forbidden-field scan
+  均通过；
+- 当前状态是 `PENDING_DOUBLE_ANNOTATION`，不是已标注 dataset。
+
+Git summary：
+[`../data/manifests/acl6060_dev_source_event_workspace_v1_20260801.json`](../data/manifests/acl6060_dev_source_event_workspace_v1_20260801.json)。
+Private Hugging Face revision 在首个 Git provenance commit 后上传并回填。
 
 ## Annotation protocol
 
@@ -79,6 +126,35 @@ PYTHONPATH=. .venv/bin/python scripts/build_acl6060_source_event_seed.py \
   --contract configs/acl6060_source_event_annotation_v1.json \
   --output ../data/annotations/acl6060_dev_source_event_seed_v1_20260801.jsonl \
   --summary-out ../data/manifests/acl6060_dev_source_event_seed_v1_20260801.json
+
+PYTHONPATH=. .venv/bin/python scripts/build_acl6060_source_annotation_manifest.py \
+  --acl-root /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/acl6060/extracted/2/acl_6060 \
+  --talk-manifest ../data/manifests/acl6060_talks_20260731.jsonl \
+  --output /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/source_segments.jsonl \
+  --summary-out ../data/manifests/acl6060_dev_source_annotation_segments_v1_20260801.json
+
+PYTHONPATH=. .venv/bin/python scripts/extract_acl6060_frame_ocr.py \
+  --frame-observations ../data/manifests/acl6060_dev_frame_observations_v1_20260801.jsonl \
+  --portable-root /Users/luojiaxuan/Documents \
+  --output /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/frame_ocr_tesseract_v1.jsonl \
+  --summary-out ../data/manifests/acl6060_dev_frame_ocr_tesseract_v1_20260801.json
+
+PYTHONPATH=. .venv/bin/python scripts/analyze_acl6060_ocr_anticipation.py \
+  --ocr /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/frame_ocr_tesseract_v1.jsonl \
+  --source-segments /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/source_segments.jsonl \
+  --event-seed ../data/annotations/acl6060_dev_source_event_seed_v1_20260801.jsonl \
+  --output /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/ocr_anticipation_raw_matches_v1.jsonl \
+  --nonredundant-output /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/ocr_anticipation_nonredundant_v1.jsonl \
+  --seed-coverage-out /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/seed_ocr_anticipation_coverage_v1.jsonl \
+  --audit-sample-out /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/ocr_anticipation_audit_sample_50_v1.jsonl \
+  --summary-out ../data/manifests/acl6060_dev_ocr_anticipation_v1_20260801.json
+
+PYTHONPATH=. .venv/bin/python scripts/materialize_acl6060_source_event_workspace.py \
+  --seed ../data/annotations/acl6060_dev_source_event_seed_v1_20260801.jsonl \
+  --acl-root /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/acl6060/extracted/2/acl_6060 \
+  --portable-root /Users/luojiaxuan/Documents \
+  --output-root /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/workspace_v1 \
+  --summary-out ../data/manifests/acl6060_dev_source_event_workspace_v1_20260801.json
 ```
 
 ## Completion gate

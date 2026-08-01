@@ -1,0 +1,99 @@
+{
+  "dataset": "acl6060",
+  "split": "dev",
+  "artifact": "ocr_first_spoken_anticipation_diagnostic",
+  "status": "AUTOMATIC_SOURCE_ONLY_DIAGNOSTIC_REQUIRES_HUMAN_AUDIT",
+  "interpretation_limit": "Measures OCR-sufficient lexical headroom only; it does not establish translation gains or raw-vision gains beyond OCR.",
+  "timing_limit": "Source segment start is used as the earliest possible spoken time, so reported lead is a conservative lower bound for within-segment mentions.",
+  "raw_ngram_match_count": 901,
+  "nonredundant_candidate_count": 344,
+  "independent_segment_frame_event_count": 149,
+  "opportunity_count": 344,
+  "token_count": 104,
+  "phrase_count": 240,
+  "lead_ge_5s_count": 265,
+  "lead_ge_10s_count": 183,
+  "lead_ge_30s_count": 33,
+  "lead_lower_bound_sec": {
+    "min": 0.063,
+    "p25": 5.074,
+    "median": 10.325,
+    "p75": 18.647,
+    "p90": 27.034,
+    "max": 81.118,
+    "phrase_median": 10.273
+  },
+  "seed_packet_count": 100,
+  "seed_packet_with_future_candidate_count": 38,
+  "seed_packet_with_future_phrase_count": 31,
+  "pending_audit_sample_count": 50,
+  "talks": [
+    {
+      "talk_id": "2022.acl-long.110",
+      "raw_ngram_match_count": 79,
+      "independent_segment_frame_event_count": 13,
+      "opportunity_count": 22,
+      "token_count": 6,
+      "phrase_count": 16,
+      "lead_ge_5s_count": 12,
+      "lead_ge_10s_count": 8,
+      "lead_ge_30s_count": 1
+    },
+    {
+      "talk_id": "2022.acl-long.117",
+      "raw_ngram_match_count": 216,
+      "independent_segment_frame_event_count": 44,
+      "opportunity_count": 97,
+      "token_count": 37,
+      "phrase_count": 60,
+      "lead_ge_5s_count": 85,
+      "lead_ge_10s_count": 51,
+      "lead_ge_30s_count": 9
+    },
+    {
+      "talk_id": "2022.acl-long.268",
+      "raw_ngram_match_count": 351,
+      "independent_segment_frame_event_count": 42,
+      "opportunity_count": 124,
+      "token_count": 23,
+      "phrase_count": 101,
+      "lead_ge_5s_count": 94,
+      "lead_ge_10s_count": 79,
+      "lead_ge_30s_count": 11
+    },
+    {
+      "talk_id": "2022.acl-long.367",
+      "raw_ngram_match_count": 217,
+      "independent_segment_frame_event_count": 32,
+      "opportunity_count": 76,
+      "token_count": 24,
+      "phrase_count": 52,
+      "lead_ge_5s_count": 62,
+      "lead_ge_10s_count": 35,
+      "lead_ge_30s_count": 11
+    },
+    {
+      "talk_id": "2022.acl-long.590",
+      "raw_ngram_match_count": 38,
+      "independent_segment_frame_event_count": 18,
+      "opportunity_count": 25,
+      "token_count": 14,
+      "phrase_count": 11,
+      "lead_ge_5s_count": 12,
+      "lead_ge_10s_count": 10,
+      "lead_ge_30s_count": 1
+    }
+  ],
+  "provenance": {
+    "ocr_sha256": "379a8e54ea54f7f1b24ef17bff4acedbe789c05039ac5895752ede6d52d9b5b0",
+    "source_segments_sha256": "3c01680b65f1fa574e4700b89581c65048c68d1fea2471da1aa584b11bac2f5b",
+    "raw_opportunities_local_path": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/ocr_anticipation_raw_matches_v1.jsonl",
+    "raw_opportunities_sha256": "882837cfe2d415916ddbd534d0ed8e5086548212b7213f69de1935dca68d4e6b",
+    "nonredundant_opportunities_local_path": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/ocr_anticipation_nonredundant_v1.jsonl",
+    "nonredundant_opportunities_sha256": "8c1d3a4889ea3bea088e87590134b04dbb70be96f301bb25bfc5e5877396760a",
+    "seed_coverage_local_path": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/seed_ocr_anticipation_coverage_v1.jsonl",
+    "seed_coverage_sha256": "f722213304089a1c2a826e5b01090e3d6cb3f33a939531317189e7d6d23258fb",
+    "pending_audit_sample_local_path": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/ocr_anticipation_audit_sample_50_v1.jsonl",
+    "pending_audit_sample_sha256": "bbf002d63d3b034485e588e8466d28996df7903d684a3a8ea308624497f0bb81"
+  }
+}

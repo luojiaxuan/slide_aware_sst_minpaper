@@ -11,7 +11,7 @@ links, or handoff state.
 | Code, configs, scripts, tests | GitHub: `luojiaxuan/slide_aware_sst_minpaper` | Active on `main` |
 | Paper notes and implementation plans | This Git repo under `latex/`, `docs/planning/`, and `docs/` | Active |
 | Lightweight progress and artifact index | This Git repo under `docs/` | Active |
-| Reusable datasets and generated data artifacts | Hugging Face Hub | Chinese-LiPS Qwen3-VL and ACL controlled-acoustic bundles uploaded to private dataset repos |
+| Reusable datasets and generated data artifacts | Hugging Face Hub | Chinese-LiPS Qwen3-VL and ACL controlled-acoustic bundles uploaded; ACL source-event workspace pending private upload |
 | Reusable checkpoints/adapters | Hugging Face Hub | None yet |
 | Local staging and active runs | Local `ResearchStudio/data/vision-aware-sst/` and verified GPU-host `/data` paths | Temporary, not canonical |
 
@@ -94,6 +94,7 @@ permission is obtained.
 | Artifact | Local path | Canonical or intended HF destination | Upload status |
 | --- | --- | --- | --- |
 | ACL60/60 dev controlled acoustic v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/noise/corruptions/acl6060_dev_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-controlled-acoustic-dev>, commit `d28c499c8845c4991b5ccea27bc9a2ad520f51fa`, tag `acl6060-controlled-acoustic-v1-20260801` | Uploaded; 75 source-only WAV files plus five metadata/card files; `private=True`; remote metadata and sampled WAV byte-verified |
+| ACL60/60 dev source-event annotation workspace v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/workspace_v1` | Intended private repo: `gavinlaw/slide-aware-sst-acl6060-source-events` | `PENDING_HF_UPLOAD`; 100 frames, 100 source-only clips, isolated A/B sheets; 205 MB; no transcript/target/reference/model output; Git manifests freeze hashes and generation commands |
 | Chinese-LiPS frame-backed train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified.jsonl` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-context-sst-chinese-lips>, revision `a83770446ded4599bf9d95d2b77cdcc7fe359ef7`, tag `qwen3_vl_context_v1` | Not uploaded as a separate raw artifact |
 | Qwen2.5-VL pilot enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
 | Qwen2.5-VL pilot enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
@@ -223,6 +224,10 @@ confirmed.
     questions, forced-choice options and 0.96 s insufficiency/sufficiency
     boundaries require two independent annotations; target realization is a
     later, physically separate stage.
+25. Automatic source/OCR alignment is diagnostic only: 149 independent
+    segment-frame exact-match events establish nonzero anticipation headroom,
+    but the 901 overlapping n-grams and 344 de-nested candidates are not human
+    event counts and cannot establish ST or pixels-beyond-OCR gains.
 
 ## Current Next Actions (2026-08-01)
 

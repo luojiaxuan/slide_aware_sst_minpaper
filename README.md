@@ -12,6 +12,14 @@
 > archives and disjoint source pools are frozen, and 75 full-talk ACL dev
 > variants pass duration, SNR, clipping, hash, and no-reference checks. See
 > [docs/CONTROLLED_ACOUSTIC_PIPELINE_20260801.md](docs/CONTROLLED_ACOUSTIC_PIPELINE_20260801.md).
+> ACL dev 的 source-side screen 也已可执行：468 个 source segments 与 468 个
+> frame observations 完成时间对齐和 Tesseract OCR；严格 exact-match diagnostic
+> 找到 149 个独立 `segment × current-frame` anticipation events，其中 183/344
+> 个去嵌套候选具有至少 10 秒的保守提前量。该数字只说明 OCR-sufficient
+> headroom，不是人工 event density 或 ST gain。100 个双标注 packet 已生成并通过
+> no-target/reference/model-output 检查，当前状态仍是
+> `PENDING_DOUBLE_ANNOTATION`。见
+> [docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md](docs/ACL6060_SOURCE_EVENT_ANNOTATION_V1.md)。
 >
 > The earlier Chinese-LiPS diagnostic remains a warning: with audio input and
 > the slide supplied through a
@@ -107,8 +115,9 @@ current benchmark contract.
 ## Next execution milestone
 
 1. Complete independent double source-side annotation of the frozen 100-row ACL
-   dev seed; report event density, negatives, boundary agreement, and subtype
-   distribution.
+   dev workspace; report event density, negatives, boundary agreement, and
+   subtype distribution. The media packets and isolated A/B sheets are ready;
+   no annotation label is complete yet.
 2. Freeze candidate inventory, source-only packets and target scoring; compare
    audio/document-only, token-budget-matched OCR, current image/semantic
    evidence, and matched stale/wrong evidence under native and controlled-noise

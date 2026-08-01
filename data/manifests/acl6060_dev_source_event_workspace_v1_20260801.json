@@ -1,0 +1,20 @@
+{
+  "dataset": "acl6060",
+  "split": "dev",
+  "artifact": "source_event_double_annotation_workspace",
+  "status": "PENDING_DOUBLE_ANNOTATION",
+  "packet_count": 100,
+  "talk_count": 5,
+  "frame_count": 100,
+  "audio_clip_count": 100,
+  "audio_duration_sec": 6498.51,
+  "audio_bytes": 207956720,
+  "frame_bytes": 6256632,
+  "local_output": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v1/workspace_v1",
+  "packet_manifest_sha256": "bd7ebce089cf909eefc3954a7c16126c9ce2c00bb6c9a14b5362a4440febc9d1",
+  "annotator_a_sha256": "98479c0eec1037beefe09c03c306139133ed4b5f1b2231d6378d6ce4ddb858d8",
+  "annotator_b_sha256": "77ffd4f04587ad12e222f29a9b5c8f4e62fdde4af45505427c34e480c76e8d2f",
+  "source_transcript_included": false,
+  "target_or_reference_included": false,
+  "model_output_included": false
+}
