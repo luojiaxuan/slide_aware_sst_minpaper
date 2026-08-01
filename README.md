@@ -99,6 +99,14 @@
 > 与 calibration，不能产生 paper gold。Replacement 是 visual A/B sequential locks、target
 > author + bilingual validator、append-only adjudication 和 talk-cluster reliability gate。见
 > [docs/MCIF_BEYOND_OCR_RELIABILITY_AUDIT_20260801.md](docs/MCIF_BEYOND_OCR_RELIABILITY_AUDIT_20260801.md)。
+> Replacement v2 core 已落地于 Git `2aa9b6a`：full-overlap visual A/B 只有 R0 被初始释放，
+> R1→pixels→descriptor 必须逐阶段验证两侧完整 HMAC freezes；target validator stage 1 在 freeze
+> 前拿不到 author text；raw agreement gate 先于 adjudication。真实 152-item zero-label workspace
+> 已冻结在 private HF revision
+> [`eb194d83`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/eb194d83c941838db2b096fe52c5e455c5b304bb/beyond_ocr_reliability_workspace_v2)，
+> tag `mcif-beyond-ocr-reliability-workspace-v2`，106 files 全量回下载逐字节验证。当前 UI/server
+> 尚未完成，不得开始 production annotation。见
+> [docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md](docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md)。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28
@@ -259,8 +267,9 @@ current benchmark contract.
 隔离、状态定义、localhost UI 与后续 freeze 命令见
 [docs/MCIF_TARGET_EVENT_ANNOTATION_V1.md](docs/MCIF_TARGET_EVENT_ANNOTATION_V1.md)。
 R1/R2 beyond-OCR v1 双角色 gate 已在 0 labels 时 superseded，不得开标。V2 必须先完成 role 内
-replication、顺序 modality lock、independent target verification 与 adjudication。见
-[docs/MCIF_BEYOND_OCR_RELIABILITY_AUDIT_20260801.md](docs/MCIF_BEYOND_OCR_RELIABILITY_AUDIT_20260801.md)。
+replication、顺序 modality lock、independent target verification 与 adjudication；core/base
+workspace 已完成，但 server/UI 未完成，仍不得开标。见
+[docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md](docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md)。
 
 ## Rules
 

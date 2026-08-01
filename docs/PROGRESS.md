@@ -1424,3 +1424,27 @@ or a stronger Qwen3-VL variant if available.
   并全部重标，不能用 adjudication 清洗。
 - 完整审计见 `docs/MCIF_BEYOND_OCR_RELIABILITY_AUDIT_20260801.md`；机器 supersession 见
   `data/manifests/mcif_beyond_ocr_validation_v1_supersession_20260801.json`。
+
+## 2026-08-01 MCIF Beyond-OCR Reliability V2 Core / Workspace
+
+- 新增 machine-readable config、zero-label builder 与 HMAC append-only annotation state machine。
+  Visual A/B 完整覆盖同一 152 candidates，R1/pixels/descriptor 只有在两侧前一阶段全部 freeze、
+  identity disjoint、candidate set 不变且 per-item predecessor/cohort locks 通过后才可释放。
+- Target validator stage 1 只看 candidate/source/reference 并独立锁 eligibility/alignment；author
+  text 只有 author + validator stage1 都完整 freeze 后才进入 stage2 `accept/edit/reject`。
+- Pre-adjudication report 输出 confusion、exact/category-specific agreement、Gwet AC1、Cohen
+  kappa 和 talk-cluster bootstrap CI。Gate 失败硬拒绝 adjudication，要求新 guideline epoch 全量
+  重标；gate 通过后的 role-specific adjudication 保留 raw row/hash 和 raw metrics。
+- 定向测试覆盖 future-field leak、source/media drift、stale submit、completed overwrite、HMAC
+  tampering、单侧 freeze、跨 role identity normalization、target stage leakage、raw-gate ordering、
+  adjudication coverage 与手算 reliability fixtures。全套 `373 passed`，仅两个既有 `pypinyin`
+  deprecation warnings。Core commit `2aa9b6a`，metrics commit `6e04e25`。
+- 真实 base workspace：152 visual A R0 + 152 visual B R0 + 152 target author + 152 target validator
+  stage1；21 talks / 120 segments / 91 states / 91 private PNGs；0 labels。初始 role views 的 future
+  leak=0，visual PNG=0，A/B ids disjoint；105 checksum entries 全通过，独立 rebuild byte-identical。
+- 上传 private HF revision
+  [`eb194d83/beyond_ocr_reliability_workspace_v2`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/eb194d83c941838db2b096fe52c5e455c5b304bb/beyond_ocr_reliability_workspace_v2)，
+  tag `mcif-beyond-ocr-reliability-workspace-v2`；106 files 全量回下载逐字节验证，repo `private=True`。
+- 当前下一 gate 是实现 token-protected localhost server/UI，并用真实 1920×1080 media 做
+  desktop/mobile projection、并发/stale request 和 no-future-field E2E。完成前不得开始 production
+  annotation；human instrument gate 前不得生成 audio tasks、event packets 或 MCIF inference。

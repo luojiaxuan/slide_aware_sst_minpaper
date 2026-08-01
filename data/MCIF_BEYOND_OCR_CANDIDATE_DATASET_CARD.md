@@ -81,3 +81,12 @@ tag `mcif-beyond-ocr-validation-workspace-v1`。它包含：
 workspace 与独立 rebuild byte-identical，private HF 全量回下载逐字节验证；当前两侧都是
 `0/152` human labels。详细 manifest：
 [`manifests/mcif_beyond_ocr_validation_workspace_v1_20260801.json`](manifests/mcif_beyond_ocr_validation_workspace_v1_20260801.json)。
+
+上述 v1 instrument 已在 0 labels 时 superseded，不能产生 paper gold。Replacement v2 冻结在
+private HF revision
+[`eb194d83/beyond_ocr_reliability_workspace_v2`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/eb194d83c941838db2b096fe52c5e455c5b304bb/beyond_ocr_reliability_workspace_v2)，
+tag `mcif-beyond-ocr-reliability-workspace-v2`。V2 使用 full-overlap visual A/B、R0→R1→pixels→
+descriptor 物理顺序释放、target author→independent validator 两阶段、HMAC append-only events、
+pre-adjudication AC1/kappa/talk-cluster gate 与 role-specific adjudication。当前仍为 0 labels，且
+annotation server/UI 未完成，不得开标。详见
+[`../docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md`](../docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md)。
