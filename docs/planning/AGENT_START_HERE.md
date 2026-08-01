@@ -60,7 +60,8 @@ budget 和 selection path。
    [`../MCIF_VISUAL_READINESS_20260801.md`](../MCIF_VISUAL_READINESS_20260801.md)；
 2. 数据与 runner revisions 已冻结；再读
    [`../PHASE_A_DATA_RUNNER_FREEZE_20260731.md`](../PHASE_A_DATA_RUNNER_FREEZE_20260731.md)；
-3. 下载/冻结 MUSAN SLR17 与 RIR/Noise SLR28；不要使用 SLR119 作为 RIR；
+3. Controlled acoustic v1 已完成；读
+   [`../CONTROLLED_ACOUSTIC_PIPELINE_20260801.md`](../CONTROLLED_ACOUSTIC_PIPELINE_20260801.md)；
 4. 导入 Figshare frames，生成不含 `sentence` 的 frame-only inference manifest，并用
    保守 timestamp 构建 current/stale/wrong state；
 5. blind 标注 80-120 个候选 opportunity events，估计 term、semantic、relation、noise

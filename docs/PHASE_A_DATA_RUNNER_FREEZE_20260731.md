@@ -138,8 +138,9 @@ Canonical Git manifests：
 
 ## 下一步
 
-1. 冻结并下载 MUSAN SLR17 与 RIR/Noise SLR28，记录 archive hashes、source ids、
-   seeds 和 full-talk achieved SNR；旧的 SLR119 指针是 AliMeeting，不得用于 RIR。
+1. MUSAN SLR17 与 RIR/Noise SLR28 freeze、source split 和 ACL dev 75 个 full-talk
+   variants 已完成，见
+   [`CONTROLLED_ACOUSTIC_PIPELINE_20260801.md`](CONTROLLED_ACOUSTIC_PIPELINE_20260801.md)。
 2. 导入已校验的 *Do Slides Help?* ACL60/60 frames，生成只含 talk/frame/causal
    availability 的 inference view；原 JSON 的 `sentence` 字段不得进入 inference。
 3. Blind 标注 80-120 个 source-side forced-choice candidates，独立冻结 source-only

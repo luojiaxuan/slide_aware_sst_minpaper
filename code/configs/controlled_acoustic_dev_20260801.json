@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "source_split": "development",
+  "global_seed": 20260801,
+  "wrap_fade_ms": 10.0,
+  "activity_fallback": {
+    "name": "energy_vad_v1",
+    "frame_ms": 25.0,
+    "hop_ms": 10.0,
+    "rms_percentile": 95,
+    "relative_threshold_db": -15.0,
+    "absolute_threshold_dbfs": -50.0
+  },
+  "conditions": [
+    {"condition_id": "babble_p10_s0", "kind": "babble", "snr_db": 10, "source_count": 5, "replicate": 0},
+    {"condition_id": "babble_p10_s1", "kind": "babble", "snr_db": 10, "source_count": 5, "replicate": 1},
+    {"condition_id": "babble_p10_s2", "kind": "babble", "snr_db": 10, "source_count": 5, "replicate": 2},
+    {"condition_id": "babble_p5_s0", "kind": "babble", "snr_db": 5, "source_count": 5, "replicate": 0},
+    {"condition_id": "babble_p5_s1", "kind": "babble", "snr_db": 5, "source_count": 5, "replicate": 1},
+    {"condition_id": "babble_p5_s2", "kind": "babble", "snr_db": 5, "source_count": 5, "replicate": 2},
+    {"condition_id": "babble_0_s0", "kind": "babble", "snr_db": 0, "source_count": 5, "replicate": 0},
+    {"condition_id": "babble_0_s1", "kind": "babble", "snr_db": 0, "source_count": 5, "replicate": 1},
+    {"condition_id": "babble_0_s2", "kind": "babble", "snr_db": 0, "source_count": 5, "replicate": 2},
+    {"condition_id": "babble_m5_s0", "kind": "babble", "snr_db": -5, "source_count": 5, "replicate": 0},
+    {"condition_id": "babble_m5_s1", "kind": "babble", "snr_db": -5, "source_count": 5, "replicate": 1},
+    {"condition_id": "babble_m5_s2", "kind": "babble", "snr_db": -5, "source_count": 5, "replicate": 2},
+    {"condition_id": "generic_noise_0_s0", "kind": "generic_noise", "snr_db": 0, "source_count": 1, "replicate": 0},
+    {"condition_id": "music_0_s0", "kind": "music", "snr_db": 0, "source_count": 1, "replicate": 0},
+    {"condition_id": "rir_medium_near", "kind": "rir", "replicate": 0}
+  ]
+}

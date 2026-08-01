@@ -9,6 +9,7 @@ only documents locations and local staging conventions. No media is committed to
 |---|---|---|---|
 | [gavinlaw/mtedx-v-eval](https://huggingface.co/datasets/gavinlaw/mtedx-v-eval) | mTEDx-V: talk-level long-form X→En manifests (es/fr/it/ru/el→en, 100 talks, ~18 h), `talk_id` = live YouTube ID, `visual_signal/` OCR stratification | CC BY-NC-ND 4.0 (manifests only, no media) | Realistic-noisy X→En eval stratum |
 | [gavinlaw/chinese-lips-longform-debug](https://huggingface.co/datasets/gavinlaw/chinese-lips-longform-debug) | Chinese-LiPS long-form: `orig_timeline` (real gaps restored) + `silence_removed` variants, 3 talks ~97 min; `en_draft_demo/` sample refs | CC BY-NC-SA 4.0 | Clean-visual zh→En stratum (En refs in progress) |
+| [gavinlaw/slide-aware-sst-controlled-acoustic-dev](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-controlled-acoustic-dev) | ACL60/60 dev full-talk controlled acoustic variants; 75 source-only PCM16 WAV files plus exact manifests/contracts | CC BY 4.0 / Apache 2.0 provenance | Private Phase-A robustness inputs; commit `d28c499c8845c4991b5ccea27bc9a2ad520f51fa`, tag `acl6060-controlled-acoustic-v1-20260801` |
 
 ## Phase-A frozen sources
 
@@ -19,6 +20,8 @@ only documents locations and local staging conventions. No media is committed to
 | MCIF media pool | `FBK-MT/MCIF` revision `e24065b919758263cfe5d157057278affe76ea7b` | 100 long audio/video talks, CC BY 4.0 | [`manifests/phase_a_sources_20260731.json`](manifests/phase_a_sources_20260731.json), [`manifests/mcif_files_e24065b9.jsonl`](manifests/mcif_files_e24065b9.jsonl) |
 | MCIF IWSLT translation subset | official `mcif-long-trans.zip`, SHA256 `445a4b92d0083b5416515a9639fcef126b72a5e80ef59d962dc30f82688cedb7` | 21 audio/video/PDF talks materialized; 919 segments; reference files unextracted and contents unopened | [`manifests/mcif_translation_subset_materialized_20260801.json`](manifests/mcif_translation_subset_materialized_20260801.json) |
 | MCIF visual states v2 | derived from the frozen 21 MP4s at 1 s intervals | 7,111 frames; 283 reviewed transition candidates; 304 causal states; 0 unconfirmed candidates | [`manifests/mcif_visual_state_candidates_v2_20260801.json`](manifests/mcif_visual_state_candidates_v2_20260801.json), [`manifests/mcif_visual_qa_20260801.json`](manifests/mcif_visual_qa_20260801.json) |
+| Controlled acoustic sources | MUSAN/SLR17 plus RIR/Noise SLR28 | archive SHA256/license snapshots frozen; 65 development and 65 disjoint confirmatory sources | [`manifests/controlled_acoustic_source_contract_20260801.json`](manifests/controlled_acoustic_source_contract_20260801.json), [`manifests/controlled_acoustic_source_pool_20260801.json`](manifests/controlled_acoustic_source_pool_20260801.json) |
+| ACL60/60 dev acoustic variants v1 | private HF commit `d28c499c8845c4991b5ccea27bc9a2ad520f51fa` | 5 talks × 15 conditions = 75 PCM16 WAV files; no references/transcripts | [`manifests/acl6060_dev_controlled_acoustic_v1_20260801.jsonl`](manifests/acl6060_dev_controlled_acoustic_v1_20260801.jsonl) |
 
 ACL60/60 dev 的 inference/scoring bundle 只在本地 staging；Git 仅保存
 [`manifests/acl6060_dev_simulstream_20260731.json`](manifests/acl6060_dev_simulstream_20260731.json)
@@ -43,9 +46,12 @@ ACL60/60 dev 的 inference/scoring bundle 只在本地 staging；Git 仅保存
   `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9`.
 - *Do Slides Help?* Figshare v2 staging:
   `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/do-slides-help/figshare-v2`.
+- Controlled-acoustic source pools and ACL dev variants:
+  `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/noise/`.
 - Historical staging: `~/research_idea/data_prep/` (`mtedx_videos/` 3.0G probe
   videos, `chinese_lips/` 1.9G raw+rebuilt audio).
 
 Raw upstream media stays local as cache. Git stores only scripts, manifests and
-contracts; no ACL60/60 or MCIF media/reference content is committed or
-re-uploaded to Hugging Face.
+contracts; no MCIF media/reference content is committed or re-uploaded. The
+reusable ACL60/60 controlled-acoustic variants are versioned separately on the
+private Hugging Face dataset recorded in Source of Truth.

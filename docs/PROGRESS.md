@@ -620,3 +620,31 @@ or a stronger Qwen3-VL variant if available.
   OpenSLR 28 (Apache 2.0); MUSAN remains OpenSLR 17 (CC BY 4.0).
 - Detailed record:
   [`docs/MCIF_VISUAL_READINESS_20260801.md`](MCIF_VISUAL_READINESS_20260801.md).
+
+## 2026-08-01 Controlled Acoustic Pipeline
+
+- Downloaded official MUSAN/SLR17 and RIR/Noise SLR28 archives; verified the
+  published MD5 values, local SHA256, licenses, resource-page snapshots, and
+  archive integrity.
+- Deterministically selected and extracted 130 sources: 32 babble speech, 16
+  generic noise, 16 music, and one real RIR for each of development and
+  confirmatory. Source overlap between the two pools is zero.
+- Added a full-talk corruption materializer with stable per-talk/condition
+  seeds, exact source hashes/offsets/wrap counts, source-only activity masks,
+  SNR scaling, peak guards, and onset-aligned RIR convolution.
+- Calibrated `energy_vad_v1` only from the five clean ACL dev waveforms. The
+  initial `p95-35 dB` rule marked one talk almost fully active and was rejected;
+  the frozen rule is `max(-50 dBFS, p95-15 dB)`.
+- Materialized 75 ACL60/60 dev variants: five talks × 15 conditions. All output
+  hashes/durations pass; maximum target/achieved SNR error is below `4.9e-7 dB`;
+  post-PCM16 recomputation is within `0.00027 dB`; PCM saturation count is zero;
+  active fractions are 49.6%–88.8%.
+- Uploaded the source-only bundle to the private HF dataset
+  `gavinlaw/slide-aware-sst-controlled-acoustic-dev` at immutable commit
+  `d28c499c8845c4991b5ccea27bc9a2ad520f51fa`, tag
+  `acl6060-controlled-acoustic-v1-20260801`. Verified the 75-WAV remote inventory,
+  privacy, all metadata bytes, and one downloaded WAV against local staging.
+- The artifacts are controlled acoustic interventions, not real noisy-talk
+  recordings. No ST inference or target/reference access occurred.
+- Detailed record:
+  [`docs/CONTROLLED_ACOUSTIC_PIPELINE_20260801.md`](CONTROLLED_ACOUSTIC_PIPELINE_20260801.md).

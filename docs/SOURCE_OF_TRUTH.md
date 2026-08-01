@@ -11,7 +11,7 @@ links, or handoff state.
 | Code, configs, scripts, tests | GitHub: `luojiaxuan/slide_aware_sst_minpaper` | Active on `main` |
 | Paper notes and implementation plans | This Git repo under `latex/`, `docs/planning/`, and `docs/` | Active |
 | Lightweight progress and artifact index | This Git repo under `docs/` | Active |
-| Reusable datasets and generated data artifacts | Hugging Face Hub | Qwen3-VL bundle uploaded to a private dataset repo |
+| Reusable datasets and generated data artifacts | Hugging Face Hub | Chinese-LiPS Qwen3-VL and ACL controlled-acoustic bundles uploaded to private dataset repos |
 | Reusable checkpoints/adapters | Hugging Face Hub | None yet |
 | Local staging and active runs | Local `ResearchStudio/data/vision-aware-sst/` and verified GPU-host `/data` paths | Temporary, not canonical |
 
@@ -26,6 +26,8 @@ links, or handoff state.
   [`docs/PHASE_A_DATA_RUNNER_FREEZE_20260731.md`](PHASE_A_DATA_RUNNER_FREEZE_20260731.md)
 - MCIF materialization, visual QA and causal-state readiness:
   [`docs/MCIF_VISUAL_READINESS_20260801.md`](MCIF_VISUAL_READINESS_20260801.md)
+- Controlled-acoustic sources, mixer contract and ACL dev QA:
+  [`docs/CONTROLLED_ACOUSTIC_PIPELINE_20260801.md`](CONTROLLED_ACOUSTIC_PIPELINE_20260801.md)
 - Route A ACL paper and confirmatory experiment contract:
   [`docs/ACL_PAPER_BLUEPRINT_20260731.md`](ACL_PAPER_BLUEPRINT_20260731.md)
 - Independent ACL-style review and resolved/residual risks:
@@ -63,7 +65,7 @@ links, or handoff state.
 | Development and tagged-term replication | [ACL60/60 official release](https://aclanthology.org/2023.iwslt-1.2/) | dev/eval 5+5 complete talks, 468+416 gold segments and term annotations frozen at archive SHA256 `5f2a3855...cfce7cc`; inference and scoring views physically separated |
 | ACL60/60 real frame supplement | [Do Slides Help? Figshare v2](https://figshare.com/articles/software/Code_and_data/30158932) | CC BY 4.0 outer archive SHA256 `f771d3f6...3d4cc`; 884 frames cover all 10 talks; downloaded and verified, frame-only inference import pending |
 | Private timing/diagnostic benchmark | Chinese-LiPS derived private HF repo below | Available; not a paper-grade ST ranking set |
-| Controlled acoustic corruptions | MUSAN/SLR17 <https://www.openslr.org/17/> (CC BY 4.0) and Room Impulse Response and Noise Database/SLR28 <https://www.openslr.org/28/> (Apache 2.0) | Selected; archives, hashes, seeds and mixing manifests not yet frozen. SLR119 is AliMeeting and is not the RIR source |
+| Controlled acoustic corruptions | MUSAN/SLR17 <https://www.openslr.org/17/> (CC BY 4.0) and Room Impulse Response and Noise Database/SLR28 <https://www.openslr.org/28/> (Apache 2.0) | Archives/hashes/licenses frozen; 65 development and 65 confirmatory sources are disjoint; ACL dev has 75 QA-passed full-talk variants. SLR119 is AliMeeting and is not the RIR source |
 
 No paper experiment may rely on an unfrozen local-only copy. The first Phase-A
 data task must record source URLs, accepted terms/licenses, immutable revisions
@@ -87,6 +89,7 @@ permission is obtained.
 
 | Artifact | Local path | Canonical or intended HF destination | Upload status |
 | --- | --- | --- | --- |
+| ACL60/60 dev controlled acoustic v1 | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/noise/corruptions/acl6060_dev_v1` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-aware-sst-controlled-acoustic-dev>, commit `d28c499c8845c4991b5ccea27bc9a2ad520f51fa`, tag `acl6060-controlled-acoustic-v1-20260801` | Uploaded; 75 source-only WAV files plus five metadata/card files; `private=True`; remote metadata and sampled WAV byte-verified |
 | Chinese-LiPS frame-backed train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified.jsonl` | Private repo: <https://huggingface.co/datasets/gavinlaw/slide-context-sst-chinese-lips>, revision `a83770446ded4599bf9d95d2b77cdcc7fe359ef7`, tag `qwen3_vl_context_v1` | Not uploaded as a separate raw artifact |
 | Qwen2.5-VL pilot enriched train challenge | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/data/challenge_verified_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
 | Qwen2.5-VL pilot enriched train evidence index | `/data/projects/slide_aware_sst_minpaper/repo/outputs/chinese_lips_train/index/evidence_qwen_vl_context.jsonl` | Do not upload as final; pilot only | Superseded by planned Qwen3-VL run |
@@ -202,26 +205,27 @@ confirmed.
     include earlier first-stable correct target decisions while the source audio
     remains insufficient, correct-over-stale/wrong content specificity, final
     quality preservation and controlled-noise interaction.
+22. Controlled-acoustic v1 uses full continuous talks, a source-only energy VAD,
+    exact source hashes/offsets/seeds, 5-speaker babble at +10/+5/0/-5 dB, and
+    a disjoint real-RIR split. Its 75 ACL dev files are input readiness, not an
+    ST result or evidence that synthetic noise represents real conferences.
 
 ## Current Next Actions (2026-08-01)
 
-1. Freeze/download MUSAN SLR17 and RIR/Noise SLR28 with archive hashes; implement
-   continuous full-talk corruption with source ids, fixed seeds and achieved-SNR
-   records. Do not use SLR119 as an RIR source.
-2. Import the verified Figshare frames into a frame-only ACL60/60 manifest;
+1. Import the verified Figshare frames into a frame-only ACL60/60 manifest;
    strip `sentence`, match the 468 dev rows to audio offsets, cluster slide
    states, represent transitions as intervals, and use conservative first-frame
    availability.
-3. Blind-label 80-120 source-side forced-choice candidates on ACL dev, including
+2. Blind-label 80-120 source-side forced-choice candidates on ACL dev, including
    random-span coverage and negative cases. Freeze candidate, source-only
    packet, and target-scoring artifacts independently.
-4. Map document-only, OCR, correct semantic/relation oracle, matched wrong
+3. Map document-only, OCR, correct semantic/relation oracle, matched wrong
    evidence, and native/noisy audio headroom. A stable signal in any route can
    justify focused automatic implementation; stop only if every gold route lacks
    practical headroom.
-5. Run small automatic comparisons for viable routes, including naive prompts,
+4. Run small automatic comparisons for viable routes, including naive prompts,
    selection/gating, and direct-image input. Preserve the complete declared
    development matrix.
-6. Select the final paper story from development evidence, then freeze and push
+5. Select the final paper story from development evidence, then freeze and push
    its main claim, metric, model/config, slices, and decision rule before ACL
    eval or MCIF is read.

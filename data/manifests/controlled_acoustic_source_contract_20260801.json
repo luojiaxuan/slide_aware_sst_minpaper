@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-01",
+  "sources": {
+    "openslr17": {
+      "resource_id": "SLR17",
+      "title": "MUSAN",
+      "resource_page": "https://www.openslr.org/17/",
+      "license": "CC BY 4.0",
+      "resource_page_snapshot": {
+        "staging_path": "ResearchStudio/data/vision-aware-sst/noise/source_pages/openslr17.html",
+        "sha256": "4cf0be3b3ffd0ac78499998adaec48909d16431a0717575beee80cf175520fbc"
+      },
+      "archive": {
+        "filename": "musan.tar.gz",
+        "url": "https://openslr.trmal.net/resources/17/musan.tar.gz",
+        "bytes": 11086114085,
+        "md5": "0c472d4fc0c5141eca47ad1ffeb2a7df",
+        "sha256": "86d1061c7e15b5c9e906777685c519701df51bfde3001e1070dcc9ffac955ee1",
+        "integrity_check": "gzip -t"
+      }
+    },
+    "openslr28": {
+      "resource_id": "SLR28",
+      "title": "Room Impulse Response and Noise Database",
+      "resource_page": "https://www.openslr.org/28/",
+      "license": "Apache 2.0",
+      "resource_page_snapshot": {
+        "staging_path": "ResearchStudio/data/vision-aware-sst/noise/source_pages/openslr28.html",
+        "sha256": "ae80828d9bdf5915017decdfc1cd73ef2842e67a7afd56469b83f28e09e401ab"
+      },
+      "archive": {
+        "filename": "rirs_noises.zip",
+        "url": "https://openslr.trmal.net/resources/28/rirs_noises.zip",
+        "bytes": 1311166223,
+        "md5": "e6f48e257286e05de56413b4779d8ffb",
+        "sha256": "3b50cfde915b3984738169b4beb341e9f6b8062ae4c2076146c5db71c2c05dc7",
+        "integrity_check": "unzip -t"
+      }
+    }
+  },
+  "selection": {
+    "salt": "slide-aware-sst-controlled-acoustics-v1",
+    "split_order": ["development", "confirmatory"],
+    "ranking": "sha256(salt + NUL + category + NUL + upstream_member)",
+    "categories": {
+      "babble_speech": {
+        "prefix": "musan/speech/",
+        "min_bytes": 16000044,
+        "minimum_nominal_duration_sec": 500,
+        "development": 32,
+        "confirmatory": 32
+      },
+      "generic_noise": {
+        "prefix": "musan/noise/",
+        "min_bytes": 3200044,
+        "minimum_nominal_duration_sec": 100,
+        "development": 16,
+        "confirmatory": 16
+      },
+      "music": {
+        "prefix": "musan/music/",
+        "min_bytes": 9600044,
+        "minimum_nominal_duration_sec": 300,
+        "development": 16,
+        "confirmatory": 16
+      }
+    }
+  },
+  "rirs": {
+    "development": {
+      "member": "RIRS_NOISES/real_rirs_isotropic_noises/RVB2014_type1_rir_mediumroom1_near_angla.wav",
+      "rir_id": "00011",
+      "room_id": "RVB2014_mediumroom1",
+      "channel": 0,
+      "selection_reason": "fixed real medium-room near-field development RIR"
+    },
+    "confirmatory": {
+      "member": "RIRS_NOISES/real_rirs_isotropic_noises/RVB2014_type1_rir_mediumroom2_near_angla.wav",
+      "rir_id": "00015",
+      "room_id": "RVB2014_mediumroom2",
+      "channel": 0,
+      "selection_reason": "disjoint fixed real medium-room near-field confirmatory RIR"
+    }
+  }
+}

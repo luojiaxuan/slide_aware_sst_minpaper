@@ -8,6 +8,10 @@
 > frames. This establishes **visual/timing readiness, not translation benefit**.
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
+> The controlled-acoustic input path is also ready: official SLR17/SLR28
+> archives and disjoint source pools are frozen, and 75 full-talk ACL dev
+> variants pass duration, SNR, clipping, hash, and no-reference checks. See
+> [docs/CONTROLLED_ACOUSTIC_PIPELINE_20260801.md](docs/CONTROLLED_ACOUSTIC_PIPELINE_20260801.md).
 >
 > The earlier Chinese-LiPS diagnostic remains a warning: with audio input and
 > the slide supplied through a
@@ -102,17 +106,14 @@ current benchmark contract.
 
 ## Next execution milestone
 
-1. Freeze and download MUSAN (`SLR17`) plus the Room Impulse Response and Noise
-   Database (`SLR28`), then implement full-talk, seed-recorded corruption. The
-   previous `SLR119` pointer was wrong: that resource is AliMeeting.
-2. Import the verified *Do Slides Help?* supplement into a stripped ACL60/60
+1. Import the verified *Do Slides Help?* supplement into a stripped ACL60/60
    frame-only development view and blind-label 80-120 source-side evidence
    opportunities.
-3. Freeze candidate inventory, source-only packets and target scoring; compare
+2. Freeze candidate inventory, source-only packets and target scoring; compare
    audio/document-only, token-budget-matched OCR, current image/semantic
    evidence, and matched stale/wrong evidence under native and controlled-noise
    audio.
-4. Require a content-specific advance in first stable correct target decisions,
+3. Require a content-specific advance in first stable correct target decisions,
    preserved final quality and a coherent noise interaction. A small aggregate
    BLEU change without these controls is not sufficient.
 

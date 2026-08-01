@@ -267,10 +267,11 @@ Pixels 是候选 Route C，而不是预设必成或预设 secondary。`C6-auto v
 
 当前先不需要 GPU。MCIF video/causal-state readiness 已通过，剩余 hard blockers 是
 eligible-event density、MDE、最终 route/config freeze 与 outcome-side no-reference ledger。
-下一步先冻结 MUSAN SLR17 与 RIR/Noise SLR28，再实现 Figshare -> stripped ACL60/60
-slide-state manifest 和 candidate-event / source-only packet / target-scoring 三阶段 schema。
-随后做 80-120 event density + multi-route oracle capability map，以小规模 automatic runs
-比较 OCR、semantic packet、visual relation、selection/gating 与 native/noisy audio。
+Controlled acoustic v1 已冻结并完成 75 个 ACL dev full-talk inputs。下一步实现
+Figshare -> stripped ACL60/60 slide-state manifest 和 candidate-event / source-only packet /
+target-scoring 三阶段 schema。随后做 80-120 event density + multi-route oracle capability
+map，以小规模 automatic runs 比较 OCR、semantic packet、visual relation、selection/gating
+与 native/noisy audio。
 
 ## Primary sources added by the audit
 

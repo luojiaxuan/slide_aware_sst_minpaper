@@ -138,10 +138,10 @@ correctness 不低于 -1 pp；它们是资源投入门槛，不是尚未注册�
 
 ## 下一步
 
-1. 下载并冻结 SLR17/SLR28 archives、SHA256 与 license snapshot。
-2. 实现 full-talk noise/RIR materializer 和无 reference 的 mixing manifest。
-3. 构建 stripped ACL dev frame timeline，blind 标注 80-120 source-side events。
-4. 冻结 candidate/source-packet/target-scoring 三件套，先跑 oracle headroom：document、
+1. SLR17/SLR28 freeze 与 full-talk noise/RIR materialization 已完成，见
+   [`CONTROLLED_ACOUSTIC_PIPELINE_20260801.md`](CONTROLLED_ACOUSTIC_PIPELINE_20260801.md)。
+2. 构建 stripped ACL dev frame timeline，blind 标注 80-120 source-side events。
+3. 冻结 candidate/source-packet/target-scoring 三件套，先跑 oracle headroom：document、
    OCR、correct semantic/relation、matched wrong，覆盖 native 与 noise。
-5. 只有看到 content-specific early-commit 或稳定 robustness signal 后，才投入 automatic
+4. 只有看到 content-specific early-commit 或稳定 robustness signal 后，才投入 automatic
    VLM compiler、selection/gating 与 GPU inference。
