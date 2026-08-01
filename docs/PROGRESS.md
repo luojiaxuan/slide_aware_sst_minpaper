@@ -1139,3 +1139,8 @@ or a stronger Qwen3-VL variant if available.
   materializer that moves visual availability to the actual capture time and
   leaves `[0.0, 0.5)` context-free. The old Qwen3-VL screen is now explicitly a
   morphology prescreen, not a causal raw-image baseline.
+- Materialized the corrected native evidence as 304 PNGs across 21 talks. All
+  frame dimensions, source-video hashes, detector-frame hashes and alignment
+  checks pass; manifest SHA256 is `4e1008ab...9cccc`. Uploaded 308 paths to the
+  private MCIF source-prescreen repo at revision `4e80dd0a...ae49`, tag
+  `mcif-native-causal-evidence-v1`; the remote checksum manifest is byte-identical.

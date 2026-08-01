@@ -1,0 +1,53 @@
+{
+  "artifact": "mcif_native_resolution_causal_visual_evidence_v1",
+  "status": "UPLOADED_PRIVATE_SOURCE_ONLY_INPUT_NOT_ANNOTATION",
+  "upstream": {
+    "repo": "FBK-MT/MCIF",
+    "revision": "e24065b919758263cfe5d157057278affe76ea7b",
+    "license": "cc-by-4.0"
+  },
+  "generation": {
+    "git_commit": "684d93440dc5665b90de07f3f1ad454fa55f2116",
+    "script": "code/scripts/materialize_mcif_native_evidence_frames.py",
+    "causal_states_sha256": "428bed602146d2f3ce51da961d614f27cb0e032805952a6469324f7aff3ec660",
+    "detector_sampling_interval_sec": 1.0,
+    "capture_offset_sec": 0.5,
+    "max_alignment_mae_8bit": 12.0
+  },
+  "inventory": {
+    "talks": 21,
+    "causal_states": 304,
+    "native_png_files": 304,
+    "source_transcript_consumed": false,
+    "target_or_reference_consumed": false
+  },
+  "timing_contract": {
+    "availability_rule": "evidence_available_at_actual_capture_time",
+    "pre_first_evidence_gap_sec_by_talk": 0.5,
+    "interpretation": "The previous 320px detector thumbnails are centered in one-second sampling buckets. Native evidence is extracted at nominal time plus 0.5 seconds and is never backdated to the bucket start."
+  },
+  "quality_audit": {
+    "alignment_mae_8bit": {
+      "min": 0.162222,
+      "mean": 1.832165,
+      "max": 9.743108
+    },
+    "rows_over_alignment_threshold": 0,
+    "frame_binding_set_sha256": "f71b2e1bd28329a4ea3eab8978e9bd5f7c42d9caa562d730256f96201fc5d8ca",
+    "manifest_sha256": "4e1008ab919a0020f7e99bff3264bdf36c28bdc3a4a61508298db6c6f6b9cccc",
+    "summary_sha256": "90669b7fe006d60e7e122fcd44e1a31eb4c447a2bb08e4d5e36fb0e17b6da65a",
+    "checksum_manifest_entries": 307
+  },
+  "local_staging": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/materialized/e24065b9/evidence/native_causal_v1",
+  "hugging_face": {
+    "repo": "gavinlaw/slide-aware-sst-mcif-source-prescreen",
+    "repo_type": "dataset",
+    "path": "native_causal_v1",
+    "private_verified": true,
+    "revision": "4e80dd0ae4f6bf4f0633cb9d605286d06f34ae49",
+    "tag": "mcif-native-causal-evidence-v1",
+    "remote_path_count": 308,
+    "checksum_manifest_byte_verified": true
+  },
+  "interpretation": "This artifact is the source-only input contract for flat OCR, structured text, and raw-image baselines. It is not an annotation, eligible-event decision, translation result, or evidence that pixels outperform text."
+}

@@ -125,6 +125,16 @@ initial states 严重错位，MAE 最大 231.66；按 `t+0.5s` 抽帧时，304/3
 它重新验证 21 个 source video SHA、detector frame SHA、native dimensions、304 个 ID 与
 state timeline，并拒绝 alignment MAE 超阈值的帧。
 
+Canonical materialization 已完成：304/304 native PNG，90 MB；manifest SHA256
+`4e1008ab919a0020f7e99bff3264bdf36c28bdc3a4a61508298db6c6f6b9cccc`，frame-binding
+set SHA256 `f71b2e1bd28329a4ea3eab8978e9bd5f7c42d9caa562d730256f96201fc5d8ca`。
+Git manifest：
+[`../data/manifests/mcif_native_causal_evidence_v1_20260801.json`](../data/manifests/mcif_native_causal_evidence_v1_20260801.json)。
+Private HF source of truth：
+[`gavinlaw/slide-aware-sst-mcif-source-prescreen@4e80dd0a/native_causal_v1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/4e80dd0ae4f6bf4f0633cb9d605286d06f34ae49/native_causal_v1)，
+tag `mcif-native-causal-evidence-v1`；repo privacy 和远端 307-entry checksum manifest
+均已验证。
+
 ## Reference-free Qwen3-VL source screen
 
 已冻结覆盖全部 304 个 causal states 的 private VLM screen input，而不是根据像素或 OCR
@@ -235,7 +245,7 @@ correctness 不低于 -1 pp；它们是资源投入门槛，不是尚未注册�
    balanced seed 也已冻结，下一步完成独立双标注。
 3. MCIF 304-state private source-only morphology prescreen、QA 和 HF upload 已完成；只用
    aggregate coverage 完善 annotation rubric，不得用逐行输出修改 inventory 或提示
-   annotator。原生分辨率 `t+0.5s` causal evidence 正在物化。
+   annotator。原生分辨率 `t+0.5s` causal evidence 已完成并上传 private HF。
 4. 在修正后的 native evidence 上冻结 `flat PP-OCRv6 -> PP-StructureV3 -> raw image`
    三层 evidence，再跑 oracle headroom：document、
    unordered OCR、layout/structure-preserving text、raw image、matched wrong，覆盖 native

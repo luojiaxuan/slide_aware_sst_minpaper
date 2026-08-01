@@ -21,6 +21,10 @@
 > Native-resolution evidence now uses the same source frames at `t+0.5s` and
 > exposes each state only from that actual capture time; the first 0.5 seconds
 > of every talk has no visual context.
+> The 304 native PNGs and portable manifest are frozen in the same private HF
+> repo at revision
+> [`4e80dd0a`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-source-prescreen/tree/4e80dd0ae4f6bf4f0633cb9d605286d06f34ae49/native_causal_v1),
+> tag `mcif-native-causal-evidence-v1`; remote checksums are byte-verified.
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28
