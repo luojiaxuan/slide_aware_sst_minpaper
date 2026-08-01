@@ -96,7 +96,7 @@ def config() -> dict:
             "paddlepaddle_gpu": "3.3.0",
         },
         "upstream": {"paddleocr_git_tag": "v3.7.0", "paddleocr_git_commit": "commit"},
-        "inference_engine": "paddle_static",
+        "inference_engine": "paddle_dynamic",
         "models": models,
         "modules": {
             "use_table_recognition": True,

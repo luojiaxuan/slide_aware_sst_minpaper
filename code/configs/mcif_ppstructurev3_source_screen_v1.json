@@ -11,7 +11,7 @@
     "paddleocr_git_commit": "b03f46425e8ff4442b268ce449e3eef758146cd4",
     "paddleocr_wheel_sha256": "c0f0a81ad4112727f30c6fcf986ac0ef6a120d31ee0991a01fae0357ee32d338"
   },
-  "inference_engine": "paddle_static",
+  "inference_engine": "paddle_dynamic",
   "model_source": "huggingface",
   "models": {
     "layout_detection": "PP-DocLayout_plus-L",
@@ -50,5 +50,5 @@
   "thresholds": {
     "text_recognition_score": 0.0
   },
-  "interpretation": "Flat OCR is the complete PP-OCRv6 overall OCR result in provider order. Structured text adds PP-StructureV3 layout, reading order, table, formula, and chart parsing over the same source frame and OCR models. PaddleOCR-VL is excluded because it is a document VLM, not a pure OCR baseline."
+  "interpretation": "Flat OCR is the complete PP-OCRv6 overall OCR result in provider order. Structured text adds PP-StructureV3 layout, reading order, table, formula, and chart parsing over the same source frame and OCR models. PaddleOCR-VL is excluded because it is a document VLM, not a pure OCR baseline. The common engine is paddle_dynamic because PP-Chart2Table does not support paddle_static."
 }

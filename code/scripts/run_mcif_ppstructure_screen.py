@@ -80,8 +80,8 @@ def validate_config(config: dict[str, Any]) -> None:
         raise ValueError("Flat and structured text must share PP-OCRv6 medium recognition")
     if any("PaddleOCR-VL" in str(value) for value in models.values()):
         raise ValueError("PaddleOCR-VL is not an OCR baseline")
-    if config.get("inference_engine") != "paddle_static":
-        raise ValueError("The frozen screen uses the recommended paddle_static engine")
+    if config.get("inference_engine") != "paddle_dynamic":
+        raise ValueError("The frozen screen uses paddle_dynamic for chart compatibility")
     modules = config.get("modules") or {}
     required_modules = {
         "use_table_recognition",
