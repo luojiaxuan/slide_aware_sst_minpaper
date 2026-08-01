@@ -1,5 +1,9 @@
 # Slide/Context-Aware SST MVP
 
+> **Historical record, superseded 2026-07-31.** Chinese-LiPS is no longer the
+> main paper dataset and this MVP is not the current execution plan. Follow
+> [`../DUAL_ROUTE_DECISION_20260731.md`](../DUAL_ROUTE_DECISION_20260731.md).
+
 ## Decision
 
 Do not replace Chinese-LiPS now, but do not frame the paper as pure

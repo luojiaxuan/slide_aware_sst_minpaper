@@ -461,19 +461,39 @@ or a stronger Qwen3-VL variant if available.
     - Path:
       `annotation/qwen3_32b_diagnostic500_review_sheet_20260707/`
 
+## 2026-07-31 Dual-Route Research Decision
+
+- Corrected the collision boundary: EGTA and RASST are terminology-only. They
+  rule out a term-only retrieval/gating contribution, not broader proposition,
+  discourse, relation, or vision-aware context.
+- Audited the IWSLT 2026 extra-context systems. Named entities, abstract prompt,
+  phrase boosting, paper pretranslation, and BM25 retrieval are mandatory
+  baselines and cannot be the new method.
+- Froze the authoritative decision in
+  [`docs/DUAL_ROUTE_DECISION_20260731.md`](DUAL_ROUTE_DECISION_20260731.md):
+  - Route B1 is conditional GO for typed, non-terminological context compiled
+    before the talk;
+  - Route A is HOLD inside the same pilot and requires image-specific visual
+    relations to beat matched slide OCR/layout propositions;
+  - generic Route B0 is NO-GO.
+- Defined shared conditions `C0-C7`, term-masked context-critical evaluation,
+  matched wrong/shuffled/stale controls, and separate B1/A futility gates.
+- Reserved all 21 MCIF talks as project-held-out. Five ACL60/60 dev talks are
+  for route screening only.
+- Stopped Chinese-LiPS pseudo-reference expansion and new multimodal training
+  pending the shared pilot.
+
 ## Open Items
 
-1. Use the uploaded diagnostic review sheet to collect independent/human
-   references before treating BLEU as a method ranking.
-2. Use the same sheet to collect hard-label, supporting-evidence, and
-   hallucination-review labels for diagnostic 500 so HDA/evidence/visual
-   metrics become meaningful.
-3. Treat the batch160 V4/V5/V6/V8 sensitivity artifact as the current
-   batch-shape check for visual/policy conditions; do not run a full all-condition
-   uniform batch unless V0/no-context can meet the 90% utilization rule.
-4. Decide whether to scale the reference pipeline and experiments beyond
-   diagnostic 500 after the metric semantics are fixed.
-5. Select and send a 500-1,000 item diagnostic set for human English
-   translation.
-6. Add an ST-native no-visual sanity check dataset such as BSTC for pipeline
-   validation.
+1. Freeze ACL60/60 dev/eval and MCIF revisions, licenses, talk ids, and file
+   hashes; reconstruct causal slide timelines.
+2. Connect the long-form SimulST runner and reproduce `C0-C3`: audio-only,
+   terminology memory, entities/abstract, and phrase boost + PDF BM25/RAG.
+3. Freeze the typed-memory schema and build offline `C4-C6` extraction QA.
+   Slide-derived entries may be precomputed but only unlock at their real
+   stable-slide timestamps.
+4. Blind-label 200-300 term/entity-masked context-critical events on the five
+   ACL60/60 dev talks.
+5. Run the native/+5 dB `C0-C7` futility screen with matched packet budgets and
+   apply the B1/A gates once. Do not access MCIF outputs before a route, system,
+   selector and evaluator are frozen.

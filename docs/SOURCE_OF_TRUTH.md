@@ -18,20 +18,23 @@ links, or handoff state.
 ## Current Git Pointers
 
 - GitHub repo: <https://github.com/luojiaxuan/slide_aware_sst_minpaper>
-- Current ACL paper and experiment contract:
+- Current dual-route decision and shared Phase-A experiment contract:
+  [`docs/DUAL_ROUTE_DECISION_20260731.md`](DUAL_ROUTE_DECISION_20260731.md)
+- Route A ACL paper and confirmatory experiment contract:
   [`docs/ACL_PAPER_BLUEPRINT_20260731.md`](ACL_PAPER_BLUEPRINT_20260731.md)
 - Independent ACL-style review and resolved/residual risks:
   [`docs/ACL_BLUEPRINT_REVIEW_20260731.md`](ACL_BLUEPRINT_REVIEW_20260731.md)
-- Current research goal and route gates:
+- Route A scope record:
   [`docs/RESEARCH_GOAL_20260731.md`](RESEARCH_GOAL_20260731.md)
 - Current evidence and confidence:
   [`docs/FINDINGS.md`](FINDINGS.md)
 - OmniFusion latency/control reassessment:
   [`docs/OMNIFUSION_REASSESSMENT_20260731.md`](OMNIFUSION_REASSESSMENT_20260731.md)
-- Historical project framing (superseded by the goal above):
+- Historical project framing (superseded by the dual-route decision):
   [`docs/planning/SLIDE_CONTEXT_AWARE_MVP.md`](planning/SLIDE_CONTEXT_AWARE_MVP.md)
 - Agent handoff plan: [`docs/planning/AGENT_START_HERE.md`](planning/AGENT_START_HERE.md)
-- Experiment matrix: [`docs/planning/EXPERIMENT_MATRIX.md`](planning/EXPERIMENT_MATRIX.md)
+- Historical Chinese-LiPS experiment matrix:
+  [`docs/planning/EXPERIMENT_MATRIX.md`](planning/EXPERIMENT_MATRIX.md)
 - Progress log: [`docs/PROGRESS.md`](PROGRESS.md)
 - Qwen3-VL GPU profiling evidence:
   [`docs/QWEN3_GPU_PROFILING_20260706.md`](QWEN3_GPU_PROFILING_20260706.md)
@@ -131,54 +134,58 @@ confirmed.
 
 ## Current Durable Decisions (2026-07-31)
 
-1. The sole experimental route is asynchronous, persistent semantic evidence
-   from slides/screens for causal, computation-aware SimulST.
-2. Encode each stable slide once after a change event and reuse its evidence
-   across the dwell window. Do not re-run the visual encoder per audio chunk.
-3. Lip video and slide+lip hybrid experiments are out of scope. AVMuST-TED is
-   retained only as a related-work and historical licensing note.
-4. Use the nested representation chain linear OCR → OCR+2D layout → OCR-only
-   text-mode VLM semantics → image+OCR VLM semantics → human relation oracle.
-   R2/R3 must share weights, prompt, schema and decoding; only pixels differ.
-5. The current speech+image result does not establish correct-slide content
-   use: its wrong slide comes from the same lecture.
-6. Measure slide dwell time and slide-to-speech lead/lag from timelines; do not
-   promote the estimated 30–60 s persistence window to a fact before that audit.
-7. Report cold visual encoding, evidence-ready timing, dwell-normalized
-   amortized cost, on-path retrieval, GPU seconds/RTF, and computation-aware
-   AL/LAAL separately. Async execution is not zero compute.
-8. Chinese-LiPS remains a private diagnostic candidate, not a settled main
-   benchmark. Paper-grade claims require independent/human references and a
-   confirmed usage scope.
-9. MCIF is the primary project-held-out long-form benchmark (En→Zh main,
-   En→De replication); ACL60/60 is the development/tagged-term replication set.
-10. Native clean/variable audio and controlled full-talk noise are reported
-    separately. Synthetic noise is a causal stress test, not evidence of
-    real-world noise prevalence.
-11. IWSLT 2026 PDF phrase boosting + BM25/RAG, strong current-slide OCR, and a
-    noise-robust audio-only system are mandatory baselines.
-12. The sole primary contribution is the causal benchmark/protocol and finding.
-    Cache is enabling infrastructure; generic gating/top-k is not novelty; the
-    evidence-budget policy is secondary only if its pre-registered gate passes.
-13. Use Qwen pseudo references for development only; use human or independently
-   produced references for paper ranking.
-14. Use Git docs for progress and Hugging Face for reusable data/model artifacts.
-15. Before the first MCIF run, push the complete frozen config/prompt/model/noise
-    hashes. Run inference without mounted references and score only after an
-    append-only 21-talk completion ledger is closed.
-16. Phase A on five ACL60/60 dev talks is only a futility screen. It cannot pass
-    the confirmatory gates or substitute segment-level p-values for talk-level
-    power.
+1. Explore two semantic-context routes in one shared pilot; do not build or
+   present them as two equal paper contributions.
+2. Route B1 is conditional GO: precompile typed proposition, discourse,
+   relation, slide-text and optional visual context before the talk; keep the
+   VLM and test-time learning off the SimulST path.
+3. Route A is HOLD inside that pilot. Promote it only if image-specific visual
+   relations beat schema- and token-matched slide OCR/layout propositions.
+4. Generic whole-PDF prompts, named entities/abstracts, terminology memory,
+   phrase boosting, pretranslation and BM25/RAG are mandatory baselines, not
+   contributions.
+5. EGTA and RASST are terminology-only. They close a term-only fallback but do
+   not close proposition, discourse, relation or vision-aware context.
+6. Use the shared conditions `C0-C7`: audio-only; term memory; entities/abstract;
+   phrase boost + PDF RAG; document proposition/discourse; slide OCR/layout;
+   image-specific visual relation; matched wrong/shuffled/stale controls.
+7. Precompilation does not grant future-slide access. PDF memory is available
+   before the talk; slide-derived entries unlock only at the real stable-slide
+   timestamp. Deck-known-in-advance is a labeled ablation, not the primary run.
+8. Route B1 must improve term/entity-masked context-critical events beyond
+   `C1-C3` at matched context budget and beat wrong/shuffled memory.
+9. Route A must pass `C6 > C5` on predeclared pooled `visual_relation` events;
+   image-vs-none or aggregate BLEU alone cannot support a vision claim.
+10. Lip video and slide+lip hybrid experiments remain out of scope. AVMuST-TED
+   is retained only as related-work and historical licensing context.
+11. The current speech+image result does not establish correct-slide content
+    use: its wrong slide comes from the same lecture.
+12. Measure slide dwell and slide-to-speech lead/lag rather than treating the
+    estimated 30-60 s window as fact.
+13. Report cold pre-talk compilation, evidence-ready timing, on-path lookup,
+    packet tokens, GPU seconds/RTF, and computation-aware AL/LAAL separately.
+14. MCIF is the primary project-held-out benchmark (En→Zh main, En→De
+    replication); ACL60/60 dev is the futility screen and eval is replication.
+15. Native audio is Route B1's primary pilot condition. Controlled +5 dB noise
+    is Route A's primary stress condition; synthetic noise is not evidence of
+    real-world prevalence.
+16. Use Qwen pseudo references for development only; paper ranking requires
+    human or independently produced references.
+17. Before any MCIF output, push frozen route, config, prompt, model, selector,
+    metric and noise hashes. Run inference without mounted references and score
+    only after the append-only 21-talk completion ledger closes.
+18. Git stores code/contracts/results; Hugging Face stores reusable data/model
+    artifacts. Chinese-LiPS remains private diagnostic data, not the main paper.
 
 ## Current Next Actions (2026-07-31)
 
 1. Freeze MCIF and ACL60/60 eval revisions/licenses/hashes, then reconstruct
    causal slide timelines and measure dwell plus slide-to-speech lead/lag.
-2. Connect an IWSLT 2026 long-form SimulStream/OmniSTEval runner and implement
-   audio-only, robust-audio, PDF-RAG, nested R0→R3, stale, and wrong controls.
-3. Run Phase A on the five ACL60/60 dev talks at native/+5/0 dB. Keep all 21
-   MCIF talks project-held-out. Phase A only judges futility; it cannot pass the
-   confirmatory content-specificity gate.
-4. If Phase A does not stop, annotate 300–500 image-needed events, run MDE/power
-   analysis, and freeze the heuristic, hashes and one-shot evaluator before any
-   MCIF output. Learned selection remains secondary.
+2. Connect a long-form SimulST runner and reproduce `C0-C3` before implementing
+   any new method.
+3. Compile the typed `C4-C6` memories before each talk and blind-label 200-300
+   context-critical events on the five ACL60/60 dev talks.
+4. Run `C0-C7` at native and +5 dB with matched context budgets, then apply the
+   B1/A futility gates exactly once.
+5. Keep all 21 MCIF talks held out. Only a passing route proceeds to MDE/power,
+   frozen selector/evaluator, and one-shot confirmatory evaluation.

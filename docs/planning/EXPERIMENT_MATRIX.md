@@ -1,5 +1,10 @@
 # Experiment matrix
 
+> **Historical record, superseded 2026-07-31.** These condition ids belong to
+> the Chinese-LiPS diagnostic MVP and conflict with the current dual-route
+> `C0-C7` ids. Do not execute this matrix. Follow
+> [`../DUAL_ROUTE_DECISION_20260731.md`](../DUAL_ROUTE_DECISION_20260731.md).
+
 ## Context conditions
 
 | ID | Condition | Inputs | Purpose |

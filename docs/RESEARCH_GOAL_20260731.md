@@ -2,6 +2,9 @@
 
 更新日期：2026-07-31
 
+状态：**Route A 的 scope record。两条路线的当前 GO/HOLD 判断与共享实验以
+[`DUAL_ROUTE_DECISION_20260731.md`](DUAL_ROUTE_DECISION_20260731.md) 为准。**
+
 ## 一句话目标
 
 研究 **once-per-slide semantic evidence** 能否在不阻塞音频流的前提下改善
@@ -12,7 +15,7 @@ visual evidence 何时提供 strong OCR 无法提供的信息。
 
 ## Scope lock
 
-1. **主线只有 semantic slide/screen evidence。** 目标信息包括文字、版式、公式、
+1. **本文档只定义 Route A 的 semantic slide/screen evidence。** 目标信息包括文字、版式、公式、
    图表关系、视觉强调和跨区域对应，不是说话人的嘴形。
 2. **lip video 退出主实验。** Lip 是 phonetic evidence，需要帧级同步、持续编码和
    完全不同的数据/控制组；offline robust AVST 已较成熟，而本项目的优势恰好是
@@ -53,7 +56,7 @@ audio prefix x_<=t + decoder state y_<m --(retrieve/gate)--> small packet P_t
 | OmniFusion | scientific-talk speech+image SimulST；image 在推理路径上带来额外时延 | change-triggered once-per-slide encoding、跨 chunk cache、非阻塞读取、cold/amortized/on-path 分项成本，以及视觉内容必要性控制 |
 | IWSLT 2026 extra-context / MLLP-VRAIN | long-form SimulST 使用 ACL paper PDF；ASR phrase boosting + 预翻译 memory + BM25 RAG | live current slide 而非整篇静态 PDF；非文本结构、temporal alignment、wrong/stale controls 和 evidence budget。Context retrieval/top-k 本身不是 novelty |
 | LECTRANS | 383 h academic lectures；slide image/OCR + aligned ASR transcript 的 segment-level translation；直接讨论 slide 何时有帮助或成为噪声 | raw-audio unsegmented SimulST、真实 slide timing、controlled acoustic corruption、causal commits 和 async cost；不能再泛称“首个 lecture slide translation benchmark” |
-| EGTA / contextual SST | 从预先存在的 document terminology memory 按 streaming speech 选择文本证据 | evidence 来自随时间变化的 live visual state；保留非纯文本结构；测 slide-speech temporal alignment。若最终只剩静态术语 routing，则会与 EGTA 实质碰撞 |
+| EGTA / RASST | 从预先存在的 document terminology memory 按 streaming speech 选择、使用 term hints | 它们只覆盖 terminology，不封住 proposition/discourse/vision context；若最终只剩静态术语 routing，才会构成实质碰撞 |
 | Do Slides Help? | slide-conditioned offline ASR；ACL60/60 evaluation 使用真实 slide，MuST-C training augmentation 才由 transcript terms 合成 PDF/image | speech translation、causal commits、noise dose-response、错误/过期证据和计算时延；不能把训练合成图误写成其评测数据 |
 | Lip-based AVST | phonetic vision 对 noisy/offline ST 的鲁棒性 | 不属于本项目主张；related work 中用于区分 continuous phonetic vision 与 sparse persistent semantic vision |
 
@@ -96,8 +99,9 @@ visible-but-unspoken hallucination、wrong-evidence adoption、copy rate、AL/LA
    否则 method 应选择最便宜、最可审计且效果相当的结构化 evidence。
 
 若只通过第 1 层而不通过第 2 层，结果是 slide-derived contextual SST，而不是
-raw-vision paper；此时必须证明 temporal state、异步成本或 evidence-selection protocol
-相对 EGTA 构成实质增量，否则停止正向方法 claim。
+raw-vision paper；此时必须回到 dual-route contract，证明非术语 proposition/discourse
+memory 超过 term/entity/abstract/PDF-RAG baselines。仅超过 EGTA 的 term memory 不足以
+建立广义 context claim。
 
 ### B. 时间与持久性
 
@@ -180,9 +184,11 @@ setting 下 `correct - same-talk wrong = +0.34 chrF (p=0.22)`，没有证明局�
   直接边界；IWSLT 2026 context track 又覆盖 PDF phrase boosting 和 BM25/RAG。
   因而论文必须是 raw-audio long-form SimulST、live temporal state、acoustic
   intervention 和 matched controls，而不能只写 multimodal lecture translation。
-- EGTA 对“文本 memory + streaming selection”构成 **Level 2 / material collision**。
-  因而本项目不能把 VLM 输出简单压成术语表后宣称 multimodal novelty；必须保留
-  live visual state、非文本关系、temporal alignment 和 async cost protocol。
+- EGTA/RASST 对“terminology memory + streaming selection/use”构成
+  **Level 2 / material collision**，但不覆盖 proposition、discourse、relation 或
+  visual semantics。因而本项目不能把 VLM 输出简单压成术语表后宣称 multimodal
+  novelty；Route A 必须证明 image-specific relation，Route B1 必须在 term-masked
+  events 上超过 terminology 和 PDF-context baselines。
 - “image-vs-none 涨分”“视觉在音频前提供”“首次 vision SimulST”都不是可守住的
   novelty claim。
 
@@ -204,15 +210,14 @@ setting 下 `correct - same-talk wrong = +0.34 chrF (p=0.22)`，没有证明局�
    极端合成噪声 gain、correct 不优于 wrong/stale，或最终方法等价于已有静态 textual
    context routing 时，停止正向方法论文。
 
-## 接下来三步
+## Route A 的后续步骤
 
-1. 拉取并冻结 MCIF 与 ACL60/60 eval revisions/licenses；重建 causal slide change
-   events，报告 dwell median、P25/P75/P90 和 slide-to-first-related-speech lead/lag。
-2. 接通 IWSLT 2026 long-form runner，在 ACL60/60 五个 dev talks 上比较 audio-only、
-   robust-audio、PDF-RAG、nested R0→R3、same-talk stale 和 cross-talk wrong；先跑
-   native/+5/0 dB。该阶段只判 futility，不能凭 5 talks 宣告 G0/G1 通过。
-3. 未触发 futility stop 后，人工标注 300–500 个 `image_needed` events、做 MDE/power
-   audit、冻结 heuristic 与 one-shot evaluator；全部 21 个 MCIF talks 只运行一次。
+1. 先执行 dual-route contract 的共享 `C0-C7` pilot，不为 Route A 单独建设第二套
+   runner 或 context pipeline。
+2. 只有 `C6 > C5` 的 A-GO gate 通过，才把共享条件映射为本文的 nested R0→R3、
+   stale/wrong 和 native/+5/0 dB confirmatory config。
+3. 随后扩充 `image_needed` annotation、做 MDE/power audit、冻结 heuristic 与 one-shot
+   evaluator；全部 21 个 MCIF talks 只运行一次。
 
 ## 主要相关工作
 

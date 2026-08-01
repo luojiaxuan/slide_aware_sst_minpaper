@@ -125,34 +125,44 @@ inference, not direct measurement. **Evidence:** `runs_bias{2,4,8}.jsonl`,
    most of the injected image is irrelevant. RASST-style chunkwise retrieval over
    the visual channel is a different mechanism and remains untested.
 
-### Scope decision after related-work audit (2026-07-31)
+### Dual-route decision after related-work audit (2026-07-31)
 
-The project is now scoped to **asynchronous, persistent slide-semantic
-evidence**. A slide is encoded once after a change event and reused across its
-dwell window; it is not re-encoded beside every audio chunk. The decision
-contract is in [`RESEARCH_GOAL_20260731.md`](RESEARCH_GOAL_20260731.md), and the
-complete experiment/paper contract is in
-[`ACL_PAPER_BLUEPRINT_20260731.md`](ACL_PAPER_BLUEPRINT_20260731.md).
+The authoritative decision is now
+[`DUAL_ROUTE_DECISION_20260731.md`](DUAL_ROUTE_DECISION_20260731.md). Route B1
+is a conditional GO: compile typed, non-terminological context from paper/deck/
+slide materials before the talk, then test whether proposition, discourse and
+relation evidence improves SimulST beyond term memory, entities/abstract, and
+PDF BM25/RAG. Route A remains a HOLD inside the same pilot: promote a vision
+claim only if image-specific relations beat matched slide OCR/layout
+propositions.
 
-- Generic contextual SST is no longer a safe fallback contribution: EGTA
-  (arXiv:2607.17766) already performs streaming-evidence-conditioned terminology
-  selection with shuffled-memory and activation controls.
-- Semantic evidence must beat audio-only and matched stale/wrong controls.
-  Beyond-OCR claims additionally require structured visual evidence to beat a
-  strong OCR baseline on predeclared layout/formula/chart/emphasis slices.
-- Direct raw-image representations are optional, not the premise: if structured
-  evidence matches them, the cheaper auditable representation wins.
-- Lip vision, AVMuST-TED execution, and slide+lip hybrid experiments are out of
-  scope. Lip work remains only as a related-work contrast between continuous
-  phonetic vision and slowly changing semantic vision.
-- Latency is split into once-per-slide cold encoding, dwell-normalized
-  amortized cost, evidence-ready lead/lag, and on-path retrieval. “Async” alone
-  is not evidence of zero cost.
+- **[high] Correction:** EGTA (arXiv:2607.17766) and RASST are terminology-only.
+  They materially collide with a new term retriever/gate, but they do not close
+  proposition, discourse, relation, or visual context.
+- **[high] Generic pre-talk context is still not a contribution by itself.**
+  IWSLT 2026 systems already use named entities, abstracts, phrase boosting,
+  paper pretranslation and BM25 translation memory. These become `C1-C3`
+  mandatory baselines.
+- **[hypothesis] Route B1 survives only if correct non-term context beats
+  term/entity/abstract/PDF-RAG at matched token budget and also beats
+  wrong/shuffled memory on predeclared term-masked events.** No such result has
+  been produced yet.
+- **[hypothesis] Route A survives only if `image + OCR` beats matched
+  `OCR/layout-only` semantics on `visual_relation` events.** Image-vs-none is
+  insufficient.
+- Direct raw-image representations remain optional. If structured evidence
+  matches them, the cheaper auditable representation wins.
+- Lip vision, AVMuST-TED execution, and slide+lip hybrid experiments remain out
+  of scope.
+- All multimodal material is compiled before the talk in Route B1. Runtime VLM
+  calls are forbidden; only frozen causal lookup is allowed. Cold compilation,
+  on-path lookup, GPU seconds/RTF, and computation-aware latency are reported
+  separately.
 
-The current defensible paper space is therefore a causal, computation-aware
-study of **when persistent slide-derived semantic evidence helps SimulST and
-when information beyond OCR is necessary**. This is a research target, not an
-established finding.
+The next scientific action is a shared `C0-C7` futility screen, not model
+training. The eventual paper identity is conditional: context-aware if B1 alone
+passes, semantic vision if A passes, and no paper investment if gains reduce to
+terms or generic PDF RAG.
 
 ### 2026 literature/data audit update (2026-07-31)
 

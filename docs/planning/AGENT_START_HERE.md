@@ -1,70 +1,64 @@
-# Agent start-here plan
+# Agent Start Here
 
-You are implementing the minimal publishable version of a paper on **slide/context-aware simultaneous speech translation**.
+更新日期：2026-07-31
 
-Current source-of-truth update: follow
-[`SLIDE_CONTEXT_AWARE_MVP.md`](SLIDE_CONTEXT_AWARE_MVP.md). Keep Chinese-LiPS as
-the main dataset, but do not frame the first paper as pure vision-aware SST.
-Treat OCR, VLM captions, deck/topic metadata, and future speaker/topic context as
-evidence sources under a latency-aware context selection problem.
+本项目当前研究 **pre-talk semantic context for long-form SimulST**。唯一权威路线与
+Phase-A contract 是
+[`../DUAL_ROUTE_DECISION_20260731.md`](../DUAL_ROUTE_DECISION_20260731.md)。先完整
+阅读该文件、[`../SOURCE_OF_TRUTH.md`](../SOURCE_OF_TRUTH.md) 和
+[`../FINDINGS.md`](../FINDINGS.md)，不要从历史 Chinese-LiPS MVP 继续执行。
 
-## Core hypothesis
+## 当前决策
 
-Slides/glossary/background context helps hard Chinese lecture translation cases such as homophones and technical terms, but naive context injection causes wrong-context hallucination when slides are stale, future, or loosely related. A lightweight evidence policy should keep most of the benefit while reducing context overuse under streaming latency constraints.
+- Route B1 conditional GO：talk 前从 paper/deck/slides 编译 typed、non-term context
+  memory；streaming path 不运行 VLM，只做冻结的 causal lookup。
+- Route A HOLD：在同一 pilot 中检验 image-specific visual relations 是否超过 matched
+  slide OCR/layout propositions。只有 A-GO 通过才执行
+  [`../ACL_PAPER_BLUEPRINT_20260731.md`](../ACL_PAPER_BLUEPRINT_20260731.md)。
+- Route B0 NO-GO：term/entity extraction、abstract prompt、phrase boosting、whole-PDF
+  prompt 和 BM25/RAG 都是 strong baselines，不是 contribution。
+- Lip video、slide+lip hybrid、新的 Chinese-LiPS pseudo-reference 和新 multimodal
+  training 均不在当前执行范围。
 
-## MVP deliverables
+## 数据角色
 
-1. A JSONL challenge set with 500-1000 manually verified Chinese-to-English hard examples, stratified by diagnostic evidence slice.
-2. A streaming simulation pipeline over Chinese lecture transcripts/audio.
-3. Context indices from automatic slide-derived evidence: OCR terms, OCR-derived glossary, VLM slide summary, deck/topic metadata, and distractors.
-4. Translation runs for: no context, OCR terms, VLM summary, OCR+VLM, naive all-context, policy-based, wrong-context, and oracle context.
-5. Evaluation scripts for BLEU/COMET, homophone accuracy, term F1, context overuse rate, wrong-slide adoption rate, slice-level gains, and latency.
-6. CSV tables and plots ready to paste into `paper/sections/07_results.tex`.
+- ACL60/60 的 5 个 dev talks：Phase-A futility screen。
+- ACL60/60 eval：通过 gate 后的 replication。
+- MCIF 21 talks：project-held-out confirmatory benchmark；系统冻结前禁止访问 outputs。
+- Chinese-LiPS：private timing/ASR diagnostic only，不是 paper ranking 主数据。
 
-## Constraints
+## 当前实验矩阵
 
-- Do not assume data can be redistributed. Store IDs and local paths.
-- Keep model providers pluggable. Do not hard-code private API keys.
-- Make every run reproducible: config file + seed + output directory + exact model name.
-- Implement transcript-oracle streaming first, then ASR-based streaming. The paper can report both.
-- Prefer simple baselines over complicated fine-tuning in v0.
+使用 dual-route contract 中的 `C0-C7`：
 
-## First coding milestones
+| ID | Condition |
+| --- | --- |
+| `C0` | audio-only |
+| `C1` | term memory |
+| `C2` | entities/abstract static prompt |
+| `C3` | phrase boost + pretranslated PDF BM25/RAG |
+| `C4` | PDF-derived proposition/discourse memory |
+| `C5` | C4 + slide OCR/layout propositions |
+| `C6` | C5 + image-specific visual relations |
+| `C7` | matched same-domain wrong/shuffled/stale controls for C4-C6 |
 
-### M0: Repo bootstrap
-- Implement the JSONL schema loader and validation.
-- Implement config parsing from YAML.
-- Add a tiny toy dataset under `repo/examples/` with 3 examples.
-- Make `pytest` pass on schema and metrics.
+Talk 前可以预计算整套 deck，但 future slide 不得提前可见：slide-derived entries 只在
+真实 stable-slide timestamp 后解锁。C7 必须继承 correct condition 的可用时间、token
+budget 和 selection path。
 
-### M1: Dataset builder
-- Write an adapter for Chinese-LiPS-style metadata: transcript, audio path, slide video/frame path, slide OCR if available.
-- Implement pinyin-based homophone mining.
-- Generate candidate hard examples with matched and mismatched slide evidence.
-- Export annotation sheet CSV for manual verification.
-- Export a diagnostic subset sheet with slice labels for human English translation.
+## 下一步
 
-### M2: Baseline runs
-- Implement no-context, glossary-only, slide-only, and naive all-context prompts.
-- Run on 50 verified examples first.
-- Save outputs as JSONL with timing, prompt, evidence packet, and model response.
+1. 冻结 ACL60/60 与 MCIF revisions、licenses、talk ids 和 hashes；
+2. 接通 long-form SimulST runner，先复现 `C0-C3`；
+3. 冻结 typed-memory schema，构建 `C4-C6` extraction QA；
+4. blind 标注 200-300 个 term/entity-masked context-critical events；
+5. 在 ACL60/60 dev 跑 native/+5 dB `C0-C7`，按 B1/A gates 作一次路线决策；
+6. 只有通过的路线进入 MDE/power、frozen selector 和 one-shot MCIF run。
 
-### M3: Evidence policy and distractors
-- Implement BM25 + pinyin + temporal-prior retrieval.
-- Implement rule-based `use / ignore / delay` policy.
-- Run policy vs naive context under matched and mismatched slide settings.
-- Make wrong/previous/next/random slide evidence a first-class negative control.
+## 禁止捷径
 
-### M4: Evaluation and tables
-- Implement term/homophone accuracy and context-overuse metrics.
-- Generate `outputs/tables/main_results.csv` and `outputs/tables/ablation.csv`.
-- Generate 3-5 case studies for the paper.
-
-### M5: Robustness
-- Add wrong-current-slide simulation.
-- Add noisy OCR simulation.
-- Add distractor glossary-size ablation.
-
-## Stop condition for first paper draft
-
-A minimal draft is ready when we have: (i) at least 500 verified hard examples, (ii) evidence that slides/glossary improve hard-case accuracy over no context, (iii) evidence that naive context increases overuse on mismatched context, and (iv) the policy reduces overuse while preserving most of the hard-case gain.
+- 不用 image-vs-none 或 aggregate BLEU 单独证明 vision；
+- 不把 terminology gain 计入 Route B1 的 non-term primary metric；
+- 不在看到 outputs 后定义 event slice 或修改 gate；
+- 不在 MCIF 上调 prompt、threshold、selector 或 context schema；
+- 不把预计算成本写成 zero latency。

@@ -11,17 +11,17 @@
 > per-claim confidence levels, raw-evidence pointers, and what would overturn
 > each conclusion.
 >
-> **Current research goal:** treat the current slide as an asynchronously
-> updated, persistent semantic-evidence state. Encode it once on a slide-change
-> event, reuse it across its full dwell window, and let causal speech state
-> retrieve only relevant evidence. Lip video and slide+lip hybrid experiments
-> are out of scope. The current ACL paper contract, including the benchmark,
-> strong baselines, noise protocol, metrics, kill gates, and eight-week
-> execution order, is
-> [docs/ACL_PAPER_BLUEPRINT_20260731.md](docs/ACL_PAPER_BLUEPRINT_20260731.md).
-> [docs/RESEARCH_GOAL_20260731.md](docs/RESEARCH_GOAL_20260731.md) records the
-> underlying scope decision. The independent ACL-style cross-review and
-> remaining rejection risks are in
+> **Current research goal:** compare two semantic-context routes in one
+> falsifiable pilot. Route B1 precompiles typed, non-terminological context from
+> paper/deck/slide materials before the talk and keeps the VLM off the streaming
+> path. Route A tests whether image-specific relations add anything beyond
+> matched slide OCR/layout propositions. The authoritative route decision,
+> shared baselines, metrics, and GO gates are in
+> [docs/DUAL_ROUTE_DECISION_20260731.md](docs/DUAL_ROUTE_DECISION_20260731.md).
+> [docs/ACL_PAPER_BLUEPRINT_20260731.md](docs/ACL_PAPER_BLUEPRINT_20260731.md)
+> remains the detailed Route A contract, not the sole active plan. Lip video and
+> slide+lip hybrid experiments remain out of scope. The independent ACL-style
+> cross-review and remaining rejection risks are in
 > [docs/ACL_BLUEPRINT_REVIEW_20260731.md](docs/ACL_BLUEPRINT_REVIEW_20260731.md).
 
 ## Original hypothesis (for the record)
@@ -55,9 +55,14 @@ latex/   paper draft by sections, refs.bib, figures/ + plotting/ code
 
 ## Current paper direction (decided 2026-07-31)
 
-- **Paper question:** when does a live slide provide useful semantic evidence
-  beyond strong OCR/PDF context for SimulST under controlled acoustic
-  corruption, and how much evidence should a causal system consume?
+- **Route B1, conditional GO:** determine whether propositions, discourse
+  referents, relations, and scope compiled before a talk improve SimulST beyond
+  term memory, entities/abstract prompting, and PDF BM25/RAG.
+- **Route A, HOLD inside the same pilot:** promote a vision-aware claim only if
+  image-specific visual relations beat schema- and token-matched slide
+  OCR/layout propositions on predeclared `visual_relation` events.
+- **Route B0, NO-GO:** whole-PDF prompts, generic RAG, term/entity extraction,
+  or a new gate over those payloads are strong baselines, not contributions.
 - **Primary benchmark:** MCIF long-form scientific talks, En→Zh primary and
   En→De replication. It has 21 talks, video/audio and professional references,
   and is the official IWSLT 2026 SimulST development corpus.
@@ -80,17 +85,19 @@ current benchmark contract.
 
 ## Next execution milestone
 
-Build the Phase-A causal futility-screen package from the ACL paper blueprint:
+Build the shared Phase-A dual-route futility screen:
 
 1. Freeze MCIF and ACL60/60 revisions/licenses and reconstruct causal slide
    timelines, including measured dwell and slide-to-speech lead/lag.
-2. Connect a long-form IWSLT 2026 runner and implement audio-only,
-   noise-robust, PDF-RAG, nested linear-OCR/layout/text-mode-VLM-semantics/
-   image-semantics, stale, and wrong conditions.
-3. On the five ACL60/60 development talks, run native/+5/0 dB before training
-   any selector. Keep all 21 MCIF talks project-held-out until the system is
-   frozen. This five-talk phase may stop the project for futility, but cannot
-   establish the confirmatory claim.
+2. Connect a long-form IWSLT 2026 runner and reproduce `C0-C3`: audio-only,
+   terminology memory, entities/abstract prompt, and PDF phrase boost +
+   pretranslated BM25/RAG.
+3. Compile `C4-C6`: document proposition/discourse memory, slide OCR/layout
+   propositions, and image-specific visual relations. Keep extraction offline
+   before the talk and match online context budgets.
+4. Blind-label 200-300 context-critical events, then run `C0-C7` on five
+   ACL60/60 dev talks at native and +5 dB. Keep all 21 MCIF talks held out until
+   one route passes its gate and the final system is frozen.
 
 ## Rules
 

@@ -2,7 +2,10 @@
 
 更新日期：2026-07-31
 
-状态：**当前唯一有效的 paper contract；实验结果尚未产生，所有正向结论均为待检验假设。**
+状态：**Route A 的详细 paper contract，不再是唯一活跃路线。当前路线选择与共享
+Phase-A pilot 以 [`DUAL_ROUTE_DECISION_20260731.md`](DUAL_ROUTE_DECISION_20260731.md)
+为准；只有 Route A 通过其中的 A-GO gate 后，才执行本文的完整 confirmatory plan。
+实验结果尚未产生，所有正向结论均为待检验假设。**
 
 ## 1. 结论先行
 
@@ -48,7 +51,7 @@ Simultaneous Speech Translation**
 > SimulST, and measure when structured evidence beyond OCR helps under matched
 > current/stale/wrong controls and explicit evidence/latency budgets.
 
-### 2.3 唯一 primary contribution
+### 2.3 Route A 的 primary contribution
 
 本文只把 **causal benchmark/protocol + empirical finding** 作为 primary
 contribution：在完整 long-form speech 上联合控制 acoustic corruption、live
@@ -81,7 +84,7 @@ beyond-OCR controls + evidence budget”，但多个相邻方向分别覆盖了�
 | IWSLT 2026 extra-context + MLLP-VRAIN | ACL paper PDF；KeyBERT phrase boosting、预翻译 memory、BM25 top-k RAG；context 带来质量增益 | live current slide 而非整篇静态 PDF；非文本结构；temporal alignment；matched wrong/stale；选择视觉 evidence 的成本 |
 | LECTRANS (ARR 2026 submission) | 383 h academic lectures；slide image/OCR + transcript translation；直接讨论 slide 何时 helpful/noisy | 其 baseline 是 aligned ASR transcript 的 segment-level MT；本文必须做 raw-audio unsegmented SimulST、真实 timing、noise 和 async cost |
 | OmniFusion | image+speech SimulST 先例；其论文报告相对自身 cascade 的时延改善 | 跨论文 latency 不直接排名；在同一 runner 中实现 competent cached raw-vision/KV 对照，比较 persistence、content necessity 和 computation-aware cost |
-| EGTA / contextual SST | streaming speech 从 document terminology memory 选择文本 context | 如果本文最终只剩术语表/top-k，就与该路线及 IWSLT PDF-RAG 碰撞；必须保留 live state、非文本关系或明确的因果 benchmark 贡献 |
+| EGTA / RASST | streaming speech 从 document terminology memory 选择、使用 term hints | 它们只覆盖 terminology，不封住广义 context/vision；但如果本文最终只剩术语表/top-k，就会直接碰撞。Route A 必须保留 image-specific relation 与 matched text control |
 | XLAVS-R、AV-TranSpeech | noisy speech 下 lip video 改善 offline AVST/S2ST | continuous phonetic vision，不是 persistent semantic context；不作为相同样本的直接 baseline |
 | reliability-gated AVSR | 按 acoustic/visual quality 决定何时信任 lips | “when to use vision”本身不是 novelty；本文 policy 的独特对象是预计算 slide evidence 的最小充分预算 |
 
@@ -561,18 +564,19 @@ model。训练目标必须对应已证明的 headroom，否则只会把 benchmar
 - 完成 introduction、method、benchmark、results、limitations；
 - artifact card、reproduction commands、licenses、negative-result appendix。
 
-## 17. 下一步唯一正确动作
+## 17. Route A 升级后的执行动作
 
-不要立即训练，也不要继续扩 Chinese-LiPS pseudo-reference。先完成一个 **Phase-A
-causal futility-screen package**：
+不要立即训练，也不要继续扩 Chinese-LiPS pseudo-reference。先按
+[`DUAL_ROUTE_DECISION_20260731.md`](DUAL_ROUTE_DECISION_20260731.md) 完成共享
+`C0-C7` pilot。只有 A-GO 通过后，才继续本文的 **Route-A confirmatory package**：
 
 1. 拉取 MCIF + ACL60/60 eval，冻结 revisions 和 licenses；
 2. 重建 causal slide timeline，实测 30–60 s dwell 假设；
 3. 接通 IWSLT 2026 long-form runner；
-4. 在 ACL60/60 五个 dev talks 上跑 `audio-only / robust-audio / PDF-RAG /
-   R0/R1/R2/R3 / stale / wrong`，只用 native、+5、0 dB；
-5. 只有未触发 futility stop 才做人工 image-needed annotation、MDE/power audit 和
-   frozen heuristic；G0/G1 只能由 one-shot MCIF confirmatory run 判定。
+4. 将共享 pilot 中通过的 text/context baselines 与 `R0/R1/R2/R3/stale/wrong` 映射到
+   冻结的 Route A config；
+5. 完成 image-needed annotation、MDE/power audit 和 frozen heuristic；G0/G1 只能由
+   one-shot MCIF confirmatory run 判定。
 
 ## 18. Primary sources
 
