@@ -331,7 +331,9 @@ confirmed.
    current-page content use; do not spend further GPU on naive Chinese-LiPS
    raw-image prompting or promote this single-talk result to paper evidence.
 2. Complete v2 frame-only canonical item authoring and freeze question hashes;
-   deploy the implemented prefix gate to two independent audio validators, then
+   use the localhost-only blinded authoring UI and its separate working sheet,
+   then run `freeze-author`. Deploy the implemented prefix gate to two
+   independent audio validators, then
    use a disjoint two-person cohort for frame validation. Report all
    negatives, right-censoring, agreement and adjudication without modifying raw
    sheets.

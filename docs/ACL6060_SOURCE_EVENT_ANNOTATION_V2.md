@@ -2,8 +2,8 @@
 
 日期：2026-08-01
 
-状态：**protocol、stage data packager 和 sequential prefix backend 已实现；100-frame blinded
-author view r4 已在本地生成，人工标签尚未开始。r3 因 plaintext quasi-identifiers 已 superseded，
+状态：**protocol、stage data packager、frame-only authoring UI 和 sequential prefix backend
+已实现；100-frame blinded author view r4 已在本地生成，人工标签尚未开始。r3 因 plaintext quasi-identifiers 已 superseded，
 不得开始标注。正式 audio annotation 必须通过 backend，不能直接编辑或分发 server-private
 timing/WAV sheet。v1 seed/media 不变。**
 
@@ -162,6 +162,10 @@ packet 或 source exclusion 时返回 `UNRESOLVED_MISSING_OUTCOME`，不会输�
   [`../code/scripts/serve_acl6060_audio_annotation.py`](../code/scripts/serve_acl6060_audio_annotation.py)；
 - sequential service tests：
   [`../code/tests/test_serve_acl6060_audio_annotation.py`](../code/tests/test_serve_acl6060_audio_annotation.py)；
+- frame-only authoring service：
+  [`../code/scripts/serve_acl6060_authoring.py`](../code/scripts/serve_acl6060_authoring.py)；
+- authoring service tests：
+  [`../code/tests/test_serve_acl6060_authoring.py`](../code/tests/test_serve_acl6060_authoring.py)；
 - Git summary：
   [`../data/manifests/acl6060_dev_source_event_annotation_v2_20260801.json`](../data/manifests/acl6060_dev_source_event_annotation_v2_20260801.json)。
 
@@ -172,6 +176,28 @@ Local author view：
 `selection_stratum` 和真实 packet mapping 只在 sibling scorer directory。Author row order 由
 secret-key HMAC 全局打乱，不能从公开代码直接枚举原 `A001--A020`。HMAC
 secret 和真实 mapping 只存在 scorer storage，不进入 Git 或 author HF repo。
+
+Authoring UI 只绑定 localhost，只读取 r4 frame/input sheet，并把编辑结果原子写入独立
+working sheet；它不读取 audio、transcript、target/reference、selection stratum、raw media
+hash 或 scorer mapping。UI 支持 2--4 个 source options、canonical answer、evidence subtype、
+图上 normalized bounding box、negative/exclusion labels 和断点续写；working sheet 以 `0600`
+权限原子替换。当前 working sheet 是：
+`/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/author_view_v2_blinded_r4/authoring_working_question-author-01.jsonl`，
+状态 `0/100`；它不是 frozen artifact，完成后仍必须通过 `freeze-author`。
+
+启动命令：
+
+```bash
+cd code
+PYTHONPATH=src:. .venv/bin/python scripts/serve_acl6060_authoring.py \
+  --input-sheet /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/author_view_v2_blinded_r4/authoring.jsonl \
+  --workspace-root /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/author_view_v2_blinded_r4 \
+  --working-sheet /Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/annotation/acl6060_source_event_v2/author_view_v2_blinded_r4/authoring_working_question-author-01.jsonl \
+  --config configs/acl6060_source_event_annotation_v2.json \
+  --author-id question-author-01 \
+  --host 127.0.0.1 \
+  --port 43187
+```
 
 Reproduction：
 

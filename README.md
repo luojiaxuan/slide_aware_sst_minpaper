@@ -123,8 +123,9 @@ current benchmark contract.
 ## Next execution milestone
 
 1. Complete v2 frame-only canonical item authoring, hash-lock the questions,
-   then use the sequential backend for two independent full-causal-prefix audio
-   trajectories and a disjoint two-person frame-only cohort. v1 media remains
+   using the implemented localhost-only blinded authoring UI, then use the
+   sequential backend for two independent full-causal-prefix audio trajectories
+   and a disjoint two-person frame-only cohort. v1 media remains
    reusable, but its A/B annotation sheets are superseded. No human label is
    complete yet.
 2. Freeze candidate inventory, source-only packets and target scoring; compare

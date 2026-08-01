@@ -1008,3 +1008,24 @@ or a stronger Qwen3-VL variant if available.
   checks. A formal model smoke and ACL run remain intentionally blocked until
   human source/target outcomes are frozen and the same canonical container is
   rebuilt with read-only rootfs, `network=none` and narrow mounts.
+
+## 2026-08-01 Frame-Only Authoring Unblock
+
+- Confirmed the canonical r4 author sheet is still exactly `0/100`: every row
+  is `pending`, so no human outcome may be inferred or replaced by model labels.
+- Added a localhost-only authoring service over the blinded r4 bundle. It shows
+  only opaque packet ID and current frame, supports normalized drag-to-box
+  evidence localization, 2--4 source options, canonical answer, evidence type,
+  negative/exclusion labels and atomic resume writes. Immutable task identity,
+  workspace path confinement, symlink rejection and the existing v2 row
+  validator remain enforced server-side.
+- The canonical input remains unchanged. The separate local working sheet is
+  `author_view_v2_blinded_r4/authoring_working_question-author-01.jsonl`, now
+  initialized at `0/100`; it is not frozen and cannot enter later stages until
+  `freeze-author` succeeds.
+- Unit tests cover candidate/negative saves, resume, invalid candidate fields,
+  immutable task drift, path escape and symlink media. Real-browser checks on
+  the 100-frame bundle verified desktop/mobile rendering, responsive navigation,
+  slide loading and drag-box coordinates with no console warnings/errors. The
+  complete project suite now passes `158 tests` with the same two upstream
+  `pypinyin` deprecation warnings.
