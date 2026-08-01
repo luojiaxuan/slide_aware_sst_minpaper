@@ -111,6 +111,7 @@ def build_inference_contract(
     worker_scientific_config_path: str,
     worker_model_artifact_root_path: str,
     worker_tokenizer_artifact_root_path: str,
+    worker_source_artifact_root_path: str | None = None,
     scoring_protected_artifact_roots: list[str],
     code_repo: Path,
     output: Path,
@@ -201,6 +202,9 @@ def build_inference_contract(
     tokenizer_artifact_host_root_path = tokenizer_artifact_root.resolve(
         strict=True
     ).as_posix()
+    source_artifact_host_root_path = source_artifact_root.resolve(
+        strict=True
+    ).as_posix()
     _require_protected(target_scores, normalized_scoring_roots)
     _require_protected(outcome_commitment, normalized_scoring_roots)
     _require_protected(outcome_artifact_root, normalized_scoring_roots)
@@ -222,11 +226,21 @@ def build_inference_contract(
         destination=worker_tokenizer_artifact_root_path,
         label="tokenizer artifact tree",
     )
+    uses_raw_images = "correct_image" in scientific.expected_conditions
+    if uses_raw_images and worker_source_artifact_root_path is None:
+        raise ValueError("v2 inference requires a worker source artifact root")
+    if worker_source_artifact_root_path is not None:
+        require_read_only_mount(
+            start_audit,
+            source=source_artifact_host_root_path,
+            destination=worker_source_artifact_root_path,
+            label="source artifact tree",
+        )
 
     marker_processes = [
         process for process in start_audit.worker_processes if process.marker_process
     ]
-    required_worker_arguments = (
+    required_worker_arguments = [
         ("--inference-contract", worker_inference_contract_path),
         ("--inference-contract-ready-file", worker_contract_ready_file_path),
         ("--scientific-config", worker_scientific_config_path),
@@ -234,7 +248,11 @@ def build_inference_contract(
         ("--tokenizer-artifact-root", worker_tokenizer_artifact_root_path),
         ("--model-id", scientific.model_id),
         ("--model-revision", scientific.model_revision),
-    )
+    ]
+    if worker_source_artifact_root_path is not None:
+        required_worker_arguments.append(
+            ("--source-artifact-root", worker_source_artifact_root_path)
+        )
     if any(
         not all(
             command_contains_exact_marker(process.command, shlex.join(argument_pair))
@@ -284,6 +302,12 @@ def build_inference_contract(
         worker_model_artifact_root_path=worker_model_artifact_root_path,
         tokenizer_artifact_host_root_path=tokenizer_artifact_host_root_path,
         worker_tokenizer_artifact_root_path=worker_tokenizer_artifact_root_path,
+        source_artifact_host_root_path=(
+            source_artifact_host_root_path
+            if worker_source_artifact_root_path is not None
+            else None
+        ),
+        worker_source_artifact_root_path=worker_source_artifact_root_path,
         expected_worker_count=len(marker_processes),
         inference_repo_path=start_audit.inference_repo_path,
         container_image_id=start_audit.container_image_id,

@@ -30,10 +30,12 @@ from slidesst.eval.event_timing import (
     InferenceContract,
     InferenceEnvironmentAudit,
     StrictModel,
+    SourceEvidenceArtifact,
     TrajectoryObservation,
     causal_observation_sha256,
     canonical_absolute_posix_path,
     command_contains_exact_marker,
+    file_sha256,
     render_evidence_packet,
 )
 
@@ -49,6 +51,8 @@ class CausalGenerationInput:
     audio: np.ndarray
     evidence_text: str
     prompt_text: str
+    evidence_image_path: Path | None = None
+    expected_visual_token_count: int = 0
 
 
 @dataclass(frozen=True)
@@ -60,6 +64,87 @@ class _ScheduledGeneration:
 
 
 GenerateBatch = Callable[[list[CausalGenerationInput]], list[str]]
+
+
+def _resolve_source_artifact_path(root: Path, relative_path: str) -> Path:
+    relative = Path(relative_path)
+    if relative.is_absolute() or ".." in relative.parts or not relative.parts:
+        raise ValueError("source evidence path must be canonical and relative")
+    resolved_root = root.resolve(strict=True)
+    cursor = root
+    for part in relative.parts:
+        cursor = cursor / part
+        if cursor.is_symlink():
+            raise ValueError("source evidence path traverses a symlink")
+    resolved = (root / relative).resolve(strict=True)
+    if not resolved.is_relative_to(resolved_root):
+        raise ValueError("source evidence path escapes the artifact root")
+    return resolved
+
+
+def resolve_packet_image(
+    packet: EvidencePacketSpec,
+    source_artifact_root: Path,
+) -> Path | None:
+    reference = packet.packet_payload.image_reference
+    if reference is None:
+        return None
+    artifact_path = _resolve_source_artifact_path(
+        source_artifact_root,
+        reference.artifact_path,
+    )
+    if file_sha256(artifact_path) != reference.artifact_sha256:
+        raise ValueError("worker image evidence artifact hash mismatch")
+    artifact = SourceEvidenceArtifact.model_validate_json(
+        artifact_path.read_text(encoding="utf-8")
+    )
+    if (
+        artifact.schema_version != "acl6060_source_evidence_artifact_v2"
+        or artifact.event_id != packet.event_id
+        or artifact.context_kind != "image"
+        or artifact.source_media_kind != "slide_image"
+        or artifact.items
+    ):
+        raise ValueError("worker image evidence artifact schema mismatch")
+    image_path = _resolve_source_artifact_path(
+        source_artifact_root,
+        artifact.source_media_path,
+    )
+    if file_sha256(image_path) != artifact.source_media_sha256:
+        raise ValueError("worker image evidence bytes changed")
+    return image_path
+
+
+def qwen_multimodal_content(item: CausalGenerationInput) -> list[dict]:
+    content = []
+    if item.evidence_image_path is not None:
+        content.append({"type": "image", "image": str(item.evidence_image_path)})
+    content.extend(
+        [
+            {"type": "text", "text": item.prompt_text},
+            {"type": "audio", "audio": item.audio},
+        ]
+    )
+    return content
+
+
+def validate_visual_token_counts(
+    input_ids,
+    *,
+    image_token_id: int,
+    batch: list[CausalGenerationInput],
+) -> None:
+    if len(input_ids) != len(batch):
+        raise ValueError("Qwen3-Omni processor returned an unexpected input batch size")
+    for item, row in zip(batch, input_ids, strict=True):
+        values = row.tolist() if hasattr(row, "tolist") else list(row)
+        observed = sum(int(token_id) == image_token_id for token_id in values)
+        if observed != item.expected_visual_token_count:
+            raise ValueError(
+                "Qwen3-Omni visual token count differs from frozen evidence packet: "
+                f"{item.event_id}/{item.condition} expected="
+                f"{item.expected_visual_token_count} observed={observed}"
+            )
 
 
 class CausalWorkerDone(StrictModel):
@@ -275,6 +360,7 @@ def run_causal_event_worker(
     tokenizer_model: str | None = None,
     tokenizer_revision: str | None = None,
     tokenizer_artifact_sha256: str | None = None,
+    source_artifact_root: Path | None = None,
 ) -> list[EventTrajectory]:
     if schedule.run_id != run_id:
         raise ValueError("worker run id differs from schedule")
@@ -288,6 +374,15 @@ def run_causal_event_worker(
         tokenizer_revision=tokenizer_revision,
         tokenizer_artifact_sha256=tokenizer_artifact_sha256,
     )
+    image_by_packet_id = {}
+    for packet in packet_by_key.values():
+        if packet.packet_payload.context_kind == "image" and source_artifact_root is None:
+            raise ValueError("raw image packet requires a source artifact root")
+        image_by_packet_id[packet.packet_id] = (
+            None
+            if source_artifact_root is None
+            else resolve_packet_image(packet, source_artifact_root)
+        )
     queues = _scheduled_by_talk(schedule, packet_by_key, selected)
     observations: dict[tuple[str, str, str], list[TrajectoryObservation]] = defaultdict(list)
     packet_by_stream: dict[tuple[str, str, str], EvidencePacketSpec] = {}
@@ -334,6 +429,8 @@ def run_causal_event_worker(
                     audio=np.frombuffer(pcm, dtype="<f4").copy(),
                     evidence_text=evidence_text,
                     prompt_text=prompt_template.format(evidence=evidence_text),
+                    evidence_image_path=image_by_packet_id[task.packet.packet_id],
+                    expected_visual_token_count=task.packet.visual_token_count,
                 )
             )
             released.append((task, session_id))
@@ -546,7 +643,7 @@ def merge_trajectory_shards(
         )
         if done.talk_ids != expected_talk_partition:
             raise ValueError("worker done talk partition is not deterministic")
-        required_worker_arguments = (
+        required_worker_arguments = [
             ("--run-id", contract.run_id),
             ("--worker-index", str(done.worker_index)),
             ("--worker-count", str(done.worker_count)),
@@ -565,7 +662,14 @@ def merge_trajectory_shards(
             ("--model-revision", contract.model_revision),
             ("--output", done.output_path),
             ("--done-file", done_path.as_posix()),
+        ]
+        worker_source_artifact_root_path = getattr(
+            contract, "worker_source_artifact_root_path", None
         )
+        if worker_source_artifact_root_path is not None:
+            required_worker_arguments.append(
+                ("--source-artifact-root", worker_source_artifact_root_path)
+            )
         if not all(
             command_contains_exact_marker(process.command, shlex.join(argument_pair))
             for argument_pair in required_worker_arguments
@@ -743,9 +847,13 @@ class Qwen3OmniBatchGenerator:
         ).eval()
         self.max_new_tokens = max_new_tokens
 
-    def __call__(self, batch: list[CausalGenerationInput]) -> list[str]:
-        if not batch:
-            return []
+    def _generate_homogeneous(self, batch: list[CausalGenerationInput]) -> list[str]:
+        from PIL import Image
+
+        image_flags = {item.evidence_image_path is not None for item in batch}
+        if len(image_flags) != 1:
+            raise ValueError("Qwen3-Omni homogeneous batch mixes image and text conditions")
+        has_images = image_flags.pop()
         sample_rates = {item.sample_rate for item in batch}
         if len(sample_rates) != 1:
             raise ValueError("Qwen3-Omni generation batch mixes sample rates")
@@ -754,10 +862,7 @@ class Qwen3OmniBatchGenerator:
             messages = [
                 {
                     "role": "user",
-                    "content": [
-                        {"type": "text", "text": item.prompt_text},
-                        {"type": "audio", "audio": item.audio},
-                    ],
+                    "content": qwen_multimodal_content(item),
                 }
             ]
             texts.append(
@@ -767,15 +872,33 @@ class Qwen3OmniBatchGenerator:
                     tokenize=False,
                 )
             )
-        inputs = self.processor(
-            text=texts,
-            audio=[item.audio for item in batch],
-            images=None,
-            videos=None,
-            return_tensors="pt",
-            padding=True,
-            sampling_rate=next(iter(sample_rates)),
-            use_audio_in_video=False,
+        images = None
+        if has_images:
+            images = []
+            for item in batch:
+                with Image.open(item.evidence_image_path) as image:
+                    images.append(image.convert("RGB"))
+        try:
+            inputs = self.processor(
+                text=texts,
+                audio=[item.audio for item in batch],
+                images=images,
+                videos=None,
+                return_tensors="pt",
+                padding=True,
+                sampling_rate=next(iter(sample_rates)),
+                use_audio_in_video=False,
+            )
+        finally:
+            for image in images or []:
+                image.close()
+        image_token_id = self.tokenizer.convert_tokens_to_ids(self.processor.image_token)
+        if image_token_id is None or image_token_id < 0:
+            raise ValueError("Qwen3-Omni processor has no valid image token id")
+        validate_visual_token_counts(
+            inputs["input_ids"],
+            image_token_id=image_token_id,
+            batch=batch,
         )
         device = next(self.model.parameters()).device
         dtype = next(self.model.parameters()).dtype
@@ -783,7 +906,7 @@ class Qwen3OmniBatchGenerator:
             if hasattr(value, "to"):
                 inputs[key] = (
                     value.to(device=device, dtype=dtype)
-                    if key == "input_features"
+                    if self.torch.is_floating_point(value)
                     else value.to(device=device)
                 )
         with self.torch.inference_mode():
@@ -804,6 +927,27 @@ class Qwen3OmniBatchGenerator:
             )
             for row in generated
         ]
+
+    def __call__(self, batch: list[CausalGenerationInput]) -> list[str]:
+        if not batch:
+            return []
+        results: list[str | None] = [None] * len(batch)
+        for has_image in (False, True):
+            indexed = [
+                (index, item)
+                for index, item in enumerate(batch)
+                if (item.evidence_image_path is not None) == has_image
+            ]
+            if not indexed:
+                continue
+            generated = self._generate_homogeneous([item for _, item in indexed])
+            if len(generated) != len(indexed):
+                raise RuntimeError("Qwen3-Omni returned an unexpected modality-group size")
+            for (index, _), hypothesis in zip(indexed, generated, strict=True):
+                results[index] = hypothesis
+        if any(result is None for result in results):
+            raise RuntimeError("Qwen3-Omni failed to produce every requested hypothesis")
+        return [result for result in results if result is not None]
 
     def tokenize_evidence(self, text: str) -> list[int]:
         return self.tokenizer.encode(text, add_special_tokens=False)

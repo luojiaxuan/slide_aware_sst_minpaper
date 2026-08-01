@@ -38,6 +38,8 @@ links, or handoff state.
   [`docs/ACL6060_SOURCE_EVENT_ANNOTATION_V2.md`](ACL6060_SOURCE_EVENT_ANNOTATION_V2.md)
 - ACL dev event-timing estimand, causal broker and provenance contract:
   [`docs/ACL6060_EVENT_TRAJECTORY_SCORING_V1.md`](ACL6060_EVENT_TRAJECTORY_SCORING_V1.md)
+- Raw-image v2 condition matrix、source mount、byte/token binding 与 runtime 边界：
+  [`docs/RAW_IMAGE_EVENT_CONTRACT_V2_20260801.md`](RAW_IMAGE_EVENT_CONTRACT_V2_20260801.md)
 - Route A ACL paper and confirmatory experiment contract:
   [`docs/ACL_PAPER_BLUEPRINT_20260731.md`](ACL_PAPER_BLUEPRINT_20260731.md)
 - Independent ACL-style review and resolved/residual risks:

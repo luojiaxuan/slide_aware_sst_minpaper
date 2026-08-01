@@ -35,6 +35,7 @@ def main() -> None:
     parser.add_argument("--scientific-config", type=Path, required=True)
     parser.add_argument("--model-artifact-root", type=Path, required=True)
     parser.add_argument("--tokenizer-artifact-root", type=Path, required=True)
+    parser.add_argument("--source-artifact-root", type=Path)
     parser.add_argument("--model-id", required=True)
     parser.add_argument("--model-revision", required=True)
     parser.add_argument("--causal-audio-schedule", type=Path, required=True)
@@ -103,6 +104,13 @@ def main() -> None:
         != contract.worker_tokenizer_artifact_root_path
     ):
         raise ValueError("worker tokenizer root differs from contract")
+    observed_source_root = (
+        None
+        if args.source_artifact_root is None
+        else args.source_artifact_root.as_posix()
+    )
+    if observed_source_root != contract.worker_source_artifact_root_path:
+        raise ValueError("worker source artifact root differs from contract")
     if directory_tree_sha256(args.model_artifact_root) != contract.model_artifact_tree_sha256:
         raise ValueError("worker model artifact tree changed before model load")
     if (
@@ -110,6 +118,11 @@ def main() -> None:
         != contract.tokenizer_artifact_sha256
     ):
         raise ValueError("worker tokenizer artifact tree changed before model load")
+    if args.source_artifact_root is not None and (
+        directory_tree_sha256(args.source_artifact_root)
+        != contract.source_artifact_tree_sha256
+    ):
+        raise ValueError("worker source artifact tree changed before model load")
     schedule, broker_audit, packets = load_worker_inputs(
         contract=contract,
         schedule_path=args.causal_audio_schedule,
@@ -143,6 +156,7 @@ def main() -> None:
         tokenizer_model=contract.tokenizer_model,
         tokenizer_revision=contract.tokenizer_revision,
         tokenizer_artifact_sha256=contract.tokenizer_artifact_sha256,
+        source_artifact_root=args.source_artifact_root,
     )
     if directory_tree_sha256(args.model_artifact_root) != contract.model_artifact_tree_sha256:
         raise ValueError("worker model artifact tree changed during generation")
@@ -151,6 +165,11 @@ def main() -> None:
         != contract.tokenizer_artifact_sha256
     ):
         raise ValueError("worker tokenizer artifact tree changed during generation")
+    if args.source_artifact_root is not None and (
+        directory_tree_sha256(args.source_artifact_root)
+        != contract.source_artifact_tree_sha256
+    ):
+        raise ValueError("worker source artifact tree changed during generation")
     write_trajectory_shard(
         args.output,
         args.done_file,

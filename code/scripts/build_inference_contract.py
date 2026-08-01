@@ -33,6 +33,7 @@ def main() -> None:
     parser.add_argument("--worker-scientific-config-path", required=True)
     parser.add_argument("--worker-model-artifact-root-path", required=True)
     parser.add_argument("--worker-tokenizer-artifact-root-path", required=True)
+    parser.add_argument("--worker-source-artifact-root-path")
     parser.add_argument("--scoring-protected-artifact-root", action="append", required=True)
     parser.add_argument("--code-repo", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
@@ -62,6 +63,7 @@ def main() -> None:
         worker_scientific_config_path=args.worker_scientific_config_path,
         worker_model_artifact_root_path=args.worker_model_artifact_root_path,
         worker_tokenizer_artifact_root_path=args.worker_tokenizer_artifact_root_path,
+        worker_source_artifact_root_path=args.worker_source_artifact_root_path,
         scoring_protected_artifact_roots=args.scoring_protected_artifact_root,
         code_repo=args.code_repo,
         output=args.output,

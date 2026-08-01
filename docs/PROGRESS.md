@@ -1173,3 +1173,22 @@ or a stronger Qwen3-VL variant if available.
 - R0/R1 input extraction 至此完成。下一步是冻结 source-event packets / target scoring，
   再做 document、unordered OCR、structured text、raw image、matched wrong 的 native/noisy
   oracle headroom；当前仍没有 MCIF translation output 或 paper effect estimate。
+
+## 2026-08-01 Raw-image Event Contract V2
+
+- 审计发现 v1 causal worker 硬编码 `images=None`，只能比较由 slide 抽出的文本，不能回答
+  `vision > OCR`。保留 v1 不变，新增 v2 的 `correct_image / matched_wrong_image` 条件和
+  `image content specificity / image over relation / relation over OCR` 三个增量。
+- image packet 现在绑定 artifact JSON、native media bytes、source tree、只读 worker mount、
+  固定 textual token IDs 与 processor 实际展开的 visual token count。任一路径、字节、
+  processor 或 worker command 漂移都会 fail closed。
+- Qwen3-Omni runner 按 image/non-image 拆分 homogeneous batches，在 message 中按
+  `image -> prompt text -> causal audio` 排列，再恢复原条件顺序。float audio/image features
+  都转换到 frozen model dtype。
+- 当前 direct-image 路径会为每个 audio prefix 重复 image encoding，必须报告为 on-path
+  quality diagnostic；在另行实现和审计 visual cache/compiler 前，不宣称 zero-latency 或
+  off-path vision。
+- 新增 8 个 v2 回归，覆盖 v1 拒绝、artifact/media tamper、路径逃逸、modality 顺序、visual
+  token 漂移、batch 顺序恢复与 broker 集成。全套测试为 `235 passed`，两个既有 warning。
+- 当前没有新 data artifact。下一步物化 304-state `R0/R1/R2` portable ladder，构造
+  visual-token-matched wrong-image controls，再上传 private HF revision。

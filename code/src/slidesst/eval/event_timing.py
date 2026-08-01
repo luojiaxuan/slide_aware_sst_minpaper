@@ -69,6 +69,31 @@ EXPECTED_CONTRASTS_V1 = (
     ("ocr_content_specificity", "ocr", "matched_wrong_ocr", True, "ocr"),
     ("ocr_over_audio_only", "ocr", "audio_only", False, None),
 )
+EXPECTED_CONDITIONS_V2 = EXPECTED_CONDITIONS_V1 + (
+    "correct_image",
+    "matched_wrong_image",
+)
+EXPECTED_PACKET_META_V2 = {
+    **EXPECTED_PACKET_META_V1,
+    "correct_image": ("image", "correct"),
+    "matched_wrong_image": ("image", "matched_wrong"),
+}
+EXPECTED_CONTEXT_KIND_V2 = {
+    **EXPECTED_CONTEXT_KIND_V1,
+    "correct_image": "image",
+    "matched_wrong_image": "image",
+}
+EXPECTED_CONTRASTS_V2 = EXPECTED_CONTRASTS_V1 + (
+    (
+        "image_content_specificity",
+        "correct_image",
+        "matched_wrong_image",
+        True,
+        "image",
+    ),
+    ("image_over_relation", "correct_image", "correct_relation", False, None),
+    ("relation_over_ocr", "correct_relation", "ocr", False, None),
+)
 EXPECTED_BABBLE_ORDER_V1 = (
     "native",
     "babble_10db",
@@ -89,7 +114,10 @@ class InferenceDecodingConfig(StrictModel):
 
 
 class InferenceScientificConfig(StrictModel):
-    schema_version: Literal["acl6060_event_inference_scientific_config_v1"]
+    schema_version: Literal[
+        "acl6060_event_inference_scientific_config_v1",
+        "acl6060_event_inference_scientific_config_v2",
+    ]
     model_id: str = Field(min_length=1)
     model_revision: str = Field(pattern=GIT_SHA_PATTERN)
     model_artifact_tree_sha256: str = Field(pattern=SHA256_PATTERN)
@@ -103,8 +131,13 @@ class InferenceScientificConfig(StrictModel):
 
     @model_validator(mode="after")
     def validate_scientific_config(self) -> "InferenceScientificConfig":
-        if tuple(self.expected_conditions) != EXPECTED_CONDITIONS_V1:
-            raise ValueError("scientific config condition matrix differs from frozen v1")
+        expected = (
+            EXPECTED_CONDITIONS_V1
+            if self.schema_version.endswith("_v1")
+            else EXPECTED_CONDITIONS_V2
+        )
+        if tuple(self.expected_conditions) != expected:
+            raise ValueError("scientific config condition matrix differs from its schema")
         fields = [
             field_name
             for _, field_name, _, _ in Formatter().parse(self.prompt_template)
@@ -127,7 +160,7 @@ class InferenceScientificConfig(StrictModel):
 
 class ExpectedEvidenceSource(StrictModel):
     condition: str = Field(min_length=1)
-    context_kind: Literal["document", "ocr", "semantic", "relation"]
+    context_kind: Literal["document", "ocr", "semantic", "relation", "image"]
     source_media_kind: Literal["source_document", "slide_image"]
     source_media_path: str = Field(min_length=1)
     source_media_sha256: str = Field(pattern=SHA256_PATTERN)
@@ -136,8 +169,14 @@ class ExpectedEvidenceSource(StrictModel):
 
     @model_validator(mode="after")
     def validate_identity(self) -> "ExpectedEvidenceSource":
-        expected_context_kind = EXPECTED_CONTEXT_KIND_V1.get(self.condition)
-        if expected_context_kind not in {"document", "ocr", "semantic", "relation"}:
+        expected_context_kind = EXPECTED_CONTEXT_KIND_V2.get(self.condition)
+        if expected_context_kind not in {
+            "document",
+            "ocr",
+            "semantic",
+            "relation",
+            "image",
+        }:
             raise ValueError("expected evidence source has a baseline or unknown condition")
         if self.context_kind != expected_context_kind:
             raise ValueError("expected evidence source context differs from condition")
@@ -148,6 +187,7 @@ class ExpectedEvidenceSource(StrictModel):
 
 
 class SourceEventTiming(StrictModel):
+    condition_matrix_version: Literal["v1", "v2"] = "v1"
     event_id: str
     talk_id: str
     primary_eligible: bool
@@ -165,9 +205,14 @@ class SourceEventTiming(StrictModel):
         by_condition = {source.condition: source for source in self.expected_evidence_sources}
         if len(by_condition) != len(self.expected_evidence_sources):
             raise ValueError("expected evidence source conditions must be unique")
+        context_schema = (
+            EXPECTED_CONTEXT_KIND_V1
+            if self.condition_matrix_version == "v1"
+            else EXPECTED_CONTEXT_KIND_V2
+        )
         expected_conditions = {
             condition
-            for condition, context_kind in EXPECTED_CONTEXT_KIND_V1.items()
+            for condition, context_kind in context_schema.items()
             if context_kind not in {"none", "empty"}
         }
         if set(by_condition) != expected_conditions:
@@ -551,7 +596,7 @@ class ControlPairSpec(StrictModel):
     event_id: str
     contrast_id: str
     control_pair_id: str
-    evidence_type: Literal["ocr", "semantic", "relation"]
+    evidence_type: Literal["ocr", "semantic", "relation", "image"]
     first_condition: str
     second_condition: str
     first_packet_id: str
@@ -562,6 +607,8 @@ class ControlPairSpec(StrictModel):
     second_available_sec: float = Field(ge=0, allow_inf_nan=False)
     first_token_count: int = Field(ge=0)
     second_token_count: int = Field(ge=0)
+    first_visual_token_count: int = Field(default=0, ge=0)
+    second_visual_token_count: int = Field(default=0, ge=0)
 
     @model_validator(mode="after")
     def validate_match(self) -> "ControlPairSpec":
@@ -580,24 +627,39 @@ class ControlPairSpec(StrictModel):
             raise ValueError("control pair availability times differ")
         if self.first_token_count != self.second_token_count:
             raise ValueError("control pair token counts differ")
+        if self.first_visual_token_count != self.second_visual_token_count:
+            raise ValueError("control pair visual token counts differ")
+        if self.evidence_type == "image" and self.first_visual_token_count == 0:
+            raise ValueError("image control pair requires visual tokens")
+        if self.evidence_type != "image" and self.first_visual_token_count != 0:
+            raise ValueError("text control pair cannot declare visual tokens")
         return self
 
 
 class SourceEvidenceArtifact(StrictModel):
-    schema_version: Literal["acl6060_source_evidence_artifact_v1"]
+    schema_version: Literal[
+        "acl6060_source_evidence_artifact_v1",
+        "acl6060_source_evidence_artifact_v2",
+    ]
     event_id: str = Field(min_length=1)
-    context_kind: Literal["document", "ocr", "semantic", "relation"]
+    context_kind: Literal["document", "ocr", "semantic", "relation", "image"]
     source_media_kind: Literal["source_document", "slide_image"]
     source_media_path: str = Field(min_length=1)
     source_media_sha256: str = Field(pattern=SHA256_PATTERN)
     extractor: str = Field(min_length=1)
     extractor_revision: str = Field(pattern=GIT_SHA_PATTERN)
-    items: list[str] = Field(min_length=1)
+    items: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def validate_items(self) -> "SourceEvidenceArtifact":
         if any(not item.strip() for item in self.items):
             raise ValueError("source evidence artifact items must be non-empty")
+        if self.schema_version.endswith("_v1") and self.context_kind == "image":
+            raise ValueError("v1 source evidence artifact cannot contain raw image context")
+        if self.context_kind == "image" and self.items:
+            raise ValueError("raw image source evidence artifact cannot contain text items")
+        if self.context_kind != "image" and not self.items:
+            raise ValueError("text source evidence artifact requires items")
         expected_media_kind = "source_document" if self.context_kind == "document" else "slide_image"
         if self.source_media_kind != expected_media_kind:
             raise ValueError("source evidence artifact media kind differs from context kind")
@@ -614,16 +676,42 @@ class SourceEvidenceReference(StrictModel):
     item_index: int = Field(ge=0)
 
 
+class SourceImageReference(StrictModel):
+    artifact_path: str = Field(min_length=1)
+    artifact_sha256: str = Field(pattern=SHA256_PATTERN)
+
+
 class EvidencePacketPayload(StrictModel):
-    schema_version: Literal["acl6060_source_evidence_packet_v1"]
-    context_kind: Literal["none", "empty", "document", "ocr", "semantic", "relation"]
+    schema_version: Literal[
+        "acl6060_source_evidence_packet_v1",
+        "acl6060_source_evidence_packet_v2",
+    ]
+    context_kind: Literal[
+        "none",
+        "empty",
+        "document",
+        "ocr",
+        "semantic",
+        "relation",
+        "image",
+    ]
     context_items: list[SourceEvidenceReference]
+    image_reference: SourceImageReference | None = None
 
     @model_validator(mode="after")
     def validate_content(self) -> "EvidencePacketPayload":
+        if self.schema_version.endswith("_v1") and (
+            self.context_kind == "image" or self.image_reference is not None
+        ):
+            raise ValueError("v1 evidence packet cannot contain raw image context")
         if self.context_kind in {"none", "empty"} and self.context_items:
             raise ValueError("none/empty evidence packets cannot contain context items")
-        if self.context_kind not in {"none", "empty"} and not self.context_items:
+        if self.context_kind == "image":
+            if self.context_items or self.image_reference is None:
+                raise ValueError("image evidence packet requires only an image reference")
+        elif self.image_reference is not None:
+            raise ValueError("non-image evidence packet cannot contain an image reference")
+        elif self.context_kind not in {"none", "empty"} and not self.context_items:
             raise ValueError("non-empty evidence packet requires context items")
         return self
 
@@ -633,7 +721,15 @@ class EvidencePacketSpec(StrictModel):
     condition: str = Field(min_length=1)
     packet_id: str = Field(min_length=1)
     packet_sha256: str = Field(pattern=SHA256_PATTERN)
-    evidence_type: Literal["none", "document", "empty", "ocr", "semantic", "relation"]
+    evidence_type: Literal[
+        "none",
+        "document",
+        "empty",
+        "ocr",
+        "semantic",
+        "relation",
+        "image",
+    ]
     evidence_role: Literal["baseline", "correct", "matched_wrong"]
     available_sec: float = Field(ge=0, allow_inf_nan=False)
     tokenizer_model: str = Field(min_length=1)
@@ -642,16 +738,22 @@ class EvidencePacketSpec(StrictModel):
     token_ids: list[Annotated[int, Field(ge=0)]]
     token_ids_sha256: str = Field(pattern=SHA256_PATTERN)
     rendered_text_sha256: str = Field(pattern=SHA256_PATTERN)
+    visual_token_count: int = Field(default=0, ge=0)
     packet_payload: EvidencePacketPayload
 
     @model_validator(mode="after")
     def validate_bytes(self) -> "EvidencePacketSpec":
-        if self.packet_sha256 != canonical_json_sha256(self.packet_payload):
+        payload_value = self.packet_payload.model_dump(mode="json", exclude_none=True)
+        if self.packet_sha256 != canonical_json_sha256(payload_value):
             raise ValueError("evidence packet payload hash mismatch")
         if self.token_ids_sha256 != canonical_json_sha256(self.token_ids):
             raise ValueError("evidence packet token-id hash mismatch")
         if self.rendered_text_sha256 != text_sha256(render_evidence_packet(self.packet_payload)):
             raise ValueError("evidence packet rendered-text hash mismatch")
+        if self.evidence_type == "image" and self.visual_token_count == 0:
+            raise ValueError("image evidence packet requires visual tokens")
+        if self.evidence_type != "image" and self.visual_token_count != 0:
+            raise ValueError("text evidence packet cannot declare visual tokens")
         return self
 
 
@@ -736,6 +838,8 @@ class InferenceContract(StrictModel):
     worker_model_artifact_root_path: str = Field(min_length=1)
     tokenizer_artifact_host_root_path: str = Field(min_length=1)
     worker_tokenizer_artifact_root_path: str = Field(min_length=1)
+    source_artifact_host_root_path: str | None = None
+    worker_source_artifact_root_path: str | None = None
     expected_worker_count: int = Field(gt=0)
     inference_repo_path: str = Field(min_length=1)
     container_image_id: str = Field(pattern=SHA256_PATTERN)
@@ -750,6 +854,14 @@ class InferenceContract(StrictModel):
             raise ValueError("worker command match is not valid shell-token syntax") from exc
         if marker_tokens.count(self.run_id) != 1:
             raise ValueError("worker command match must contain the exact run id token once")
+        source_paths = (
+            self.source_artifact_host_root_path,
+            self.worker_source_artifact_root_path,
+        )
+        if (source_paths[0] is None) != (source_paths[1] is None):
+            raise ValueError("worker source artifact host/container paths must be paired")
+        if "correct_image" in self.expected_conditions and source_paths[0] is None:
+            raise ValueError("raw image inference contract requires a worker source artifact mount")
         for path in (
             self.worker_inference_contract_path,
             self.worker_contract_ready_file_path,
@@ -759,6 +871,7 @@ class InferenceContract(StrictModel):
             self.worker_model_artifact_root_path,
             self.tokenizer_artifact_host_root_path,
             self.worker_tokenizer_artifact_root_path,
+            *(value for value in source_paths if value is not None),
         ):
             if not canonical_absolute_posix_path(path):
                 raise ValueError("worker contract barrier paths must be canonical and absolute")
@@ -1007,7 +1120,7 @@ class ContrastSpec(StrictModel):
     first: str
     second: str
     requires_matched_control: bool
-    evidence_type: Literal["ocr", "semantic", "relation"] | None
+    evidence_type: Literal["ocr", "semantic", "relation", "image"] | None
 
     @model_validator(mode="after")
     def validate_evidence_type(self) -> "ContrastSpec":
@@ -1041,7 +1154,10 @@ class DevelopmentSignalSpec(StrictModel):
 
 
 class EventScoringConfig(StrictModel):
-    schema_version: Literal["acl6060_event_trajectory_scoring_v1"]
+    schema_version: Literal[
+        "acl6060_event_trajectory_scoring_v1",
+        "acl6060_event_trajectory_scoring_v2",
+    ]
     scope: Literal["exploratory_acl_dev_not_confirmatory"]
     primary_development_estimand: Literal[
         "talk_equal_risk_difference_of_first_stable_correct_target_decision_by_conservative_audio_insufficient_boundary"
@@ -1102,22 +1218,33 @@ class EventScoringConfig(StrictModel):
             for members_for_group in EXPECTED_ACOUSTIC_GROUPS_V1.values()
             for member in members_for_group
         )
+        schema_label = "v1" if self.schema_version.endswith("_v1") else "v2"
         if self.min_stability_observations != 2:
-            raise ValueError("v1 min_stability_observations must equal 2")
+            raise ValueError(f"{schema_label} min_stability_observations must equal 2")
         if tuple(self.expected_acoustic_conditions) != expected_acoustic:
-            raise ValueError("v1 acoustic condition matrix differs from frozen order")
+            raise ValueError(f"{schema_label} acoustic condition matrix differs from frozen order")
         if observed_groups != EXPECTED_ACOUSTIC_GROUPS_V1:
-            raise ValueError("v1 acoustic groups differ from frozen mapping")
+            raise ValueError(f"{schema_label} acoustic groups differ from frozen mapping")
         if tuple(group_ids) != tuple(EXPECTED_ACOUSTIC_GROUPS_V1):
-            raise ValueError("v1 acoustic group order differs from frozen order")
-        if tuple(self.expected_conditions) != EXPECTED_CONDITIONS_V1:
-            raise ValueError("v1 model condition matrix differs from frozen order")
-        if observed_contrasts != EXPECTED_CONTRASTS_V1:
-            raise ValueError("v1 contrasts differ from frozen definitions")
+            raise ValueError(f"{schema_label} acoustic group order differs from frozen order")
+        expected_conditions = (
+            EXPECTED_CONDITIONS_V1
+            if self.schema_version.endswith("_v1")
+            else EXPECTED_CONDITIONS_V2
+        )
+        expected_contrasts = (
+            EXPECTED_CONTRASTS_V1
+            if self.schema_version.endswith("_v1")
+            else EXPECTED_CONTRASTS_V2
+        )
+        if tuple(self.expected_conditions) != expected_conditions:
+            raise ValueError(f"{schema_label} model condition matrix differs from frozen order")
+        if observed_contrasts != expected_contrasts:
+            raise ValueError(f"{schema_label} contrasts differ from frozen definitions")
         if self.bootstrap_samples != 10000 or self.bootstrap_seed != 20260801:
-            raise ValueError("v1 bootstrap count/seed differ from frozen values")
+            raise ValueError(f"{schema_label} bootstrap count/seed differ from frozen values")
         if tuple(self.babble_severity_order) != EXPECTED_BABBLE_ORDER_V1:
-            raise ValueError("v1 babble severity order differs from frozen order")
+            raise ValueError(f"{schema_label} babble severity order differs from frozen order")
         return self
 
 
@@ -1152,7 +1279,7 @@ def tokenize_realization(text: str) -> tuple[str, ...]:
 
 def canonical_json_sha256(value) -> str:
     if isinstance(value, BaseModel):
-        value = value.model_dump(mode="json")
+        value = value.model_dump(mode="json", exclude_none=True)
     payload = json.dumps(
         value,
         ensure_ascii=False,
@@ -1179,6 +1306,8 @@ def render_evidence_packet(payload: EvidencePacketPayload) -> str:
         return ""
     if payload.context_kind == "empty":
         return "Advance source context:\n[no context available]"
+    if payload.context_kind == "image":
+        return "Current slide image:\n[image bytes attached]"
     headings = {
         "document": "Document context:",
         "ocr": "Current slide text:",
@@ -1490,7 +1619,7 @@ def validate_inference_provenance(
         ]
         if len(marker_processes) != contract.expected_worker_count:
             raise ValueError("inference marker worker count differs from contract")
-        required_worker_arguments = (
+        required_worker_arguments = [
             ("--inference-contract", contract.worker_inference_contract_path),
             ("--inference-contract-ready-file", contract.worker_contract_ready_file_path),
             ("--scientific-config", contract.worker_scientific_config_path),
@@ -1501,7 +1630,11 @@ def validate_inference_provenance(
             ),
             ("--model-id", contract.model_id),
             ("--model-revision", contract.model_revision),
-        )
+        ]
+        if contract.worker_source_artifact_root_path is not None:
+            required_worker_arguments.append(
+                ("--source-artifact-root", contract.worker_source_artifact_root_path)
+            )
         if any(
             not all(
                 command_contains_exact_marker(process.command, shlex.join(argument_pair))
@@ -1528,6 +1661,13 @@ def validate_inference_provenance(
             destination=contract.worker_tokenizer_artifact_root_path,
             label="tokenizer artifact tree",
         )
+        if contract.source_artifact_host_root_path is not None:
+            require_read_only_mount(
+                environment_audit,
+                source=contract.source_artifact_host_root_path,
+                destination=contract.worker_source_artifact_root_path,
+                label="source artifact tree",
+            )
     for trajectory in trajectories:
         if trajectory.inference_run_id != contract.run_id:
             raise ValueError(f"trajectory inference run mismatch: {trajectory.event_id}")
@@ -1789,6 +1929,21 @@ def validate_evidence_packets(
     by_key: dict[tuple[str, str], EvidencePacketSpec] = {}
     packet_ids: set[str] = set()
     artifact_cache: dict[str, SourceEvidenceArtifact] = {}
+    packet_meta = (
+        EXPECTED_PACKET_META_V1
+        if config.schema_version.endswith("_v1")
+        else EXPECTED_PACKET_META_V2
+    )
+    context_schema = (
+        EXPECTED_CONTEXT_KIND_V1
+        if config.schema_version.endswith("_v1")
+        else EXPECTED_CONTEXT_KIND_V2
+    )
+    expected_packet_schema = (
+        "acl6060_source_evidence_packet_v1"
+        if config.schema_version.endswith("_v1")
+        else "acl6060_source_evidence_packet_v2"
+    )
     for packet in evidence_packets:
         key = (packet.event_id, packet.condition)
         if key in by_key:
@@ -1797,7 +1952,7 @@ def validate_evidence_packets(
             raise ValueError(f"duplicate evidence packet id: {packet.packet_id}")
         if packet.event_id not in source_by_id:
             raise ValueError(f"evidence packet has unknown event: {packet.event_id}")
-        expected_meta = EXPECTED_PACKET_META_V1.get(packet.condition)
+        expected_meta = packet_meta.get(packet.condition)
         if packet.condition not in config.expected_conditions or expected_meta is None:
             raise ValueError(f"evidence packet has unexpected condition: {packet.condition}")
         if (packet.evidence_type, packet.evidence_role) != expected_meta:
@@ -1808,23 +1963,29 @@ def validate_evidence_packets(
             raise ValueError(f"evidence packet tokenizer revision mismatch: {key}")
         if packet.tokenizer_artifact_sha256 != expected_tokenizer_artifact_sha256:
             raise ValueError(f"evidence packet tokenizer artifact mismatch: {key}")
-        expected_context_kind = EXPECTED_CONTEXT_KIND_V1[packet.condition]
+        expected_context_kind = context_schema[packet.condition]
         if packet.packet_payload.context_kind != expected_context_kind:
             raise ValueError(f"evidence packet context kind mismatch: {key}")
+        if packet.packet_payload.schema_version != expected_packet_schema:
+            raise ValueError(f"evidence packet schema version mismatch: {key}")
+        expected_source_version = "v1" if config.schema_version.endswith("_v1") else "v2"
+        if source_by_id[packet.event_id].condition_matrix_version != expected_source_version:
+            raise ValueError(f"source event condition matrix version mismatch: {key}")
         expected_source = {
             value.condition: value
             for value in source_by_id[packet.event_id].expected_evidence_sources
         }.get(packet.condition)
-        for reference in packet.packet_payload.context_items:
-            artifact_path = _safe_artifact_path(source_artifact_root, reference.artifact_path)
-            if file_sha256(artifact_path) != reference.artifact_sha256:
+
+        def load_artifact(reference_path: str, reference_sha256: str) -> SourceEvidenceArtifact:
+            artifact_path = _safe_artifact_path(source_artifact_root, reference_path)
+            if file_sha256(artifact_path) != reference_sha256:
                 raise ValueError(f"source evidence artifact hash mismatch: {key}")
-            artifact = artifact_cache.get(reference.artifact_path)
+            artifact = artifact_cache.get(reference_path)
             if artifact is None:
                 artifact = SourceEvidenceArtifact.model_validate_json(
                     artifact_path.read_text(encoding="utf-8")
                 )
-                artifact_cache[reference.artifact_path] = artifact
+                artifact_cache[reference_path] = artifact
             if artifact.event_id != packet.event_id:
                 raise ValueError(f"source evidence artifact event mismatch: {key}")
             if artifact.context_kind != packet.packet_payload.context_kind:
@@ -1849,13 +2010,25 @@ def validate_evidence_packets(
             )
             if observed_source_identity != frozen_source_identity:
                 raise ValueError(f"source evidence artifact differs from event source identity: {key}")
+            media_path = _safe_artifact_path(source_artifact_root, artifact.source_media_path)
+            if file_sha256(media_path) != artifact.source_media_sha256:
+                raise ValueError(f"source media hash mismatch: {key}")
+            return artifact
+
+        for reference in packet.packet_payload.context_items:
+            artifact = load_artifact(reference.artifact_path, reference.artifact_sha256)
             if reference.item_index >= len(artifact.items):
                 raise ValueError(f"source evidence artifact item index is out of range: {key}")
             if artifact.items[reference.item_index] != reference.text:
                 raise ValueError(f"source evidence text differs from frozen artifact: {key}")
-            media_path = _safe_artifact_path(source_artifact_root, artifact.source_media_path)
-            if file_sha256(media_path) != artifact.source_media_sha256:
-                raise ValueError(f"source media hash mismatch: {key}")
+        image_reference = packet.packet_payload.image_reference
+        if image_reference is not None:
+            artifact = load_artifact(
+                image_reference.artifact_path,
+                image_reference.artifact_sha256,
+            )
+            if artifact.context_kind != "image" or artifact.items:
+                raise ValueError(f"raw image artifact contains text context: {key}")
         replayed_token_ids = tokenize(render_evidence_packet(packet.packet_payload))
         if replayed_token_ids != packet.token_ids:
             raise ValueError(f"evidence packet token ids differ from tokenizer replay: {key}")
@@ -1945,11 +2118,13 @@ def validate_control_pairs(
             pair.first_packet_sha256,
             pair.first_available_sec,
             pair.first_token_count,
+            pair.first_visual_token_count,
         ) != (
             first_packet.packet_id,
             first_packet.packet_sha256,
             first_packet.available_sec,
             len(first_packet.token_ids),
+            first_packet.visual_token_count,
         ):
             raise ValueError(f"correct control-pair metadata differs from packet bytes: {key}")
         if (
@@ -1957,11 +2132,13 @@ def validate_control_pairs(
             pair.second_packet_sha256,
             pair.second_available_sec,
             pair.second_token_count,
+            pair.second_visual_token_count,
         ) != (
             second_packet.packet_id,
             second_packet.packet_sha256,
             second_packet.available_sec,
             len(second_packet.token_ids),
+            second_packet.visual_token_count,
         ):
             raise ValueError(f"wrong control-pair metadata differs from packet bytes: {key}")
         by_key[key] = pair
