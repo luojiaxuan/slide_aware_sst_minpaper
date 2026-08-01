@@ -808,3 +808,8 @@ or a stronger Qwen3-VL variant if available.
   into an editable public sheet and a scorer-private media manifest; freeze now
   rejects schema/task-field drift before merging author outcomes. The author-
   facing Stage-2 bundle now omits the same linkable identifiers as Stage 1.
+- Final independent regression review reproduced the hardened Stage-2 artifact
+  and all prior adversarial cases. It found no remaining P0/P1: the public
+  author-audio sheet contains none of the five linkable fields, strict merge
+  rejects task/schema drift, and wrong release boundaries, early completion,
+  non-monotonic timestamps and an isolated final positive are all rejected.

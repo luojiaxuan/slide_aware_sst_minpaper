@@ -133,6 +133,10 @@ event-state machine、release boundary、monotonic server timestamps 和 complet
 已实现 causal release；
 当前 blocking gate 是尚未完成的 human authoring 和四人独立 validation。
 
+最终独立方法回归审计已重放错误 release boundary、early completion、non-monotonic
+timestamps、末尾孤立 positive 和 Stage-2 identifier leak；当前实现全部拒绝，未发现剩余
+P0/P1。该结论不替代人工 annotation 本身。
+
 ## Sampling estimand
 
 100-row seed 在 transition/random strata 各抽 50 条，不是自然分布。主报告先给每个
