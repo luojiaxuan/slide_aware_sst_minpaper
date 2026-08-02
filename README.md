@@ -128,8 +128,10 @@
 > HF revision
 > [`34e8f9b1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/34e8f9b16ef06dc9503066d3446304400c750c22/beyond_ocr_positive_validation_v1)，
 > tag `mcif-beyond-ocr-positive-validation-v1`。两个 visual 与两个 outcome roles 各 6 items，
-> 远端 38 files 全量回下载、37 manifest-bound files 校验通过；当前仍为 0 human labels，等待
-> 四个互不重合的真实 annotators。见
+> 远端 38 files 全量回下载、37 manifest-bound files 校验通过。后续 post-hoc audit 发现原
+> full-string candidate exclusion 不能保证 OCR insufficiency：34 条中 10 条的全部 candidate
+> tokens 已分别出现在 OCR 中，21 条 token coverage 至少为 50%。因此该 packet 当前为
+> `DO_NOT_ANNOTATE`、0 human labels；先完成 strict re-screen。见
 > [docs/MCIF_BEYOND_OCR_POSITIVE_VALIDATION_V1.md](docs/MCIF_BEYOND_OCR_POSITIVE_VALIDATION_V1.md)。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).

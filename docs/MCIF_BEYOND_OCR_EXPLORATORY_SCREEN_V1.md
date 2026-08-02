@@ -2,7 +2,7 @@
 
 日期：2026-08-02
 
-状态：`SCREEN_COMPLETE_FORMAL_VALIDATION_PENDING`
+状态：`SCREEN_COMPLETE_POSTHOC_CANDIDATE_AUDIT_FAILED`
 
 ## 目标
 
@@ -148,17 +148,36 @@ image 整体没有打败 OCR。** 不能写成 `vision > OCR` aggregate result�
 
 ## 下一步
 
-1. 为 20 条 unique positives 构建正式人工 visual/OCR/target validation，优先完成 6 条
-   clean/noisy robust positives；
-2. 人工确认 pixels 包含正确证据、flat OCR 确实不足、raw-image advance 与 candidate 相关，
-   并排除 hallucination 或一般 decoding variation；
-3. 只有通过人工验证的样本才进入后续 audio-sufficiency/commit-time analysis；
-4. human validation artifact 完成后，以新的 private immutable revision 上传，不改写本次
-   screen revision。
+### 2026-08-02 post-hoc candidate audit
+
+本次 screen 完成后，对冻结的 candidate string 与实际 flat OCR 做了 token-level 复核。34 条中：
+
+- 10 条 candidate 的全部 tokens 已分别出现在 OCR 中；
+- 21 条至少 50% candidate tokens 已出现在 OCR 中；
+- 只有 10 条为零 token overlap；
+- 至少 `blue and orange lines`、`human study participants and`、
+  `Mila and Microsoft Research` 等 case 不能视为严格的 OCR-insufficient evidence。
+
+原 selection 只排除了 normalized full-string exact match，仍允许 OCR 已提供组成词、词形或关键
+实体的 case。因此本次 `raw image` 未 aggregate 超过 OCR 不能单独归因于 vision model capacity，
+而 6 条 robust positives 也不能直接视为 beyond-OCR gold positives。现有 zero-label validation
+packet 保留作 provenance，但在 strict re-screen 完成前标记为 `DO_NOT_ANNOTATE`。
+
+修订后的 kill test 与模型容量判断见
+[`MCIF_STRICT_BEYOND_OCR_RESCREEN_DECISION_20260802.md`](MCIF_STRICT_BEYOND_OCR_RESCREEN_DECISION_20260802.md)。
+
+1. 重筛 30--50 条 strict candidates，并把 `OCR-error-only` 与真正的
+   `layout/relation/color/spatial` evidence 分层；
+2. 先冻结同 schema、同预算的 human-oracle packet，测任务本身是否有 beyond-OCR upper bound；
+3. 用 strong image-text compiler 生成 correct/wrong visual packets，再由同一 Qwen3-Omni online
+   ST backbone 消费；
+4. primary 改用 candidate correctness 与 first/stable commit time，sentence chrF 只作 secondary；
+5. 只有新 screen 通过 `strong packet > OCR AND strong packet > wrong packet`，才启动正式人工
+   outcome validation。
 
 其中前两步的 zero-label packet 已完成并冻结在 private HF revision
 [`34e8f9b1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/34e8f9b16ef06dc9503066d3446304400c750c22/beyond_ocr_positive_validation_v1)，
 tag `mcif-beyond-ocr-positive-validation-v1`。它含 2 个 visual roles 与 2 个 outcome roles，
 每个 6 items；38 files 回下载、37 manifest-bound files 校验通过。当前仍是 0 human labels，
-等待四个互不重合的真实 annotators。详见
+并已标记为 `DO_NOT_ANNOTATE`，只保留作 provenance。详见
 [`MCIF_BEYOND_OCR_POSITIVE_VALIDATION_V1.md`](MCIF_BEYOND_OCR_POSITIVE_VALIDATION_V1.md)。

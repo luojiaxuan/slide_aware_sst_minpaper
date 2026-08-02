@@ -2,7 +2,7 @@
 
 日期：2026-08-02
 
-状态：`READY_FOR_FOUR_DISJOINT_HUMAN_VALIDATORS_NO_LABELS`
+状态：`DO_NOT_ANNOTATE_PENDING_STRICT_CANDIDATE_RESCREEN`
 
 ## 范围
 
@@ -33,6 +33,11 @@ correctness 与 unsupported content。真实 image/condition mapping 只在 `sco
 任何 disagreement 或 `uncertain` 都进入后续 adjudication，不能按多数票或自动规则抹掉。当前
 24 个 role items 和 24 个 working rows 均为 `pending`，没有 annotator id 或人工判断。
 
+2026-08-02 的 post-hoc candidate audit 发现原 screen 的 full-string exclusion 不足以保证 OCR
+insufficiency：34 条中 10 条的全部 candidate tokens 已分别出现在 OCR 中，21 条 token coverage
+至少为 50%。因此本 packet 只保留为 zero-label provenance，不再请求四位 annotators 开始工作。
+必须先完成 strict beyond-OCR re-screen；不得把当前 6 条当作 gold positives。
+
 ## Source of Truth
 
 - Git：<https://github.com/luojiaxuan/slide_aware_sst_minpaper/tree/941f24807664b9a38122c8fd32e1c5e134ca1fc6>
@@ -50,9 +55,10 @@ visibility 确认为 private。每个 annotator 只能收到自己 role director
 
 ## 下一步
 
-1. 用户提供四个真实且互不重合的 annotator identities；
-2. 为四个 role 分别复制/分发对应目录，记录 identity assignment；
-3. 收回四份完整 working sheets，先冻结 raw labels，再 scorer-side 解盲；
-4. 生成 disagreement queue，交给未参与原始判断的 adjudicator；
-5. 只有 visual evidence、OCR insufficiency 和 candidate-relevant outcome 都通过的样本，才进入
+1. 先按 strict beyond-OCR contract 重筛候选，并完成 OCR-insufficiency prescreen；
+2. 再由用户提供四个真实且互不重合的 annotator identities；
+3. 为四个 role 分别复制/分发对应目录，记录 identity assignment；
+4. 收回四份完整 working sheets，先冻结 raw labels，再 scorer-side 解盲；
+5. 生成 disagreement queue，交给未参与原始判断的 adjudicator；
+6. 只有 visual evidence、OCR insufficiency 和 candidate-relevant outcome 都通过的样本，才进入
    audio-sufficiency 与 stable-commit analysis。
