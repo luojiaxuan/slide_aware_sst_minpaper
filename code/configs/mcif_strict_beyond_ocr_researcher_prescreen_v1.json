@@ -1,0 +1,26 @@
+{
+  "schema_version": "mcif_strict_beyond_ocr_researcher_prescreen_config_v1",
+  "scope": "researcher_prescreen_not_gold",
+  "minimum_lead_sec": 5.0,
+  "minimum_segment_duration_sec": 3.0,
+  "maximum_segment_duration_sec": 24.0,
+  "priority_max_candidates_per_talk": 4,
+  "priority_max_candidates_per_segment": 1,
+  "expected_source_items": 152,
+  "expected_review_items": 116,
+  "expected_priority_items": 70,
+  "strict_evidence_types": [
+    "chart_color_legend_relation",
+    "diagram_arrow_entity_link",
+    "spatial_order_count",
+    "other_semantic_visual"
+  ],
+  "control_evidence_type": "ocr_error_only",
+  "decisions": [
+    "strict_keep",
+    "ocr_control",
+    "reject",
+    "uncertain"
+  ],
+  "interpretation": "Researcher prescreen only. It selects candidates for later independent annotation and cannot create paper-gold labels."
+}

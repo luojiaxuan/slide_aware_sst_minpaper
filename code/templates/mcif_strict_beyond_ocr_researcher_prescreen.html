@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MCIF Strict Beyond-OCR Researcher Prescreen</title>
+  <style>
+    :root{--bg:#f4f5f6;--paper:#fff;--ink:#17202a;--muted:#64707c;--line:#d7dce1;--green:#176b52;--green-soft:#e3f1eb;--amber:#9a5b12;--amber-soft:#fff0d8;--red:#a4382c;--blue:#245b8f}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:0}
+    button,select,textarea{font:inherit;letter-spacing:0}button{height:36px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:0 12px;cursor:pointer;border-radius:4px}button:hover{border-color:#8793a0}button.primary{background:var(--green);border-color:var(--green);color:#fff}button.icon{width:36px;padding:0;font-size:18px}button.danger{color:var(--red)}
+    header{position:sticky;top:0;z-index:10;display:grid;grid-template-columns:minmax(220px,1fr) auto auto;gap:12px;align-items:center;padding:10px 18px;background:#fff;border-bottom:1px solid var(--line)}
+    h1{font-size:16px;margin:0}.summary{display:flex;gap:14px;color:var(--muted);font-variant-numeric:tabular-nums}.toolbar{display:flex;gap:6px;align-items:center}.toolbar select{height:36px;border:1px solid var(--line);background:#fff;padding:0 30px 0 9px;border-radius:4px}
+    main{max-width:1600px;margin:0 auto}.top-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(360px,.75fr);background:#fff;border-bottom:1px solid var(--line)}
+    .slide{min-height:520px;background:#20262c;display:flex;align-items:center;justify-content:center;padding:14px}.slide img{display:block;max-width:100%;max-height:70vh;object-fit:contain}
+    .context{border-left:1px solid var(--line);min-width:0}.candidate{padding:18px;border-bottom:1px solid var(--line)}.eyebrow{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}.candidate h2{font-size:25px;margin:8px 0 10px;overflow-wrap:anywhere}.timing{display:flex;gap:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+    .reference{padding:16px 18px;border-bottom:1px solid var(--line)}.reference h3,.panel h3,.form-band h3{font-size:12px;text-transform:uppercase;color:var(--muted);margin:0 0 8px}.reference p{margin:0;overflow-wrap:anywhere}.reference.zh p{font-size:15px}
+    .evidence{background:#fff;border-bottom:1px solid var(--line)}.tabs{display:flex;border-bottom:1px solid var(--line);padding:0 18px}.tabs button{border:0;border-bottom:3px solid transparent;border-radius:0;background:transparent;height:42px;padding:0 14px}.tabs button.active{border-bottom-color:var(--blue);color:var(--blue);font-weight:600}
+    .panel{display:none;padding:16px 20px;max-height:310px;overflow:auto}.panel.active{display:block}.panel pre{white-space:pre-wrap;word-break:break-word;margin:0;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}.origin,.block{padding:8px 0;border-bottom:1px solid #edf0f2}.origin:last-child,.block:last-child{border-bottom:0}.origin small,.block small{display:block;color:var(--muted);margin-bottom:2px}
+    .form-band{padding:20px;background:#fff}.judgments{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.judgment{border:1px solid var(--line);padding:12px;min-width:0}.judgment>span{display:block;font-weight:600;margin-bottom:9px}.segments{display:grid;grid-template-columns:repeat(3,1fr)}.segments label{position:relative}.segments input{position:absolute;opacity:0}.segments b{display:block;text-align:center;padding:8px 4px;border:1px solid var(--line);border-right:0;font-weight:500;cursor:pointer}.segments label:last-child b{border-right:1px solid var(--line)}.segments input:checked+b{background:var(--green-soft);border-color:var(--green);color:#0f523f}
+    .choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.field{border-top:1px solid var(--line);padding-top:14px}.field>span{display:block;font-weight:600;margin-bottom:8px}.radio-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.radio-list label,.reasons label{display:flex;align-items:center;gap:7px;border:1px solid var(--line);padding:8px;background:#fff;min-width:0}.radio-list input,.reasons input{margin:0}.reasons{display:flex;flex-wrap:wrap;gap:6px}.notes{margin-top:14px}.notes textarea{width:100%;min-height:74px;border:1px solid var(--line);padding:9px;resize:vertical;border-radius:4px}.decision-help{margin-top:8px;color:var(--muted);font-size:12px}
+    .footer{position:sticky;bottom:0;z-index:9;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 18px;background:#fff;border-top:1px solid var(--line)}.status{color:var(--muted);min-width:0;overflow-wrap:anywhere}.status.error{color:var(--red)}.footer-actions{display:flex;gap:6px}
+    dialog{width:min(760px,calc(100vw - 32px));border:1px solid var(--line);padding:0;border-radius:6px;box-shadow:0 18px 50px #0003}dialog::backdrop{background:#1118}.dialog-head{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}.dialog-head h2{font-size:17px;margin:0}.dialog-body{padding:18px;max-height:70vh;overflow:auto}.dialog-body h3{font-size:14px;margin:18px 0 6px}.dialog-body h3:first-child{margin-top:0}.dialog-body p,.dialog-body li{margin:5px 0}.dialog-body code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.file-input{display:none}
+    @media(max-width:920px){header{grid-template-columns:1fr}.summary{grid-row:2;grid-column:1}.toolbar{grid-row:3;grid-column:1;flex-wrap:wrap}.toolbar select{flex:1 1 120px;min-width:0}.top-grid{grid-template-columns:1fr}.slide{min-height:280px}.slide img{max-height:52vh}.context{border-left:0;border-top:1px solid var(--line)}.judgments,.choice-grid{grid-template-columns:1fr}.radio-list{grid-template-columns:1fr}.footer{align-items:flex-start;flex-direction:column}.footer-actions{width:100%}.footer-actions button{flex:1}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MCIF Strict Beyond-OCR Researcher Prescreen</h1>
+    <div class="summary"><span id="progress">0 / 0</span><span id="kept">Strict 0</span><span id="controls">OCR control 0</span></div>
+    <div class="toolbar">
+      <select id="filter" aria-label="筛选队列"><option value="A">A 队列</option><option value="pending">未完成</option><option value="strict_keep">Strict keep</option><option value="all">全部</option><option value="B">B 队列</option></select>
+      <button id="rules" title="审查规则">规则</button>
+      <button id="import" title="导入已有 JSONL">导入</button>
+      <button id="export" title="导出 JSONL">导出 JSONL</button>
+      <input class="file-input" id="file" type="file" accept=".jsonl,.json">
+      <button class="icon" id="prev" title="上一条" aria-label="上一条">←</button>
+      <button class="icon" id="next" title="下一条" aria-label="下一条">→</button>
+    </div>
+  </header>
+  <main>
+    <section class="top-grid">
+      <div class="slide"><img id="slide" alt="当前 slide"></div>
+      <div class="context">
+        <div class="candidate"><div class="eyebrow"><span id="queue"></span><span id="index"></span></div><h2 id="candidate"></h2><div class="timing"><span id="lead"></span><span id="duration"></span><span id="overlap"></span></div></div>
+        <div class="reference"><h3>English source reference</h3><p id="source"></p></div>
+        <div class="reference zh"><h3>Chinese target reference</h3><p id="target"></p></div>
+      </div>
+    </section>
+    <section class="evidence">
+      <div class="tabs"><button class="active" data-tab="ocr">Flat OCR</button><button data-tab="structured">Structured text</button><button data-tab="proposal">机器提议</button></div>
+      <div class="panel active" id="ocr"><pre id="ocr-text"></pre></div>
+      <div class="panel" id="structured"></div>
+      <div class="panel" id="proposal"></div>
+    </section>
+    <section class="form-band">
+      <h3>核心判断</h3>
+      <div class="judgments" id="judgments"></div>
+      <div class="choice-grid">
+        <div class="field"><span>Evidence 类型</span><div class="radio-list" id="types"></div></div>
+        <div class="field"><span>最终处置</span><div class="radio-list" id="decisions"></div><div class="decision-help" id="decision-help"></div></div>
+      </div>
+      <div class="field"><span>拒绝原因</span><div class="reasons" id="reasons"></div></div>
+      <label class="notes">备注<textarea id="notes" placeholder="uncertain 或边界 case 必须说明原因"></textarea></label>
+    </section>
+    <div class="footer"><span class="status" id="status"></span><div class="footer-actions"><button class="danger" id="clear">清空本条</button><button class="primary" id="complete">完成并下一条</button></div></div>
+  </main>
+  <dialog id="rule-dialog"><div class="dialog-head"><h2>审查规则</h2><button class="icon" id="close-rules" title="关闭" aria-label="关闭">×</button></div><div class="dialog-body">
+    <h3>Strict keep</h3><p>必须同时满足：图片本身支持该 speech-relevant evidence；只看 flat OCR 不足；source/target event 可稳定计分；类型属于颜色/图例关系、箭头/实体连接、空间/顺序/计数或其他真正语义视觉信息。</p>
+    <h3>OCR control</h3><p>图片有帮助，但帮助只来自 OCR 漏字、错字或小字识别。它可以保留作控制组，不能当作 <code>vision &gt; OCR</code> 的 semantic evidence。</p>
+    <h3>OCR 是否充分</h3><p>把 OCR 当作无布局、无颜色、无箭头的纯文本。若这些文字已经足以预测或消解 speech 中的相关内容，选“是”。候选词没完整出现不代表 OCR 不充分；候选词出现也不必然代表 OCR 充分，关键看关系信息是否缺失。</p>
+    <h3>Event 是否可计分</h3><p>English source 必须包含明确、非泛化的事件；Chinese reference 必须有可辨认的对应表达。<code>example</code>、<code>content</code>、<code>based</code> 等泛词通常不可稳定计分。</p>
+    <h3>机器提议</h3><p>机器描述只能帮助发现提议错误，不能替代对 pixels 的判断。以 slide 实际内容为准。</p>
+    <h3>输出</h3><p>先完成 A 队列。若 strict keep 少于 30，再继续 B 队列。导出的 JSONL 可以包含 pending rows；后续只消费 completed rows。</p>
+  </div></dialog>
+  <script>const PACKET=__PACKET_JSON__;</script>
+  <script>
+    const STORAGE=`${PACKET.packet_id}:reviews`;const strictTypes=new Set(['chart_color_legend_relation','diagram_arrow_entity_link','spatial_order_count','other_semantic_visual']);
+    const labels={visual_support:'图片支持该 evidence',flat_ocr_sufficient:'Flat OCR 已充分',event_scoreable:'Source/target event 可计分'};
+    const typeLabels={chart_color_legend_relation:'颜色 / 图例 / 曲线关系',diagram_arrow_entity_link:'箭头 / 流程 / 实体连接',spatial_order_count:'空间 / 顺序 / 计数',other_semantic_visual:'其他 semantic visual',ocr_error_only:'仅 OCR 漏识别',text_only:'纯文本，无额外视觉语义',unsupported:'图片不支持',uncertain:'不确定'};
+    const decisionLabels={strict_keep:'Strict keep',ocr_control:'OCR control',reject:'Reject',uncertain:'Uncertain'};
+    const reasonLabels={candidate_not_visual:'图片不支持候选',ocr_already_sufficient:'OCR 已充分',event_not_scoreable:'事件不可稳定计分',generic_or_ambiguous:'候选泛化或歧义',relation_not_speech_relevant:'视觉关系与 speech 无关',machine_proposal_wrong:'机器提议错误',timing_or_alignment:'时序或对齐可疑',other:'其他'};
+    const blank=()=>({annotation_status:'pending',visual_support:null,flat_ocr_sufficient:null,event_scoreable:null,evidence_type:null,decision:null,reason_codes:[],note:'',reviewed_at_utc:null});
+    let reviews={};try{reviews=JSON.parse(localStorage.getItem(STORAGE)||'{}')}catch{reviews={}};let visible=[];let position=0;
+    const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const current=()=>PACKET.items.find(x=>x.candidate_id===visible[position]);const review=id=>({...blank(),...(reviews[id]||{})});
+    function persist(){localStorage.setItem(STORAGE,JSON.stringify(reviews))}
+    function filtered(){const f=document.getElementById('filter').value;return PACKET.items.filter(x=>{const r=review(x.candidate_id);if(f==='all')return true;if(f==='pending')return r.annotation_status!=='completed';if(f==='strict_keep')return r.decision==='strict_keep';return x.queue===f})}
+    function refreshVisible(keepId){visible=filtered().map(x=>x.candidate_id);if(!visible.length){position=0;renderEmpty();return}const i=keepId?visible.indexOf(keepId):-1;position=i>=0?i:Math.min(position,visible.length-1);render()}
+    function counts(){const rows=PACKET.items.map(x=>review(x.candidate_id));return{done:rows.filter(x=>x.annotation_status==='completed').length,strict:rows.filter(x=>x.decision==='strict_keep').length,controls:rows.filter(x=>x.decision==='ocr_control').length}}
+    function judgment(key,value){return `<div class="judgment"><span>${labels[key]}</span><div class="segments">${['yes','no','uncertain'].map(v=>`<label><input type="radio" name="${key}" value="${v}" ${value===v?'checked':''}><b>${v==='yes'?'是':v==='no'?'否':'不确定'}</b></label>`).join('')}</div></div>`}
+    function radioList(name,values,selected,labelMap){return values.map(v=>`<label><input type="radio" name="${name}" value="${v}" ${selected===v?'checked':''}><span>${esc(labelMap[v])}</span></label>`).join('')}
+    function render(){const x=current();if(!x){renderEmpty();return}const r=review(x.candidate_id);const c=counts();document.getElementById('progress').textContent=`已完成 ${c.done} / ${PACKET.item_count}`;document.getElementById('kept').textContent=`Strict ${c.strict}`;document.getElementById('controls').textContent=`OCR control ${c.controls}`;document.getElementById('queue').textContent=`${x.queue} 队列 · ${x.candidate_id}`;document.getElementById('index').textContent=`${position+1} / ${visible.length}`;document.getElementById('candidate').textContent=x.candidate_source_en;document.getElementById('lead').textContent=`lead ${Number(x.lead_lower_bound_sec).toFixed(1)}s`;document.getElementById('duration').textContent=`segment ${Number(x.segment_duration_sec).toFixed(1)}s`;document.getElementById('overlap').textContent=`OCR token ${Math.round(x.candidate_ocr_token_overlap.coverage*100)}%`;document.getElementById('source').textContent=x.source_reference_en;document.getElementById('target').textContent=x.target_reference_zh;document.getElementById('slide').src=x.slide.path;document.getElementById('ocr-text').textContent=x.flat_ocr_text||'[empty]';document.getElementById('structured').innerHTML=x.structured_text_blocks.map(b=>`<div class="block"><small>${esc(b.content_kind)} · ${esc(b.label)}</small>${esc(b.content)}</div>`).join('')||'[empty]';document.getElementById('proposal').innerHTML=x.machine_proposed_evidence.map(o=>`<div class="origin"><small>${esc(o.descriptor_field)}</small>${esc(o.descriptor_text)}</div>`).join('')||'[empty]';document.getElementById('judgments').innerHTML=['visual_support','flat_ocr_sufficient','event_scoreable'].map(k=>judgment(k,r[k])).join('');document.getElementById('types').innerHTML=radioList('evidence_type',Object.keys(typeLabels),r.evidence_type,typeLabels);document.getElementById('decisions').innerHTML=radioList('decision',Object.keys(decisionLabels),r.decision,decisionLabels);document.getElementById('reasons').innerHTML=Object.keys(reasonLabels).map(v=>`<label><input type="checkbox" name="reason" value="${v}" ${(r.reason_codes||[]).includes(v)?'checked':''}>${esc(reasonLabels[v])}</label>`).join('');document.getElementById('notes').value=r.note||'';document.getElementById('status').textContent=`${r.annotation_status==='completed'?'已完成':'待审'} · 自动保存在此浏览器`;document.getElementById('status').className='status';bindChanges()}
+    function renderEmpty(){document.getElementById('status').textContent='当前筛选没有条目';document.getElementById('candidate').textContent='';document.getElementById('slide').removeAttribute('src')}
+    const value=name=>document.querySelector(`input[name="${name}"]:checked`)?.value||null;const reasons=()=>[...document.querySelectorAll('input[name="reason"]:checked')].map(x=>x.value);
+    function collect(){const x=current();if(!x)return null;return{...review(x.candidate_id),visual_support:value('visual_support'),flat_ocr_sufficient:value('flat_ocr_sufficient'),event_scoreable:value('event_scoreable'),evidence_type:value('evidence_type'),decision:value('decision'),reason_codes:reasons(),note:document.getElementById('notes').value.trim()}}
+    function autoSave(){const x=current();if(!x)return;reviews[x.candidate_id]=collect();persist();const c=counts();document.getElementById('kept').textContent=`Strict ${c.strict}`;document.getElementById('controls').textContent=`OCR control ${c.controls}`}
+    function bindChanges(){document.querySelectorAll('input').forEach(el=>el.onchange=autoSave);document.getElementById('notes').oninput=autoSave}
+    function validate(r){if(!r.visual_support||!r.flat_ocr_sufficient||!r.event_scoreable||!r.evidence_type||!r.decision)return'请完成三个核心判断、Evidence 类型和最终处置';if(r.decision==='strict_keep'&&!(r.visual_support==='yes'&&r.flat_ocr_sufficient==='no'&&r.event_scoreable==='yes'&&strictTypes.has(r.evidence_type)))return'Strict keep 必须满足图片支持、OCR 不充分、event 可计分且属于 semantic visual 类型';if(r.decision==='ocr_control'&&!(r.visual_support==='yes'&&r.flat_ocr_sufficient==='no'&&r.event_scoreable==='yes'&&r.evidence_type==='ocr_error_only'))return'OCR control 必须是图片支持、OCR 不充分、event 可计分且类型为仅 OCR 漏识别';if(r.decision==='reject'&&!r.reason_codes.length)return'Reject 至少选择一个原因';if(r.decision==='uncertain'&&!r.note)return'Uncertain 必须填写备注';return null}
+    function complete(){const x=current();if(!x)return;const r=collect();const error=validate(r);if(error){const s=document.getElementById('status');s.textContent=error;s.className='status error';return}reviews[x.candidate_id]={...r,annotation_status:'completed',reviewed_at_utc:new Date().toISOString()};persist();const old=x.candidate_id;refreshVisible(old);if(visible.length&&current()?.candidate_id===old)position=Math.min(position+1,visible.length-1);render()}
+    function clearCurrent(){const x=current();if(!x)return;reviews[x.candidate_id]=blank();persist();render()}
+    function exportRows(){autoSave();const rows=PACKET.items.map(x=>({schema_version:'mcif_strict_beyond_ocr_researcher_review_v1',packet_id:PACKET.packet_id,packet_items_sha256:PACKET.items_sha256,candidate_id:x.candidate_id,input_row_sha256:x.row_sha256,...review(x.candidate_id)}));const body=rows.map(x=>JSON.stringify(x)).join('\n')+'\n';const blob=new Blob([body],{type:'application/x-ndjson'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${PACKET.packet_id}-output.jsonl`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+    async function importRows(file){const lines=(await file.text()).split(/\n/).filter(Boolean).map(JSON.parse);for(const row of lines){if(row.packet_id!==PACKET.packet_id||row.packet_items_sha256!==PACKET.items_sha256)throw Error('导入文件不属于当前 packet');const item=PACKET.items.find(x=>x.candidate_id===row.candidate_id);if(!item||item.row_sha256!==row.input_row_sha256)throw Error(`导入 row 不匹配: ${row.candidate_id}`);reviews[row.candidate_id]={annotation_status:row.annotation_status,visual_support:row.visual_support,flat_ocr_sufficient:row.flat_ocr_sufficient,event_scoreable:row.event_scoreable,evidence_type:row.evidence_type,decision:row.decision,reason_codes:row.reason_codes||[],note:row.note||'',reviewed_at_utc:row.reviewed_at_utc}}persist();refreshVisible();}
+    document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active')});document.getElementById('filter').onchange=()=>refreshVisible();document.getElementById('prev').onclick=()=>{position=Math.max(0,position-1);render()};document.getElementById('next').onclick=()=>{position=Math.min(visible.length-1,position+1);render()};document.getElementById('complete').onclick=complete;document.getElementById('clear').onclick=clearCurrent;document.getElementById('export').onclick=exportRows;document.getElementById('import').onclick=()=>document.getElementById('file').click();document.getElementById('file').onchange=e=>importRows(e.target.files[0]).catch(err=>{const s=document.getElementById('status');s.textContent=err.message;s.className='status error'});document.getElementById('rules').onclick=()=>document.getElementById('rule-dialog').showModal();document.getElementById('close-rules').onclick=()=>document.getElementById('rule-dialog').close();
+    refreshVisible();
+  </script>
+</body>
+</html>
