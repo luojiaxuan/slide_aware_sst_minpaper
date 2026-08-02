@@ -160,5 +160,7 @@ def test_analyzer_end_to_end_applies_positive_gate(tmp_path):
     )
     assert summary["result_count"] == 8
     assert summary["positive_candidate_acoustic_pairs"] == 2
+    assert summary["unique_positive_candidates"] == 1
     assert summary["positive_in_both_acoustic_conditions"] == 1
+    assert summary["positive_in_exactly_one_acoustic_condition"] == 0
     assert len((output / "positive_candidates.jsonl").read_text().splitlines()) == 2

@@ -1,0 +1,43 @@
+{
+  "schema_version": "mcif_beyond_ocr_exploratory_git_summary_v1",
+  "scope": "exploratory_screen_not_paper_gold",
+  "git_commit": "c098d9f64b9d162991b3bcc1182cf78cc67bb2dd",
+  "config_sha256": "863e6af816e9f6a51f149a03b3a6677ce8bfa8e6530cf9c15cff1f63641390af",
+  "model": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+  "model_revision": "26291f793822fb6be9555850f06dfe95f2d7e695",
+  "candidate_count": 34,
+  "talk_count": 16,
+  "result_count": 272,
+  "conditions": {
+    "clean": {
+      "mean_prefix_auc_sentence_chrf": {
+        "audio_only": 22.588561194793183,
+        "ocr": 27.140341499735662,
+        "raw_image": 26.70134264941918,
+        "wrong_image": 24.25759484487445
+      },
+      "talk_macro_raw_minus_ocr": -0.9023657399868927,
+      "talk_macro_raw_minus_ocr_ci95": [-2.4753619404701603, 0.3237883100156849],
+      "talk_macro_raw_minus_wrong": 2.1405765377959964,
+      "talk_macro_raw_minus_wrong_ci95": [1.0257523025557684, 3.280591038220513],
+      "positive_candidate_count": 9
+    },
+    "babble_p5_s0": {
+      "mean_prefix_auc_sentence_chrf": {
+        "audio_only": 7.749426742919879,
+        "ocr": 11.180202072978647,
+        "raw_image": 11.562750365893638,
+        "wrong_image": 6.080803911196121
+      },
+      "talk_macro_raw_minus_ocr": -0.17285007860516788,
+      "talk_macro_raw_minus_ocr_ci95": [-4.618951455085612, 3.45410758268667],
+      "talk_macro_raw_minus_wrong": 4.746638646118598,
+      "talk_macro_raw_minus_wrong_ci95": [2.2753228539444255, 7.43279819202053],
+      "positive_candidate_count": 17
+    }
+  },
+  "unique_positive_candidates": 20,
+  "positive_in_both_acoustic_conditions": 6,
+  "conclusion": "Raw image is content-sensitive relative to matched wrong image, but aggregate raw image does not beat OCR. Formal human validation is warranted only for positive samples, beginning with six candidates positive under both clean and noisy audio.",
+  "artifact_status": "PENDING_PRIVATE_HF_UPLOAD"
+}

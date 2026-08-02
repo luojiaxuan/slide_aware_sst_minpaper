@@ -215,6 +215,9 @@ def analyze(args: argparse.Namespace) -> dict:
     positive_by_screen = Counter(
         row["screen_id"] for row in positive_rows
     )
+    positive_in_both = sum(
+        count == len(acoustic_conditions) for count in positive_by_screen.values()
+    )
     summary = {
         "schema_version": "mcif_beyond_ocr_exploratory_analysis_v1",
         "scope": config["scope"],
@@ -224,8 +227,10 @@ def analyze(args: argparse.Namespace) -> dict:
         "conditions": condition_summary,
         "talk_cluster_bootstrap": bootstraps,
         "positive_candidate_acoustic_pairs": len(positive_rows),
-        "positive_in_both_acoustic_conditions": sum(
-            count == len(acoustic_conditions) for count in positive_by_screen.values()
+        "unique_positive_candidates": len(positive_by_screen),
+        "positive_in_both_acoustic_conditions": positive_in_both,
+        "positive_in_exactly_one_acoustic_condition": (
+            len(positive_by_screen) - positive_in_both
         ),
         "decision_rule": config["decision_rule"],
         "selection_sha256": sha256_file(args.selection),

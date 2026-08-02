@@ -114,9 +114,12 @@
 > 为避免在尚不知道 signal 是否存在时先投入六角色正式 annotation，当前先执行一个明确标为
 > exploratory 的 34-candidate screen：`audio-only / OCR / raw image / matched wrong image x
 > clean / +5 dB babble`。34 条覆盖 16 talks、34 个不同 segments；68 个 reference-free
-> inference inputs 已完成构建与逐文件哈希验证，272-row Qwen3-Omni matrix 尚未启动。只有
-> `raw_image` 的 prefix-AUC chrF 同时严格高于 `ocr` 和 `wrong_image` 的 positive samples 才进入
-> 正式人工验证。见
+> inference inputs 已完成构建与逐文件哈希验证，272-row Qwen3-Omni matrix 也已完成。
+> aggregate 上 raw image 相对 matched wrong image 的 talk-macro AUC 差值在 clean/noisy 分别为
+> `+2.141 [1.026,3.281]` / `+4.747 [2.275,7.433]`，但相对 OCR 为
+> `-0.902 [-2.475,0.324]` / `-0.173 [-4.619,3.454]`，所以不能宣称整体
+> `vision > OCR`。样本级有 20/34 unique positives，其中 6 条 clean/noisy 都通过；下一步只对
+> 这些 positives 做正式人工验证。见
 > [docs/MCIF_BEYOND_OCR_EXPLORATORY_SCREEN_V1.md](docs/MCIF_BEYOND_OCR_EXPLORATORY_SCREEN_V1.md)。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
@@ -243,14 +246,13 @@ current benchmark contract.
 
 ## Next execution milestone
 
-1. Run the frozen 34-candidate MCIF exploratory screen on the exact Git commit:
-   `audio-only / OCR / raw image / matched wrong image x clean / +5 dB babble`,
-   producing 272 unique Qwen3-Omni rows. Keep `scorer_private` off the GPU host
-   and join references only during local analysis.
-2. If and only if raw image beats both OCR and wrong image on candidate-level
-   prefix-AUC chrF, build formal human validation for those positive samples.
-   The existing six-role reliability-v2 system remains the downstream formal
-   path; no human label is complete yet.
+1. Build formal human validation for the 20 sample-level MCIF positives,
+   starting with the six candidates positive under both clean and +5 dB
+   babble. Validate visual correctness, OCR insufficiency and candidate-relevant
+   translation advance; no human label is complete yet.
+2. Only validated positives may enter audio-sufficiency and stable-commit
+   analysis. Aggregate raw image did not beat OCR, so do not promote this screen
+   into a global `vision > OCR` claim.
 3. The 304-state visual-token inventory, deterministic stale/wrong candidates,
    and 101 transformed wrong-image bytes are frozen. Next freeze target events
    and scoring, then join each event to immutable state-level media inside

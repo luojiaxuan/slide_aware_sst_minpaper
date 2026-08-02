@@ -2,7 +2,7 @@
 
 日期：2026-08-02
 
-状态：`INPUT_BUNDLE_READY_INFERENCE_NOT_STARTED`
+状态：`SCREEN_COMPLETE_FORMAL_VALIDATION_PENDING`
 
 ## 目标
 
@@ -91,14 +91,65 @@ Chinese target reference 未出现在 serialized inference rows 中。
 | complete build | `/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/outcomes/mcif_beyond_ocr_exploratory_screen_v1_863e6af8_b2` | `PENDING_HF_UPLOAD` |
 | inference-only bundle | `.../inference_bundle` | 68 rows；39 MB；可传 GPU worker |
 | scorer-only mapping | `.../scorer_private` | 34 rows；不得传 GPU worker |
+| complete r5 run | `.../results/mcif_beyond_ocr_exploratory_v1_c098d9f_2gpu_r5_bs16_20260802_033300` | 272/272 rows；analysis complete |
 
 `SHA256SUMS` 已对 140 个文件全量验证。HF upload 等 inference/analysis 完成后作为一个完整、
 可复用 private revision 执行；上传前 Git 只记录本地 staging 状态，不宣称已有远端 revision。
 
+## 运行结果
+
+正式结果只来自 Hyper00 r5：Git `c098d9f64b9d162991b3bcc1182cf78cc67bb2dd`、GPU
+2/5、每卡一个 worker、两个 shards、`batch_items=16`。两个 shard 各 136 rows，合计
+272/272 unique results；model revision 唯一且正确，两个 worker 均以 0 退出。完整 aggregate
+summary 位于 `data/mcif_beyond_ocr_exploratory_screen_v1_summary.json`。
+
+| acoustic | audio-only AUC | OCR AUC | raw-image AUC | wrong-image AUC | positive |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| clean | 22.589 | 27.140 | 26.701 | 24.258 | 9/34 |
+| +5 dB babble | 7.749 | 11.180 | 11.563 | 6.081 | 17/34 |
+
+按 16 talks 做 cluster bootstrap：
+
+- clean `raw - OCR = -0.902`，95% CI `[-2.475, 0.324]`；
+- noisy `raw - OCR = -0.173`，95% CI `[-4.619, 3.454]`；
+- clean `raw - wrong = +2.141`，95% CI `[1.026, 3.281]`；
+- noisy `raw - wrong = +4.747`，95% CI `[2.275, 7.433]`。
+
+因此当前正确结论是：**raw image 相对 matched wrong image 有 content-sensitive signal，但 raw
+image 整体没有打败 OCR。** 不能写成 `vision > OCR` aggregate result。样本级 gate 共得到
+26 个 `candidate x acoustic` positives，覆盖 20/34 unique candidates；其中 6 条在 clean/noisy
+都通过，优先进入正式人工验证：
+
+| candidate | clean raw-OCR / raw-wrong | noisy raw-OCR / raw-wrong |
+| --- | ---: | ---: |
+| `Mila and Microsoft Research` | +8.708 / +11.352 | +30.872 / +36.761 |
+| `bounding box` | +7.709 / +8.772 | +19.358 / +25.260 |
+| `three speech bubbles` | +6.978 / +12.486 | +1.124 / +1.087 |
+| `performance drop is` | +1.956 / +3.280 | +1.021 / +1.167 |
+| `blue and orange lines` | +0.879 / +0.346 | +1.934 / +5.651 |
+| `belief and action` | +5.240 / +5.318 | +0.075 / +13.658 |
+
+最后四条 margin 较小，尤其 `belief and action` 的 noisy `raw-OCR=+0.075`，人工验证必须检查
+是否真是 candidate-relevant advance，而不是一般生成波动。
+
+## GPU 运行诊断
+
+- 初次启动因 container 缺少 `accelerate` 在 0 rows 失败；补装 `accelerate==1.14.0` 后恢复；
+- `batch_items=32` 使利用率降到约 40%，已停止并保留独立 FAILED run；
+- 每卡两个 model workers 在 OCR 阶段把 H200 推到约 140.4 GiB，进入 image 条件前停止；
+- 安全 r5 的两卡 10 秒 mean utilization 约 80--83%，低于 90% 目标；瓶颈是每个 prefix
+  重复 multimodal preprocessing。失败 run 遗留的 processor children 已定向清理；r5 没有
+  traceback/OOM/IPC error。
+
+这个规模上继续重启会增加总 GPU 消耗，所以 r5 完成后停止扩卡。任何更大规模 run 前必须先
+实现 image/audio prefix feature cache 或更深的 preprocessing queue，并重新量测吞吐和利用率。
+
 ## 下一步
 
-1. 从包含本 contract 的精确 Git commit 在 Hyper00 canonical container 启动 2-GPU、2-shard run；
-2. 验证 272/272 unique rows、四条件、两种 acoustic conditions 和 immutable model revision；
-3. 在本地 scorer 侧运行 analyzer，列出 clean/noisy positives；
-4. 仅当存在 positive samples 时，才为这些样本构建正式人工 visual/OCR/target validation；
-5. 把结果、失败模式与 reusable artifacts 同步到 Git 和 private Hugging Face immutable revision。
+1. 为 20 条 unique positives 构建正式人工 visual/OCR/target validation，优先完成 6 条
+   clean/noisy robust positives；
+2. 人工确认 pixels 包含正确证据、flat OCR 确实不足、raw-image advance 与 candidate 相关，
+   并排除 hallucination 或一般 decoding variation；
+3. 只有通过人工验证的样本才进入后续 audio-sufficiency/commit-time analysis；
+4. 把 reusable inputs/results/scorer artifacts 上传到 private Hugging Face immutable revision，
+   全量回下载验字节后替换当前 `PENDING_HF_UPLOAD`。
