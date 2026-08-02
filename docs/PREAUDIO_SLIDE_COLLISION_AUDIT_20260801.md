@@ -29,6 +29,32 @@ causal measurement 和 solid result 支撑，不能只做普通 slide-aware Simu
 `problem + key insight + application` 三个 native axes 上重合；原始命题没有指定新机制，
 不能把 ambiguity 当作 mechanism difference。审计结论是 **Level 2 - High Overlap**。
 
+## 最新全文核验
+
+本轮 reliability follow-up 重新核对了五篇最容易误判边界的全文，结论没有放宽，补充如下：
+
+- [Towards Multimodal Simultaneous Neural Machine Translation](https://aclanthology.org/2020.wmt-1.70/)
+  在 Multi30K/F30kEnt-JP 的 text SiMT 中已经统计 source token 尚未出现时被正确翻译的
+  entity；最终论文同时致谢 Caglayan 指出了早期实现中的 critical bugs。因此它能证明
+  “视觉 anticipation 已有先例”，但不应把其早期数值当作可靠效果上界；
+- [Do Slides Help?](https://aclanthology.org/2025.emnlp-main.814/) 的真实 ACL
+  evaluation 使用 segment midpoint frame，但大规模 MuST-C training visual 是
+  transcript chunks 经 Llama 3 生成 LaTeX、编译 PDF 再渲染的 synthetic slide。它是必须
+  正面对比的 image/OCR baseline precedent，不是 continuous SimulST 的 causal evidence；
+- [Test-Time Adaptation of an Offline Multimodal Foundation Model for Simultaneous Speech Translation](https://aclanthology.org/2026.iwslt-1.27/)
+  名称中的 `multimodal` 指 Qwen3-Omni 基座；其每轮实际输入只有 pause-based audio chunk，
+  没有 image/slide，因此属于当前 architecture 邻域，不占据 visual-evidence claim；
+- Caglayan et al. 2020 再次确认 image 在整个 source stream 之前可见，并以 anticipation
+  解释低 wait-k 收益。这意味着“pre-available vision 带来更早 target”本身也不能作为
+  speech/slide paper 的唯一 novelty；
+- OmniFusion 仍是最直接碰撞，但其 aggregate quality-latency 与 earlier/stable commitment
+  不能替代 event correctness、audio-sufficiency boundary、matched wrong/stale/empty、
+  inference-time OCR ladder 和 controlled SNR interaction。
+
+所以，当前可守住的 claim 不是“流式系统第一次利用提前出现的 slide”，而是对
+**何时、由什么 slide content、在何种 acoustic evidence 下推进 first-stable-correct target**
+进行可归因测量。这个 claim 仍然依赖后续 solid result，现阶段只是冻结的实验命题。
+
 ## 仍然存在的 paper 空间
 
 OmniFusion 只给 aggregate quality-latency curves。它没有回答以下因果问题：
@@ -102,6 +128,9 @@ point-estimate screen，不得写成正式 non-inferiority test。
 
 - immutable idea lock SHA256：
   `4c176a7bd3c41dd5846356a74fb020db945e5eb19db00fb449c4220a13f7f66f`；
+- reliability follow-up 审计：
+  `/Users/luojiaxuan/Documents/ResearchStudio/ResearchStudio-Idea/runs/slide-aware-sst-20260801-reliability-audit`，
+  lock SHA256 `45c1b2643050976b42066f4a5e2ce304f8a7d65b564d015ae191d1465ef9ab28`；
 - 审计使用已保存的 full primary PDFs/text，并增量检索 2018--2026 official paper records；
 - OpenAlex 返回 HTTP 504，Semantic Scholar/DBLP rate-limited，OpenReview Python connector
   不可用；这些是 coverage limitations，不作为“没有相关工作”的证据；

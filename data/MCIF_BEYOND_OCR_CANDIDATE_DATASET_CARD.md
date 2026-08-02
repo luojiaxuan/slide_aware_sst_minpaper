@@ -82,11 +82,14 @@ workspace 与独立 rebuild byte-identical，private HF 全量回下载逐字节
 `0/152` human labels。详细 manifest：
 [`manifests/mcif_beyond_ocr_validation_workspace_v1_20260801.json`](manifests/mcif_beyond_ocr_validation_workspace_v1_20260801.json)。
 
-上述 v1 instrument 已在 0 labels 时 superseded，不能产生 paper gold。Replacement v2 冻结在
-private HF revision
+上述 v1 instrument 已在 0 labels 时 superseded，不能产生 paper gold。早期 replacement v2
+workspace 冻结在 historical private HF revision
 [`eb194d83/beyond_ocr_reliability_workspace_v2`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/eb194d83c941838db2b096fe52c5e455c5b304bb/beyond_ocr_reliability_workspace_v2)，
 tag `mcif-beyond-ocr-reliability-workspace-v2`。V2 使用 full-overlap visual A/B、R0→R1→pixels→
 descriptor 物理顺序释放、target author→independent validator 两阶段、HMAC append-only events、
-pre-adjudication AC1/kappa/talk-cluster gate 与 role-specific adjudication。当前仍为 0 labels，且
-annotation server/UI 未完成，不得开标。详见
-[`../docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md`](../docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md)。
+pre-adjudication AC1/kappa/talk-cluster gate 与 role-specific adjudication。该 revision 仍为 0
+labels，但因缺少 signed run contract、role capabilities 和 external event-head ledger 已废止。
+Hardened protocol 位于 Git `8a263a6c`；server/UI/security review 完成，正式 workspace 等待六个
+真实 disjoint identities/tokens 后重新构建。详见
+[`../docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md`](../docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md) 和
+[`../docs/MCIF_BEYOND_OCR_SECURITY_REVIEW_20260801.md`](../docs/MCIF_BEYOND_OCR_SECURITY_REVIEW_20260801.md)。

@@ -1448,3 +1448,30 @@ or a stronger Qwen3-VL variant if available.
 - 当前下一 gate 是实现 token-protected localhost server/UI，并用真实 1920×1080 media 做
   desktop/mobile projection、并发/stale request 和 no-future-field E2E。完成前不得开始 production
   annotation；human instrument gate 前不得生成 audio tasks、event packets 或 MCIF inference。
+
+## 2026-08-01 MCIF Beyond-OCR Reliability V2 Security Closure
+
+- 三轮交叉 review 补齐 exact config/registry/private-bundle binding、nested evidence/media schema、
+  signed release/adjudication binding，以及 descriptor fidelity gate。第二轮进一步发现并关闭两个
+  material blockers：unauthenticated role-session issuance (`P0`) 和恢复旧合法 event prefix (`P1`)。
+- 当前 Git implementation 为 `8a263a6c04794be330496bcf0752f11dbfa4a008`，config SHA256
+  `e3978733f1f1e0520b54185880a6246d5d85dbe2463988dae097023a23d98d7b`。Builder 强制生成
+  HMAC-signed run contract，绑定 exact source/config/registry/private hashes、builder commit、六个
+  role token hashes、expected items 和 required roles。
+- Localhost server 改为 per-role 256-bit capability login；anonymous GET 不签发 cookie，API/JS/save
+  都要求 session，login/save 验证 localhost Origin 和严格 content type。每个 event log 另配
+  scorer-private append-only HMAC head ledger；合法旧 prefix rollback 与 event/ledger crash mismatch
+  都 fail closed。
+- Targeted tests `34 passed`，全套 `397 passed`；ruff、format、py_compile、diff checks 通过。
+  Desktop `1280x720` / mobile `390x844` E2E 无 horizontal overflow；draft reload、completed
+  immutability、anonymous rejection 均验证。最终独立复审在明确 scorer-private threat boundary 下
+  为 `NO BLOCKER`。完整记录见 `docs/MCIF_BEYOND_OCR_SECURITY_REVIEW_20260801.md`。
+- Historical private HF revision
+  [`eb194d83/beyond_ocr_reliability_workspace_v2`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/eb194d83c941838db2b096fe52c5e455c5b304bb/beyond_ocr_reliability_workspace_v2)
+  虽已 106-file byte-verified，但早于 signed contract/capabilities/ledger，因此在 0 labels 时改为
+  `SUPERSEDED_BEFORE_LABELS_UNAUTHENTICATED_UNSIGNED_CONTRACT`。不修改或删除该 immutable revision，
+  只保留 provenance，禁止继续标注。
+- 下一可执行 gate 是收集六个真实且互不重合的 role identities，为每个角色生成独立 scorer-private
+  token，重建 signed production workspace，上传新的 immutable private HF revision 并验证 bytes。
+  当前状态 `WAITING_FOR_PRIVATE_IDENTITY_AND_ACCESS_TOKEN_REGISTRY`；在此之前不生成 audio task、
+  event packet、MCIF inference input 或 `pixels > OCR` 结果。

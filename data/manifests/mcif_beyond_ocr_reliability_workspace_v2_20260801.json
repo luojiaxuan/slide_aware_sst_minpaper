@@ -1,6 +1,6 @@
 {
   "artifact": "mcif_beyond_ocr_reliability_workspace_v2",
-  "status": "INITIAL_R0_AND_TARGET_STAGE1_RELEASES_READY_NO_HUMAN_LABELS",
+  "status": "SUPERSEDED_BEFORE_LABELS_UNAUTHENTICATED_UNSIGNED_CONTRACT",
   "local_path": "/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/annotation/mcif_beyond_ocr_reliability_workspace_v2",
   "git": {
     "repository": "https://github.com/luojiaxuan/slide_aware_sst_minpaper",
@@ -8,6 +8,15 @@
     "metrics_commit": "6e04e25a415a8dc6d664f249af82f73dbb8c6a7e",
     "config_path": "code/configs/mcif_beyond_ocr_reliability_v2.json",
     "config_sha256": "5886b1a45364ba7f9c577148f8eaca97e5cfcc2343342fbb1f24dbe468f7cd75"
+  },
+  "supersession": {
+    "date": "2026-08-01",
+    "human_labels": 0,
+    "reason": "This historical workspace predates the signed config/registry/private-bundle run contract, per-role capability authentication, and external event-head ledger.",
+    "replacement_git_commit": "8a263a6c04794be330496bcf0752f11dbfa4a008",
+    "replacement_config_sha256": "e3978733f1f1e0520b54185880a6246d5d85dbe2463988dae097023a23d98d7b",
+    "replacement_artifact_status": "WAITING_FOR_PRIVATE_IDENTITY_AND_ACCESS_TOKEN_REGISTRY",
+    "historical_hf_revision_mutated": false
   },
   "hugging_face": {
     "repo_id": "gavinlaw/slide-aware-sst-mcif-outcomes",

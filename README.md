@@ -99,14 +99,18 @@
 > 与 calibration，不能产生 paper gold。Replacement 是 visual A/B sequential locks、target
 > author + bilingual validator、append-only adjudication 和 talk-cluster reliability gate。见
 > [docs/MCIF_BEYOND_OCR_RELIABILITY_AUDIT_20260801.md](docs/MCIF_BEYOND_OCR_RELIABILITY_AUDIT_20260801.md)。
-> Replacement v2 core 已落地于 Git `2aa9b6a`：full-overlap visual A/B 只有 R0 被初始释放，
-> R1→pixels→descriptor 必须逐阶段验证两侧完整 HMAC freezes；target validator stage 1 在 freeze
-> 前拿不到 author text；raw agreement gate 先于 adjudication。真实 152-item zero-label workspace
-> 已冻结在 private HF revision
+> Replacement v2 已进一步完成 security closure，当前实现位于 Git `8a263a6c`，config SHA256
+> `e3978733...98d7b`。除 full-overlap visual A/B、顺序 release、target independent validation 和
+> raw reliability gate 外，现在还强制 signed run contract、六角色 capability authentication 与
+> scorer-private external event-head ledger。此前 152-item zero-label workspace 位于 historical
+> private HF revision
 > [`eb194d83`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/eb194d83c941838db2b096fe52c5e455c5b304bb/beyond_ocr_reliability_workspace_v2)，
-> tag `mcif-beyond-ocr-reliability-workspace-v2`，106 files 全量回下载逐字节验证。当前 UI/server
-> 尚未完成，不得开始 production annotation。见
-> [docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md](docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md)。
+> tag `mcif-beyond-ocr-reliability-workspace-v2`；它早于这些 controls，已在 **0 labels** 时标记为
+> `SUPERSEDED_BEFORE_LABELS_UNAUTHENTICATED_UNSIGNED_CONTRACT`，只保留 provenance。Server/UI、
+> attack tests、desktop/mobile E2E 与独立复审均已完成；新的 production artifact 尚未构建，
+> 等待六个真实 disjoint identities 和 scorer-private token manifest。见
+> [docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md](docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md) 与
+> [docs/MCIF_BEYOND_OCR_SECURITY_REVIEW_20260801.md](docs/MCIF_BEYOND_OCR_SECURITY_REVIEW_20260801.md)。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28
