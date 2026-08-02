@@ -1,5 +1,6 @@
-from types import SimpleNamespace
+import json
 from threading import Event
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -59,6 +60,12 @@ def test_stream_many_refills_dynamic_batch(monkeypatch):
     assert by_id["b"]["hypothesis"] == "b b b"
     assert by_id["c"]["hypothesis"] == "c"
     assert all(record["batch_items"] == 2 for record in by_id.values())
+    assert len(by_id["b"]["prefix_hypotheses"]) == 3
+    assert by_id["b"]["prefix_hypotheses"][-1] == {
+        "step": 3,
+        "audio_time_sec": 3.0,
+        "hypothesis": "b b b",
+    }
 
 
 def test_prepare_stream_state_requires_condition_image(monkeypatch):
@@ -71,6 +78,62 @@ def test_prepare_stream_state_requires_condition_image(monkeypatch):
         probe.prepare_stream_state(0, {"id": "a", "audio": "a.wav"}, "slide", args())
     with pytest.raises(ValueError, match="Unknown condition"):
         probe.prepare_stream_state(0, {"id": "a", "audio": "a.wav"}, "future", args())
+    with pytest.raises(ValueError, match="Missing OCR text"):
+        probe.prepare_stream_state(0, {"id": "a", "audio": "a.wav"}, "ocr", args())
+
+
+def test_new_condition_aliases_and_ocr_prompt(monkeypatch):
+    monkeypatch.setattr(
+        probe,
+        "read_audio",
+        lambda path: (np.ones(2, dtype=np.float32), 1),
+    )
+    item = {
+        "id": "a",
+        "audio": "a.wav",
+        "slide_image": "correct.png",
+        "wrong_image": "wrong.png",
+        "ocr_text": "R1 metric",
+    }
+    assert probe.prepare_stream_state(0, item, "audio_only", args()).image is None
+    assert probe.prepare_stream_state(0, item, "raw_image", args()).image == "correct.png"
+    assert probe.prepare_stream_state(0, item, "wrong_image", args()).image == "wrong.png"
+    state = probe.prepare_stream_state(0, item, "ocr", args())
+
+    class Processor:
+        def apply_chat_template(self, messages, **kwargs):
+            return messages
+
+    messages = probe.build_prompt(
+        np.ones(1), None, state.item, "Chinese", Processor()
+    )
+    text_parts = [
+        part["text"]
+        for part in messages[0]["content"]
+        if part["type"] == "text"
+    ]
+    assert any("R1 metric" in text for text in text_parts)
+    assert all(part["type"] != "image" for part in messages[0]["content"])
+
+
+def test_load_items_resolves_media_relative_to_manifest(tmp_path):
+    manifest = tmp_path / "bundle" / "items.jsonl"
+    manifest.parent.mkdir()
+    manifest.write_text(
+        json.dumps(
+            {
+                "id": "a",
+                "audio": "media/a.wav",
+                "slide_image": "media/a.png",
+                "wrong_image": "media/wrong.png",
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    item = probe.load_items(str(manifest))[0]
+    assert item["audio"] == str((manifest.parent / "media/a.wav").resolve())
+    assert item["slide_image"] == str((manifest.parent / "media/a.png").resolve())
 
 
 def test_prefetched_stream_overlaps_next_processor_batch_with_generation(monkeypatch):

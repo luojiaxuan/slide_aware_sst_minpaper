@@ -136,10 +136,24 @@ def main() -> None:
 
 
 def load_items(path: str) -> list[dict]:
-    text = Path(path).read_text(encoding="utf-8").strip()
+    item_path = Path(path).resolve()
+    text = item_path.read_text(encoding="utf-8").strip()
     if text.startswith("["):
-        return json.loads(text)
-    return [json.loads(l) for l in text.splitlines() if l.strip()]
+        items = json.loads(text)
+    else:
+        items = [json.loads(l) for l in text.splitlines() if l.strip()]
+    for item in items:
+        for field_name in (
+            "audio",
+            "slide_image",
+            "wrong_image",
+            "cross_talk_image",
+            "blank_image",
+        ):
+            value = item.get(field_name)
+            if value and not Path(value).is_absolute():
+                item[field_name] = str((item_path.parent / value).resolve())
+    return items
 
 
 def read_audio(path: str) -> tuple[np.ndarray, int]:
@@ -165,10 +179,13 @@ class StreamState:
     committed: list[str] = field(default_factory=list)
     previous: list[str] = field(default_factory=list)
     events: list[tuple[int, int]] = field(default_factory=list)
+    prefix_hypotheses: list[dict] = field(default_factory=list)
     started_at: float = field(default_factory=time.time)
 
 
 def prepare_stream_state(source_index: int, item: dict, cond: str, args) -> StreamState:
+    item = dict(item)
+    item["_probe_condition"] = cond
     audio, sr = read_audio(item["audio"])
     chunk = max(1, int(round(args.chunk_s * sr)))
     n_chunks = max(1, int(np.ceil(len(audio) / chunk)))
@@ -178,9 +195,13 @@ def prepare_stream_state(source_index: int, item: dict, cond: str, args) -> Stre
         "wrong": "wrong_image",
         "cross_talk": "cross_talk_image",
         "blank": "blank_image",
+        "raw_image": "slide_image",
+        "wrong_image": "wrong_image",
     }
-    if cond not in {"none", *image_fields}:
+    if cond not in {"none", "audio_only", "ocr", *image_fields}:
         raise ValueError(f"Unknown condition: {cond}")
+    if cond == "ocr" and not item.get("ocr_text"):
+        raise ValueError(f"Missing OCR text for {item['id']}")
     if cond in image_fields:
         image = item.get(image_fields[cond])
         if not image:
@@ -371,6 +392,17 @@ def stream_many_prefetched(
 
 def advance_stream_state(state: StreamState, text: str, args) -> dict | None:
     state.step += 1
+    state.prefix_hypotheses.append(
+        {
+            "step": state.step,
+            "audio_time_sec": round(
+                min(state.step * state.chunk_samples, len(state.audio))
+                / state.sample_rate,
+                6,
+            ),
+            "hypothesis": text,
+        }
+    )
     full = text.split()
     if state.step == state.n_chunks:
         k = len(state.committed)
@@ -387,12 +419,13 @@ def advance_stream_state(state: StreamState, text: str, args) -> dict | None:
     state.previous = full
     if state.step < state.n_chunks:
         return None
-    return {
+    record = {
         "id": state.item["id"],
         "condition": state.condition,
         "n_chunks": state.n_chunks,
         "chunk_s": args.chunk_s,
         "events": state.events,
+        "prefix_hypotheses": state.prefix_hypotheses,
         "hypothesis": " ".join(state.committed),
         "reference": state.item.get("reference", ""),
         "image_used": state.image or "",
@@ -406,6 +439,10 @@ def advance_stream_state(state: StreamState, text: str, args) -> dict | None:
         "shard_index": args.shard_index,
         "shard_count": args.shard_count,
     }
+    for field_name in ("screen_id", "acoustic_condition", "input_row_sha256"):
+        if field_name in state.item:
+            record[field_name] = state.item[field_name]
+    return record
 
 
 def stream_one(item, cond, processor, tokenizer, model, args) -> dict:
@@ -564,6 +601,12 @@ def build_prompt(audio_prefix, image_path, item, tgt, processor) -> str:
                         "The image above is the slide currently on screen. "
                         "Use it only to resolve ambiguous words in the speech; "
                         "never translate or output slide content itself."})
+    if item.get("_probe_condition") == "ocr":
+        content.append({"type": "text", "text":
+                        "Current slide OCR context (available before speech):\n"
+                        f"{item['ocr_text']}\n"
+                        "Use it only to resolve ambiguous words in the speech; "
+                        "never translate or output unsupported slide content."})
     content.append({"type": "audio", "audio": audio_prefix})
     content.append({"type": "text", "text":
                     f"Translate the {item.get('src_lang','Chinese')} speech heard "

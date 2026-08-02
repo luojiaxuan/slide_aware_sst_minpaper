@@ -1,0 +1,88 @@
+{
+  "schema_version": "mcif_beyond_ocr_exploratory_screen_config_v1",
+  "scope": "exploratory_screen_not_paper_gold",
+  "selection": {
+    "method": "automatic_inventory_plus_manual_high_confidence_screen",
+    "minimum_candidates": 30,
+    "maximum_candidates": 50,
+    "minimum_lead_sec": 5.0,
+    "minimum_segment_duration_sec": 3.0,
+    "maximum_segment_duration_sec": 24.0,
+    "maximum_candidates_per_talk": 3,
+    "maximum_candidates_per_segment": 1,
+    "candidate_ids": [
+      "mcif:JRrbTnEZbF:R1C001",
+      "mcif:ERmKpJPPDc:R2C002",
+      "mcif:ERmKpJPPDc:R2C004",
+      "mcif:ERmKpJPPDc:R2C011",
+      "mcif:EqmWoxNDIr:R2C001",
+      "mcif:EqmWoxNDIr:R2C002",
+      "mcif:ICWfTnUMio:R2C005",
+      "mcif:ICWfTnUMio:R2C006",
+      "mcif:JhbtCwcsWY:R2C004",
+      "mcif:JhbtCwcsWY:R2C008",
+      "mcif:QTlIuodOsA:R2C003",
+      "mcif:ccpXHNfaoy:R2C001",
+      "mcif:csJIsDTYMW:R2C004",
+      "mcif:krJSAnVcGR:R2C001",
+      "mcif:krJSAnVcGR:R2C004",
+      "mcif:krJSAnVcGR:R2C008",
+      "mcif:miPjvjWOvI:R2C003",
+      "mcif:miPjvjWOvI:R2C004",
+      "mcif:miPjvjWOvI:R2C008",
+      "mcif:rOwZgUjcwB:R2C002",
+      "mcif:rOwZgUjcwB:R2C006",
+      "mcif:rOwZgUjcwB:R2C008",
+      "mcif:rxrToXvRyM:R2C004",
+      "mcif:rxrToXvRyM:R2C007",
+      "mcif:rxrToXvRyM:R2C008",
+      "mcif:vrydRuOXbT:R2C001",
+      "mcif:vrydRuOXbT:R2C003",
+      "mcif:wJAPXMIoIG:R2C003",
+      "mcif:wJAPXMIoIG:R2C005",
+      "mcif:xhjBHGVOyQ:R2C008",
+      "mcif:xhjBHGVOyQ:R2C014",
+      "mcif:xiSxNRoOzm:R2C002",
+      "mcif:xiSxNRoOzm:R2C003",
+      "mcif:xiSxNRoOzm:R2C006"
+    ]
+  },
+  "evidence_conditions": [
+    "audio_only",
+    "ocr",
+    "raw_image",
+    "wrong_image"
+  ],
+  "acoustic_conditions": [
+    {
+      "condition_id": "clean",
+      "kind": "clean"
+    },
+    {
+      "condition_id": "babble_p5_s0",
+      "kind": "babble",
+      "snr_db": 5.0,
+      "source_count": 5,
+      "source_split": "development",
+      "replicate": 0,
+      "global_seed": 20260801
+    }
+  ],
+  "inference": {
+    "model": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+    "model_revision": "26291f793822fb6be9555850f06dfe95f2d7e695",
+    "chunk_sec": 1.0,
+    "max_new_tokens": 96,
+    "batch_items": 16,
+    "prefetch_mode": "process",
+    "seed": 0,
+    "gpu_count": 2,
+    "shard_count": 2
+  },
+  "decision_rule": {
+    "primary_metric": "prefix_auc_sentence_chrf",
+    "positive_when": "raw_image > ocr AND raw_image > wrong_image",
+    "report_clean_and_noisy_separately": true,
+    "formal_human_validation_only_after_positive_screen": true
+  }
+}

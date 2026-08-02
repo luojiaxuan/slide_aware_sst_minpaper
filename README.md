@@ -111,6 +111,13 @@
 > 等待六个真实 disjoint identities 和 scorer-private token manifest。见
 > [docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md](docs/MCIF_BEYOND_OCR_RELIABILITY_V2.md) 与
 > [docs/MCIF_BEYOND_OCR_SECURITY_REVIEW_20260801.md](docs/MCIF_BEYOND_OCR_SECURITY_REVIEW_20260801.md)。
+> 为避免在尚不知道 signal 是否存在时先投入六角色正式 annotation，当前先执行一个明确标为
+> exploratory 的 34-candidate screen：`audio-only / OCR / raw image / matched wrong image x
+> clean / +5 dB babble`。34 条覆盖 16 talks、34 个不同 segments；68 个 reference-free
+> inference inputs 已完成构建与逐文件哈希验证，272-row Qwen3-Omni matrix 尚未启动。只有
+> `raw_image` 的 prefix-AUC chrF 同时严格高于 `ocr` 和 `wrong_image` 的 positive samples 才进入
+> 正式人工验证。见
+> [docs/MCIF_BEYOND_OCR_EXPLORATORY_SCREEN_V1.md](docs/MCIF_BEYOND_OCR_EXPLORATORY_SCREEN_V1.md)。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28
@@ -236,14 +243,15 @@ current benchmark contract.
 
 ## Next execution milestone
 
-1. Complete v2 frame-only canonical item authoring, hash-lock the questions,
-   using the implemented localhost-only blinded authoring UI, then use the
-   sequential backend for two independent full-causal-prefix audio trajectories
-   and the implemented localhost-only validator UI for a disjoint two-person
-   frame-only cohort. v1 media remains
-   reusable, but its A/B annotation sheets are superseded. No human label is
-   complete yet.
-2. The 304-state visual-token inventory, deterministic stale/wrong candidates,
+1. Run the frozen 34-candidate MCIF exploratory screen on the exact Git commit:
+   `audio-only / OCR / raw image / matched wrong image x clean / +5 dB babble`,
+   producing 272 unique Qwen3-Omni rows. Keep `scorer_private` off the GPU host
+   and join references only during local analysis.
+2. If and only if raw image beats both OCR and wrong image on candidate-level
+   prefix-AUC chrF, build formal human validation for those positive samples.
+   The existing six-role reliability-v2 system remains the downstream formal
+   path; no human label is complete yet.
+3. The 304-state visual-token inventory, deterministic stale/wrong candidates,
    and 101 transformed wrong-image bytes are frozen. Next freeze target events
    and scoring, then join each event to immutable state-level media inside
    hash-bound source-only packets; then compare audio/document-only,
@@ -251,7 +259,7 @@ current benchmark contract.
    preserving text, current raw image, and matched stale/wrong evidence under
    native and controlled-noise audio. This ladder separates “context helps”
    from “raw pixels are necessary.”
-3. Require a content-specific advance in first stable correct target decisions,
+4. Require a content-specific advance in first stable correct target decisions,
    preserved final quality and a coherent noise interaction. A small aggregate
    BLEU change without these controls is not sufficient. The fail-closed event
    scorer and exact 16-condition acoustic grouping are implemented in
