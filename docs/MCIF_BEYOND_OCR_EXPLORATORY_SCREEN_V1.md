@@ -155,3 +155,10 @@ image 整体没有打败 OCR。** 不能写成 `vision > OCR` aggregate result�
 3. 只有通过人工验证的样本才进入后续 audio-sufficiency/commit-time analysis；
 4. human validation artifact 完成后，以新的 private immutable revision 上传，不改写本次
    screen revision。
+
+其中前两步的 zero-label packet 已完成并冻结在 private HF revision
+[`34e8f9b1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/34e8f9b16ef06dc9503066d3446304400c750c22/beyond_ocr_positive_validation_v1)，
+tag `mcif-beyond-ocr-positive-validation-v1`。它含 2 个 visual roles 与 2 个 outcome roles，
+每个 6 items；38 files 回下载、37 manifest-bound files 校验通过。当前仍是 0 human labels，
+等待四个互不重合的真实 annotators。详见
+[`MCIF_BEYOND_OCR_POSITIVE_VALIDATION_V1.md`](MCIF_BEYOND_OCR_POSITIVE_VALIDATION_V1.md)。

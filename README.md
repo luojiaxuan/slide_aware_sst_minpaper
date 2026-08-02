@@ -124,6 +124,13 @@
 > 完整 private artifact 已冻结在
 > [`d6b01409`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/d6b01409200379bc22b1aecd485d5ebc4fe2b4d1/beyond_ocr_exploratory_screen_v1)，
 > tag `mcif-beyond-ocr-exploratory-screen-v1`；160 个 manifest-bound files 已全量回下载验字节。
+> 6 条 clean/noisy robust positives 的四角色 blinded human-validation packet 也已冻结在 private
+> HF revision
+> [`34e8f9b1`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/34e8f9b16ef06dc9503066d3446304400c750c22/beyond_ocr_positive_validation_v1)，
+> tag `mcif-beyond-ocr-positive-validation-v1`。两个 visual 与两个 outcome roles 各 6 items，
+> 远端 38 files 全量回下载、37 manifest-bound files 校验通过；当前仍为 0 human labels，等待
+> 四个互不重合的真实 annotators。见
+> [docs/MCIF_BEYOND_OCR_POSITIVE_VALIDATION_V1.md](docs/MCIF_BEYOND_OCR_POSITIVE_VALIDATION_V1.md)。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28
