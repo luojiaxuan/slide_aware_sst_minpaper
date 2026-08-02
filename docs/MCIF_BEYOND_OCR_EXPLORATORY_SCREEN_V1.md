@@ -93,8 +93,10 @@ Chinese target reference 未出现在 serialized inference rows 中。
 | scorer-only mapping | `.../scorer_private` | 34 rows；不得传 GPU worker |
 | complete r5 run | `.../results/mcif_beyond_ocr_exploratory_v1_c098d9f_2gpu_r5_bs16_20260802_033300` | 272/272 rows；analysis complete |
 
-`SHA256SUMS` 已对 140 个文件全量验证。HF upload 等 inference/analysis 完成后作为一个完整、
-可复用 private revision 执行；上传前 Git 只记录本地 staging 状态，不宣称已有远端 revision。
+完整 artifact 已上传到 private
+[`gavinlaw/slide-aware-sst-mcif-outcomes@d6b01409`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/d6b01409200379bc22b1aecd485d5ebc4fe2b4d1/beyond_ocr_exploratory_screen_v1)，
+tag `mcif-beyond-ocr-exploratory-screen-v1`。独立回下载 161 个实际 files，其中
+`ARTIFACT_SHA256SUMS` 覆盖的 160 files 全部逐字节验证通过；repo visibility 确认为 private。
 
 ## 运行结果
 
@@ -151,5 +153,5 @@ image 整体没有打败 OCR。** 不能写成 `vision > OCR` aggregate result�
 2. 人工确认 pixels 包含正确证据、flat OCR 确实不足、raw-image advance 与 candidate 相关，
    并排除 hallucination 或一般 decoding variation；
 3. 只有通过人工验证的样本才进入后续 audio-sufficiency/commit-time analysis；
-4. 把 reusable inputs/results/scorer artifacts 上传到 private Hugging Face immutable revision，
-   全量回下载验字节后替换当前 `PENDING_HF_UPLOAD`。
+4. human validation artifact 完成后，以新的 private immutable revision 上传，不改写本次
+   screen revision。

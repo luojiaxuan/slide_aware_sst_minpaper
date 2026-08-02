@@ -121,6 +121,9 @@
 > `vision > OCR`。样本级有 20/34 unique positives，其中 6 条 clean/noisy 都通过；下一步只对
 > 这些 positives 做正式人工验证。见
 > [docs/MCIF_BEYOND_OCR_EXPLORATORY_SCREEN_V1.md](docs/MCIF_BEYOND_OCR_EXPLORATORY_SCREEN_V1.md)。
+> 完整 private artifact 已冻结在
+> [`d6b01409`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/d6b01409200379bc22b1aecd485d5ebc4fe2b4d1/beyond_ocr_exploratory_screen_v1)，
+> tag `mcif-beyond-ocr-exploratory-screen-v1`；160 个 manifest-bound files 已全量回下载验字节。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28

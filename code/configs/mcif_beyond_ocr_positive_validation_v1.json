@@ -1,0 +1,26 @@
+{
+  "schema_version": "mcif_beyond_ocr_positive_validation_config_v1",
+  "scope": "formal_human_validation_of_exploratory_robust_positives",
+  "selection_rule": "sample-level primary gate passes under both clean and babble_p5_s0",
+  "expected_items": 6,
+  "roles": [
+    "visual_a",
+    "visual_b",
+    "outcome_a",
+    "outcome_b"
+  ],
+  "require_disjoint_humans": true,
+  "visual_judgments": [
+    "yes",
+    "no",
+    "uncertain"
+  ],
+  "outcome_judgments": [
+    "correct",
+    "incorrect",
+    "uncertain"
+  ],
+  "adjudication_trigger": "any disagreement or uncertain judgment",
+  "ordering_seed": "mcif-beyond-ocr-positive-validation-v1-20260802",
+  "interpretation": "Passing validates individual examples only; it does not establish aggregate raw-image superiority over OCR."
+}

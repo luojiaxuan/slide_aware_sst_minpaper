@@ -39,5 +39,10 @@
   "unique_positive_candidates": 20,
   "positive_in_both_acoustic_conditions": 6,
   "conclusion": "Raw image is content-sensitive relative to matched wrong image, but aggregate raw image does not beat OCR. Formal human validation is warranted only for positive samples, beginning with six candidates positive under both clean and noisy audio.",
-  "artifact_status": "PENDING_PRIVATE_HF_UPLOAD"
+  "artifact_status": "UPLOADED_AND_BYTE_VERIFIED",
+  "hf_repo": "gavinlaw/slide-aware-sst-mcif-outcomes",
+  "hf_revision": "d6b01409200379bc22b1aecd485d5ebc4fe2b4d1",
+  "hf_tag": "mcif-beyond-ocr-exploratory-screen-v1",
+  "hf_path": "beyond_ocr_exploratory_screen_v1",
+  "verified_file_count": 160
 }
