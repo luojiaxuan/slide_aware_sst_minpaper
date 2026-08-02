@@ -133,6 +133,14 @@
 > tokens 已分别出现在 OCR 中，21 条 token coverage 至少为 50%。因此该 packet 当前为
 > `DO_NOT_ANNOTATE`、0 human labels；先完成 strict re-screen。见
 > [docs/MCIF_BEYOND_OCR_POSITIVE_VALIDATION_V1.md](docs/MCIF_BEYOND_OCR_POSITIVE_VALIDATION_V1.md)。
+> Strict re-screen 的 researcher prescreen 包现已就绪，仍为 **0 human labels**、不是 paper gold。
+> 包含 116 条候选：A 队列 70 条、B 队列 46 条，以及 69 张去重 slide PNG。Finder 交付目录为
+> `/Users/luojiaxuan/Downloads/mcif_strict_beyond_ocr_review_v1`；canonical artifact 冻结在 private
+> HF revision
+> [`18c4b1f4`](https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/18c4b1f4245bacf265caac1b1dfa1c6df198c195/strict_beyond_ocr_researcher_prescreen_v1)，
+> tag `mcif-strict-beyond-ocr-researcher-prescreen-v1`，73 files 已全量回下载并逐字节验证。先完成
+> A；若 `strict_keep < 30` 再完成 B。规则和回传格式见
+> [docs/MCIF_STRICT_BEYOND_OCR_RESEARCHER_REVIEW_RULES_V1.md](docs/MCIF_STRICT_BEYOND_OCR_RESEARCHER_REVIEW_RULES_V1.md)。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28

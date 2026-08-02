@@ -67,3 +67,20 @@ mcif-strict-beyond-ocr-prescreen-v1-<packet>-output.jsonl
 
 可以中途导出；文件包含所有 rows，后续只消费 `annotation_status=completed` 的 rows。不要编辑
 `packet_id`、`packet_items_sha256`、`candidate_id` 或 `input_row_sha256`。
+
+## Source of Truth
+
+- packet id：`mcif-strict-beyond-ocr-prescreen-v1-600d50299a42`；
+- canonical local artifact：`/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/outcomes/mcif_strict_beyond_ocr_researcher_prescreen_v1_600d50299a42_gef3bf0c`；
+- Finder 交付目录：`/Users/luojiaxuan/Downloads/mcif_strict_beyond_ocr_review_v1`；
+- private HF revision：<https://huggingface.co/datasets/gavinlaw/slide-aware-sst-mcif-outcomes/tree/18c4b1f4245bacf265caac1b1dfa1c6df198c195/strict_beyond_ocr_researcher_prescreen_v1>；
+- HF tag：`mcif-strict-beyond-ocr-researcher-prescreen-v1`；
+- builder Git commit：`ef3bf0c42290ad4616a11b75f310c254b25fe231`；
+- config SHA256：`cf57e4d45823ac9055707cfd48b7950de71f80d78aae6b306742a705b95d2955`；
+- source workspace `SHA256SUMS` SHA256：`0b480c19a1de2c0cbb2997290cde97a5f6dc0c25e01e6cf8affdcade5580c422`；
+- items SHA256：`495fd6a1c7541682fbbec24b81b93e144d620ee9412f6c93daca920dfc62c255`。
+
+Artifact 共 73 files / 24 MB，含 116 candidate rows 和 69 张去重 PNG。Finder copy 与 HF
+强制全量回下载均和 canonical local artifact 逐字节一致，`SHA256SUMS` 全部通过。相关测试为
+`18 passed`；桌面、手机布局和实际保存/自动跳转已验证。浏览器保存状态只存在本机
+`localStorage`，canonical artifact 和 HF revision 保持 0 labels。

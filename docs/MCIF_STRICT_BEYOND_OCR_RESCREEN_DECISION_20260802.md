@@ -2,7 +2,7 @@
 
 日期：2026-08-02
 
-状态：`DECISION_FROZEN_IMPLEMENTATION_PENDING`
+状态：`RESEARCHER_PRESCREEN_READY_NO_LABELS`
 
 ## 当前判断
 
@@ -81,3 +81,20 @@ evidence packet，再让同一个 Qwen3-Omni online ST backbone 消费 packet。
 
 这个实验能区分数据问题、visual extraction 问题和 online fusion 问题。单纯在旧 34 条上更换
 更大总参数模型不能作出这一区分，因此不执行原矩阵的盲目 scale-up。
+
+## Researcher Prescreen Artifact
+
+严格重筛材料已经构建，但仍为研究者预筛、0 human labels、不是 paper gold：
+
+- packet：`mcif-strict-beyond-ocr-prescreen-v1-600d50299a42`；
+- 规模：116 candidates，A 队列 70、B 队列 46、69 张去重 slide PNG；
+- canonical local artifact：`/Users/luojiaxuan/Documents/ResearchStudio/data/vision-aware-sst/mcif/outcomes/mcif_strict_beyond_ocr_researcher_prescreen_v1_600d50299a42_gef3bf0c`；
+- Finder 交付目录：`/Users/luojiaxuan/Downloads/mcif_strict_beyond_ocr_review_v1`；
+- private HF revision：`18c4b1f4245bacf265caac1b1dfa1c6df198c195`；
+- HF tag：`mcif-strict-beyond-ocr-researcher-prescreen-v1`；
+- builder Git commit：`ef3bf0c42290ad4616a11b75f310c254b25fe231`。
+
+本地 source、Finder copy 与 HF 强制全量回下载内容逐字节一致，artifact 自带
+`SHA256SUMS`。审查者打开 `index.html`，先完成 A；若 `strict_keep < 30` 再完成 B，最后点击
+`导出 JSONL` 回传 `mcif-strict-beyond-ocr-prescreen-v1-600d50299a42-output.jsonl`。完整规则见
+`docs/MCIF_STRICT_BEYOND_OCR_RESEARCHER_REVIEW_RULES_V1.md`。
