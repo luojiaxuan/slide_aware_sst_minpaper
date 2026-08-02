@@ -142,12 +142,11 @@
       "r0_support",
       "r1_support",
       "pixel_support",
+      "descriptor_fidelity",
       "candidate_eligibility",
       "target_reference_alignment"
     ],
-    "diagnostic_fields": [
-      "descriptor_fidelity"
-    ],
+    "diagnostic_fields": [],
     "minimum_exact_agreement": 0.8,
     "minimum_gwet_ac1": 0.67,
     "maximum_adjudication_rate": 0.25,

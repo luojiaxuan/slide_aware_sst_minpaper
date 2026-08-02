@@ -1,0 +1,11 @@
+{
+  "role_access_token_sha256": {
+    "target_adjudicator": "10f3bb1298beef81edd79f4a901b466c828407bb4d0afa9cf9b161348fb6ca59",
+    "target_author": "fc223e3d44ff469d951d664fd9742b245ec3ece7adde35b0d0765777eab520f0",
+    "target_validator": "f95fb7628afd7d824fbbc1a5b0e62c00ba4dbba56eb5568767fa64d233a3179f",
+    "visual_a": "3a3c3c74eb8f066e5491919f495482769efddfcc6d53a8c5547dab6f0770c04a",
+    "visual_adjudicator": "6e72cb45948d67f7b30b8007e55e0d96e6bfc64c7ec52d3b8068bab1ea098763",
+    "visual_b": "b49238e61ae923f005399411b03e7de2e3d5b24b1ef3b3b91d4a609730e26f38"
+  },
+  "schema_version": "mcif_beyond_ocr_access_token_manifest_v2"
+}

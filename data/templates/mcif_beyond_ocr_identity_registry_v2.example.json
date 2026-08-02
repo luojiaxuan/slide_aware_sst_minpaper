@@ -1,0 +1,50 @@
+{
+  "people": [
+    {
+      "aliases": [
+        "visual-a-private-alias"
+      ],
+      "person_id": "VISUAL_A_ANNOTATOR"
+    },
+    {
+      "aliases": [
+        "visual-b-private-alias"
+      ],
+      "person_id": "VISUAL_B_ANNOTATOR"
+    },
+    {
+      "aliases": [
+        "target-author-private-alias"
+      ],
+      "person_id": "TARGET_AUTHOR_ANNOTATOR"
+    },
+    {
+      "aliases": [
+        "target-validator-private-alias"
+      ],
+      "person_id": "TARGET_VALIDATOR_ANNOTATOR"
+    },
+    {
+      "aliases": [
+        "visual-adjudicator-private-alias"
+      ],
+      "person_id": "VISUAL_ADJUDICATOR"
+    },
+    {
+      "aliases": [
+        "target-adjudicator-private-alias"
+      ],
+      "person_id": "TARGET_ADJUDICATOR"
+    }
+  ],
+  "registry_sha256": "9f9861904bbc4c8558d7080a148d64d31f69028aa66ac29ea3aaa07926155d36",
+  "role_assignments": {
+    "target_adjudicator": "TARGET_ADJUDICATOR",
+    "target_author": "TARGET_AUTHOR_ANNOTATOR",
+    "target_validator": "TARGET_VALIDATOR_ANNOTATOR",
+    "visual_a": "VISUAL_A_ANNOTATOR",
+    "visual_adjudicator": "VISUAL_ADJUDICATOR",
+    "visual_b": "VISUAL_B_ANNOTATOR"
+  },
+  "schema_version": "mcif_beyond_ocr_identity_registry_v2"
+}

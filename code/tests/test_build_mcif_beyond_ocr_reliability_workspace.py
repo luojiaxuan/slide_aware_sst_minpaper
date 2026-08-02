@@ -1,16 +1,85 @@
 import copy
+import hashlib
+import json
 from pathlib import Path
 
-from PIL import Image
 import pytest
-
+from PIL import Image
 from scripts.build_mcif_beyond_ocr_reliability_workspace import (
+    ACCESS_TOKEN_MANIFEST_SCHEMA,
     TARGET_AUTHOR_SCHEMA,
     TARGET_VALIDATOR_STAGE1_SCHEMA,
     VISUAL_R0_SCHEMA,
     build_bundle,
+    validate_access_token_manifest,
+    validate_identity_registry,
 )
-from scripts.build_mcif_visual_token_controls import canonical_sha256, file_sha256, load_jsonl
+from scripts.build_mcif_visual_token_controls import (
+    canonical_sha256,
+    file_sha256,
+    load_jsonl,
+)
+
+CONFIG_PATH = (
+    Path(__file__).parents[1] / "configs" / "mcif_beyond_ocr_reliability_v2.json"
+)
+IDENTITY_REGISTRY_PATH = (
+    Path(__file__).parents[2]
+    / "data"
+    / "templates"
+    / "mcif_beyond_ocr_identity_registry_v2.example.json"
+)
+ACCESS_TOKEN_MANIFEST_PATH = (
+    Path(__file__).parents[2]
+    / "data"
+    / "templates"
+    / "mcif_beyond_ocr_access_token_manifest_v2.example.json"
+)
+
+
+def identity_registry_fixture():
+    assignments = {
+        "visual_a": "Visual A",
+        "visual_b": "Visual B",
+        "target_author": "Target Author",
+        "target_validator": "Target Validator",
+        "visual_adjudicator": "Visual Adjudicator",
+        "target_adjudicator": "Target Adjudicator",
+    }
+    registry = {
+        "schema_version": "mcif_beyond_ocr_identity_registry_v2",
+        "people": [
+            {
+                "person_id": person_id,
+                "aliases": [f"{role.replace('_', '-')}@example.test"],
+            }
+            for role, person_id in assignments.items()
+        ],
+        "role_assignments": assignments,
+    }
+    registry["registry_sha256"] = canonical_sha256(registry)
+    return registry
+
+
+def test_example_identity_registry_is_schema_valid():
+    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    registry = json.loads(IDENTITY_REGISTRY_PATH.read_text(encoding="utf-8"))
+    assignments = validate_identity_registry(
+        registry, config["identity"]["required_disjoint_roles"]
+    )
+    assert assignments == registry["role_assignments"]
+
+
+def test_example_access_token_manifest_is_schema_valid():
+    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    manifest = json.loads(ACCESS_TOKEN_MANIFEST_PATH.read_text(encoding="utf-8"))
+    assert manifest["schema_version"] == ACCESS_TOKEN_MANIFEST_SCHEMA
+    assert (
+        validate_access_token_manifest(
+            manifest, config["identity"]["required_disjoint_roles"]
+        )
+        == manifest["role_access_token_sha256"]
+    )
 
 
 def hashed(row):
@@ -43,7 +112,9 @@ def source_workspace(tmp_path: Path):
                 "candidate_source_en": f"candidate {index}",
                 "candidate_kind": "phrase",
                 "candidate_token_count": 2,
-                "evidence_channel": "structure_preserving_text" if index == 1 else "raw_visual_semantics",
+                "evidence_channel": "structure_preserving_text"
+                if index == 1
+                else "raw_visual_semantics",
                 "current_slide": {
                     "media_id": f"M{index:04d}",
                     "path": f"media/M{index:04d}.png",
@@ -61,11 +132,13 @@ def source_workspace(tmp_path: Path):
                         "reading_order": 0,
                     }
                 ],
-                "proposed_evidence_origins": [] if index == 1 else [
+                "proposed_evidence_origins": []
+                if index == 1
+                else [
                     {
                         "descriptor_field": "scene_summary",
                         "descriptor_index": 0,
-                        "descriptor_sha256": "a" * 64,
+                        "descriptor_sha256": canonical_sha256("A relation is visible."),
                         "descriptor_text": "A relation is visible.",
                     }
                 ],
@@ -138,7 +211,10 @@ def source_workspace(tmp_path: Path):
     }
     for name, rows in (("visual", visual), ("target", target), ("mapping", mapping)):
         paths[name].write_text(
-            "".join(__import__("json").dumps(row, ensure_ascii=False, sort_keys=True) + "\n" for row in rows),
+            "".join(
+                __import__("json").dumps(row, ensure_ascii=False, sort_keys=True) + "\n"
+                for row in rows
+            ),
             encoding="utf-8",
         )
     return root, paths
@@ -146,6 +222,7 @@ def source_workspace(tmp_path: Path):
 
 def build_kwargs(tmp_path: Path):
     root, paths = source_workspace(tmp_path)
+    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     return {
         "source_root": root,
         "expected_items": 2,
@@ -153,8 +230,15 @@ def build_kwargs(tmp_path: Path):
         "expected_target_sha256": file_sha256(paths["target"]),
         "expected_mapping_sha256": file_sha256(paths["mapping"]),
         "source_hf_revision": "1" * 40,
-        "config_sha256": "2" * 64,
+        "config_sha256": file_sha256(CONFIG_PATH),
+        "config": config,
+        "identity_registry": identity_registry_fixture(),
         "builder_git_commit": "3" * 40,
+        "release_key": b"release-key-for-tests-must-be-32b",
+        "role_access_token_sha256": {
+            role: hashlib.sha256(f"access-token-{role}".encode()).hexdigest()
+            for role in config["identity"]["required_disjoint_roles"]
+        },
     }
 
 
@@ -162,17 +246,40 @@ def test_initial_releases_physically_exclude_future_evidence_and_author_text(tmp
     kwargs = build_kwargs(tmp_path)
     output = tmp_path / "v2"
     report = build_bundle(output, **kwargs)
+    contract = json.loads(
+        (output / "scorer_private" / "run_contract.json").read_text(encoding="utf-8")
+    )
+    assert contract["private_visual_rows_sha256"] == canonical_sha256(
+        load_jsonl(output / "scorer_private" / "visual_material.jsonl")
+    )
+    assert contract["private_target_rows_sha256"] == canonical_sha256(
+        load_jsonl(output / "scorer_private" / "target_material.jsonl")
+    )
+    assert contract["private_mapping_rows_sha256"] == canonical_sha256(
+        load_jsonl(output / "scorer_private" / "item_mapping.jsonl")
+    )
+    assert report["run_contract_file_sha256"] == file_sha256(
+        output / "scorer_private" / "run_contract.json"
+    )
     visual_a = load_jsonl(output / "visual_a_r0_view" / "items.jsonl")
     visual_b = load_jsonl(output / "visual_b_r0_view" / "items.jsonl")
     author = load_jsonl(output / "target_author_view" / "items.jsonl")
     validator = load_jsonl(output / "target_validator_stage1_view" / "items.jsonl")
 
     assert report["human_labels"] == 0
+    assert (
+        report["release_key_sha256"]
+        == hashlib.sha256(kwargs["release_key"]).hexdigest()
+    )
     assert len(visual_a) == len(visual_b) == len(author) == len(validator) == 2
     assert all(row["schema_version"] == VISUAL_R0_SCHEMA for row in visual_a + visual_b)
     assert all(row["schema_version"] == TARGET_AUTHOR_SCHEMA for row in author)
-    assert all(row["schema_version"] == TARGET_VALIDATOR_STAGE1_SCHEMA for row in validator)
-    assert {row["item_id"] for row in visual_a}.isdisjoint({row["item_id"] for row in visual_b})
+    assert all(
+        row["schema_version"] == TARGET_VALIDATOR_STAGE1_SCHEMA for row in validator
+    )
+    assert {row["item_id"] for row in visual_a}.isdisjoint(
+        {row["item_id"] for row in visual_b}
+    )
     forbidden_visual = {
         "r1_blocks",
         "current_slide_r1_blocks",
@@ -205,10 +312,14 @@ def test_workspace_is_reproducible_create_once_and_source_hash_bound(tmp_path):
     build_bundle(first, **kwargs)
     build_bundle(second, **kwargs)
     first_bytes = {
-        path.relative_to(first): path.read_bytes() for path in first.rglob("*") if path.is_file()
+        path.relative_to(first): path.read_bytes()
+        for path in first.rglob("*")
+        if path.is_file()
     }
     second_bytes = {
-        path.relative_to(second): path.read_bytes() for path in second.rglob("*") if path.is_file()
+        path.relative_to(second): path.read_bytes()
+        for path in second.rglob("*")
+        if path.is_file()
     }
     assert first_bytes == second_bytes
     with pytest.raises(FileExistsError, match="must not already exist"):
@@ -219,14 +330,36 @@ def test_workspace_is_reproducible_create_once_and_source_hash_bound(tmp_path):
         build_bundle(tmp_path / "drifted", **drifted)
 
 
+def test_workspace_rejects_missing_or_reused_role_access_tokens(tmp_path):
+    kwargs = build_kwargs(tmp_path)
+    missing = copy.deepcopy(kwargs)
+    missing["role_access_token_sha256"].pop("visual_a")
+    with pytest.raises(ValueError, match="role access-token hashes differ"):
+        build_bundle(tmp_path / "missing-token", **missing)
+
+    reused = copy.deepcopy(kwargs)
+    reused["role_access_token_sha256"]["visual_a"] = reused["role_access_token_sha256"][
+        "visual_b"
+    ]
+    with pytest.raises(ValueError, match="role access-token hashes differ"):
+        build_bundle(tmp_path / "reused-token", **reused)
+
+
 def test_v1_label_or_media_drift_is_rejected_without_partial_output(tmp_path):
     kwargs = build_kwargs(tmp_path)
-    visual_path = kwargs["source_root"] / "visual_validator_view" / "validation_items.jsonl"
+    visual_path = (
+        kwargs["source_root"] / "visual_validator_view" / "validation_items.jsonl"
+    )
     rows = load_jsonl(visual_path)
     rows[0]["annotation_status"] = "completed"
-    rows[0]["row_sha256"] = canonical_sha256({key: value for key, value in rows[0].items() if key != "row_sha256"})
+    rows[0]["row_sha256"] = canonical_sha256(
+        {key: value for key, value in rows[0].items() if key != "row_sha256"}
+    )
     visual_path.write_text(
-        "".join(__import__("json").dumps(row, ensure_ascii=False, sort_keys=True) + "\n" for row in rows),
+        "".join(
+            __import__("json").dumps(row, ensure_ascii=False, sort_keys=True) + "\n"
+            for row in rows
+        ),
         encoding="utf-8",
     )
     kwargs["expected_visual_sha256"] = file_sha256(visual_path)
