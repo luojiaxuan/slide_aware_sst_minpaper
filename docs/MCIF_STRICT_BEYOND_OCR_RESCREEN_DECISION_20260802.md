@@ -98,3 +98,15 @@ evidence packet，再让同一个 Qwen3-Omni online ST backbone 消费 packet。
 `SHA256SUMS`。审查者打开 `index.html`，先完成 A；若 `strict_keep < 30` 再完成 B，最后点击
 `导出 JSONL` 回传 `mcif-strict-beyond-ocr-prescreen-v1-600d50299a42-output.jsonl`。完整规则见
 `docs/MCIF_STRICT_BEYOND_OCR_RESEARCHER_REVIEW_RULES_V1.md`。
+
+## Candidate Provenance 与扩展假设
+
+当前 packet 的 `candidate_source_en` 不是术语标签，也没有自动确认 Chinese realization。它是
+source-only VLM descriptor 与 official English source 的 normalized 1--4 gram lexical overlap；
+Chinese reference 只在 outcome-side join 后显示给 reviewer。`method`、`based` 等 proposal
+因此必须由人拒绝或重写 event head，不能直接进入术语指标。
+
+人工 review 同时发现 raw image 可能存在 strict semantic relation、OCR error、layout/typography
+selection、object grounding 以及 noisy-audio interaction 等不同收益机制。它们的 claim 和 baseline
+要求不能混用，已冻结在 `docs/RAW_IMAGE_VS_OCR_HYPOTHESES_20260802.md`。当前 immutable packet
+不增补临时类型；output 返回后再按三类候选池重编译并人工 author event heads。

@@ -13,6 +13,18 @@
 提议、OCR token overlap、lead、talk/segment diversity 排序后的 70 条；B 队列为剩余 46 条。
 先完成 A；若 `strict_keep < 30`，再继续 B。
 
+## Candidate 不是术语标签
+
+页面顶部的 candidate 是 high-recall `lexical/event proposal`，不是术语识别结果。R2 candidate
+来自 source-only VLM visual descriptors 与 official English source 的 normalized 1--4 gram
+词面交集；`candidate_kind=token|phrase` 只表示 n-gram 形态。Chinese reference 仅在后续
+outcome-side join 后展示，pipeline 没有执行双语 alignment，也没有确认 target realization。
+
+因此系统只知道 candidate 词面出现在 English source，不知道它是不是术语，也不知道 Chinese
+reference 是否有稳定对应。`method`、`based`、`content` 等泛词应由 reviewer 判为不可计分。
+`OCR token N%` 也只表示 exact token coverage，不表示 OCR 语义充分或不足。完整 provenance 与
+raw-image/OCR 待验证机制见 `docs/RAW_IMAGE_VS_OCR_HYPOTHESES_20260802.md`。
+
 ## 每条必填判断
 
 ### 1. 图片支持该 evidence

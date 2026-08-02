@@ -1475,3 +1475,22 @@ or a stronger Qwen3-VL variant if available.
   token，重建 signed production workspace，上传新的 immutable private HF revision 并验证 bytes。
   当前状态 `WAITING_FOR_PRIVATE_IDENTITY_AND_ACCESS_TOKEN_REGISTRY`；在此之前不生成 audio task、
   event packet、MCIF inference input 或 `pixels > OCR` 结果。
+
+## 2026-08-02 MCIF Candidate Provenance Correction / Raw-vs-OCR Hypotheses
+
+- 人工 prescreen 过程中确认一个命名风险：页面 `candidate_source_en` 不是术语识别或中英术语
+  alignment。R2 由 source-only Qwen3-VL descriptor 与 official English source 的 normalized
+  1--4 gram lexical overlap 产生；Chinese reference 后置展示，没有自动 target realization。
+- `candidate_kind=token|phrase` 只描述 n-gram，`OCR token N%` 只描述 exact token coverage。
+  `method`、`based` 等是 high-recall false positives，必须由人判 event scoreability；此前把候选
+  统称为“术语”不准确，后续统一使用 `lexical/event proposal`。
+- 冻结 raw image 可能优于 OCR 的五类待验证情况：non-text semantic relation、layout/typography
+  selection、OCR recognition/serialization failure、object/icon/shape grounding、pre-speech visual
+  context 与 noisy audio 的交互。它们不是一个统一 claim。
+- Layout/typography selection 必须与 full flat OCR、caption/title/header OCR、structure-aware OCR、
+  retrieved OCR 对比。只赢 full OCR 不能证明 pixels 必要；OCR error-only 只能支持 robustness；
+  strict semantic relation 仍是最强 beyond-OCR 路线。
+- 当前 immutable researcher packet 不改 schema 或 evidence types。Reviewer 在 note 中保留可能的
+  layout diagnostic；output 返回后重编译 `strict_semantic`、`ocr_error_control`、
+  `layout_selection_diagnostic` 三个池，并人工 author event heads/Chinese realizations。完整记录见
+  `docs/RAW_IMAGE_VS_OCR_HYPOTHESES_20260802.md`。

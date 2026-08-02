@@ -141,6 +141,10 @@
 > tag `mcif-strict-beyond-ocr-researcher-prescreen-v1`，73 files 已全量回下载并逐字节验证。先完成
 > A；若 `strict_keep < 30` 再完成 B。规则和回传格式见
 > [docs/MCIF_STRICT_BEYOND_OCR_RESEARCHER_REVIEW_RULES_V1.md](docs/MCIF_STRICT_BEYOND_OCR_RESEARCHER_REVIEW_RULES_V1.md)。
+> 页面 candidate 只是 VLM descriptor 与 English source 的 high-recall lexical proposal，不是
+> 术语标签，也没有自动确认 Chinese realization。Raw image 相对 OCR 的 strict semantics、OCR
+> error、layout/typography selection 与 noisy-audio interaction 假设及必要 baselines 见
+> [docs/RAW_IMAGE_VS_OCR_HYPOTHESES_20260802.md](docs/RAW_IMAGE_VS_OCR_HYPOTHESES_20260802.md)。
 > See
 > [docs/MCIF_VISUAL_READINESS_20260801.md](docs/MCIF_VISUAL_READINESS_20260801.md).
 > The controlled-acoustic input path is also ready: official SLR17/SLR28
